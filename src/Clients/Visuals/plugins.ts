@@ -338,10 +338,15 @@ module powerbi.visuals.plugins {
         capabilities: Histogram.capabilities,
         create: () => new Histogram()
     };
-
     export var areaRangeChart: IVisualPlugin = {
         name: 'areaRangeChart',
         capabilities: samples.AreaRangeChart.capabilities,
         create: () => new samples.AreaRangeChart()
+    };
+    
+    export var slicerX: IVisualPlugin = {
+        name: 'slicerX',
+        capabilities: samples.slicerXCapabilities,
+        create: () => new samples.SlicerX()
     };
 }

@@ -322,6 +322,11 @@ module powerbi.visuals {
             createPlugin(plugins, powerbi.visuals.plugins.areaRangeChart, () => new samples.AreaRangeChart({
                 animator: new BaseAnimator()
             }));
+            // SlicerX
+            createPlugin(plugins, powerbi.visuals.plugins.slicerX, () => new samples.SlicerX({
+                behavior: new samples.SlicerXWebBehavior()
+            }));
+
         }
 
         export class MinervaVisualPluginService extends VisualPluginService {
