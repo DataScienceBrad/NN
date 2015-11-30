@@ -344,4 +344,10 @@ module powerbi.visuals.plugins {
         capabilities: samples.AreaRangeChart.capabilities,
         create: () => new samples.AreaRangeChart()
     };
+
+    export var groupedImageSlicer: IVisualPlugin = {
+        name: 'groupedImageSlicer',
+        capabilities: samples.GroupedImageSlicer.capabilities,
+        create: () => new samples.GroupedImageSlicer()
+    };
 }

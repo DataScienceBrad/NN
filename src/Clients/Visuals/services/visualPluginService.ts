@@ -322,6 +322,11 @@ module powerbi.visuals {
             createPlugin(plugins, powerbi.visuals.plugins.areaRangeChart, () => new samples.AreaRangeChart({
                 animator: new BaseAnimator()
             }));
+            // Grouped Image Slicer
+            createPlugin(plugins, powerbi.visuals.plugins.groupedImageSlicer, () => new samples.GroupedImageSlicer({
+                behavior: new samples.GroupedImageSlicerWebBehavior()
+            }));
+
         }
 
         export class MinervaVisualPluginService extends VisualPluginService {

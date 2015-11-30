@@ -176,6 +176,7 @@
 /// <reference path="visuals/sampleVisual.ts"/>
 /// <reference path="cartesian/scatterChart.ts"/>
 /// <reference path="cartesian/playChart.ts"/>
+/// <reference path="cartesian/waterfallChart.ts"/>
 
 /// <reference path="visuals/slicer.ts"/>
 /// <reference path="visuals/table.ts"/>
@@ -183,19 +184,16 @@
 /// <reference path="visuals/treemap.ts"/>
 /// <reference path="visuals/card.ts"/>
 /// <reference path="visuals/owlGauge.ts"/>
+/// <reference path="visuals/histogram.ts"/>
 /// <reference path="visuals/samples/streamGraph.ts"/>
 /// <reference path="visuals/samples/sunburst.ts"/>
 /// <reference path="visuals/samples/radarChart.ts"/>
 /// <reference path="visuals/samples/dotPlot.ts"/>
 /// <reference path="visuals/samples/areaRangeChart.ts"/>
-/// <reference path="visuals/histogram.ts"/>
-/// <reference path="warnings/visualWarnings.ts"/>
-/// <reference path="cartesian/waterfallChart.ts"/>
+/// <reference path="visuals/samples/groupedImageSlicer.ts"/>
 
 /// <reference path="tooltip.ts"/>
-
 /// <reference path="styles/visualStyles.ts"/>
-
 /// <reference path="visuals/donutChart.ts"/>
 
 /// <reference path="plugins.ts"/>
