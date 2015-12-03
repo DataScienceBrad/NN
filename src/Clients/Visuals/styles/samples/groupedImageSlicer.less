@@ -26,10 +26,113 @@
 
 .groupedImageSlicer {
     font-family: @regularFontFamily;
-    .hidden {
-        display: none !important;
-    }
+    
+    /*overflow: scroll;*/
+    
+    .groupedImageSlicerGroup {
+        width: 100%;
+        padding-bottom: 10px;
+        
+        .groupedImageSlicerHeader {
+            margin-bottom: 5px;
+                   
+            .groupedImageSlicerHeaderText {
+                padding: 0;
+            }
+        }
+        
+        .groupedImageSlicerRow {
+            
+            display: inline-block;
+            white-space: nowrap;
 
+            .groupedImageSlicerCell {
+                
+                box-sizing: border-box;
+                margin: 2px 5px;
+                //border-radius: 5px;
+                display: inline-block;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                position: relative;
+                cursor: pointer;       
+                
+                width: 50px;
+                height: 50px;
+                border-radius: 50px;
+                border: 2px solid #fff;
+                font-family: Cambria;
+                font-size: 11px;
+                color: white;
+                line-height: 40px;
+                text-align: center;
+                /*background: #3E78B2;  
+                
+                display: flex;
+                flex-direction: column;
+                flex-wrap: nowrap;
+                justify-content: center;
+                align-content: center;
+                align-items: stretch;
+                */
+
+            
+                .groupedImageSlicerImage {
+                    width: 25px;
+                    height: 25px;
+                
+                    background-size: contain;
+                    background-repeat: no-repeat;
+                    background-position: center;
+                    
+                    margin-left: 10px;
+                    margin-top: 2px;
+                
+                }
+                
+                .groupedImageSlicerText {
+                    order: 1;
+                    box-sizing: border-box;
+                    text-align: center;
+                    color: white;
+                    font-size: 10px;
+    
+                    margin-top: -13px;
+                }
+            }
+            
+            .groupedImageSlicerCell.red {
+                background: #fd7c7c;
+                border-color: #fc4444;
+            }
+            
+            .groupedImageSlicerCell.orange {
+                background: #FFAE4D;
+                border-color: #FF8900;
+            }
+            
+            .groupedImageSlicerCell.yellow {
+                background: #ffd44d;
+                border-color: #FFC103;                
+            }
+            
+            .groupedImageSlicerCell.gray {
+                background: #D1D3D4;
+                border-color: #BCBFC0;                
+            }
+            
+            .groupedImageSlicerCell.white {
+                background: white;
+                border-color: lightgray;                
+            }            
+            
+            .groupedImageSlicerCell.selected {
+                background: #BDD7EE !important;
+                border-color: #BDD7EE !important;
+            }
+        }
+    }
+    
     .slicerBody {
 
         .cell {
@@ -95,18 +198,4 @@
         background: #BDD7EE;
     }
 
-    .slicerBody-horizontal {
-        white-space: nowrap;
-    }
-
-    .row-horizontal {
-        display: inline-block;
-    }
-
-    .slicerContainer .slicerText {
-        padding: 0px 5px;
-    }
-    .slicerHeader {
-        margin-bottom: 5px;
-    }
 }

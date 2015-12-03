@@ -28,198 +28,32 @@
 
 module powerbi.visuals.samples {
 
-    export interface ITableView {
-        data(data: any[], dataIdFunction: (d) => {}, dataAppended: boolean): ITableView;
-        rowHeight(rowHeight: number): ITableView;
-        columnWidth(columnWidth: number): ITableView;
-        orientation(orientation: string): ITableView;
-        rows(rows: number): ITableView;
-        columns(columns: number): ITableView;
-        viewport(viewport: IViewport): ITableView;
-        render(): void;
-        empty(): void;
-    }
+    import ClassAndSelector = jsCommon.CssConstants.ClassAndSelector;
+    import createClassAndSelector = jsCommon.CssConstants.createClassAndSelector;
+    
+    import SelectionManager = utility.SelectionManager;
 
-    export module TableViewFactory {
-        export function createTableView(options): ITableView {
-            return new TableView(options);
-        }
-    }
+    import PixelConverter = jsCommon.PixelConverter;
 
-    export interface TableViewViewOptions {
-        enter: (selection: D3.Selection) => void;
-        exit: (selection: D3.Selection) => void;
-        update: (selection: D3.Selection) => void;
-        loadMoreData: () => void;
-        baseContainer: D3.Selection;
-        rowHeight: number;
-        columnWidth: number;
-        orientation: string;
-        rows: number;
-        columns: number;
-        viewport: IViewport;
-        scrollEnabled: boolean;
-    }
+    module Orientation {
+        export var HORIZONTAL: string = 'Horizontal';
+        export var VERTICAL: string = 'Vertical';
 
-    /**
-     * A UI Virtualized List, that uses the D3 Enter, Update & Exit pattern to update rows.
-     * It can create lists containing either HTML or SVG elements.
-     */
-    class TableView implements ITableView {
-        private getDatumIndex: (d: any) => {};
-        private _data: any[];
-        private _totalRows: number;
-        private _totalColumns: number;
-
-        private options: TableViewViewOptions;
-        private visibleGroupContainer: D3.Selection;
-        private scrollContainer: D3.Selection;
-
-        private static defaultRowHeight = 0;
-        private static defaultColumns = 1;
-
-        public constructor(options: TableViewViewOptions) {
-            // make a copy of options so that it is not modified later by caller
-            this.options = $.extend(true, {}, options);
-
-            this.options.baseContainer
-                .style('overflow-y', 'auto')
-                .attr('drag-resize-disabled', true);
-
-            this.scrollContainer = options.baseContainer
-                .append('div')
-                .attr('class', 'scrollRegion');
-            this.visibleGroupContainer = this.scrollContainer
-                .append('div')
-                .attr('class', 'visibleGroup');
-
-            TableView.SetDefaultOptions(options);
-        }
-
-        private static SetDefaultOptions(options: TableViewViewOptions) {
-            options.rowHeight = options.rowHeight || TableView.defaultRowHeight;
-        }
-
-        public rowHeight(rowHeight: number): TableView {
-            this.options.rowHeight = Math.ceil(rowHeight);
-            return this;
-        }
-        public columnWidth(columnWidth: number): TableView {
-            this.options.columnWidth = Math.ceil(columnWidth);
-            return this;
-        }
-
-        public orientation(orientation: string): TableView {
-            this.options.orientation = orientation;
-            return this;
-        }
-
-        public rows(rows: number): TableView {
-            this.options.rows = Math.ceil(rows);
-            return this;
-        }
-
-        public columns(columns: number): TableView {
-            this.options.columns = Math.ceil(columns);
-            return this;
-        }
-
-        public data(data: any[], getDatumIndex: (d) => {}, dataReset: boolean = false): ITableView {
-            this._data = data;
-            this.getDatumIndex = getDatumIndex;
-            this.setTotalRows();
-            if (dataReset) {
-                $(this.options.baseContainer.node()).scrollTop(0);
-            }
-            return this;
-        }
-
-        public viewport(viewport: IViewport): ITableView {
-            this.options.viewport = viewport;
-            return this;
-        }
-
-        public empty(): void {
-            this._data = [];
-            this.render();
-        }
-
-        private setTotalRows(): void {
-            var  count = this._data.length;
-            var  rows = Math.min(this.options.rows, count);
-            var  columns = Math.min(this.options.columns, count);
-
-            if ((columns > 0) && (rows > 0)) {
-                this._totalColumns = columns;
-                this._totalRows = rows;
-            } else if (rows > 0) {
-                this._totalRows = rows;
-                this._totalColumns = Math.ceil(count / rows);
-            } else if (columns > 0) {
-                this._totalColumns = columns;
-                this._totalRows = Math.ceil(count / columns);
-            } else {
-                this._totalColumns = TableView.defaultColumns;
-                this._totalRows = Math.ceil(count / TableView.defaultColumns);
-            }
-
-            if (this.options.orientation === Orientation.HORIZONTAL) {
-                this._totalRows = 1;
-                this._totalColumns = count;
-            }
-        }
-
-        public render(): void {
-            var  options = this.options;
-            var  visibleGroupContainer = this.visibleGroupContainer;
-            var  rowHeight = options.rowHeight || TableView.defaultRowHeight;
-            var  groupedData: any[] = [];
-            var i;
-            for (i = 0; i < this._totalRows; i++) {
-                var  k = i * this._totalColumns;
-                groupedData.push(this._data.slice(k, k + this._totalColumns));
-            }
-
-            visibleGroupContainer.selectAll(".row").remove();
-            var  cellSelection = visibleGroupContainer.selectAll(".row")
-                .data(groupedData)
-                .enter()
-                .append("div")
-                .classed('row', true)
-                .selectAll(".cell")
-                .data(d => d);
-
-            cellSelection
-                .enter()
-                .append('div')
-                .classed('cell', true)
-                .call(d => options.enter(d));
-            cellSelection.order();
-
-            var  cellUpdateSelection = visibleGroupContainer.selectAll('.cell:not(.transitioning)');
-
-            cellUpdateSelection.call(d => options.update(d));
-            cellUpdateSelection.style({ 'height': (rowHeight > 0) ? rowHeight + 'px' : 'auto' });
-            cellUpdateSelection.style({
-                'width': (options.columnWidth > 0) ? options.columnWidth + 'px' : (100 / this._totalColumns) + '%'
-            });
-
-            cellSelection
-                .exit()
-                .call(d => options.exit(d))
-                .remove();
-        }
+        export var type: IEnumType = createEnumType([
+            { value: HORIZONTAL, displayName: HORIZONTAL },
+            { value: VERTICAL, displayName: VERTICAL }
+        ]);
     }
 
     // TODO: Generate these from above, defining twice just introduces potential for error
-    export var  groupedImageSlicerProps = {
-        general: {
+    export var groupedImageSlicerProps = {
+   /*     general: {
             orientation: <DataViewObjectPropertyIdentifier>{ objectName: 'general', propertyName: 'orientation' },
             columns: <DataViewObjectPropertyIdentifier>{ objectName: 'general', propertyName: 'columns' },
             rows: <DataViewObjectPropertyIdentifier>{ objectName: 'general', propertyName: 'rows' },
             showDisabled: <DataViewObjectPropertyIdentifier>{ objectName: 'general', propertyName: 'showDisabled' },
             multiselect: <DataViewObjectPropertyIdentifier>{ objectName: 'general', propertyName: 'multiselect' },
-        },
+        },*/
         header: {
             show: <DataViewObjectPropertyIdentifier>{ objectName: 'header', propertyName: 'show' },
             title: <DataViewObjectPropertyIdentifier>{ objectName: 'header', propertyName: 'title' },
@@ -255,33 +89,6 @@ module powerbi.visuals.samples {
 
     };
 
-    import ClassAndSelector = jsCommon.CssConstants.ClassAndSelector;
-    import createClassAndSelector = jsCommon.CssConstants.createClassAndSelector;
-
-    import PixelConverter = jsCommon.PixelConverter;
-
-    module GroupedImageSlicerShowDisabled {
-        export var  INPLACE: string = 'Inplace';
-        export var  BOTTOM: string = 'Bottom';
-        export var  HIDE: string = 'Hide';
-
-        export var  type: IEnumType = createEnumType([
-            { value: INPLACE, displayName: GroupedImageSlicerShowDisabled.INPLACE },
-            { value: BOTTOM, displayName: GroupedImageSlicerShowDisabled.BOTTOM },
-            { value: HIDE, displayName: GroupedImageSlicerShowDisabled.HIDE },
-        ]);
-    }
-
-    module Orientation {
-        export var HORIZONTAL: string = 'Horizontal';
-        export var VERTICAL: string = 'Vertical';
-
-        export var type: IEnumType = createEnumType([
-            { value: HORIZONTAL, displayName: HORIZONTAL },
-            { value: VERTICAL, displayName: VERTICAL }
-        ]);
-    }
-
     export interface GroupedImageSlicerConstructorOptions {
         behavior?: GroupedImageSlicerWebBehavior;
     }
@@ -289,29 +96,36 @@ module powerbi.visuals.samples {
     export interface GroupedImageSlicerData {
         categorySourceName: string;
         formatString: string;
-        slicerDataPoints: GroupedImageSlicerDataPoint[];
-        slicerSettings: GroupedImageSlicerSettings;
+        settings: GroupedImageSlicerSettings;
         hasSelectionOverride?: boolean;
+        groups: GroupedImageSlicerDataGroup[];
+    }
+
+    export interface GroupedImageSlicerDataGroup {
+        dataPoints: GroupedImageSlicerDataPoint[];
+        group: DataViewValueColumnGroup;
     }
 
     export interface GroupedImageSlicerDataPoint extends SelectableDataPoint {
         category?: string;
         value?: number;
+        imageURL?: string;
+        state?: string;
+
         mouseOver?: boolean;
         mouseOut?: boolean;
         isSelectAllDataPoint?: boolean;
-        imageURL?: string;
         selectable?: boolean;
     }
 
     export interface GroupedImageSlicerSettings {
-        general: {
+    /*    general: {
             orientation: string;
             columns: number;
             rows: number;
             multiselect: boolean;
             showDisabled: string;
-        };
+        };*/
         margin: IMargin;
         header: {
             borderBottomWidth: number;
@@ -355,27 +169,46 @@ module powerbi.visuals.samples {
     }
 
     export class GroupedImageSlicer implements IVisual {
+                
+        public static RoleNames = {
+            AirplaneType: 'Airplane Type',
+            Category: 'Tale Number',
+            State: 'State',
+            Values: 'Severity Score',
+            Image: 'Icon URL',
+        };
+        
         public static capabilities: VisualCapabilities = {
             dataRoles: [
                 {
-                    name: 'Category',
+                    name: GroupedImageSlicer.RoleNames.AirplaneType,
                     kind: VisualDataRoleKind.Grouping,
-                    displayName: powerbi.data.createDisplayNameGetter('Role_DisplayName_Field'),
+                    displayName: GroupedImageSlicer.RoleNames.AirplaneType,
                 },
                 {
-                    name: 'Values',
+                    name: GroupedImageSlicer.RoleNames.Category,
+                    kind: VisualDataRoleKind.Grouping,
+                    displayName: GroupedImageSlicer.RoleNames.Category,
+                },
+                {
+                    name: GroupedImageSlicer.RoleNames.State,
+                    kind: VisualDataRoleKind.Grouping,
+                    displayName: GroupedImageSlicer.RoleNames.State,
+                },
+                {
+                    name: GroupedImageSlicer.RoleNames.Values,
                     kind: VisualDataRoleKind.Measure,
-                    displayName: data.createDisplayNameGetter('Role_DisplayName_Values'),
+                    displayName: GroupedImageSlicer.RoleNames.Values,
                 },
                 {
-                    name: 'Image',
+                    name: GroupedImageSlicer.RoleNames.Image,
                     kind: VisualDataRoleKind.Grouping,
-                    displayName: 'Image',
+                    displayName: GroupedImageSlicer.RoleNames.Image,
                 },
 
             ],
             objects: {
-                general: {
+            /*    general: {
                     displayName: data.createDisplayNameGetter('Visual_General'),
                     properties: {
                         orientation: {
@@ -406,7 +239,7 @@ module powerbi.visuals.samples {
                             rule: {
                                 output: {
                                     property: 'selected',
-                                    selector: ['Category'],
+                                    selector: [GroupedImageSlicer.RoleNames.Category],
                                 }
                             }
                         },
@@ -415,7 +248,7 @@ module powerbi.visuals.samples {
                         },
 
                     },
-                },
+                },*/
                 header: {
                     displayName: data.createDisplayNameGetter('Visual_Header'),
                     properties: {
@@ -523,16 +356,24 @@ module powerbi.visuals.samples {
             },
             dataViewMappings: [{
                 conditions: [
-                    { 'Category': { max: 1 }, 'Image': { min: 0, max: 1 }, 'Values': { min: 0, max: 1 } }],
+                    {  'Airplane Type':  { min: 0, max: 1 },
+                      'Tale Number':    { max: 1 },
+                      'State':          { min: 0, max: 1 },
+                      'Severity Score': { min: 0, max: 1 },
+                      'Icon URL':       { min: 0, max: 1 }
+                     }],
                 categorical: {
                     categories: {
-                        for: { in: 'Category' },
+                        for: { in: GroupedImageSlicer.RoleNames.Category },
                         dataReductionAlgorithm: { top: {} }
                     },
                     values: {
                         group: {
-                            by: 'Image',
-                            select: [{ bind: { to: 'Values' } },
+                            by: GroupedImageSlicer.RoleNames.AirplaneType,
+                            select: [
+                                { bind: { to: GroupedImageSlicer.RoleNames.State } },
+                                { bind: { to: GroupedImageSlicer.RoleNames.Values } },
+                                { bind: { to: GroupedImageSlicer.RoleNames.Image } },
                             ],
                             dataReductionAlgorithm: { top: {} }
                         }
@@ -542,47 +383,111 @@ module powerbi.visuals.samples {
             }],
             supportsHighlight: true,
             sorting: {
-                default: {},
+                default: {
+                },
             },
             drilldown: {
-                roles: ['Category']
+                roles: [GroupedImageSlicer.RoleNames.Category]
             },
             suppressDefaultTitle: true,
         };
+
         private element: JQuery;
         private currentViewport: IViewport;
         private dataView: DataView;
-        private slicerHeader: D3.Selection;
-        private slicerBody: D3.Selection;
-        private tableView: ITableView;
-        private slicerData: GroupedImageSlicerData;
+        //private slicerHeader: D3.Selection;
+        //private slicerBody: D3.Selection;
+        //private tableView: ITableView;
+        
+        private slicerContainer: D3.Selection;
+        
+        private data: GroupedImageSlicerData;
         private settings: GroupedImageSlicerSettings;
         private interactivityService: IInteractivityService;
         private behavior: GroupedImageSlicerWebBehavior;
         private hostServices: IVisualHostServices;
-        private waitingForData: boolean;
-        private textProperties: TextProperties = {
+        
+        private selectionManager: SelectionManager;
+        
+        //private waitingForData: boolean;
+        /*private textProperties: TextProperties = {
             'fontFamily': 'wf_segoe-ui_normal, helvetica, arial, sans-serif',
             'fontSize': '14px',
-        };
-        private static ItemContainer: ClassAndSelector = createClassAndSelector('slicerItemContainer');
-        private static HeaderText: ClassAndSelector = createClassAndSelector('headerText');
-        private static Container: ClassAndSelector = createClassAndSelector('groupedImageSlicer');
+        };*/
+        
+        private static SelectorContainer: ClassAndSelector = createClassAndSelector('groupedImageSlicer');
+        private static SelectorGroup: ClassAndSelector = createClassAndSelector('groupedImageSlicerGroup');
+   
+        private static SelectorHeader: ClassAndSelector = createClassAndSelector('groupedImageSlicerHeader');
+        private static SelectorHeaderText: ClassAndSelector = createClassAndSelector('groupedImageSlicerHeaderText');
+        
+        private static SelectorRow: ClassAndSelector = createClassAndSelector('groupedImageSlicerRow');
+        private static SelectorCell: ClassAndSelector = createClassAndSelector('groupedImageSlicerCell');
+        
+        private static SelectorImage: ClassAndSelector = createClassAndSelector('groupedImageSlicerImage');
+        private static SelectorText: ClassAndSelector = createClassAndSelector('groupedImageSlicerText');
+                
+        private static SelectorSelected: ClassAndSelector = createClassAndSelector('selected');
+                
+        private static StateRed: ClassAndSelector = createClassAndSelector('red');
+        private static StateOrange: ClassAndSelector = createClassAndSelector('orange');
+        private static StateYellow: ClassAndSelector = createClassAndSelector('yellow');
+        private static StateGray: ClassAndSelector = createClassAndSelector('gray');
+        private static StateWhite: ClassAndSelector = createClassAndSelector('white');
+        
+                        
+        private static StateValues = {
+            Immediate: "Immediate",
+            Preventative: "Preventative",
+            Required: "Required",
+            InMaintenance: "InMaintenance",
+            OnGround: "OnGround",
+        };        
+        
+        private static StateColors = [            
+            {
+                state: GroupedImageSlicer.StateValues.Immediate,
+                color: GroupedImageSlicer.StateRed,
+            },            
+            {
+                state: GroupedImageSlicer.StateValues.Preventative,
+                color: GroupedImageSlicer.StateOrange,
+            },            
+            {
+                state: GroupedImageSlicer.StateValues.Required,
+                color: GroupedImageSlicer.StateYellow,
+            },            
+            {
+                state: GroupedImageSlicer.StateValues.InMaintenance,
+                color: GroupedImageSlicer.StateGray,
+            },            
+            {
+                state: GroupedImageSlicer.StateValues.OnGround,
+                color: GroupedImageSlicer.StateWhite,
+            },
+        ];
+        
+        /*
+        private static SelectorHeader:     ClassAndSelector = createClassAndSelector('groupedImageSlicerHeader');
+        private static SelectorHeaderText: ClassAndSelector = createClassAndSelector('groupedImageSlicerHeaderText');
+        
+        //private static ItemContainer: ClassAndSelector = createClassAndSelector('slicerItemContainer');
+        //private static HeaderText: ClassAndSelector = createClassAndSelector('headerText');
         private static LabelText: ClassAndSelector = createClassAndSelector('slicerText');
-        private static Header: ClassAndSelector = createClassAndSelector('slicerHeader');
         private static Input: ClassAndSelector = createClassAndSelector('slicerCheckbox');
         private static Clear: ClassAndSelector = createClassAndSelector('clear');
         private static Body: ClassAndSelector = createClassAndSelector('slicerBody');
+        */
 
         public static DefaultStyleProperties(): GroupedImageSlicerSettings {
             return {
-                general: {
+              /*  general: {
                     orientation: Orientation.VERTICAL,
-                    columns: 3,
-                    rows: 0,
-                    multiselect: true,
+                    columns: 0,
+                    rows: 1,
+                    multiselect: false,
                     showDisabled: GroupedImageSlicerShowDisabled.INPLACE
-                },
+                },*/
                 margin: {
                     top: 50,
                     bottom: 50,
@@ -644,29 +549,18 @@ module powerbi.visuals.samples {
             }
 
         }
-
-        public static converter(dataView: DataView, localizedSelectAllText: string, interactivityService: IInteractivityService): GroupedImageSlicerData {
-            if (!dataView ||
-                !dataView.categorical ||
-                !dataView.categorical.categories ||
-                !dataView.categorical.categories[0] ||
-                !dataView.categorical.categories[0].values ||
-                !(dataView.categorical.categories[0].values.length > 0) ||
-                !dataView.categorical.values) {
-                return;
-            }
-            var  converter = new GroupedImageSlicerChartConversion.GroupedImageSlicerConverter(dataView, interactivityService);
-            converter.convert();
-            var  slicerData: GroupedImageSlicerData;
-            var  defaultSettings = this.DefaultStyleProperties();
-            var  objects = dataView.metadata.objects;
+        
+        
+        private static parseSettings(dataView: DataView): GroupedImageSlicerSettings {
+            var defaultSettings = GroupedImageSlicer.DefaultStyleProperties();
+            var objects = dataView.metadata.objects;
             if (objects) {
-                defaultSettings.general.orientation = DataViewObjects.getValue<string>(objects, groupedImageSlicerProps.general.orientation, defaultSettings.general.orientation);
+                /*defaultSettings.general.orientation = DataViewObjects.getValue<string>(objects, groupedImageSlicerProps.general.orientation, defaultSettings.general.orientation);
                 defaultSettings.general.columns = DataViewObjects.getValue<number>(objects, groupedImageSlicerProps.general.columns, defaultSettings.general.columns);
                 defaultSettings.general.rows = DataViewObjects.getValue<number>(objects, groupedImageSlicerProps.general.rows, defaultSettings.general.rows);
                 defaultSettings.general.multiselect = DataViewObjects.getValue<boolean>(objects, groupedImageSlicerProps.general.multiselect, defaultSettings.general.multiselect);
                 defaultSettings.general.showDisabled = DataViewObjects.getValue<string>(objects, groupedImageSlicerProps.general.showDisabled, defaultSettings.general.showDisabled);
-
+                */
                 defaultSettings.header.show = DataViewObjects.getValue<boolean>(objects, groupedImageSlicerProps.header.show, defaultSettings.header.show);
                 defaultSettings.header.title = DataViewObjects.getValue<string>(objects, groupedImageSlicerProps.header.title, defaultSettings.header.title);
                 defaultSettings.header.fontColor = DataViewObjects.getFillColor(objects, groupedImageSlicerProps.header.fontColor, defaultSettings.header.fontColor);
@@ -692,17 +586,130 @@ module powerbi.visuals.samples {
                 defaultSettings.images.stretchImage = DataViewObjects.getValue<boolean>(objects, groupedImageSlicerProps.images.stretchImage, defaultSettings.images.stretchImage);
                 defaultSettings.images.bottomImage = DataViewObjects.getValue<boolean>(objects, groupedImageSlicerProps.images.bottomImage, defaultSettings.images.bottomImage);
             }
-            var  categories = dataView.categorical.categories[0];
 
-            slicerData = {
-                categorySourceName: categories.source.displayName,
-                formatString: valueFormatter.getFormatString(categories.source, groupedImageSlicerProps.formatString),
-                slicerSettings: defaultSettings,
-                slicerDataPoints: converter.dataPoints,
+            return defaultSettings;
+        }
+
+        private static parseValues(categories: DataViewCategoryColumn[], roleName: string): any[] {
+            for (var i = 0; i < categories.length; i++) {
+                if (categories[i].source.roles && categories[i].source.roles[roleName]) {
+                    return categories[i].values;
+                }
+            }
+            return [];
+        }
+
+        private static getCategoryIndex(categories: DataViewCategoryColumn[], roleName: string): number {
+            for (var i = 0; i < categories.length; i++) {
+                if (categories[i].source.roles && categories[i].source.roles[roleName]) {
+                    return i;
+                }
+            }
+            return -1;
+        }        
+        
+        
+        public static converter(dataView: DataView, interactivityService: IInteractivityService): GroupedImageSlicerData {
+            if (!dataView ||
+                !dataView.categorical ||
+                !dataView.categorical.categories ||
+                !dataView.categorical.categories[0] ||
+                !dataView.categorical.categories[0].values ||
+                !(dataView.categorical.categories[0].values.length > 0) ||
+                !dataView.categorical.values) {
+                return;
+            }
+                
+            var dataViewCategorical = dataView.categorical;
+            var dataViewCategories = dataViewCategorical.categories;
+            /*
+            if (dataViewCategorical.categories && dataViewCategorical.categories.length > 0) {
+             
+                this.category = dataViewCategorical.categories[airplaneTypeIndex];
+                this.categoryIdentities = this.category.identity;
+                this.categoryValues = this.category.values;
+                this.categoryColumnRef = this.category.identityFields;
+                this.categoryFormatString = valueFormatter.getFormatString(this.category.source, groupedImageSlicerProps.formatString);
+            }
+            */
+            
+            var airplaneTypeIndex = GroupedImageSlicer.getCategoryIndex(dataViewCategories, GroupedImageSlicer.RoleNames.Category);
+            var category = dataViewCategorical.categories[airplaneTypeIndex];            
+            
+            var categoryValues: string[] = GroupedImageSlicer.parseValues(dataViewCategories, GroupedImageSlicer.RoleNames.Category);
+            var imageValues: string[] = GroupedImageSlicer.parseValues(dataViewCategories, GroupedImageSlicer.RoleNames.Image);
+            var stateValues: string[] = GroupedImageSlicer.parseValues(dataViewCategories, GroupedImageSlicer.RoleNames.State);
+            
+            if (!category ||
+               !categoryValues.length ||
+               !imageValues.length ||
+                !stateValues.length) {
+                return;
+            }
+            
+            var grouped = dataViewCategorical.values.grouped();
+            
+            
+            if (!category ||
+               !categoryValues.length ||
+                !imageValues.length ||
+                !grouped.length ||
+                !stateValues.length) {
+                return;
+            }
+            var slicerGroups: GroupedImageSlicerDataGroup[] = [];
+            
+            for (var groupedIndex = 0; groupedIndex < grouped.length; groupedIndex++) {
+                var dataGroup: GroupedImageSlicerDataGroup = {
+                    group: grouped[groupedIndex],
+                    dataPoints: []
+                };
+                
+                var groupValues: number[] = grouped[groupedIndex].values[0].values;
+                
+                
+                for (var categoryIndex = 0; categoryIndex < groupValues.length; categoryIndex++) {
+                    var categoryIdentity: DataViewScopeIdentity = category.identity ? category.identity[categoryIndex] : null;
+                    var categoryIsSelected: boolean = isCategoryColumnSelected(groupedImageSlicerProps.selectedPropertyIdentifier, category, categoryIndex);
+                    var selectable: boolean = true;
+
+                    var value: number = groupValues[categoryIndex];
+
+                    if (!value) {
+                        continue;
+                    }
+
+                    var categoryLabel: string = categoryValues[categoryIndex]; 
+                    var imageURL: string = imageValues[categoryIndex]; 
+                    var state: string = stateValues[categoryIndex]; 
+
+                    dataGroup.dataPoints.push({
+                        category: categoryLabel,
+                        imageURL: imageURL,
+                        value: value,
+                        state: state,
+                        
+                        identity: SelectionId.createWithId(categoryIdentity),
+                        selected: categoryIsSelected,
+                        selectable: selectable
+                    });
+                }
+                
+                _.sortBy(dataGroup.dataPoints, item => item.value);
+
+                slicerGroups.push(dataGroup);
+            }
+            
+            //console.log('slicerGroups', slicerGroups);  
+   
+            var settings = GroupedImageSlicer.parseSettings(dataView);
+
+            var slicerData: GroupedImageSlicerData = {
+                categorySourceName: category.source.displayName,
+                formatString: valueFormatter.getFormatString(category.source, groupedImageSlicerProps.formatString),
+                settings: settings,
+                groups: slicerGroups,
             };
-
-            // Override hasSelection if a objects contained more scopeIds than selections we found in the data
-            slicerData.hasSelectionOverride = converter.hasSelectionOverride;
 
             return slicerData;
         }
@@ -714,12 +721,15 @@ module powerbi.visuals.samples {
                 this.interactivityService = createInteractivityService(options.host);
             }
             this.hostServices = options.host;
+            this.selectionManager = new SelectionManager({ hostServices: options.host });
             this.settings = GroupedImageSlicer.DefaultStyleProperties();
 
             this.initContainer();
         }
 
         public onDataChanged(options: VisualDataChangedOptions): void {
+            //console.log('onDataChanged');
+            
             if (!options.dataViews || !options.dataViews[0]) {
                 return;
             }
@@ -727,7 +737,7 @@ module powerbi.visuals.samples {
             var dataView,
                 dataViews = options.dataViews;
 
-            var existingDataView = this.dataView;
+            //var existingDataView = this.dataView;
             if (dataViews && dataViews.length > 0) {
                 dataView = this.dataView = dataViews[0];
             }
@@ -739,19 +749,21 @@ module powerbi.visuals.samples {
                 !dataView.categorical.values[0].values) {
                 return;
             }
-
+            /*
             var resetScrollbarPosition = false;
             // Null check is needed here. If we don't check for null, selecting a value on loadMore event will evaluate the below condition to true and resets the scrollbar
             if (options.operationKind !== undefined) {
                 resetScrollbarPosition = options.operationKind !== VisualDataChangeOperationKind.Append
                     && !DataViewAnalysis.hasSameCategoryIdentity(existingDataView, this.dataView);
             }
-
-            this.updateInternal(resetScrollbarPosition);
-            this.waitingForData = false;
+            */
+            this.updateInternal();
+            //this.waitingForData = false;
         }
 
         public update(options: VisualUpdateOptions) {
+            //console.log('update');
+            
             if (!options ||
                 !options.dataViews ||
                 !options.dataViews[0] ||
@@ -759,10 +771,10 @@ module powerbi.visuals.samples {
                 return;
             }
 
-            var  existingDataView = this.dataView;
+            //var existingDataView = this.dataView;
             this.dataView = options.dataViews[0];
-
-            var  resetScrollbarPosition = true;
+/*
+            var resetScrollbarPosition = true;
             if (existingDataView) {
                 resetScrollbarPosition = !DataViewAnalysis.hasSameCategoryIdentity(existingDataView, this.dataView);
             }
@@ -774,223 +786,181 @@ module powerbi.visuals.samples {
             else {
                 this.currentViewport = options.viewport;
             }
-
-            this.updateInternal(resetScrollbarPosition);
+*/
+            this.updateInternal();
         }
 
         public onResizing(finalViewport: IViewport): void {
+            //onsole.log('onResizing');
             this.currentViewport = finalViewport;
-            this.updateInternal(false /* resetScrollbarPosition */);
+            this.updateInternal();
         }
 
-        public enumerateObjectInstances(options: EnumerateVisualObjectInstancesOptions): VisualObjectInstance[] {
-            var  data = this.slicerData;
+   
+        private updateInternal() {
+            //this.updateSlicerBodyDimensions();
+            //console.log('updateInternal');
+
+            var data = this.data = GroupedImageSlicer.converter(this.dataView, this.interactivityService);
             if (!data) {
+                this.clear();
                 return;
             }
 
-            var  objectName = options.objectName;
-            switch (objectName) {
-                case 'rows':
-                    return this.enumerateRows(data);
-                case 'header':
-                    return this.enumerateHeader(data);
-                case 'general':
-                    return this.enumerateGeneral(data);
-                case 'images':
-                    return this.enumerateImages(data);
-            }
+            this.render();
         }
-
-        private enumerateHeader(data: GroupedImageSlicerData): VisualObjectInstance[] {
-            var  slicerSettings = this.settings;
-            return [{
-                selector: null,
-                objectName: 'header',
-                properties: {
-                    show: slicerSettings.header.show,
-                    title: slicerSettings.header.title,
-                    fontColor: slicerSettings.header.fontColor,
-                    background: slicerSettings.header.background,
-                    textSize: slicerSettings.header.textSize,
-                    outline: slicerSettings.header.outline,
-                    outlineColor: slicerSettings.header.outlineColor,
-                    outlineWeight: slicerSettings.header.outlineWeight
-                }
-            }];
+        
+        private clear() {
+            this.slicerContainer.selectAll("*").remove();
         }
-
-        private enumerateRows(data: GroupedImageSlicerData): VisualObjectInstance[] {
-            var  slicerSettings = this.settings;
-            return [{
-                selector: null,
-                objectName: 'rows',
-                properties: {
-                    textSize: slicerSettings.slicerText.textSize,
-                    height: slicerSettings.slicerText.height,
-                    width: slicerSettings.slicerText.width,
-                    background: slicerSettings.slicerText.background,
-                    selectedColor: slicerSettings.slicerText.selectedColor,
-                    unselectedColor: slicerSettings.slicerText.unselectedColor,
-                    disabledColor: slicerSettings.slicerText.disabledColor,
-                    outline: slicerSettings.slicerText.outline,
-                    outlineColor: slicerSettings.slicerText.outlineColor,
-                    outlineWeight: slicerSettings.slicerText.outlineWeight,
-                    fontColor: slicerSettings.slicerText.fontColor,
-                }
-            }];
-        }
-
-        private enumerateGeneral(data: GroupedImageSlicerData): VisualObjectInstance[] {
-            var  slicerSettings = this.settings;
-
-            return [{
-                selector: null,
-                objectName: 'general',
-                properties: {
-                    orientation: slicerSettings.general.orientation,
-                    columns: slicerSettings.general.columns,
-                    rows: slicerSettings.general.rows,
-                    showDisabled: slicerSettings.general.showDisabled,
-                    multiselect: slicerSettings.general.multiselect,
-                }
-            }];
-        }
-
-        private enumerateImages(data: GroupedImageSlicerData): VisualObjectInstance[] {
-            var  slicerSettings = this.settings;
-            return [{
-                selector: null,
-                objectName: 'images',
-                properties: {
-                    imageSplit: slicerSettings.images.imageSplit,
-                    stretchImage: slicerSettings.images.stretchImage,
-                    bottomImage: slicerSettings.images.bottomImage,
-                }
-            }];
-        }
-        private updateInternal(resetScrollbarPosition: boolean) {
-            this.updateSlicerBodyDimensions();
-
-            var  localizedSelectAllText = 'Select All';
-            var  data = GroupedImageSlicer.converter(this.dataView, localizedSelectAllText, this.interactivityService);
-            if (!data) {
-                this.tableView.empty();
-                return;
-            }
-            data.slicerSettings.header.outlineWeight = data.slicerSettings.header.outlineWeight < 0 ? 0 : data.slicerSettings.header.outlineWeight;
-            this.slicerData = data;
-            this.settings = this.slicerData.slicerSettings;
-            if (this.settings.general.showDisabled === GroupedImageSlicerShowDisabled.BOTTOM) {
-                data.slicerDataPoints.sort(function(a, b) {
-                    if (a.selectable === b.selectable) {
-                        return 0;
-                    } else if (a.selectable && !b.selectable) {
-                        return -1;
-                    } else {
-                        return 1;
-                    }
-                });
-            }
-
-            var  height: number = this.settings.slicerText.height > 0 ? this.settings.slicerText.height :
-                (data.slicerDataPoints[0].imageURL !== '' ? 100 : 25);
-
-            this.tableView
-                .rowHeight(height)
-                .columnWidth(this.settings.slicerText.width)
-                .orientation(this.settings.general.orientation)
-                .rows(this.settings.general.rows)
-                .columns(this.settings.general.columns)
-                .data(data.slicerDataPoints,
-                (d: GroupedImageSlicerDataPoint) => $.inArray(d, data.slicerDataPoints),
-                resetScrollbarPosition
-                )
-                .viewport(this.getSlicerBodyViewport(this.currentViewport))
-                .render();
-        }
-
+    
         private initContainer() {
-            var  settings = this.settings;
-            var  slicerBodyViewport = this.getSlicerBodyViewport(this.currentViewport);
-            var  slicerContainer: D3.Selection = d3.select(this.element.get(0))
+            //var settings = this.settings;
+            //var slicerBodyViewport = this.getSlicerBodyViewport(this.currentViewport);
+            this.slicerContainer = d3.select(this.element.get(0))
                 .append('div')
-                .classed(GroupedImageSlicer.Container.class, true);
+                .classed(GroupedImageSlicer.SelectorContainer.class, true);
 
-            this.slicerHeader = slicerContainer
+            //console.log(slicerBodyViewport, this.slicerContainer);
+        }
+
+        public render(): void {
+            var groups = this.data.groups;
+            var sm: SelectionManager = this.selectionManager;
+
+            var groupSelection = this.slicerContainer.selectAll(GroupedImageSlicer.SelectorGroup.selector)
+                .data(groups)
+                .enter()
                 .append('div')
-                .classed(GroupedImageSlicer.Header.class, true);
+                .classed(GroupedImageSlicer.SelectorGroup.class, true);
+           
+             groupSelection.on('click', (d) => {
+                 sm.clear();
+                 d3.select(GroupedImageSlicer.SelectorSelected.selector).classed(GroupedImageSlicer.SelectorSelected.class, false);
+                 d3.event.stopPropagation();
+             });  
+            //console.log(groupSelection);
+            
+            this.drawHeader(groupSelection);
+            this.drawGroup(groupSelection);
+        }       
 
-            this.slicerHeader
-                .append('span')
-                .classed(GroupedImageSlicer.Clear.class, true)
-                .attr('title', 'Clear');
+        private drawHeader(groupSelection: D3.Selection): void {
+            var settings: GroupedImageSlicerSettings = this.settings;
 
-            this.slicerHeader
-                .append('div')
-                .classed(GroupedImageSlicer.HeaderText.class, true)
+            var headerSelection: D3.Selection = groupSelection
+                .append("div")
+                .classed(GroupedImageSlicer.SelectorHeader.class, true)
                 .style({
-                    'margin-left': PixelConverter.toString(settings.headerText.marginLeft),
-                    'margin-top': PixelConverter.toString(settings.headerText.marginTop),
                     'border-style': this.getBorderStyle(settings.header.outline),
                     'border-color': settings.header.outlineColor,
                     'border-width': this.getBorderWidth(settings.header.outline, settings.header.outlineWeight),
+                    'color': settings.header.fontColor,
+                    'background-color': settings.header.background,
                     'font-size': PixelConverter.fromPoint(settings.header.textSize),
                 });
 
-            this.slicerBody = slicerContainer
-                .append('div').classed(GroupedImageSlicer.Body.class, true)
-                .classed('slicerBody-horizontal', settings.general.orientation === Orientation.HORIZONTAL)
+            var headerTextSelection: D3.Selection = headerSelection
+                .append('div')
+                .classed(GroupedImageSlicer.SelectorHeaderText.class, true)
                 .style({
-                    'height': PixelConverter.toString(slicerBodyViewport.height),
-                    'width': '100%',
+                    'margin-left': PixelConverter.toString(settings.headerText.marginLeft),
+                    'margin-top': PixelConverter.toString(settings.headerText.marginTop),
+                    /*'border-style': this.getBorderStyle(settings.header.outline),
+                    'border-color': settings.header.outlineColor,
+                    'border-width': this.getBorderWidth(settings.header.outline, settings.header.outlineWeight),*/
+                    'font-size': PixelConverter.fromPoint(settings.header.textSize),
+                });                    
+ 
+            headerTextSelection.text((d) => {
+                return d.group.name;
+            });           
+        }  
+
+        private drawGroup(groupSelection: D3.Selection): void {
+            //var settings: GroupedImageSlicerSettings = this.settings;
+
+            var rowSelection: D3.Selection = groupSelection
+                .append("div")
+                .classed(GroupedImageSlicer.SelectorRow.class, true);
+
+            var cellSelection: D3.Selection = rowSelection.selectAll(GroupedImageSlicer.SelectorCell.selector)
+                .data(d => d.dataPoints)
+                .enter()
+                .append('div')
+                .classed(GroupedImageSlicer.SelectorCell.class, true);
+
+            this.drawCells(cellSelection);
+        }
+        
+        
+        private drawCells(cellSelection: D3.Selection): void {
+            var settings: GroupedImageSlicerSettings = this.settings;
+            var sm: SelectionManager = this.selectionManager;
+ 
+            cellSelection   
+                .style({
+                    'color': settings.slicerText.fontColor,
+                    'border-style': this.getBorderStyle(settings.slicerText.outline),
+                    //'border-color': settings.slicerText.outlineColor,
+                    //'border-width': this.getBorderWidth(settings.slicerText.outline, settings.slicerText.outlineWeight),
+                    'font-size': PixelConverter.fromPoint(settings.slicerText.textSize),
                 });
 
-            var  rowEnter = (rowSelection: D3.Selection) => {
-                var  settings = this.settings;
-                var  listItemElement = rowSelection.append('li')
-                    .classed(GroupedImageSlicer.ItemContainer.class, true)
-                    .style({
-                        'margin-left': PixelConverter.toString(settings.slicerItemContainer.marginLeft),
+            for (var i = 0; i < GroupedImageSlicer.StateColors.length; i++) {
+                cellSelection.classed(GroupedImageSlicer.StateColors[i].color.class, (d: GroupedImageSlicerDataPoint) => {
+                    return d.state === GroupedImageSlicer.StateColors[i].state;
+                });
+            }
+
+            cellSelection
+                .append("div")
+                .classed(GroupedImageSlicer.SelectorImage.class, true)
+                .style('background-image', (d: GroupedImageSlicerDataPoint) => {
+                    //console.log('imageURL', d.imageURL);
+                    return d.imageURL ? `url(${d.imageURL})` : '';
+                });
+
+            cellSelection
+                .append("div")
+                .classed(GroupedImageSlicer.SelectorText.class, true)
+                .text((d: GroupedImageSlicerDataPoint) => d.category);      
+
+            cellSelection
+                .on('click', function (d: GroupedImageSlicerDataPoint) {
+                    sm.select(d.identity).then(ids => {
+                        cellSelection.classed(GroupedImageSlicer.SelectorSelected.class, false);
+                        if (ids.length > 0) {
+                            d3.select(this).classed(GroupedImageSlicer.SelectorSelected.class, true);
+                            
+                            /*
+                            selection.style('fill-opacity', AreaRangeChart.DimmedFillOpacity);
+                            d3.select(this).transition()
+                                .duration(duration)
+                                .style('fill-opacity', AreaRangeChart.FillOpacity);*/
+                            //console.log('selected', ids);
+                        } else {
+                            //console.log('npn selected');
+                        }
                     });
+                    d3.event.stopPropagation();
+                });            
+        }                        
+      
+       /*
 
-                listItemElement.append('div')
-                    .classed('slicer-img-wrapper', true);
-
-                listItemElement.append('div')
-                    .classed('slicer-text-wrapper', true)
-                    .append('span')
-                    .classed(GroupedImageSlicer.LabelText.class, true)
-                    .style({
-                        'font-size': PixelConverter.fromPoint(settings.slicerText.textSize),
-                    });
-            };
-
-            var  rowUpdate = (rowSelection: D3.Selection) => {
-                var  settings = this.settings;
-                var  data = this.slicerData;
+            var rowUpdate = (rowSelection: D3.Selection) => {
+                var settings = this.settings;
+                var data = this.slicerData;
                 if (data && settings) {
-                    this.slicerHeader.classed('hidden', !settings.header.show);
-                    this.slicerHeader.select(GroupedImageSlicer.HeaderText.selector)
-                        .text(settings.header.title.trim() !== "" ? settings.header.title.trim() : this.slicerData.categorySourceName)
-                        .style({
-                            'border-style': this.getBorderStyle(settings.header.outline),
-                            'border-color': settings.header.outlineColor,
-                            'border-width': this.getBorderWidth(settings.header.outline, settings.header.outlineWeight),
-                            'color': settings.header.fontColor,
-                            'background-color': settings.header.background,
-                            'font-size': PixelConverter.fromPoint(settings.header.textSize),
-                        });
+                    //this.slicerBody.classed('slicerBody-horizontal', settings.general.orientation === Orientation.HORIZONTAL);
 
-                    this.slicerBody
-                        .classed('slicerBody-horizontal', settings.general.orientation === Orientation.HORIZONTAL);
+                    var slicerText = rowSelection.selectAll(GroupedImageSlicer.LabelText.selector);
 
-                    var  slicerText = rowSelection.selectAll(GroupedImageSlicer.LabelText.selector);
-
-                    var  formatString = data.formatString;
+                    var formatString = data.formatString;
                     slicerText.text((d: GroupedImageSlicerDataPoint) => valueFormatter.format(d.category, formatString));
 
-                    var  slicerImg = rowSelection.selectAll('.slicer-img-wrapper');
+                    var slicerImg = rowSelection.selectAll('.slicer-img-wrapper');
                     slicerImg
                         .style('height', settings.images.imageSplit + '%')
                         .classed('hidden', (d: GroupedImageSlicerDataPoint) => {
@@ -1005,11 +975,13 @@ module powerbi.visuals.samples {
                         .classed('stretchImage', settings.images.stretchImage)
                         .classed('bottomImage', settings.images.bottomImage)
                         .style('background-image', (d: GroupedImageSlicerDataPoint) => {
+                            console.log('imageURL', d.imageURL);
                             return d.imageURL ? `url(${d.imageURL})` : '';
                         });
 
                     rowSelection.selectAll('.slicer-text-wrapper')
                         .style('height', (d: GroupedImageSlicerDataPoint) => {
+                            //console.log(arguments);
                             return d.imageURL ? (100 - settings.images.imageSplit) + '%' : '100%';
                         })
                         .classed('hidden', (d: GroupedImageSlicerDataPoint) => {
@@ -1027,15 +999,15 @@ module powerbi.visuals.samples {
                     });
                     rowSelection.style('display', (d: GroupedImageSlicerDataPoint) => (d.selectable || settings.general.showDisabled !== GroupedImageSlicerShowDisabled.HIDE) ? 'inline-block' : 'none');
                     this.slicerBody.style('background-color', settings.slicerText.background);
-
+                    
                     if (this.interactivityService && this.slicerBody) {
-                        var  slicerBody = this.slicerBody.attr('width', this.currentViewport.width);
-                        var  slicerItemContainers = slicerBody.selectAll(GroupedImageSlicer.ItemContainer.selector);
-                        var  slicerItemLabels = slicerBody.selectAll(GroupedImageSlicer.LabelText.selector);
-                        var  slicerItemInputs = slicerBody.selectAll(GroupedImageSlicer.Input.selector);
-                        var  slicerClear = this.slicerHeader.select(GroupedImageSlicer.Clear.selector);
+                        var slicerBody = this.slicerBody.attr('width', this.currentViewport.width);
+                        var slicerItemContainers = slicerBody.selectAll(GroupedImageSlicer.ItemContainer.selector);
+                        var slicerItemLabels = slicerBody.selectAll(GroupedImageSlicer.LabelText.selector);
+                        var slicerItemInputs = slicerBody.selectAll(GroupedImageSlicer.Input.selector);
+                        var slicerClear = this.slicerHeader.select(GroupedImageSlicer.Clear.selector);
 
-                        var  behaviorOptions: GroupedImageSlicerBehaviorOptions = {
+                        var behaviorOptions: GroupedImageSlicerBehaviorOptions = {
                             dataPoints: data.slicerDataPoints,
                             slicerItemContainers: slicerItemContainers,
                             slicerItemLabels: slicerItemLabels,
@@ -1058,29 +1030,12 @@ module powerbi.visuals.samples {
                 }
             };
 
-            var  rowExit = (rowSelection: D3.Selection) => {
-                rowSelection.remove();
-            };
 
-            var  tableViewOptions: TableViewViewOptions = {
-                rowHeight: this.getRowHeight(),
-                columnWidth: this.settings.slicerText.width,
-                orientation: this.settings.general.orientation,
-                rows: this.settings.general.rows,
-                columns: this.settings.general.columns,
-                enter: rowEnter,
-                exit: rowExit,
-                update: rowUpdate,
-                loadMoreData: () => this.onLoadMoreData(),
-                scrollEnabled: true,
-                viewport: this.getSlicerBodyViewport(this.currentViewport),
-                baseContainer: this.slicerBody,
-            };
-
-            this.tableView = TableViewFactory.createTableView(tableViewOptions);
-        }
-
+            }          */
+        
+   /*
         private onLoadMoreData(): void {
+            
             if (!this.waitingForData && this.dataView.metadata && this.dataView.metadata.segment) {
                 this.hostServices.loadMoreData();
                 this.waitingForData = true;
@@ -1088,17 +1043,17 @@ module powerbi.visuals.samples {
         }
 
         private getSlicerBodyViewport(currentViewport: IViewport): IViewport {
-            var  settings = this.settings;
-            var  headerHeight = (settings.header.show) ? this.getHeaderHeight() : 0;
-            var  slicerBodyHeight = currentViewport.height - (headerHeight + settings.header.borderBottomWidth);
+            var settings = this.settings;
+            var headerHeight = (settings.header.show) ? this.getHeaderHeight() : 0;
+            var slicerBodyHeight = currentViewport.height - (headerHeight + settings.header.borderBottomWidth);
             return {
                 height: slicerBodyHeight,
                 width: currentViewport.width
             };
         }
-
+/*
         private updateSlicerBodyDimensions(): void {
-            var  slicerViewport = this.getSlicerBodyViewport(this.currentViewport);
+            var slicerViewport = this.getSlicerBodyViewport(this.currentViewport);
             this.slicerBody
                 .style({
                     'height': PixelConverter.toString(slicerViewport.height),
@@ -1111,19 +1066,19 @@ module powerbi.visuals.samples {
             return this.textProperties;
         }
 
-        private getHeaderHeight(): number {
+       private getHeaderHeight(): number {
             return TextMeasurementService.estimateSvgTextHeight(
                 this.getTextProperties(this.settings.header.textSize)
             );
         }
 
         private getRowHeight(): number {
-            var  textSettings = this.settings.slicerText;
+            var textSettings = this.settings.slicerText;
             return textSettings.height !== 0 ? textSettings.height : TextMeasurementService.estimateSvgTextHeight(
                 this.getTextProperties(textSettings.textSize)
             );
         }
-
+*/
         private getBorderStyle(outlineElement: string): string {
             return outlineElement === '0px' ? 'none' : 'solid';
         }
@@ -1146,157 +1101,94 @@ module powerbi.visuals.samples {
                     return outlineElement.replace("1", outlineWeight.toString());
             }
         }
-    }
-
-    module GroupedImageSlicerChartConversion {
-        export class GroupedImageSlicerConverter {
-            private dataViewCategorical: DataViewCategorical;
-            private dataViewMetadata: DataViewMetadata;
-            private seriesCount: number;
-            private category: DataViewCategoryColumn;
-            private categoryIdentities: DataViewScopeIdentity[];
-            private categoryValues: any[];
-            private categoryColumnRef: data.SQExpr[];
-            private categoryFormatString: string;
-            private interactivityService: IInteractivityService;
-
-            public numberOfCategoriesSelectedInData: number;
-            public dataPoints: GroupedImageSlicerDataPoint[];
-            public hasSelectionOverride: boolean;
-
-            public constructor(dataView: DataView, interactivityService: IInteractivityService) {
-
-                var  dataViewCategorical = dataView.categorical;
-                this.dataViewCategorical = dataViewCategorical;
-                this.dataViewMetadata = dataView.metadata;
-                this.seriesCount = dataViewCategorical.values ? dataViewCategorical.values.length : 0;
-
-                if (dataViewCategorical.categories && dataViewCategorical.categories.length > 0) {
-                    this.category = dataViewCategorical.categories[0];
-                    this.categoryIdentities = this.category.identity;
-                    this.categoryValues = this.category.values;
-                    this.categoryColumnRef = this.category.identityFields;
-                    this.categoryFormatString = valueFormatter.getFormatString(this.category.source, groupedImageSlicerProps.formatString);
-                }
-
-                this.dataPoints = [];
-
-                this.interactivityService = interactivityService;
-                this.hasSelectionOverride = false;
+        
+        public enumerateObjectInstances(options: EnumerateVisualObjectInstancesOptions): VisualObjectInstance[] {
+            var data = this.data;
+            if (!data) {
+                return;
             }
 
-            public convert(): void {
-                this.dataPoints = [];
-                this.numberOfCategoriesSelectedInData = 0;
-                // If category exists, we render labels using category values. If not, we render labels
-                // using measure labels.
-                if (this.categoryValues) {
-                    var  objects = this.dataViewMetadata ? <any>this.dataViewMetadata.objects : undefined;
-
-                    var  isInvertedSelectionMode = undefined;
-                    var  numberOfScopeIds: number;
-                    if (objects && objects.general && objects.general.filter) {
-                        if (!this.categoryColumnRef)
-                            return;
-                        var  filter = <powerbi.data.SemanticFilter>objects.general.filter;
-                        var  scopeIds = powerbi.data.SQExprConverter.asScopeIdsContainer(filter, this.categoryColumnRef);
-                        if (scopeIds) {
-                            isInvertedSelectionMode = scopeIds.isNot;
-                            numberOfScopeIds = scopeIds.scopeIds ? scopeIds.scopeIds.length : 0;
-                        }
-                        else {
-                            isInvertedSelectionMode = false;
-                        }
-                    }
-
-                    if (this.interactivityService) {
-                        if (isInvertedSelectionMode === undefined) {
-                            // The selection state is read from the Interactivity service in case of SelectAll or Clear when query doesn't update the visual
-                            isInvertedSelectionMode = this.interactivityService.isSelectionModeInverted();
-                        }
-                        else {
-                            this.interactivityService.setSelectionModeInverted(isInvertedSelectionMode);
-                        }
-                    }
-
-                    var  hasSelection: boolean = undefined;
-                    var idx;
-                    for (idx = 0; idx < this.categoryValues.length; idx++) {
-                        var  selected = isCategoryColumnSelected(groupedImageSlicerProps.selectedPropertyIdentifier, this.category, idx);
-                        if (selected != null) {
-                            hasSelection = selected;
-                            break;
-                        }
-                    }
-
-                    var  dataViewCategorical = this.dataViewCategorical;
-                    var  formatStringProp = groupedImageSlicerProps.formatString;
-                    var  value: number = -Infinity;
-                    var  imageURL: string = '';
-                    var categoryIndex, categoryCount;
-
-                    for (categoryIndex = 0, categoryCount = this.categoryValues.length; categoryIndex < categoryCount; categoryIndex++) {
-                        var  categoryIdentity = this.category.identity ? this.category.identity[categoryIndex] : null;
-                        var  categoryIsSelected = isCategoryColumnSelected(groupedImageSlicerProps.selectedPropertyIdentifier, this.category, categoryIndex);
-                        var  selectable = true;
-
-                        if (hasSelection != null) {
-                            if (isInvertedSelectionMode) {
-                                if (this.category.objects == null)
-                                    categoryIsSelected = undefined;
-
-                                if (categoryIsSelected != null) {
-                                    categoryIsSelected = hasSelection;
-                                }
-                                else if (categoryIsSelected == null)
-                                    categoryIsSelected = !hasSelection;
-                            }
-                            else {
-                                if (categoryIsSelected == null) {
-                                    categoryIsSelected = !hasSelection;
-                                }
-                            }
-                        }
-
-                        if (categoryIsSelected)
-                            this.numberOfCategoriesSelectedInData++;
-
-                        var  categoryValue = this.categoryValues[categoryIndex];
-                        var  categoryLabel = valueFormatter.format(categoryValue, this.categoryFormatString);
-                        var seriesIndex;
-                        if (this.seriesCount > 0) {
-                        
-                            // Series are either measures in the multi-measure case, or the single series otherwise
-                            for (seriesIndex = 0; seriesIndex < this.seriesCount; seriesIndex++) {
-                                var  seriesData = dataViewCategorical.values[seriesIndex];
-                                if (seriesData.values[categoryIndex] != null) {
-                                    value = seriesData.values[categoryIndex];
-                                    if (seriesData.highlights) {
-                                        selectable = !(seriesData.highlights[categoryIndex] === null);
-                                    }
-                                    if (seriesData.source.groupName && seriesData.source.groupName !== '') {
-                                        imageURL = converterHelper.getFormattedLegendLabel(seriesData.source, dataViewCategorical.values, formatStringProp);
-                                    }
-                                }
-                            }
-                        }
-                        this.dataPoints.push({
-                            identity: SelectionId.createWithId(categoryIdentity),
-                            category: categoryLabel,
-                            imageURL: imageURL,
-                            value: value,
-                            selected: categoryIsSelected,
-                            selectable: selectable
-                        });
-
-                    }
-                    if (numberOfScopeIds != null && numberOfScopeIds > this.numberOfCategoriesSelectedInData) {
-                        this.hasSelectionOverride = true;
-                    }
-
-                }
+            var objectName = options.objectName;
+            switch (objectName) {
+                case 'rows':
+                    //return this.enumerateRows(data);
+                case 'header':
+                    //return this.enumerateHeader(data);
+                case 'general':
+                    //return this.enumerateGeneral(data);
+                    break;
+                case 'images':
+                    //return this.enumerateImages(data);
             }
         }
+/*
+        private enumerateHeader(data: GroupedImageSlicerData): VisualObjectInstance[] {
+            var slicerSettings = this.settings;
+            return [{
+                selector: null,
+                objectName: 'header',
+                properties: {
+                    show: slicerSettings.header.show,
+                    title: slicerSettings.header.title,
+                    fontColor: slicerSettings.header.fontColor,
+                    background: slicerSettings.header.background,
+                    textSize: slicerSettings.header.textSize,
+                    outline: slicerSettings.header.outline,
+                    outlineColor: slicerSettings.header.outlineColor,
+                    outlineWeight: slicerSettings.header.outlineWeight
+                }
+            }];
+        }
+
+        private enumerateRows(data: GroupedImageSlicerData): VisualObjectInstance[] {
+            var slicerSettings = this.settings;
+            return [{
+                selector: null,
+                objectName: 'rows',
+                properties: {
+                    textSize: slicerSettings.slicerText.textSize,
+                    height: slicerSettings.slicerText.height,
+                    width: slicerSettings.slicerText.width,
+                    background: slicerSettings.slicerText.background,
+                    selectedColor: slicerSettings.slicerText.selectedColor,
+                    unselectedColor: slicerSettings.slicerText.unselectedColor,
+                    disabledColor: slicerSettings.slicerText.disabledColor,
+                    outline: slicerSettings.slicerText.outline,
+                    outlineColor: slicerSettings.slicerText.outlineColor,
+                    outlineWeight: slicerSettings.slicerText.outlineWeight,
+                    fontColor: slicerSettings.slicerText.fontColor,
+                }
+            }];
+        }
+/*
+        private enumerateGeneral(data: GroupedImageSlicerData): VisualObjectInstance[] {
+            var slicerSettings = this.settings;
+
+            return [{
+                selector: null,
+                objectName: 'general',
+                properties: {
+                    orientation: slicerSettings.general.orientation,
+                    columns: slicerSettings.general.columns,
+                    rows: slicerSettings.general.rows,
+                    showDisabled: slicerSettings.general.showDisabled,
+                    multiselect: slicerSettings.general.multiselect,
+                }
+            }];
+        }
+
+        private enumerateImages(data: GroupedImageSlicerData): VisualObjectInstance[] {
+            var slicerSettings = this.settings;
+            return [{
+                selector: null,
+                objectName: 'images',
+                properties: {
+                    imageSplit: slicerSettings.images.imageSplit,
+                    stretchImage: slicerSettings.images.stretchImage,
+                    bottomImage: slicerSettings.images.bottomImage,
+                }
+            }];
+        }*/
     }
 
     export interface GroupedImageSlicerBehaviorOptions {
@@ -1318,11 +1210,11 @@ module powerbi.visuals.samples {
         private slicerSettings: GroupedImageSlicerSettings;
 
         public bindEvents(options: GroupedImageSlicerBehaviorOptions, selectionHandler: ISelectionHandler): void {
-            var  filterPropertyId = groupedImageSlicerProps.filterPropertyIdentifier;
-            var  slicers = this.slicers = options.slicerItemContainers;
+            var filterPropertyId = groupedImageSlicerProps.filterPropertyIdentifier;
+            var slicers = this.slicers = options.slicerItemContainers;
             this.slicerItemLabels = options.slicerItemLabels;
             this.slicerItemInputs = options.slicerItemInputs;
-            var  slicerClear = options.slicerClear;
+            var slicerClear = options.slicerClear;
             this.dataPoints = options.dataPoints;
             this.interactivityService = options.interactivityService;
             this.slicerSettings = options.slicerSettings;
@@ -1345,29 +1237,31 @@ module powerbi.visuals.samples {
 
             slicers.on("click", (d: GroupedImageSlicerDataPoint, index) => {
                 if (d.selectable) {
-                    var  settings = this.slicerSettings;
+                    //var settings = this.slicerSettings;
                     d3.event.preventDefault();
+                    /*
                     if (d3.event.altKey && settings.general.multiselect) {
-                        var  selectedIndexes = jQuery.map(this.dataPoints, function(d, index) { if (d.selected) return index; });
-                        var  selIndex = selectedIndexes.length > 0 ? (selectedIndexes[selectedIndexes.length - 1]) : 0;
+                        var selectedIndexes = jQuery.map(this.dataPoints, function(d, index) { if (d.selected) return index; });
+                        var selIndex = selectedIndexes.length > 0 ? (selectedIndexes[selectedIndexes.length - 1]) : 0;
                         if (selIndex > index) {
-                            var  temp = index;
+                            var temp = index;
                             index = selIndex;
                             selIndex = temp;
                         }
                         selectionHandler.handleClearSelection();
                         var i;
                         for (i = selIndex; i <= index; i++) {
-                            selectionHandler.handleSelection(this.dataPoints[i], true /* isMultiSelect */);
+                            selectionHandler.handleSelection(this.dataPoints[i], true);
                         }
                     }
                     else if (d3.event.ctrlKey && settings.general.multiselect) {
-                        selectionHandler.handleSelection(d, true /* isMultiSelect */);
+                        selectionHandler.handleSelection(d, true);
                     }
                     else {
-                        selectionHandler.handleSelection(d, false /* isMultiSelect */);
+                        selectionHandler.handleSelection(d, false);
                     }
                     selectionHandler.persistSelectionFilter(filterPropertyId);
+                    */
                 }
             });
 
@@ -1403,7 +1297,7 @@ module powerbi.visuals.samples {
         }
 
         public styleSlicerInputs(slicers: D3.Selection, hasSelection: boolean) {
-            var  settings = this.slicerSettings;
+            var settings = this.slicerSettings;
             slicers.each(function(d: GroupedImageSlicerDataPoint) {
                 d3.select(this).style({
                     'background': d.selectable ? (d.selected ? settings.slicerText.selectedColor : settings.slicerText.unselectedColor)

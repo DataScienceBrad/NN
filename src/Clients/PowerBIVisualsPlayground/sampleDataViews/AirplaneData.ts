@@ -37,10 +37,10 @@ module powerbi.visuals.sampleDataViews {
         public visuals: string[] = ['groupedImageSlicer'];
 
         private airplaneTypes: string[] = ["Boeing 787", "Airbus A380", "Boeing 787", "Airbus A380", "Boeing 787"];
-        //private tailNumbers: string[] = ["9V-ABC", "9V-EFG", "9V-HIJ", "9V-KLM", "9V-NOP"];
-        //private states: string[] = ["Immediate", "Preventative", "Immediate", "Immediate", "Preventative"];
-        private severityScore: number[] = [0.9, 0.5, 0.1, 0.7, 0.8];
-        private iconUrls: string[] = [
+        private tailNumbers: string[] = ["9V-ABC", "9V-EFG", "9V-HIJ", "9V-KLM", "9V-NOP"];
+        private states: string[] = ["Immediate", "Preventative", "Immediate", "Immediate", "Preventative"];
+        private scores: number[] = [0.9, 0.5, 0.1, 0.7, 0.8];
+        private imageURLs: string[] = [
             "https://storage.googleapis.com/powerbi/airplaneB.png",
             "https://storage.googleapis.com/powerbi/airplaneB.png",
             "https://storage.googleapis.com/powerbi/airplaneB.png",
@@ -50,7 +50,7 @@ module powerbi.visuals.sampleDataViews {
 
         public getDataViews(): DataView[] {
 
-            let fieldExpr = powerbi.data.SQExprBuilder.fieldExpr({ column: { schema: 's', entity: "table1", name: "country" } });
+            let fieldExpr = powerbi.data.SQExprBuilder.fieldExpr({ column: { schema: 's', entity: "table1", name: "Airplane Type" } });
 
             let categoryIdentities = this.airplaneTypes.map(function(value) {
                 let expr = powerbi.data.SQExprBuilder.equal(fieldExpr, powerbi.data.SQExprBuilder.text(value));
@@ -63,17 +63,17 @@ module powerbi.visuals.sampleDataViews {
                 columns: [
                     {
                         displayName: 'Airplane Type',
-                        queryName: 'AirplaneType',
+                        queryName: 'Airplane Type',
                         roles: {
-                            Airplane: true
+                            'Airplane Type': true
                         },
                         type: powerbi.ValueType.fromDescriptor({ text: true })
                     },
                     {
-                        displayName: 'Tail Number',
-                        queryName: 'TailNumber',
+                        displayName: 'Tale Number',
+                        queryName: 'Tale Number',
                         roles: {
-                            Tail: true
+                            'Tale Number': true
                         },
                         type: powerbi.ValueType.fromDescriptor({ text: true })
                     },
@@ -81,7 +81,16 @@ module powerbi.visuals.sampleDataViews {
                         displayName: 'State',
                         queryName: 'State',
                         roles: {
-                            State: true
+                            'State': true
+                        },
+                        type: powerbi.ValueType.fromDescriptor({ text: true })
+                    },
+                    {
+                        displayName: 'Icon URL',
+                        format: "g",
+                        queryName: 'Icon URL',
+                        roles: {
+                            'Icon URL': true
                         },
                         type: powerbi.ValueType.fromDescriptor({ text: true })
                     },
@@ -89,22 +98,13 @@ module powerbi.visuals.sampleDataViews {
                         displayName: 'Severity Score',
                         format: "g",
                         isMeasure: true,
-                        queryName: 'SeverityScore',
+                        queryName: 'Severity Score',
                         roles: { 
-                            SeverityScore: true 
+                            'Severity Score': true 
                         },
                         type: powerbi.ValueType.fromDescriptor({ numeric: true }),
                         objects: { dataPoint: { fill: { solid: { color: 'purple' } } } },
                     },
-                    {
-                        displayName: 'Icon URL',
-                        format: "g",
-                        queryName: 'IconURL',
-                        roles: {
-                            Image: true
-                        },
-                        type: powerbi.ValueType.fromDescriptor({ text: true })
-                    }
                 ],
                 objects: {
                     general: {
@@ -113,34 +113,70 @@ module powerbi.visuals.sampleDataViews {
                 }
             };
             
-            let imageFieldExpr = powerbi.data.SQExprBuilder.fieldExpr({ column: { schema: 's', entity: "table1", name: "Image" } });
+            let tailFieldExpr = powerbi.data.SQExprBuilder.fieldExpr({ column: { schema: 's', entity: "Tale Number", name: "Tale Number" } });
+            let tailIdentities = this.imageURLs.map(function(value) {
+                let expr = powerbi.data.SQExprBuilder.equal(tailFieldExpr, powerbi.data.SQExprBuilder.text(value));
+                return powerbi.data.createDataViewScopeIdentity(expr);
+            });
             
-            let imageIdentities = this.iconUrls.map(function(value) {
+            let stateFieldExpr = powerbi.data.SQExprBuilder.fieldExpr({ column: { schema: 's', entity: "State", name: "State" } });
+            let stateIdentities = this.imageURLs.map(function(value) {
+                let expr = powerbi.data.SQExprBuilder.equal(stateFieldExpr, powerbi.data.SQExprBuilder.text(value));
+                return powerbi.data.createDataViewScopeIdentity(expr);
+            });
+            
+            let imageFieldExpr = powerbi.data.SQExprBuilder.fieldExpr({ column: { schema: 's', entity: "Icon URL", name: "Icon URL" } });
+            let imageIdentities = this.imageURLs.map(function(value) {
                 let expr = powerbi.data.SQExprBuilder.equal(imageFieldExpr, powerbi.data.SQExprBuilder.text(value));
                 return powerbi.data.createDataViewScopeIdentity(expr);
             });
+            
+            
+            let columns: DataViewValueColumn[] = [];            
+            
+            let airplaneGroups: string[] = _.keys(_.groupBy(this.airplaneTypes));
+            for (let i = 0; i < airplaneGroups.length; i++) {
+                let scores: number[] = [];
 
-            let columns: DataViewValueColumn[] = this.airplaneTypes.map((car, i): DataViewValueColumn => {
+                for (let k = 0; k < this.airplaneTypes.length; k++) {
+                    if (airplaneGroups[i] === this.airplaneTypes[k]) {
+                        scores[k] = this.scores[k];
+                    } else {
+                        scores[k] = null;
+                    }
+                }
 
-                let source = dataViewMetadata.columns[1];
-                source.groupName = this.iconUrls[i];
-                return {
+                let source = dataViewMetadata.columns[0];
+                source.groupName = airplaneGroups[i];
+                columns.push({
                     source: source,
-                    identity: imageIdentities[i],
-                    values: this.severityScore
-                };
-            });
+                    identity: categoryIdentities[i],
+                    values: scores
+                });
+            }
 
-            let dataValues: DataViewValueColumns = DataViewTransform.createValueColumns(columns, [fieldExpr, imageFieldExpr], dataViewMetadata.columns[2]);
+            let dataValues: DataViewValueColumns = DataViewTransform.createValueColumns(columns, [fieldExpr], dataViewMetadata.columns[0]);
             
             return [{
                 metadata: dataViewMetadata,
                 categorical: {
-                    categories: [{
-                        source: dataViewMetadata.columns[0],
-                        values: this.airplaneTypes,
-                        identity: categoryIdentities,
-                    }],
+                    categories: [
+                        {
+                            source: dataViewMetadata.columns[1],
+                            values: this.tailNumbers,
+                            identity: tailIdentities,
+                        },
+                        {
+                            source: dataViewMetadata.columns[2],
+                            values: this.states,
+                            identity: stateIdentities,
+                        },
+                        {
+                            source: dataViewMetadata.columns[3],
+                            values: this.imageURLs,
+                            identity: imageIdentities,
+                        }
+                    ],
                     values: dataValues
                 }
             }];
