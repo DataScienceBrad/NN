@@ -1,0 +1,1596 @@
+.sandDance {
+    background: black;
+    font-family: Tahoma, Verdana, Geneva, sans-serif;
+    font-size: 11px;
+    touch-action: none;
+    stroke-width: 1px;
+    color: #fff;
+    stroke: #fff;
+    fill: #fff;
+    overflow: hidden;
+
+    .canvas {
+        position: absolute;
+    }
+
+    #svgDoc {
+        width: 100%;
+        height: 100%;
+    }
+
+    .tooltip-inner {
+        white-space: pre-wrap;
+    }
+
+    .canvasElem:focus {
+        outline: 0;
+    }
+
+    /*---- MENU BUTTON and friends ----*/
+    .menuButton {
+
+    }
+
+    .menuButtonDisabled {
+        cursor: default;
+        fill: #999;
+        font-style: italic;
+    }
+
+    .menuButtonText {
+        stroke: none;
+    }
+
+    .menuButtonCircle {
+        fill: black;
+        stroke: #999;
+    }
+
+    .menuButtonOpenCircle {
+        stroke: white;
+    }
+
+    .menuButtonEventBox {
+        stroke: white;
+        fill: #333;
+        opacity: 0;
+        cursor: pointer;
+    }
+
+    .menuButtonEventBox:hover {
+        opacity: .3;
+    }
+
+    .menuButtonEventBox:active {
+        opacity: .5;
+    }
+
+    .menuButtonOpenLine {
+        fill: none;
+    }
+
+    .menuGroupingLine {
+        fill: none;
+        opacity: .5;
+    }
+
+    .menuGroupingBox {
+        fill: black;
+        stroke: #fff;
+        opacity: 0;
+    }
+
+    .menuGroupingBox:hover {
+        opacity: .5;
+        fill: #555;
+    }
+
+    .menuSeparator {
+        stroke: white;
+        stroke-width: 1px;
+        opacity: .5;
+    }
+
+    .gaugeTitleText {
+        stroke: none;
+        cursor: pointer;
+    }
+
+    .gaugeValueText {
+        stroke: none;
+        font-size: 10px;
+        cursor: pointer; fill: #fff;
+    }
+
+    .gaugeOuterCircle {
+        fill: black;
+        stroke: #999;
+    }
+
+    .gaugeInnerCircle {
+        fill: none;
+    }
+
+    .gaugeTickLabel {
+        stroke: none;
+        font-size: 10px;
+        fill: #555;
+    }
+
+    .gaugeDraggingLine {
+        stroke: #555;
+        fill: none;
+        opacity: 0;
+    }
+
+    .gaugeDragBox {
+        stroke: white;
+        fill: black;
+        opacity: 0;
+    }
+
+    /* the setting of opacity=1 also happens (thru our code) when mouse is over the text. */
+    /*  .gaugeDragBox:hover { opacity: 1; }  */
+
+    .menuButtonIcon {
+        stroke: #999;
+        fill: none;
+    }
+
+    .transformWheel {
+        stroke-width: 40px;
+        stroke: gray;
+        fill: none;
+        opacity: 1;
+        transition: opacity .5s ease-in-out;
+    }
+
+    .transformWheelCircle {
+        opacity: .3;
+    }
+
+    .transformWheelVBar {
+        opacity: .3;
+    }
+
+    .transformWheelHBar {
+        opacity: .3;
+    }
+
+    .rubberBand {
+        border: 2px dashed yellow;
+    }
+
+    .groupMenuBg {
+        fill: black;
+        opacity: .7;
+        stroke: none;
+    }
+
+    .facetBorder {
+        fill: none;
+        stroke: #777;
+        stroke-width: 1px;
+    }
+
+    .facetLabel {
+        fill: white;
+        stroke-width: 0;
+        cursor: pointer;
+    }
+
+    .facetLabel:hover {
+        opacity: .7;
+    }
+
+    .facetLabel:active {
+        opacity: .5;
+    }
+
+    .clickableAxisLabel {
+        color: white;
+        opacity: .8;
+    }
+
+    .clickableAxisLabel:hover {
+        opacity: 1;
+    }
+
+    /* VuePlotPlus.css - contains default styles for vuePlot mark-based controls. */
+    /* reminder: z-index is ignored by SVG shapes, text, and images. */
+
+    .vpxTest {
+        fill: red;
+        stroke: blue;
+        stroke-width: 2px;
+    }
+
+    /* NOTE: stroke-linecap set to value other than "butt" causes line to be drawn with a anti-aliased ending */
+
+    .vpxAxis {
+        stroke: gray;
+        fill: gray;
+        font-family: Tahoma;
+        font-size: 13.33px;
+        text-anchor: middle;
+        text-rendering: optimizeLegibility;
+        shape-rendering: crispEdges;
+        stroke-linecap: butt;
+        stroke-width: 1px;
+    }
+
+    .vpxAxisLine {
+        stroke-width: 1px
+    }
+
+    .vpxGridLines {
+        stroke: gray;
+        shape-rendering: crispEdges;
+        stroke-linecap: butt;
+        stroke-width: 1px;
+    }
+
+    .vpxAxisBox {
+        stroke-width: 1px;
+        stroke: gray;
+        fill: none;
+    }
+
+    .vpxAxisTick {
+        stroke-width: 1px;
+    }
+
+    .vpxAxisTickBox {
+        fill: #000;
+        padding-left: 6px;
+        padding-right: 6px;
+        cursor: pointer;
+        stroke-width: 1px;
+        stroke: #333;
+    }
+
+    .vpxAxisTickBox:hover {
+        fill: #333;
+    }
+
+    .vpxAxisTickBox:active {
+        fill: #555;
+    }
+
+    .vpxAxisLabel {
+        stroke: none;
+        cursor: default;
+        stroke: none;
+    }
+
+    .vpxAxisName {
+        font-size: 16px;
+        stroke: none;
+        cursor: default;
+    }
+
+    .vpxXGridLine {
+        stroke-width: 1px;
+        opacity: .5;
+    }
+
+    .vpxYGridLine {
+        stroke-width: 1px;
+        opacity: .5;
+    }
+
+    .vpxMinorXGridLine {
+        stroke-width: 1px;
+        opacity: .5;
+    }
+
+    .vpxMinorYGridLine {
+        stroke-width: 1px;
+        opacity: .5;
+    }
+
+    #playAndIconBar {
+        min-height: 52p;
+        margin-left: 0;
+        margin-bottom: 4px;
+    }
+
+    #playPanel{
+         display: none;
+    }
+
+    // #iconBar {
+    //     margin-left: 10px;
+    //     width: 100%;
+    //     z-index: 999;
+    //     overflow-x: auto;
+    //     overflow-y : hidden;
+    //     display: none;
+    //     border: 0 solid blue
+    // }
+
+    #leftPanel {
+         position: absolute;
+         z-index: 25;
+         left: 0;
+         top: 260px;
+         height: 100%;
+         width: 60px;
+
+        #yStuff {
+            display: block;
+            position: relative;
+            top: 41%;
+            left: 10px;
+            border: 0px solid yellow;
+            height: 10px;
+            width: 30px;
+
+            #yButton {
+                //display: none;
+                border: 0 solid red;
+                padding: 4px
+            }
+
+            #yBins {
+                position: relative;
+                border: 1px solid none;
+            }
+        }
+
+        #zStuff {
+            display: inline-block;
+            border: 0 solid red;
+            position: absolute;
+            bottom: 10px;
+            left: 20px;
+
+            #zButton, #zBins {
+                //display: none;
+            }
+
+            #zBins {
+                position: absolute;
+                top: -5px;
+                left: -2px;
+            }
+        }
+    }
+
+    #fileInfo {
+        display: none;
+    }
+
+    #myChart {
+        position: absolute;
+        opacity: 0;
+        border: 0px solid yellow;
+        background: black;
+    }
+
+    #chartUxDiv {
+        position: absolute;
+    }
+
+    #facetLabelHolder {
+        position: absolute;
+        width: 0;
+        height: 0;
+    }
+
+    #debugPanel {
+        background: black;
+        display: none;
+        border: 1px solid white;
+        position: absolute;
+        right: 50px;
+        top: 20px;
+        padding: 10px
+    }
+
+    .debugPanel-item {
+        width: 100%;
+        background: none;
+        text-align: center;
+    }
+
+    #searchPanel, #bbData {
+        display: none !important;
+    }
+
+    /* This is code from BeachPartyApp.css*/
+
+/* also see: BeachPartyAppEx.less */
+
+    // body {
+    //     line-height: 1;
+    //
+    //     /* prevent user from accidently selecting text, especially on touch devices */
+    //     -webkit-user-select: none;
+    //     -moz-user-select: none;
+    //     -ms-user-select: none;
+    //     user-select: none;
+    // }
+
+    /*---- remove unwanted spaces from tables ----*/
+    .noSpaceTable {border-collapse: collapse; border-spacing: 0; }
+
+    span { cursor: default;}
+
+    .searchText {color: white; border: 1px solid #777; background: black; font-family: Calibri; font-size: 16px;
+                padding: 3px 6px 3px 6px;
+    }
+
+    .searchText:focus { border: 1px solid white;    }
+
+    /* TEXT BOX AND TEXTAREA PLACEHOLDER ("input" covers them both) */
+    input::-webkit-input-placeholder  { font-style: italic; color: #777; }
+    input:-moz-input-placeholder  { font-style: italic; color: #777; }
+    input::-moz-input-placeholder  { font-style: italic; color: #777; }
+    input:-ms-input-placeholder  { font-style: italic; color: #777; }
+
+
+    .searchPanel { opacity: 1; border: 1px solid #333;  margin-top: -2px; margin-bottom: -2px;}
+    /*
+    .searchPanel:hover {opacity: .8; }
+    .searchPanel[data-disabled=true]   { opacity: .65; cursor: default; }
+    */
+
+    .infoMsgBox { background: white; animation-duration: 2s; }
+    .infoMsg { background: white; color: black; padding: 8px;  }
+    #infoMsgCloseButton {background-color: white; color: black; }
+    #infoMsgCloseButton:hover { background: #ccc;  }
+    #infoMsgCloseButton:active { background: #777;  }
+
+    .promptText { color: white;  }
+
+    .editText { color: white; border: 1px solid black; background: black; font-family: Calibri; font-size: 16px;
+    }
+
+    .editText:focus { border: 1px solid white;
+    }
+
+    .binsHolder { opacity: .86;
+    }
+
+    #yText {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translateX(-50%) translateY(-50%) rotate(-90deg);
+        opacity: 1;
+    }
+
+    .numAdjuster {
+        background: none;
+    }
+
+    .numAdjusterInPanel {
+        opacity: .85;
+    }
+
+    .numAdjusterValue {
+        color: white;
+        opacity: .8;
+        font-size: 12px;
+        width: 26px;
+        display: block;
+        text-align: center;
+        cursor: pointer;
+    }
+
+    .numAdjusterActiveValue {
+        opacity: .8
+    }
+
+    .numAdjusterValue:hover {
+        background: #555;
+    }
+
+    .numAdjusterName {
+        color: white;
+        opacity: .83;
+        font-size: 12px;
+        width: 26px;
+        display: block;
+        text-align: center;
+        cursor: pointer;
+    }
+
+    .numAdjusterName:hover {
+        background: #555;
+    }
+
+    .numAdjusterImg {
+        @backgroundSize: 40px;
+
+        width: @backgroundSize;
+        height: @backgroundSize;
+
+        background-size: @backgroundSize @backgroundSize;
+
+        cursor: pointer;
+    }
+
+    .numAdjusterLine { height: 2px; background-color: white; text-align: center; opacity: .83; z-index: 2999;
+    }
+
+    .legend { padding: 5px; display: inline-block; border: 0px solid #555; width: 120px; margin-left: 6px;
+    }
+
+    .legendTitle {  color: white; opacity: .8; cursor: pointer; margin-bottom: 10px;
+    }
+
+    .legendPalette { border: 0px solid red;
+    }
+
+    .legendTicks {
+    }
+
+    .legendLabels {
+    }
+
+    .legendHolder { margin-bottom: 6px;
+    }
+
+    .legendTick { background: #777; width: 6px; height: 1px;
+    }
+
+    .legendLabel {color: white; opacity: .85; cursor: pointer; white-space: nowrap; overflow: hidden;
+    }
+
+    .legendLabel:hover {color: white; opacity: .8; cursor: pointer;
+    }
+
+    .colorPaletteEntry { cursor: pointer;
+    }
+
+    .sizePaletteEntry { cursor: pointer; border: 1px solid gray;
+    }
+
+    .sizePaletteEntry:hover { background: #444;
+    }
+
+    .sizePaletteEntry:active { background: #777;
+    }
+
+    .sizePaletteShape { cursor: pointer; background: #ccc; pointer-events: none;
+    }
+
+    .imagePaletteEntry {cursor: pointer; border: 1px solid gray; background: black;
+    }
+
+    .imagePaletteEntry:hover { background: #444;
+    }
+
+    .imagePaletteEntry:active { background: #777;
+    }
+
+    .imagePaletteShape { pointer-events: none;
+    }
+
+    .expandCollapseImg { cursor: pointer;
+    }
+
+    .expandCollapseImg:active {opacity: .5;
+    }
+
+    .expandCollapseImg:hover { border: 1px solid gray;
+    }
+
+    .listColorPaletteName { color: white; opacity: .85; margin: 4px;
+    }
+
+    .listColorPaletteNameSelected { color: black; background: white;
+    }
+
+    .listColorPalette { border: 1px solid black;
+    }
+
+    .listColorPaletteGradient { border: 0px solid black; display: inline-block;
+    }
+
+    .customList { margin: 10px;
+    }
+
+    .listColorPaletteEntry { border-right: 0px solid black; display: inline-block; white-space: nowrap;
+    }
+
+    .panel { position: absolute; opacity: 1; display: inline-block; background:  rgb(56, 56, 56); z-index: 1005;
+    }
+
+    .popupPanel { position: absolute; opacity: 1; display: inline-block; background:  rgb(56, 56, 56); z-index: 1005;
+    }
+
+    .menuItemHolder{  overflow-y: auto; overflow-x: hidden; border: 1px solid none;
+    }
+
+    .floatingPanel { position: absolute; border: 1px solid #777; opacity: 1; display: inline-block; background:  black; z-index: 1005;
+    }
+
+    .panelSeparator { border-bottom: 1px solid white; opacity: .85;
+    }
+
+    .emptyRow { display: inline-block; height: 18px;
+    }
+
+    .panelTitle {color: white; border-bottom: 1px solid white; padding: 6px; cursor: pointer; opacity: .86;
+    }
+
+    .panelContent {padding: 6px; padding-top: 12px; padding-bottom: 20px;
+    }
+
+    .panelLink:link { color: #0cf; }
+    .panelLink:visited { color: #0cf; }
+    .panelLink:active { color: #0cf; }
+    .panelLink:hover { background: #333; }
+
+    .panelPrompt { color: white; opacity: .86;
+    }
+
+    .panelRow {
+    }
+
+    .panelRowSpacer {    /* spacing between normal panel rows */
+    }
+
+    .panelText { color: white; background: none; opacity: .85; padding: 4px;
+    }
+
+    .panelTextArea { color: white; background: black; opacity: .85; padding: 4px; font-family: Calibri; font-size: 16px;
+    }
+
+    .panelTextArea::selection {background: gray;}
+
+
+    .panelCheckbox { width: 14px;  height: 14px; opacity: .86;
+    }
+
+    .panelRadio { width: 14px; height: 14px; opacity: .86;
+    }
+
+    .panelCheckboxContainer { background: black; opacity: .1;
+    }
+
+    .tabButton { color: white; opacity: .5; cursor: pointer;  min-width: 30px; min-height: 21px;
+                display: inline-block; padding: 5px; padding-top: 1px;  padding-bottom: 1px;
+                border-right: 1px solid white; border-bottom: 1px solid white; text-align: center;
+
+    }
+
+    .tabButton:hover{ opacity: .8;
+    }
+
+    .tabButtonOpen { border-bottom: 1px solid rgb(55,47,70); background: none; opacity: 1;
+    }
+
+    .tableHeader {
+        color: white; font-weight: normal;
+    }
+
+    .tableValue { color: white; }
+
+    /*---- RECORD VIEW (in details panel) ----*/
+    .recordView {
+    }
+
+    .recordView:focus {
+        outline: 0;
+    }
+
+    .rvList {border: 1px solid gray;
+    }
+
+    .recordViewRow { white-space: nowrap;
+    }
+
+    .slicerSlider {
+    }
+
+    .rvColName { color: gray; text-align: right; padding-left: 6px; padding-right: 4px; cursor: pointer;
+    }
+
+    .rvColName:hover { opacity: .7;
+    }
+
+    .rvValue {color: white; text-align: left; padding-left: 4px; padding-right: 6px;  cursor: pointer; padding-right: 10px;
+    }
+
+    .rvValue:hover { opacity: .7;
+    }
+
+    .rvControlBar { margin-bottom: 2px; padding: 6px;
+    }
+
+    .rvRecordText {
+        color: GrayText;
+    }
+
+    .rvImgButton { cursor: pointer; opacity: .7;
+    }
+
+    .rvImgButton:hover { opacity: .3;
+    }
+
+    .bingImg { cursor: pointer; padding-right: 0px; margin-left: -5px;
+    }
+
+    /*---- SLICER PANEL ----*/
+
+    .slicerImg { cursor: pointer;
+    }
+
+    .slicerControl {
+    }
+
+    .slicerControlBar {
+    }
+
+
+    .histogram {
+    }
+
+    .histogramRow {
+    }
+
+    .histogramBinName { color: gray; text-align: right; padding-left: 6px; padding-right: 4px; cursor: pointer;
+    }
+
+    .histogramBinName:hover { opacity: .6;
+    }
+
+    .histogramHolder { border: 1px solid gray;
+    }
+
+
+    .histogramBinBar { background-color: gray;
+    }
+
+    .histogramBinBar:hover { opacity: .6;
+    }
+
+    /*---- INSIGHT PANEL ----*/
+    .insightPanel { background: rgb(38, 36, 34); color: white; width: 240px;
+    }
+
+    .insightTitleBar { border-bottom: 2px solid black; padding: 10px 1px 10px 10px;
+    }
+
+    .insightCreateBar { border-bottom: 2px solid black;   padding: 10px 10px 10px 20px; cursor: pointer;
+    }
+
+    .insightCreateBar:hover { color: #aaa;
+    }
+
+    .insightCreateBar:active { color: #333;
+    }
+
+    .insightListHolder { scrollbar-face-color: #444; scrollbar-arrow-color: #444; scrollbar-track-color: #222;
+                        overflow-y: auto; overflow-x: hidden; white-space: nowrap;
+    }
+
+    .insightList {
+    }
+
+    .insightEntry {  border: 1px solid transparent; cursor: pointer; color: white; margin: 20px;
+    }
+
+    .insightEntry:hover {  border: 1px solid #555;
+    }
+
+    .currentEntry { border: 1px solid #999;
+    }
+
+    .insightImage {
+    }
+
+    .insightText {  text-align: left; position: relative; cursor: pointer;  margin: 4px 8px 4px 8px;
+                    /* text-shadow: 0 0 4px black;  font-size: 18px;*/
+    }
+
+    .listBox {border: 1px solid #555; }
+
+    .tabButtonContainer { border-right: 0px solid white; /* background: #333; */
+    }
+
+    /*--- styles for HTML 5 slider control ---*/
+    .numSpreaderSlider {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background: none;
+    cursor: pointer;
+    display: block;
+    overflow: hidden;
+    padding: 0;
+    }
+
+    .numSpreaderSlider:focus {
+    box-shadow: none;
+    outline: none;
+    }
+
+    .numSpreaderSlider::-webkit-slider-runnable-track {
+    -webkit-appearance: none;
+    background: #666;
+    height: 22px;
+    }
+
+    .numSpreaderSlider::-webkit-slider-thumb:before {
+    position: absolute;
+    top: 0;
+    right: 50%;
+    left: -200px;
+    background: #e00;
+    content: '';
+    height: 22px;
+    pointer-events: none;
+    }
+
+    .numSpreaderSlider::-webkit-slider-thumb {
+    width: 0;
+    height: 0;
+    -webkit-appearance: none;
+    position: relative;
+    }
+
+    .numSpreaderSlider::-moz-range-track {
+    }
+
+    .numSpreaderSlider::-moz-range-thumb {
+    width: 22px;
+    height: 22px;
+    -moz-appearance: none;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    box-shadow: 0;
+    position: relative;
+    }
+
+    .numSpreaderSlider::-moz-range-progress {
+    background: #e00;
+    }
+
+    .numSpreaderSlider::-ms-track {
+        background: transparent;
+        border: 0;
+        border-color: transparent;
+        border-radius: 0;
+        border-width: 0;
+        color: transparent;
+        height: 10px;
+    }
+
+    .numSpreaderSlider::-ms-fill-lower {
+    background: #555;
+    border-radius: 0;
+    }
+
+    .numSpreaderSlider::-ms-fill-upper {
+    background: #555;
+    border-radius: 0;
+    }
+
+    .numSpreaderSlider::-ms-thumb {
+    width: 22px;
+    height: 22px;
+    background: #999;
+    }
+
+    .numSpreaderSlider::-ms-tooltip {
+    display: none;
+    }
+
+    /* NUM SPREADER PANEL */
+    .numSpreaderPanel {
+    }
+
+    .numSpreaderColName { color: white;
+    }
+
+    .numSpreaderRange {color: white;
+    }
+
+    .numSpreaderPercent {color: white;
+    }
+
+    #chartNotesHolder {
+    }
+
+    #chartNotes {  padding: 10px; border: 1px solid white;  font-family: Calibri; font-size: 16px;
+                color: white; text-align: center; display: table; margin: 0 auto; background: black;
+                opacity: .9; margin-top: 40px; cursor: pointer;
+    }
+
+    .checkboxItem { color: white;
+    }
+
+    .checkboxItem:hover { background: #333;
+    }
+
+    .checkboxItem[data-isSelected=true] {     background: rgb(157,211,238);
+    }
+
+    .checkboxText[data-isSelected=true]   { color: black; font-weight: normal;
+    }
+
+    /* bug workaround: for some reason, if we specify a border on listItem, the data-selelected modifier will not work correctly */
+    .listItem { background: black; cursor: pointer;
+    }
+
+    .listItem[data-selected='true'] {  border: 1px solid gray;
+    }
+
+    .wordmark {color: white; font-size: 32px; padding-left: 20px; padding-top: 6px; cursor: pointer; display: inline-block; }
+
+    .iconBar {
+        scrollbar-face-color: #444;
+        scrollbar-arrow-color: #444;
+        scrollbar-track-color: #222;
+
+         // background-image: data-uri()
+/*
+        #undoButton div {
+            background-image: data-uri("../images/sandDance/iconBar_undo.png");
+        }
+
+        #redoButton div {
+            background-image: data-uri("../images/sandDance/iconBar_redo.png");
+        }
+
+        #insightButton div {
+            background-image: data-uri("../images/sandDance/insightPanel_fullInsight_white.png");
+        }
+
+        #playIconButton div {
+            background-image: data-uri("../images/sandDance/iconBar_play.png");
+        }
+
+        #wheelButton div {
+            background-image: data-uri("../images/sandDance/iconBar_toggle3D_white.png");
+        }
+
+        #selectButton div {
+            background-image: data-uri("../images/sandDance/selectionModePanel_normal_white.png");
+        }
+
+        #addViewButton div {
+            background-image: data-uri("../images/sandDance/iconBar_newView.png");
+        }
+
+        #scrubButton div {
+            background-image: data-uri("../images/sandDance/iconBar_dataScrubber.png");
+        }
+
+        #isolateButton div {
+            background-image: data-uri("../images/sandDance/iconBar_isolateSelection.png");
+        }
+
+        #excludeButton div {
+            background-image: data-uri("../images/sandDance/iconBar_excludeSelection.png");
+        }
+
+        #resetButton div {
+            background-image: data-uri("../images/sandDance/iconBar_reset.png");
+        }
+
+        #detailsButton div {
+            background-image: data-uri("../images/sandDance/iconBar_details.png");
+        }
+
+        #snapshotButton div {
+            background-image: data-uri("../images/sandDance/iconBar_snapshot.png");
+        }
+*/
+    }
+
+    .bigBar {
+        background: rgb(28, 26, 24);
+        width: 100%;
+    }
+
+    .bigBarEntry {  color: white; border: 0 solid transparent; cursor: pointer; padding: 9px 12px 9px 12px; border-right: 0 solid black; }
+    .bigBarEntry:hover { background: rgb(50, 50, 50); }
+    .bigBarEntry:active { opacity: .8; }
+    .bigBarEntry[data-selected=true] { background: rgb(56, 56, 56); }
+    .bigBarEntry[data-disabled=true] { opacity: .5; cursor: default; background: rgb(22, 20, 18); }
+
+    .bigBarPrompt { color: rgb(110, 111, 113); text-align: left; margin-bottom: 4px; white-space: nowrap; }
+
+    .bigBarValue {
+        font-size: 14px;
+        text-align: left;
+        padding-right: 3px;
+        white-space: nowrap;
+    }
+
+    .bigBarValue [data-disabled=true] {  font-weight: lighter;   }
+
+    .noneValue { color: rgb(69, 69, 69); }
+
+    .rotateRing { border: 4px solid white; pointer-events: none; background: none;
+    }
+
+    .chartPicker{
+        padding: 3px;
+
+        .chartPickerImage {
+            @backgroundWidth: 50px;
+            @backgroundHeight: 50px;
+
+            width: @backgroundWidth;
+            height: @backgroundHeight;
+
+            background-size: @backgroundWidth @backgroundHeight;
+        }
+
+        #chartPickerScatter .chartPickerImage {
+            background-image: data-uri("../images/sandDance/chartPicker_scatterplot.png");
+        }
+
+        #chartPickerColumn .chartPickerImage {
+            background-image: data-uri("../images/sandDance/chartPicker_columns.png");
+        }
+
+        #chartPickerBar .chartPickerImage {
+            background-image: data-uri("../images/sandDance/chartPicker_bar.png");
+        }
+
+        #chartPickerFlat .chartPickerImage {
+            background-image: data-uri("../images/sandDance/chartPicker_flat.png");
+        }
+
+        #chartPickerSquarify .chartPickerImage {
+            background-image: data-uri("../images/sandDance/chartPicker_squarify.png");
+        }
+
+        #chartPickerDensity .chartPickerImage {
+            background-image: data-uri("../images/sandDance/chartPicker_density.png");
+        }
+
+        #chartPickerViolin .chartPickerImage {
+            background-image: data-uri("../images/sandDance/chartPicker_violin.png");
+        }
+
+        #chartPickerRadial .chartPickerImage {
+            background-image: data-uri("../images/sandDance/chartPicker_radial.png");
+        }
+
+        #chartPickerScatter3D .chartPickerImage {
+            background-image: data-uri("../images/sandDance/chartPicker_scatter3D.png");
+        }
+
+        #chartPickerStacks .chartPickerImage {
+            background-image: data-uri("../images/sandDance/chartPicker_stacks.png");
+        }
+    }
+
+    .chartPickerEntry{ padding: 6px; color: white; cursor: pointer; border: 1px solid none;
+    }
+
+    .chartPickerEntry:hover{ background: rgb(87, 87, 87);  }
+    .chartPickerEntry:active{ opacity: .7; }
+    .chartPickerEntry[data-selected=true] { border: 1px solid #555; background: rgb(69, 69, 69); }
+
+
+
+    .chartPickerTitle { padding: 0;  text-align: center; padding-bottom: 4px; position: relative; top: 0;
+    }
+
+    .logo { cursor: pointer;
+    }
+
+    .addInsightButton { background: none; padding: 10px;
+    }
+
+    .addInsightButton:hover { background: #555;
+    }
+
+    .addInsightButton:active { background: black;
+    }
+
+    .insightNotesHolder {padding: 10px; overflow-y: auto;
+    }
+
+    .insightNotesSpan {color: white; margin: 0px;
+    }
+
+    .panelResizer {
+    }
+
+    .panelResizer:hover { cursor: se-resize;
+    }
+
+    .panelResizer:active { cursor: default;
+    }
+
+    .iconBarSpacer { width: 25px; }
+    .iconBarSpacer2 { width: 50px; }
+
+
+    /* ---- ICON/TEXT: COMBO ----*/
+    .iconTextCombo { border: 1px solid transparent;  padding: 0;  margin-top: 1px; cursor: pointer;  opacity: 1; background: transparent;}
+    .iconTextCombo:hover { background: #444; }
+    .iconTextCombo:active { opacity: .8; border: 1px solid green; }    /* IE doesn't support "active" on complex objects, so this is busted. */
+    .iconTextCombo[data-selected=true] {border: 1px solid white; }
+    .iconTextCombo[data-disabled=true] { opacity: .5; cursor: default; background: transparent; }
+
+    /* ---- ICON/TEXT: ICON ----*/
+    .iconOfCombo {  border: none; background: none; width: 40px; padding: 0;  margin: 0;}
+    .iconOfCombo[data-selected=true] { border: none; background: transparent;}
+
+    /* ---- ICON/TEXT: TEXT ----*/
+    .textOfCombo  {  color: white; border: 0; background: none;   }
+
+    /*---- ICON/TEXT: CHEVRON ----*/
+    .chevronOfCombo {
+        border: 0;
+        background: none;
+        width: 8px;
+        opacity: 0.5;
+    }
+
+    /*--- TEXT BUTTON ----*/
+    .textButton { color: white; cursor: pointer; border: 1px solid none; background: none; padding: 4px 8px 4px 8px;}
+    .textButton:hover { background: #333;  }
+    .textButton:active { opacity: .8;  }
+    .textButton[data-selected=true] { border: 1px solid white;}
+    .textButton[data-disabled=true] { opacity: .5; cursor: default; background: transparent; }
+
+    /*--- CLICK ICON (ICON BUTTON) ----*/
+    /*---- use "display: block" on   to remote extra spacing (at least when in a TD) ----*/
+    .clickIcon {
+        float: left;
+        cursor: pointer;
+        border: 1px solid transparent;
+        padding: 0;
+        width: 40px;
+        opacity: .8;
+        background: none;
+      }
+
+    .clickIcon:hover {
+        background-color: #555;
+    }
+
+    .clickIcon:active {
+        background: #333;
+    }
+
+    .clickIcon[data-selected=true] {
+        background-color: #555;
+    }     /* icon will be inverted */
+
+    .clickIcon[data-disabled=true] {
+        opacity: .5;
+        cursor: default;
+        border: 1px solid transparent;
+        //background: transparent;
+    }
+
+    .iconBarIcon,
+    .clickIcon:hover,
+    .clickIcon:active,
+    .clickIcon[data-selected=true] {
+        @backgroundHeight: 30px;
+        @backgroundWidth: 30px;
+
+        width: @backgroundWidth;
+        height: @backgroundHeight;
+
+        background-size: @backgroundWidth @backgroundHeight;
+    }
+
+    #xPanelPanel {
+        #imgPin {
+            // background-image: data-uri("../images/sandDance/pinLeft.png");
+            height: 15px;
+            width: 15px;
+            position: relative;
+        }
+    }
+
+    .closeButton {
+        @elementSize: 22px;
+
+        width: @elementSize !important;
+        height: @elementSize !important;
+
+        background-image: data-uri("../images/sandDance/colorPanel_close.png");
+        background-size: @elementSize @elementSize !important;
+    }
+
+    .fnColPickerNone {
+        background-image: data-uri("../images/sandDance/columnPicker_none.png");
+    }
+
+    .fnColPickerString {
+        background-image: data-uri("../images/sandDance/columnPicker_stringField.png");
+    }
+
+    .fnColPickerNumber {
+        background-image: data-uri("../images/sandDance/columnPicker_numberField.png");
+    }
+
+    .fnColPickerDate {
+        background-image: data-uri("../images/sandDance/columnPicker_dateField.png")
+    }
+
+    .iconOnlyHolder { padding: 0; margin: 0; height: 40px; }
+
+    .selectFilterTextTable { width: 300px;  border: 1px solid none;}
+
+    .blackBg {background: transparent;}
+    .blackBg:hover {background: #444;}
+
+    .insightBg {background: transparent;}
+    .insightBg:hover {background: rgb(56, 53, 50);}
+
+    /*---- POPUP MENU ----*/
+    .popupMenu { background: black; border: 1px solid #555; padding-top: 3px; padding-bottom: 3px; z-index: 2001;
+                border-top: 1px solid #aaa; border-bottom: 1px solid #aaa; }
+
+    /*---- POPUP MENU ITEM ----*/
+    .popupMenuItemHolder {
+        padding: 2px 16px 2px 2px;
+        margin-bottom: 2px;
+        border: 1px solid transparent;
+        background: transparent;
+        white-space: nowrap;
+    }
+
+    .popupMenuItemHolder:hover { background: #555;  }
+    .popupMenuItemHolder:active { background: #333;  }
+    .popupMenuItemHolder[data-selected=true] { background: #555; border: 1px solid white;  }
+    .popupMenuItemHolder[data-disabled=true] { opacity: .5; cursor: default; border: 1px solid transparent; background: transparent; }
+
+    .popupMenuItem { border: 0; background: none; display: inline-block; color: white; padding-right: 6px;}
+
+    .popupMenuIcon {
+        @backgroundSize: 20px;
+
+        display: inline-block;
+        margin: 0 8px 2px 0;
+        vertical-align: middle;
+        border: 0;
+        width: @backgroundSize;
+        height: @backgroundSize;
+        background-size: @backgroundSize @backgroundSize;
+    }
+
+    .popupMenuHR { height: 1px; margin: 3px 0 3px 0; background: none; }
+
+    .rubberBand { border: 2px dashed yellow; }
+
+    .dataTipContainer{ }
+
+    .dataTipDragger {border: 0; background: none; width: 40px;  padding: 0; cursor: pointer}
+    .dataTipDragger:hover { background: transparent; }
+    .dataTipDragger:active { background: transparent; }
+
+    .dataTipText { border: 1px solid gray; background: white; color: blue; padding-left: 2px; padding-right: 2px; cursor: pointer; }
+
+    .buttonLegendCombo {border: 0 solid #555; width: 144px; margin-bottom: 10px; padding-right: 4px; }
+
+    .oldBrowserMsg { color: white; font-size: 22px; margin: 20px; width: 100%;}
+
+    .facetLabel { pointer-events: all  }
+
+    #btFeedback { color: rgb(110, 111, 113); }
+
+    .infoMsgTitle { font-weight: bold; }
+
+    .infoMsgText {  }
+
+    /* This is code from  beachPartyAppEx.less */
+
+    //-------------------------------------------------------------------------------------
+    //  Copyright (c) 2015 - Microsoft Corporation.
+    //    beachPartyAppEx.less - defines the styles used in the BeachParty app.
+    //-------------------------------------------------------------------------------------
+
+    //---- high level theme settings ----
+    @fontFamily: Tahoma;       //Tahoma;
+    @fontSize: 14px;            // 14px;
+    @labelColor: #aaa;
+    @clickColor: white;
+    @background: none;
+    @bodyBackground: black;
+
+    //---- states ----
+    @borderColor: #777;
+    @hoverColor: #555;
+    @activeColor: #aaa;
+    @activeBg: #777;
+    @selectedBg: #333;
+    @disabledColor: #999;
+    @selectedBorderColor: white;
+
+    body { background: @bodyBackground; font-family: @fontFamily; font-size: @fontSize;
+        touch-action: none; overflow: hidden; -webkit-touch-callout: none;
+        user-select: none;
+    }
+
+    .noselect {
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
+
+    /* hide selection of HTML elements (since we cannot prevent it). */
+    ::selection { background: transparent;color:inherit; }
+    ::-moz-selection { background: transparent;color:inherit; }
+
+    /* enable selection of TEXT BOX element. */
+    input[type=text]::selection { background: gray; color: inherit; }
+
+
+    //---- LABEL (non-clickable text) ----
+    .label { color: @labelColor; }
+
+    //---- BASE CLICKABLE TEXT (used in other controls) ----
+    .baseText
+    {
+        .noselect;
+        color: @clickColor;
+        background-color: none;
+        border: 1px solid @borderColor;
+        cursor: pointer;
+        padding-left: 5px; padding-right: 5px; padding-top: 0; padding-bottom: 0;
+    }
+
+    //---- TEXT BUTTON (standalone clickable text) ----
+    .textButtonEx
+    {
+        .baseText;
+
+        &:hover { background: @hoverColor; }
+        &:active { color: @activeColor; background: @activeBg; }
+        &[data-disabled=true] { color: @disabledColor; background: @background; cursor: default; font-style: italic;  border: 1px solid @background; }
+        &[data-selected=true] { border: 1px solid @selectedBorderColor;}
+    }
+
+
+    //---- SELECTED TEXT BUTTON (clickable text in a selected row (of details panel)) ----
+    .selectedtextButtonEx
+    {
+        .baseText; background-color: transparent;
+
+        &:hover { background: black; }
+        &:active { color: @activeColor; background: black; }
+        &[data-disabled=true] { color: @disabledColor; background: @background; cursor: default; font-style: italic;  border: 0;}
+        &[data-selected=true] { border: 1px solid @selectedBorderColor;}
+    }
+
+    //---- CLICKABLE ICON (standalone) ----
+    .clickIconEx { .textButtonEx; border: 0; background: none; padding: 3px; width: 40px;}
+
+    //---- TEXT/CHEVRON: PAIR ----
+    .textChevronPair { .textButtonEx; border: 0; padding-bottom: 4px;  }
+    //---- TEXT/CHEVRON: TEXT ----
+    .clickTextInChevron { .baseText; border: 0; background: none  }
+    //---- TEXT/CHEVRON: CHEVRON ----
+    .chevron { background: 1px solid red}
+
+
+    //---- PANEL BUTTON (would be simpler if "pointer-events: none" were working in IE) ----
+    .panelButton { .textButtonEx;  min-width: 20px; min-height: 21px; text-align: center; height: 26px; display: inline-block; padding-top: 4px; }
+    .panelButtonText { .textButtonEx; border: 0; background: none; }
+
+    .chevron-background {
+        @backgroundWidth: 8px;
+        @backgroundHeight: 6px;
+
+        width: @backgroundWidth;
+        height: @backgroundHeight;
+
+        background-image: data-uri("../images/sandDance/smallChevron3.png");
+        background-size: @backgroundWidth, @backgroundHeight;
+    }
+
+    .fnAdjustDial {
+        @width: 40px;
+
+        width: @width;
+
+
+    }
+
+    .fnAdjustDialLeft {
+        background-image: data-uri("../images/sandDance/general_adjusterDial_left.svg");
+    }
+
+    .fnAdjustDialTop {
+        background-image: data-uri("../images/sandDance/general_adjusterDial_top.svg");
+    }
+
+    .fnAdjustDialRight {
+        background-image: data-uri("../images/sandDance/general_adjusterDial_right.svg");
+    }
+
+    .fnAdjustDialBottom {
+        background-image: data-uri("../images/sandDance/general_adjusterDial_bottom.svg");
+    }
+
+    .listColorPalette,
+    .listColorPaletteItem,
+    .listColorPaletteEntry,
+    .listColorPaletteGradient {
+        height: 12px;
+    }
+
+    .listColorPaletteItem {
+        width: 225px;
+    }
+
+    .listColorPalette {
+        width: 175px;
+        display: inline-block;
+    }
+
+    .listColorPaletteName {
+        position: relative;
+        top: -4px;
+    }
+
+    #rightPanel {
+        border: 0 solid green;
+        width: 160px;
+        right: 2px;
+        top: 2px;
+        position: absolute;
+        background: none;
+        overflow-y: auto;
+        overflow-x:visible;
+        z-index: 1;
+        display: none
+    }
+
+    #bottomPanel {
+        position: absolute;
+        border: 0px solid red;
+        bottom: 20px;
+        height: 60px;
+
+        #xStuff {
+            top: 10px;
+            left: 49%;
+            max-width: 100px;
+            max-height: 40px;
+            position: relative;
+            border: 0 solid yellow;
+        }
+    }
+
+    .fnPinDown {
+        background-image: data-uri("../images/sandDance/pinDown.png");
+    }
+
+    .fnPinLeft {
+        @elementSize: 15px;
+
+        width: @elementSize;
+        height: @elementSize;
+
+        background-image: data-uri("../images/sandDance/pinLeft.png");
+        background-size: @elementSize @elementSize;
+    }
+
+    .fnClose {
+        background-image: data-uri("../images/sandDance/colorPanel_close.png");
+    }
+
+    .fnIconBarUndo {
+        background-image: data-uri("../images/sandDance/iconBar_undo.png");
+    }
+
+    .fnIconBarRedo {
+        background-image: data-uri("../images/sandDance/iconBar_redo.png");
+    }
+
+    .fnIconBarToggleInsightNorm {
+        background-image: data-uri("../images/sandDance/insightPanel_fullInsight_white.png");
+    }
+
+    .fnIconBarPlay {
+        background-image: data-uri("../images/sandDance/iconBar_play.png");
+    }
+
+    .fnIconBarToggle3dNorm {
+        background-image: data-uri("../images/sandDance/iconBar_toggle3D_white.png");
+    }
+
+    .fnSelectionNormal {
+        background-image: data-uri("../images/sandDance/selectionModePanel_normal_white.png");
+    }
+
+    .fnIconBarNewView {
+        background-image: data-uri("../images/sandDance/iconBar_newView.png");
+    }
+
+    .fnIconBarScrubber {
+        background-image: data-uri("../images/sandDance/iconBar_dataScrubber.png");
+    }
+
+    .fnIconBarIsolate {
+        background-image: data-uri("../images/sandDance/iconBar_isolateSelection.png");
+    }
+
+    .fnIconBarExclude {
+        background-image: data-uri("../images/sandDance/iconBar_excludeSelection.png");
+    }
+
+    .fnIconBarReset {
+        background-image: data-uri("../images/sandDance/iconBar_reset.png");
+    }
+
+    .fnIconBarDetails {
+        background-image: data-uri("../images/sandDance/iconBar_details.png");
+    }
+
+    .fnIconBarSnapshot {
+        background-image: data-uri("../images/sandDance/iconBar_snapshot.png");
+    }
+
+    .fnIconBarDataTip {
+        background-image: data-uri("../images/sandDance/iconBar_toolTip_alternate01.png");
+    }
+
+    .fnInsightCreate {
+        background-image: data-uri("../images/sandDance/insightPanel_createNewInsight.png");
+    }
+
+    .fnInsightMenu {
+        background-image: data-uri("../images/sandDance/insightPanel_insightMenuBars.png");
+    }
+
+    .fnIconBarSlicer {
+        background-image: data-uri("../images/sandDance/iconBar_dataSlicer.png");
+    }
+
+    .fnIconBarToggle3dSelect {
+        background-image: data-uri("../images/sandDance/iconBar_toggle3D_black.png");
+    }
+
+    .fnSelectionUnite {
+        background-image: data-uri("../images/sandDance/selectionModePanel_unite_white.png");
+    }
+
+    .fnSelectionSubtract {
+        background-image: data-uri("../images/sandDance/selectionModePanel_subtract_white.png");
+    }
+
+    .fnSelectionIntersect {
+        background-image: data-uri("../images/sandDance/selectionModePanel_intersect_white.png");
+    }
+
+    .fnDragDataTip {
+        background-image: data-uri("../images/sandDance/iconBar_toolTip_alternate01c.png");
+    }
+
+    .fnIconBarToggleInsightSelect {
+        background-image: data-uri("../images/sandDance/insightPanel_fullInsight_black.png");
+    }
+
+    .fnInsightFull {
+        background-image: data-uri("../images/sandDance/insightPanel_fullInsight.png");
+    }
+
+    .fnInsightData {
+        background-image: data-uri("../images/sandDance/insightPanel_dataOnly.png");
+    }
+
+    .fnInsightView {
+          background-image: data-uri("../images/sandDance/insightPanel_viewOnly.png");
+    }
+
+    .fnInsightSelection {
+        background-image: data-uri("../images/sandDance/insightPanel_selectionOnly.png");
+    }
+
+    .fnInsightFilter {
+        background-image: data-uri("../images/sandDance/insightPanel_filterOnly.png");
+    }
+}

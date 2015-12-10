@@ -35,8 +35,7 @@ module powerbi.visuals.sampleDataViews {
         public name: string = "SimpleTableData";
         public displayName: string = "Simple table data";
 
-        public visuals: string[] = ['table',
-        ];
+        public visuals: string[] = [ 'table' ];
 
         public getDataViews(): DataView[] {
             var dataTypeNumber = ValueType.fromPrimitiveTypeAndCategory(PrimitiveType.Double);

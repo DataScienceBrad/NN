@@ -207,6 +207,8 @@
 
 /// <reference path="visuals/samples/histogram.ts"/>
 
+/// <reference path="visuals/samples/sandDance/sandDance.ts"/>
+
 /// <reference path="visuals/scriptVisual.ts"/>
 
 /// <reference path="plugins.ts"/>

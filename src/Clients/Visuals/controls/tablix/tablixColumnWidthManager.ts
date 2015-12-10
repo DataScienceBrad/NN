@@ -62,7 +62,7 @@ module powerbi.visuals.controls {
             this.isMatrix = isMatrix;
             this.suppressNotification = false;
             this.currentPersistedWidths = [];
-            this.visualObjectInstancesToPersist = [];
+            this.visualObjectInstancesToPersist = {};
             this.callHostPersistProperties = false;
             this.dataViewUpdated = false;
         }

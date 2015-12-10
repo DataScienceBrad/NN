@@ -69,14 +69,21 @@ var jsUglifyOptions = {
 var internalsPaths = [
     "src/Clients/VisualsCommon/obj/VisualsCommon.js",
     "src/Clients/VisualsData/obj/VisualsData.js",
-    "src/Clients/Visuals/obj/Visuals.js"];
+    "src/Clients/Visuals/obj/Visuals.js"
+];
+
 var externalsPath = [
     "src/Clients/Externals/ThirdPartyIP/JQuery/2.1.3/jquery.min.js",
     "src/Clients/Externals/ThirdPartyIP/D3/d3.min.js",
     "src/Clients/Externals/ThirdPartyIP/LoDash/lodash.min.js",
     "src/Clients/Externals/ThirdPartyIP/GlobalizeJS/globalize.min.js",
     "src/Clients/Externals/ThirdPartyIP/GlobalizeJS/globalize.culture.en-US.js",
-    "src/Clients/Externals/ThirdPartyIP/jqueryui/1.11.4/jquery-ui.min.js"];
+    "src/Clients/Externals/ThirdPartyIP/jqueryui/1.11.4/jquery-ui.min.js",
+    "src/Clients/Externals/ThirdPartyIP/three/three-r69-min.js",
+    "src/Clients/Externals/ThirdPartyIP/hammer/hammer-204.min.js",
+    "src/Clients/Externals/ThirdPartyIP/mat4x/mat4x.js",
+    "src/Clients/Externals/vuePlotCore/vuePlotCore.js"
+];
 
 module.exports.load = function (options) {
     var isRelease = Boolean(cliParser.cliOptions.release);
@@ -223,9 +230,13 @@ module.exports.load = function (options) {
     function buildVisualsProjectLess() {
         var css = gulp.src([
                 "src/Clients/Externals/ThirdPartyIP/jqueryui/1.11.4/jquery-ui.min.css",
-                "src/Clients/Visuals/styles/visuals.less"])
-            .pipe(less())
+                "src/Clients/Visuals/styles/visuals.less"
+            ])
+            .pipe(less({
+                ieCompat: false
+            }))
             .pipe(concat("visuals.css"));
+
         if (isRelease) {
             css = css.pipe(minifyCSS());
         }

@@ -47,6 +47,7 @@
 /// <reference path="sampleDataViews/calenderData.ts"/>
 /// <reference path="sampleDataViews/SimpleTreeData.ts"/>
 /// <reference path="sampleDataViews/SimpleHistogramData.ts"/>
+/// <reference path="sampleDataViews/SandDanceData.ts" />
 /// <reference path="sampleData.ts"/>
 /// <reference path="hostControls.ts"/>
 /// <reference path="app.ts"/>

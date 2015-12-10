@@ -358,4 +358,10 @@ module powerbi.visuals.plugins {
         capabilities: samples.Timeline.capabilities,
         create: () => new samples.Timeline()
     };
+
+    export var sandDance: IVisualPlugin = {
+        name: 'sandDance',
+        capabilities: samples.SandDance.capabilities,
+        create: () => new samples.SandDance()
+    };
 }

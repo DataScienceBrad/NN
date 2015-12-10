@@ -348,6 +348,8 @@ module powerbi.visuals {
             createPlugin(plugins, powerbi.visuals.plugins.areaRangeChart, () => new samples.AreaRangeChart({
                 animator: new BaseAnimator()
             }));
+            // SandDance
+            createPlugin(plugins, powerbi.visuals.plugins.sandDance, () => new samples.SandDance());
 
             if (scriptVisualEnabled) {
             // Radar Chart

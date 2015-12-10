@@ -556,7 +556,7 @@ module powerbi.visuals {
                 dataPoints: [],
                 legendData: { dataPoints: [] },
                 axesLabels: { x: '', y: '' },
-                sizeRange: [],
+                sizeRange: {},
                 dataLabelsSettings: dataLabelUtils.getDefaultPointLabelSettings(),
                 defaultDataPointColor: null,
                 hasDynamicSeries: false,
