@@ -27,7 +27,7 @@ module beachParty
         private _transformMgr: transformMgrClass; 
         private _isMouseDown = false;
         private _hammertime = null;
-        private _showWheelDuringTransformMode = false;
+        private _showWheelDuringTransformMode = true;
 
         //---- event handling ----
         _isTouchEnabled = true;
@@ -199,7 +199,7 @@ module beachParty
             }
 
             this._areTransformsEnabled = value;
-            this._transformWheel.isActive(value && this._showWheelDuringTransformMode);
+            this._transformWheel.isActive(value/* && this._showWheelDuringTransformMode*/);
 
             if (this._hammertime)
             {
@@ -922,7 +922,7 @@ module beachParty
 
             if (this._areTransformsEnabled) 
             {
-                this._transformWheel.show(this._showWheelDuringTransformMode);
+                this._transformWheel.show(this._showWheelDuringTransformMode || true);
 
                 //---- one-use wheel ----
                 //this.areTransformsEnabled(false);

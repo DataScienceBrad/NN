@@ -175,7 +175,7 @@ module beachPartyApp
                 if (rcBand)
                 {
                     //---- adjust rcBand so that it is relative to "myChart" ----
-                    var rc = vp.select("#myChart").getBounds(true);
+                    var rc = vp.select("#myChart").getBounds(false);
                     var rcBandAdj = vp.geom.createRect(rcBand.left - rc.left, rcBand.top - rc.top, rcBand.width, rcBand.height);
 
                     var sd = new SelectionDesc();

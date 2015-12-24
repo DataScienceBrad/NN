@@ -41,7 +41,15 @@ module beachPartyApp
                 popupMenuClass.addItem(holderW, info, indexes, hideAfterCallback, callback, (e) => this.close(), iconWidth);
             }
 
-            vp.select(".sandDance").append(rootW[0]);
+            let currentOwnerElement: vp.dom.IWrapperOuter = null;
+
+            if (ownerElem) {
+                currentOwnerElement = vp.select(ownerElem);
+            } else {
+                currentOwnerElement = vp.select(".sandDance");
+            }
+
+            currentOwnerElement.append(rootW[0]);
 
             // document.body.appendChild(rootW[0]);
 

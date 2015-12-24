@@ -55,21 +55,23 @@ module beachPartyApp
             var recordTextW = barW.append("span")
                 .addClass("rvRecordText")
 
-            barW.append("img")
+            barW.append("div")// img
                 .addClass("rvImgButton")
+                .addClass("prevPng")
                 .css("position", "relative")
                 .css("margin-left", "30px")
                 .css("top", "6px")
-                .attr("src", "images/prev.png")
+                // .attr("src", "images/prev.png")
                 .title("View the next record")
                 .attach("click", (e) => this.goto(this._selectionIndex - 1))
 
-            barW.append("img")
+            barW.append("div")// img
                 .addClass("rvImgButton")
+                .addClass("nextPng")
                 .css("position", "relative")
                 .css("mnargin-left", "20px")
                 .css("top", "6px")
-                .attr("src", "images/next.png")
+                // .attr("src", "images/next.png")
                 .title("View the previous record")
                 .attach("click", (e) => this.goto(this._selectionIndex + 1))
 

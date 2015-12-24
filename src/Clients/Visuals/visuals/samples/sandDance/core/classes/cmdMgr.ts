@@ -344,7 +344,7 @@ module beachParty
                 }
                 else if (cmd == "showwheelduringtransformmode")
                 {
-                    windowMgr.showWheelDuringTransformMode(boolParam);
+                    //windowMgr.showWheelDuringTransformMode(boolParam);
                 }
                 else if (cmd == "setmaxitemcount")
                 {

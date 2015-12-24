@@ -1154,7 +1154,7 @@
     }
 
     .clickIcon:active {
-        background: #333;
+        background-color: #333;
     }
 
     .clickIcon[data-selected=true] {
@@ -1181,17 +1181,8 @@
         background-size: @backgroundWidth @backgroundHeight;
     }
 
-    #xPanelPanel {
-        #imgPin {
-            // background-image: data-uri("../images/sandDance/pinLeft.png");
-            height: 15px;
-            width: 15px;
-            position: relative;
-        }
-    }
-
     .closeButton {
-        @elementSize: 22px;
+        @elementSize: 20px;
 
         width: @elementSize !important;
         height: @elementSize !important;
@@ -1227,8 +1218,15 @@
     .insightBg:hover {background: rgb(56, 53, 50);}
 
     /*---- POPUP MENU ----*/
-    .popupMenu { background: black; border: 1px solid #555; padding-top: 3px; padding-bottom: 3px; z-index: 2001;
-                border-top: 1px solid #aaa; border-bottom: 1px solid #aaa; }
+    .popupMenu {
+        background: black;
+        border: 1px solid #555;
+        padding-top: 3px;
+        padding-bottom: 3px;
+        z-index: 2001;
+        border-top: 1px solid #aaa;
+        border-bottom: 1px solid #aaa;
+    }
 
     /*---- POPUP MENU ITEM ----*/
     .popupMenuItemHolder {
@@ -1469,13 +1467,16 @@
     }
 
     .fnPinLeft {
+        background-image: data-uri("../images/sandDance/pinLeft.png");
+    }
+
+    .fnPinDown, .fnPinLeft {
         @elementSize: 15px;
 
-        width: @elementSize;
-        height: @elementSize;
+        width: @elementSize !important;
+        height: @elementSize !important;
 
-        background-image: data-uri("../images/sandDance/pinLeft.png");
-        background-size: @elementSize @elementSize;
+        background-size: @elementSize @elementSize !important;
     }
 
     .fnClose {
@@ -1592,5 +1593,35 @@
 
     .fnInsightFilter {
         background-image: data-uri("../images/sandDance/insightPanel_filterOnly.png");
+    }
+
+    .resize2 {
+        @elementSize: 9px;
+
+        width: @elementSize;
+        height: @elementSize;
+
+        background-image: data-uri("../images/sandDance/resize2.png");
+        background-size: @elementSize @elementSize;
+    }
+
+    .prevPng {
+        background-image: data-uri("../images/sandDance/prev.png");
+    }
+
+    .nextPng {
+        background-image: data-uri("../images/sandDance/next.png");
+    }
+
+    .prevPng, .nextPng {
+        @elementWidth: 27px;
+        @elementHeight: 26px;
+
+        width: @elementWidth;
+        height: @elementHeight;
+
+        background-size: @elementWidth @elementHeight;
+
+        display: inline-block;
     }
 }

@@ -81,7 +81,7 @@ module beachParty
             hBar.attach("pointerdown", (e) => this.onPartMouseDown(e, "hBar"));
             vBar.attach("pointerdown", (e) => this.onPartMouseDown(e, "vBar"));
 
-            circle.attach("mouseup", (e) => this.onPartMouseUp(e, "circle"));
+            circle.attach("mouseup", (e) => {this.onPartMouseUp(e, "circle")});
             hBar.attach("mouseup", (e) => this.onPartMouseUp(e, "hBar"));
             vBar.attach("mouseup", (e) => this.onPartMouseUp(e, "vBar"));
 

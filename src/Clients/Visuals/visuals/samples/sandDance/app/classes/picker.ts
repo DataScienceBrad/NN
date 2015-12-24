@@ -61,7 +61,7 @@ module beachPartyApp
                 .css("cursor", "pointer")
 
             //---- add dropdown CHEVRON icon ----
-            var chevronW = divW.append("img")
+            var chevronW = divW.append("div")
                 // .attr("src", "Images/smallChevron3.png")
                 .addClass("chevron-background")
                 .css("margin-left", "4px")

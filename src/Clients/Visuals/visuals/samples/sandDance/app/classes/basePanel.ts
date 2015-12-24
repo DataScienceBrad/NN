@@ -66,6 +66,7 @@ module beachPartyApp
 
                     var imgPinW = btHolderW.append("div")//images/pinLeft.png
                         .addClass("clickIcon")
+                        .addClass("fnPinLeft")
                         .id("imgPin")
                         //.attr("src", fnPinLeft)
                         // .css("width", "15px")
@@ -196,9 +197,10 @@ module beachPartyApp
         createResizer(rootW)
         {
             //---- add RESIZE icon as affordance ----
-            var imgW = rootW.append("img")
+            var imgW = rootW.append("div")// img
                 .addClass("panelResizer")
-                .attr("src", "images/resize2.png")
+                .addClass("resize2")
+                // .attr("src", "images/resize2.png")
                 .css("position", "absolute")
                 .css("right", "0px")
                 .css("bottom", "0px")
@@ -209,7 +211,7 @@ module beachPartyApp
             imgW
                 .attach("mousedown", (e) =>
                 {
-                    this._ptDown = vp.events.mousePosition(e, this._root);
+                    this._ptDown = vp.events.mousePosition(e/*, this._root*/);
                     this._resizeTarget = (this._primaryControl) ? this._primaryControl.getRootElem() : this._root;
                     this._sizeAtMouseDown = vp.dom.getBounds(this._resizeTarget);
                     this._isResizing = true;
@@ -343,17 +345,18 @@ module beachPartyApp
 
         onMouseDown(e)
         {
-            this._ptDown = vp.events.mousePosition(e, this._root);
+            this._ptDown = vp.events.mousePosition(e/*, this._root*/);
             this._isDragging = true;
 
-            vp.events.setCapture(document.body, e, this._onMouseMoveFunc, this._onMouseUpFunc);
+            vp.events.setCapture(/*document.body*/this._root, e, this._onMouseMoveFunc, this._onMouseUpFunc);
         }
 
         onMouseMove(e)
         {
             if (this._isDragging)
             {
-                var pt = vp.events.mousePosition(e);
+                var pt = vp.events.mousePosition(e/*, this._root*/);
+                
                 var x = pt.x - this._ptDown.x;
                 var y = pt.y - this._ptDown.y;
 
@@ -370,7 +373,7 @@ module beachPartyApp
         onMouseUp(e)
         {
             this._isDragging = false;
-            vp.events.releaseCapture(document.body, e, this._onMouseMoveFunc, this._onMouseUpFunc);
+            vp.events.setCapture(/*document.body*/this._root, e, this._onMouseMoveFunc, this._onMouseUpFunc);
         }
 
         //---- override basePopup onKey handling ----

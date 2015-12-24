@@ -481,9 +481,10 @@ module powerbi.visuals.samples {
             this.updateElements();
 
             this.application.update(this.viewport.width, this.viewport.height);
-            //this.coreApplication.layoutWindow();
 
-            this.application.updateDataView(dataView.data);
+            if (JSON.stringify(this.dataView) !== JSON.stringify(dataView)) {
+                this.application.updateDataView(dataView.data);
+            }
 
             this.dataView = dataView;
         }

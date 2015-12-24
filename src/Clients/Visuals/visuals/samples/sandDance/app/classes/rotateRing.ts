@@ -10,7 +10,7 @@ module beachPartyApp
     export class rotateRingClass 
     {
         _root: HTMLDivElement;
-        _fullOpacity = "1";
+        _fullOpacity = "0";//"1"
         //_radius = 0;               // size of 3D transform center
         _pulseInterval = 5000;
         _pulseTimer = null;

@@ -1243,16 +1243,10 @@ module beachPartyApp
             if (picker)
             {
                 var rcChevron = chevronW.getBounds(true),
-                    pickerElem = picker.getRootElem(),
-                    rcPicker = vp.select(pickerElem).getBounds(true);
-
-                let ownerElementBounds = vp.select(picker._ownerElem).getBounds(true);
-
-                //---- right align picker with right of text/chevon box ----
-                var x = ownerElementBounds.left + rcChevron.right;
+                    buttonBounds = vp.select(chevronW, ".panelButton").getBounds(true);
 
                 //---- ENUM PICKERS seem to need this adjustment - does this break anything else? ----
-                picker.openWithoutOverlap(x + 2, ownerElementBounds.top + rcChevron.bottom + 5);
+                picker.openWithoutOverlap(rcChevron.width - buttonBounds.width, rcChevron.bottom, false);
             }
         }
 
@@ -1430,13 +1424,13 @@ module beachPartyApp
         if (left === undefined && right === undefined)
         {
             //---- center horizontally ----
-            left = window.innerWidth / 2 - rc.width / 2;
+            left = vp.select(".sandDance").element().innerWidth / 2 - rc.width / 2;
         }
 
         if (top === undefined && bottom === undefined)
         {
             //---- center vertically ----
-            top = window.innerHeight / 2 - rc.height / 2;
+            top = vp.select(".sandDance").element().innerHeight / 2 - rc.height / 2;
         }
 
         if (openPanel)

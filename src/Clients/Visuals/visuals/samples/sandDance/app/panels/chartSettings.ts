@@ -13,7 +13,6 @@ module sandDance {
                 { col: 1, colorPicker: "Shape color:", tip: "Sets the shape color (used when color is not mapped to a column) ", dataName: "shapeColor" },
                 { col: 1, shapePicker: "Shape image:", tip: "Sets the image used to draw shapes", dataName: "shapeImage" },
 
-                { emptyRow: true },
                 { prompt: "Layouts:", tip: "Change layout settings" },
                 { col: 1, numAdjuster: "Shape separation:", tip: "Adjust the separation factor used in layout-style views", min: 0, max: 5, dataName: "separationFactor", newCol: true },
                 {
@@ -21,7 +20,6 @@ module sandDance {
                     dataName: "zBins", newCol: true, roundValues: true,
                 },
 
-                { emptyRow: true },
                 { prompt: "Other:", tip: "Change other chart settings" },
                 { col: 1, checkbox: "X gridlines", tip: "Show the vertical gridlines associated with the X axis", dataName: "showXGridLines" },
                 { col: 1, checkbox: "Y gridlines", tip: "Show the vertical gridlines associated with the Y axis", dataName: "showYGridLines" },

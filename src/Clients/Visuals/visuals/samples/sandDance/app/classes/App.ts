@@ -920,9 +920,10 @@ module beachPartyApp
 
             this.createIconTextPair(trW, "toggleTransformMode", "wheel", "Toggle the 3D tranform mode on/off", "fnIconBarToggle3dNorm", "Transform");
             this.createIconTextPair(trW, "onSelectClick", "select", "Change the selection mode", "fnSelectionNormal", "Selection");
-            this.createSpacer(trW);
+            // this.createSpacer(trW);
 
-            this.createIconTextPair(trW, "onAddView", "addView", "Open a new SandDance browser tab/window", "fnIconBarNewView", "View", false);
+            // this.createIconTextPair(trW, "onAddView", "addView", "Open a new SandDance browser tab/window", "fnIconBarNewView", "View", false);
+
             this.createIconTextPair(trW, "onOpenScrubber", "scrub", "Open the data scrubber dialog", "fnIconBarScrubber", "Scrub", false);
             this.createSpacer(trW);
 
@@ -932,8 +933,11 @@ module beachPartyApp
             this.createSpacer(trW);
 
             this.createIconTextPair(trW, "onDetailsClick", "details", "Show details of the selected items", "fnIconBarDetails", "Details", false, true);
-            this.createIconTextPair(trW, "onSnapshotClick", "snapshot", "Download snapshot of page", "fnIconBarSnapshot", "Snapshot");
-            this.createSpacer(trW);
+
+            // Snapshot doesn't work because we don't have support in current browsers. It supports only IE.
+            // this.createIconTextPair(trW, "onSnapshotClick", "snapshot", "Download snapshot of page", "fnIconBarSnapshot", "Snapshot");
+
+            // this.createSpacer(trW);
 
             if (false)
             {
@@ -1001,7 +1005,7 @@ module beachPartyApp
             items.push(new MenuItemData("Subtract", "The new selection is subtracted from the previous selection", "fnSelectionSubtract"));
             items.push(new MenuItemData("Intersect", "Selects the intersection of the new and previous selections", "fnSelectionIntersect"));
 
-            var picker = this.createGeneralPicker("selectButton", "selectionMode", items, (mid: MenuItemData) =>
+            var picker = this.createGeneralPicker("selectButton", "selectionMode", items, (mid: MenuItemData, columns) =>
             {
                 var selectName = mid.text;
 
@@ -1024,19 +1028,26 @@ module beachPartyApp
 
                 this._selectionMode = mode;
 
-                this.onSelectionModeChanged(mid.iconSrc);
+                this.onSelectionModeChanged(mid.iconSrc, columns.map((item) => {
+                    return item.iconSrc;
+                }));
 
             });
 
             if (picker)
             {
                 var rc = vp.select("#selectButton").getBounds(true);
+                let sandDanceBounds = vp.select(".sandDance").getBounds(true),
+                    bigBarBounds = vp.select("#playAndIconBar").getBounds(true);
+
+                rc.left -= sandDanceBounds.left;//TODO: remove this hard fix.
+                rc.bottom -= sandDanceBounds.top + bigBarBounds.bottom;
 
                 picker.show(rc.left, rc.bottom);
             }
         }
 
-        onSelectionModeChanged(imgSrc: string)
+        onSelectionModeChanged(imgSrc: string, imgSources: string[] = [])
         {
             //---- update the selection button to reflect the new mode ----
             var isSelected = (imgSrc != "fnSelectionNormal");
@@ -1046,12 +1057,16 @@ module beachPartyApp
                 imgSrc = imgSrc.replace("white", "black");
             }
 
-            vp.select("#selectImg")
-                .addClass(imgSrc);
+            let element = vp.select("#selectImg");
+
+            imgSources.forEach((srcClass) => {
+                element.removeClass(srcClass);
+            });
+
+            element.addClass(imgSrc);
 
             //---- don't enable this until we have the negative selectionMode icons ----
-            vp.select("#selectImg")
-                .attr("data-selected", (isSelected) ? "true" : "false")
+            element.attr("data-selected", (isSelected) ? "true" : "false")
 
         }
 
@@ -1420,6 +1435,24 @@ module beachPartyApp
 
             //---- CHART OPTIONS ----
             this.addBigBarEntry(trW, "bbChart", "Chart Options", "Open the Chart Options panel", (e) => this.onChartOptionsClick(e), true, true);
+
+            //---- SPAVER ----
+            this.addBigBarSpacer(trW);
+
+            //---- SPAVER ----
+            this.addBigBarSpacer(trW);
+
+            //---- SPAVER ----
+            this.addBigBarSpacer(trW);
+
+            //---- SPAVER ----
+            this.addBigBarSpacer(trW);
+
+            //---- SPAVER ----
+            this.addBigBarSpacer(trW);
+
+            //---- SPAVER ----
+            this.addBigBarSpacer(trW);
         }
 
         onSelectionClick(e)
@@ -4169,23 +4202,6 @@ module beachPartyApp
             this.toggleDetailsPanel(e);
         }
 
-        //takeWebPageSnapshot(e)
-        //{
-        //    var url = window.location.href;
-        //    var firstChar = (url.contains("?") ? "&" : "?");
-
-        //    url += firstChar + "animate=false&persistChanges=false&zoom=1.0";
-
-        //    this._bpsHelper.renderWebPageToPng(url, window.innerWidth, window.innerHeight, 10 * 1000, (msgBlock) =>
-        //    {
-        //        var png64 = msgBlock.data;
-        //        //png64 = png64.substr(png64.indexOf(',') + 1);
-
-        //        localFileHelper.saveBase64ToLocalFile("snapshot-" + appClass.nextSnapShotNum + ".png", png64);
-        //        appClass.nextSnapShotNum++;
-        //    });
-        //}
-
         imgUrlToBlob(url: string, callback)
         {
             var img = new Image();
@@ -4199,7 +4215,12 @@ module beachPartyApp
                 var ctx = canvas.getContext("2d");
                 ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, img.width, img.height);
 
-                var blob = canvas.msToBlob();
+                var blob = null;
+
+                if (canvas.msToBlob) {
+                    blob = canvas.msToBlob();
+                }
+
                 callback(blob);
             };
 
@@ -4262,7 +4283,7 @@ module beachPartyApp
 
         openDetailsPanel()
         {
-            var rc = vp.select("#detailsButton").getBounds(false);
+            var rc = vp.select("#detailsButton").getBounds(true);
             var left = rc.left;
             var top = rc.bottom;
 
@@ -5164,7 +5185,7 @@ module beachPartyApp
                 pm = new popupMenuClass(openerIds, "generalColPicker", colItems, (e, menu, textIndex, menuIndex) =>
                 {
                     var mid = <MenuItemData>colItems[menuIndex];
-                    callback(mid);
+                    callback(mid, colItems);
                 }, undefined, undefined, verticalMargin, iconWidth, ownerElem);
             }
 

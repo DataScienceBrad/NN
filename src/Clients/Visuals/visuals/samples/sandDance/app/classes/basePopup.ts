@@ -72,7 +72,7 @@ module beachPartyApp
         }
 
         /** Open the specified panel so that it is near x,y but not overlapping with any of the 4 window edges. */
-        openWithoutOverlap(x: number, yTop: number)
+        openWithoutOverlap(x: number, yTop: number, isOwnerRoot: boolean = true)
         {
             var rootW = vp.select(this._root);
             var myHeight = rootW.height();
@@ -118,11 +118,13 @@ module beachPartyApp
                 }
             }
 
-            let sandDanceBounds = vp.select(".sandDance").getBounds(true),
-                bigBarBounds = vp.select("#playAndIconBar").getBounds(true);
+            if (isOwnerRoot) {
+                let sandDanceBounds = vp.select(".sandDance").getBounds(true),
+                    bigBarBounds = vp.select("#playAndIconBar").getBounds(true);
 
-            x += sandDanceBounds.left;//TODO: remove this hard fix.
-            yTop += sandDanceBounds.top + bigBarBounds.bottom;
+                x += sandDanceBounds.left;//TODO: remove this hard fix.
+                yTop += sandDanceBounds.top + bigBarBounds.bottom;
+            }
 
             rootW
                 .css("left", x + "px")
