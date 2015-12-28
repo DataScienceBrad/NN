@@ -569,9 +569,10 @@ module beachPartyApp
 
             //---- create a vertically-scrolling list ----
             var listW = tdW.append("div")
-                .css("overflow-y", "hidden")
+                // .css("overflow-y", "hidden")
                 .css("overflow-x", "hidden")
                 .addClass("customList")
+                .addClass("colorList")
                 .css("vertical-align", "top")
                 //.css("background", "yellow")
 
@@ -992,7 +993,7 @@ module beachPartyApp
                 this.setValue(propName, value);
 
                 this.onUserAction();
-            }, this._root);
+            }, this._root, chevronW);
 
             this.openPicker(picker, chevronW);
         }
@@ -1028,7 +1029,7 @@ module beachPartyApp
                 this.setValue(propName, lcValue);
 
                 this.onUserAction();
-            }, this._root);
+            }, this._root, chevronW);
 
             this.openPicker(picker, chevronW);
         }
@@ -1058,7 +1059,7 @@ module beachPartyApp
                 this.setValue(propName, text);
 
                 this.onUserAction();
-            }, this._root);
+            }, this._root, chevronW);
 
             this.openPicker(picker, chevronW);
         }
@@ -1083,8 +1084,12 @@ module beachPartyApp
                 }
             }
 
+            var buttonContainer = tdW
+                .append("div")
+                .addClass("buttonContainer");
+
             //---- create DROPDOWN BUTTON to hold text and chevron ----
-            var ddButton = tdW.append("span")
+            var ddButton = buttonContainer.append("span")
                 .addClass("panelButton")
                 .title(row.tip)
                 .css("cursor", "pointer")
@@ -1127,7 +1132,7 @@ module beachPartyApp
             ddButton
                 .attach("click", (e) =>
                 {
-                    onOpenCallback(row.dataName, ddText, /*chevronW*/rowW, e);
+                    onOpenCallback(row.dataName, ddText, /*chevronW*/buttonContainer, e);//rowW
                 })
 
 
@@ -1242,11 +1247,13 @@ module beachPartyApp
         {
             if (picker)
             {
-                var rcChevron = chevronW.getBounds(true),
-                    buttonBounds = vp.select(chevronW, ".panelButton").getBounds(true);
+                this.openWithoutPosition();
 
-                //---- ENUM PICKERS seem to need this adjustment - does this break anything else? ----
-                picker.openWithoutOverlap(rcChevron.width - buttonBounds.width, rcChevron.bottom, false);
+//                 var rcChevron = chevronW.getBounds(true),
+//                     buttonBounds = vp.select(chevronW, ".panelButton").getBounds(true);
+// 
+//                 //---- ENUM PICKERS seem to need this adjustment - does this break anything else? ----
+//                 picker.openWithoutOverlap(rcChevron.width - buttonBounds.width, rcChevron.bottom, false);
             }
         }
 

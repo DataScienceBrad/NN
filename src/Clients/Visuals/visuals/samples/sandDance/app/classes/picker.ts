@@ -180,17 +180,7 @@ module beachPartyApp
                 }, undefined, undefined, verticalMargin, iconWidth, this._parentElem);
             }
 
-            //---- open popup menu relative to chevron ----
-            var chevronW = vp.select(this._chevronElem);
-            var rcChevron = chevronW.getBounds(false);
-            var pickerElem = picker.getRootElem();
-            var rcPicker = vp.select(pickerElem).getBounds(false);
-
-            //---- right align picker with right of text/chevon box ----
-            var x = rcChevron.right + 4 - rcPicker.width;
-
-            //---- ENUM PICKERS seem to need this adjustment - does this break anything else? ----
-            picker.openWithoutOverlap(x + 2, rcChevron.bottom + 12);
+            picker.openWithoutPosition();
         }
 
     }

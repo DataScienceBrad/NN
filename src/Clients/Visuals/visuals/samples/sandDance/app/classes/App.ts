@@ -3640,7 +3640,7 @@ module beachPartyApp
             }
 
             var paletteCount = this._currentColorMapping.stepsRequested;
-            var entryWidth = (200 / paletteCount);      // - 1;
+            var entryWidth = (150 / paletteCount);      // - 1;
 
             if (showSteps)
             {
@@ -5055,7 +5055,7 @@ module beachPartyApp
             }
         }
 
-        createEnumPicker(enumType, callback, ownerElem?: HTMLElement)
+        createEnumPicker(enumType, callback, ownerElem?: HTMLElement, internalOwnerElement?: HTMLElement)
         {
             var pickerItems = vp.utils.keys(enumType);
 
@@ -5074,7 +5074,7 @@ module beachPartyApp
                 return (val == "separator") ? "-" : val;
             });
 
-            var picker = this.createGeneralPicker(null, "enumPicker", pickerItems, callback, undefined, undefined, ownerElem);
+            var picker = this.createGeneralPicker(null, "enumPicker", pickerItems, callback, undefined, undefined, ownerElem, internalOwnerElement);
 
             return picker;
         }
@@ -5142,7 +5142,7 @@ module beachPartyApp
             return listBox;
         }
 
-        createColorPicker(includeTransparent: boolean, callback, ownerElem?: HTMLElement)
+        createColorPicker(includeTransparent: boolean, callback, ownerElem?: HTMLElement, internalOwnerElement?: HTMLElement)
         {
             var colItems = ["beach blue", "black", "blue", "gray", "green", "orange", "purple", "red", "violet", "white", "yellow"];
 
@@ -5152,15 +5152,15 @@ module beachPartyApp
                 colItems.sort();
             }
 
-            var picker = this.createGeneralPicker(null, "colorPicker", colItems, callback, undefined, undefined, ownerElem);
+            var picker = this.createGeneralPicker(null, "colorPicker", colItems, callback, undefined, undefined, ownerElem, internalOwnerElement);
 
             return picker;
         }
 
-        createShapePicker(callback, ownerElem?: HTMLElement)
+        createShapePicker(callback, ownerElem?: HTMLElement, internalOwnerElement?: HTMLElement)
         {
             var colItems = ["none", "circle", "square", "triangle", "filled circle", "filled square", "filled triangle"];
-            var picker = this.createGeneralPicker(null, "shapePicker", colItems, callback, undefined, undefined, ownerElem);
+            var picker = this.createGeneralPicker(null, "shapePicker", colItems, callback, undefined, undefined, ownerElem, internalOwnerElement);
 
             return picker;
         }
@@ -5176,7 +5176,7 @@ module beachPartyApp
         }
 
         public createGeneralPicker(openerIds: string, name: string, colItems: any[], callback, verticalMargin = 0,
-            iconWidth?: number, ownerElem?: HTMLElement)
+            iconWidth?: number, ownerElem?: HTMLElement, internalOwnerElement?: HTMLElement)
         {
             var pm: popupMenuClass = null;
 
@@ -5186,7 +5186,7 @@ module beachPartyApp
                 {
                     var mid = <MenuItemData>colItems[menuIndex];
                     callback(mid, colItems);
-                }, undefined, undefined, verticalMargin, iconWidth, ownerElem);
+                }, undefined, undefined, verticalMargin, iconWidth, ownerElem, internalOwnerElement);
             }
 
             this._generalPicker = pm;

@@ -71,6 +71,15 @@ module beachPartyApp
             this.openWithoutOverlap(left, top);
         }
 
+        openWithoutPosition(): void {
+            var rootW = vp.select(this._root);
+
+            rootW[0].focus();
+
+            //---- set our button to "selected" state ----
+            this.setOpenerSelected(true);
+        }
+
         /** Open the specified panel so that it is near x,y but not overlapping with any of the 4 window edges. */
         openWithoutOverlap(x: number, yTop: number, isOwnerRoot: boolean = true)
         {

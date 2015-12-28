@@ -9,7 +9,7 @@ module sandDance {
             rows:
             [
                 //{ numAdjuster: "Bins:", tip: "Specifies the number of bins to create", min: 2, max: 999, roundValues: true, spreadLow: true, dataName: "zBins" },
-                { colPickerList: "", tip: "Sets column used to map the Z axis", dataName: "changeZMapping", marginTop: 10, marginRight: -48 },
+                { colPickerList: "", tip: "Sets column used to map the Z axis", dataName: "changeZMapping", marginTop: 10, marginRight: -40 },
             ]
         };
     }

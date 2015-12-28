@@ -6,7 +6,7 @@
 module sandDance {
     export module panels {
         export var color: any = {
-            width: 300,
+            // width: 300,
             tabs: [
                 {
                     tabName: "Column", tip: "Specifies which column is used for color mapping", rows:
@@ -32,12 +32,13 @@ module sandDance {
 
                         { checkbox: "Reversed", tip: "Reverses the order of the colors in the palette", dataName: "reverseColorPalette" },
                         { checkbox: "Continuous", tip: "Specifies that the color palette should be a continuous blend of its colors", dataName: "colorIsContinuous" },
+                        { enumPicker: "Spread:", tip: "Sets how the data is mapped to the color palette", dataName: "colorSpread", enumType: bps.MappingSpread, sameCol: true },
                         { numAdjuster: "Colors:", tip: "Specifies the number of steps in the color palette", min: 2, max: 12, roundValues: true, dataName: "colorSteps" },
 
-                        { emptyRow: true },
+                        // { emptyRow: true },
                         //{ col: 1, text: "Data type:", tip: "Type of data being mapped to color", dataName: "colorDataType", readOnly: true, capitalize: true },
                         { button: "Map with filter", tip: "Remap the current FILTERED-IN data to the speicifed color palette", dataName: "remapColorData" },
-                        { enumPicker: "Spread:", tip: "Sets how the data is mapped to the color palette", dataName: "colorSpread", enumType: bps.MappingSpread, sameCol: true },
+                        
                         //{ checkbox: "Force category", tip: "When set to true, forces column data to be treated as categorical data", dataName: "colorForceCategory" },
                     ]
                 },

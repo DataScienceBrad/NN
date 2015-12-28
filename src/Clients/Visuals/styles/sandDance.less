@@ -444,13 +444,20 @@
 
     .promptText { color: white;  }
 
-    .editText { color: white; border: 1px solid black; background: black; font-family: Calibri; font-size: 16px;
+    .editText {
+        color: white;
+        border: 1px solid black;
+        background: black;
+        font-family: Calibri;
+        font-size: 16px;
     }
 
-    .editText:focus { border: 1px solid white;
+    .editText:focus {
+        border: 1px solid white;
     }
 
-    .binsHolder { opacity: .86;
+    .binsHolder {
+        opacity: .86;
     }
 
     #yText {
@@ -512,7 +519,12 @@
         cursor: pointer;
     }
 
-    .numAdjusterLine { height: 2px; background-color: white; text-align: center; opacity: .83; z-index: 2999;
+    .numAdjusterLine {
+        height: 2px;
+        background-color: white;
+        text-align: center;
+        opacity: .83;
+        z-index: 2999;
     }
 
     .legend { padding: 5px; display: inline-block; border: 0px solid #555; width: 120px; margin-left: 6px;
@@ -581,19 +593,37 @@
     .listColorPaletteName { color: white; opacity: .85; margin: 4px;
     }
 
-    .listColorPaletteNameSelected { color: black; background: white;
+    .listColorPaletteNameSelected {
+        color: black;
+        background: white;
     }
 
-    .listColorPalette { border: 1px solid black;
+    .listColorPalette {
+        border: 1px solid black;
     }
 
-    .listColorPaletteGradient { border: 0px solid black; display: inline-block;
+    .listColorPaletteGradient {
+        border: 0px solid black;
+        display: inline-block;
     }
 
-    .customList { margin: 10px;
+    .customList {
+        margin: 10px;
     }
 
-    .listColorPaletteEntry { border-right: 0px solid black; display: inline-block; white-space: nowrap;
+    .colorList {
+        max-height: 60px;
+        overflow-y: auto;
+    }
+
+    .buttonContainer {
+        display: inline-block;
+    }
+
+    .listColorPaletteEntry {
+        border-right: 0px solid black;
+        display: inline-block;
+        white-space: nowrap;
     }
 
     .panel { position: absolute; opacity: 1; display: inline-block; background:  rgb(56, 56, 56); z-index: 1005;
@@ -617,7 +647,10 @@
     .panelTitle {color: white; border-bottom: 1px solid white; padding: 6px; cursor: pointer; opacity: .86;
     }
 
-    .panelContent {padding: 6px; padding-top: 12px; padding-bottom: 20px;
+    .panelContent {
+        padding: 6px;
+        padding-top: 12px;
+        padding-bottom: 0px;
     }
 
     .panelLink:link { color: #0cf; }
@@ -652,9 +685,19 @@
     .panelCheckboxContainer { background: black; opacity: .1;
     }
 
-    .tabButton { color: white; opacity: .5; cursor: pointer;  min-width: 30px; min-height: 21px;
-                display: inline-block; padding: 5px; padding-top: 1px;  padding-bottom: 1px;
-                border-right: 1px solid white; border-bottom: 1px solid white; text-align: center;
+    .tabButton {
+        color: white;
+        opacity: .5;
+        cursor: pointer;
+        min-width: 25px;
+        min-height: 21px;
+        display: inline-block;
+        padding: 5px;
+        padding-top: 1px;
+        padding-bottom: 1px;
+        border-right: 1px solid white;
+        border-bottom: 1px solid white;
+        text-align: center;
 
     }
 
@@ -1304,10 +1347,10 @@
     @disabledColor: #999;
     @selectedBorderColor: white;
 
-    body { background: @bodyBackground; font-family: @fontFamily; font-size: @fontSize;
-        touch-action: none; overflow: hidden; -webkit-touch-callout: none;
-        user-select: none;
-    }
+    // body { background: @bodyBackground; font-family: @fontFamily; font-size: @fontSize;
+    //     touch-action: none; overflow: hidden; -webkit-touch-callout: none;
+    //     user-select: none;
+    // }
 
     .noselect {
         -webkit-touch-callout: none;
@@ -1424,7 +1467,7 @@
     }
 
     .listColorPalette {
-        width: 175px;
+        width: 150px;
         display: inline-block;
     }
 
@@ -1449,7 +1492,7 @@
     #bottomPanel {
         position: absolute;
         border: 0px solid red;
-        bottom: 20px;
+        bottom: 32px;
         height: 60px;
 
         #xStuff {
@@ -1623,5 +1666,9 @@
         background-size: @elementWidth @elementHeight;
 
         display: inline-block;
+    }
+
+    table {
+        border-collapse: separate;
     }
 }

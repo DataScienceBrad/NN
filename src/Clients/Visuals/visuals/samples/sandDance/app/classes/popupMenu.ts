@@ -12,7 +12,7 @@ module beachPartyApp
         public context = null;
 
         constructor(openerIds: string, id: string, names: any[], callback, hideAfterCallback = false, limitHeight = true, verticalMargin = 0,
-            iconWidth?: number, ownerElem?: HTMLElement)
+            iconWidth?: number, ownerElem?: HTMLElement, internalOwnerElement: HTMLElement = ownerElem)
         {
             super(openerIds, ownerElem);
 
@@ -43,8 +43,8 @@ module beachPartyApp
 
             let currentOwnerElement: vp.dom.IWrapperOuter = null;
 
-            if (ownerElem) {
-                currentOwnerElement = vp.select(ownerElem);
+            if (internalOwnerElement) {
+                currentOwnerElement = vp.select(internalOwnerElement);
             } else {
                 currentOwnerElement = vp.select(".sandDance");
             }

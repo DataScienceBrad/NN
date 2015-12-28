@@ -143,7 +143,15 @@ module powerbi.visuals.samples {
                     },
                     rowCount: { preferred: { min: 1 } }
                 }
-            }]
+            }],
+            objects: {
+                general: {
+                    displayName: data.createDisplayNameGetter("Visual_General"),
+                    properties: {
+                        formatString: { type: { formatting: { formatString: true } } }
+                    }
+                }
+            }
         };
 
         private margin: IMargin = {
@@ -542,29 +550,11 @@ module powerbi.visuals.samples {
             });
         }
 
-//         private isNeedToUpdate(dataView: SandDanceDataView): boolean {
-//             if (!this.dataView ||
-//                 !this.dataView.data) {
-//                 return true;
-//             }
-// 
-//             let keys: string[] = Object.keys(dataView.data);
-// 
-//             keys.forEach((key: string) => {
-//                 let previous: any[] = this.dataView.data[key],
-//                     current: any[] = dataView.data[key];
-// 
-//                 if (!previous ||
-//                     !current ||
-//                     previous.length !== current.length) {
-//                     return true;
-//                 }
-// 
-//                 
-//             });
-// 
-//             return false;
-//         }
+        public enumerateObjectInstances(options: EnumerateVisualObjectInstancesOptions): VisualObjectInstanceEnumeration  {
+            let enumeration = new ObjectEnumerationBuilder();
+
+            return enumeration.complete();
+        }
 
         public destroy(): void {
             this.rootElement = null;
