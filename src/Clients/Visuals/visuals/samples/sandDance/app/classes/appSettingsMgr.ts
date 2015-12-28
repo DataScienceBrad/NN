@@ -53,14 +53,19 @@ module beachPartyApp
         _cacheLocalFiles: boolean;
         _cacheWebFiles: boolean;
 
-        constructor(bpsHelper: bps.chartHostHelperClass)
-        {
+        private saveSettingsHandler: (settings: any) => void;
+        private loadSettingsHandler: () => any;
+
+        constructor(bpsHelper: bps.chartHostHelperClass, saveSettingsHandler: (settings: any) => void, loadSettingsHandler: () => any) {
             super();
+
+            this.saveSettingsHandler = saveSettingsHandler;
+            this.loadSettingsHandler = loadSettingsHandler;
 
             this._bpsHelper = bpsHelper;
 
             this._appStyleSheet = new vp.dom.styleSheetClass()
-                .id("appStyleSheet")
+                .id("appStyleSheet");
 
             this._hoverParams = new bps.HoverParams();
             this._selectionParams = new bps.SelectionParams();
@@ -120,7 +125,7 @@ module beachPartyApp
             //---- STARTUP tab ----
             this.rememberLastFile(true);
             this.rememberLastSession(true);
-            this._initFilename = "Titanic";        // for shipping, need a faster loaded dataset
+            this._initFilename = null; //"Titanic"        // for shipping, need a faster loaded dataset
             this.initialChartType("Column");
             this.initialLayout("Grid");
 
@@ -135,7 +140,7 @@ module beachPartyApp
 
         saveAppSettings()//TODO: save settings in PowerBI.
         {
-            if (localStorage && !this._isSavingSettingsDisabled && !settings._persistChangesDisabledFromUrlParams)
+            if (!this._isSavingSettingsDisabled && !settings._persistChangesDisabledFromUrlParams)
             {
                 var appSettings = new AppSettings(appClass.buildId);
 
@@ -149,12 +154,12 @@ module beachPartyApp
                 appSettings.canvasColor = this._canvasColor;
 
                 //---- startup settings ----
-                appSettings.rememberLastFile = this._rememberLastFile;
+                appSettings.rememberLastFile = null; //this._rememberLastFile;
                 appSettings.rememberLastSession = this._rememberLastSession;
 
                 if (this._rememberLastFile)
                 {
-                    appSettings.lastFileName = appClass.instance._filename;
+                    appSettings.lastFileName = null;//appClass.instance._filename;
                 }
 
                 appSettings.initialChartType = this._initialChartType;
@@ -189,8 +194,10 @@ module beachPartyApp
                 appSettings.animationData = this._animationData;
                 appSettings.chartFrameData = this._chartFrameData;
 
-                var str = JSON.stringify(appSettings);
-                localStorage["appSettings"] = str;
+                this.saveSettingsHandler(appSettings);
+
+                // var str = JSON.stringify(appSettings);
+                // localStorage["appSettings"] = str;
             }
         }
 
@@ -201,7 +208,7 @@ module beachPartyApp
 
         saveSessionToLocalStorage()
         {
-            if (localStorage)
+            if (true) //localStorage
             {
                 var key = this.getLastSessionKey();
                 var preload = undoMgrClass.instance.getCurrentInsight();
@@ -211,26 +218,28 @@ module beachPartyApp
                     preload.name = "$lastSession";
                 }
 
-                var strPreload = JSON.stringify(preload);
-                localStorage[key] = strPreload;
+                // var strPreload = JSON.stringify(preload);
+                // localStorage[key] = strPreload;
+
+                this.saveSettingsHandler(preload);
             }
         }
 
         loadAppSettings()//TODO: load settings from PowerBI.
         {
-            if (localStorage)//localStorage
+            if (true)//localStorage
             {
-                var str = localStorage["appSettings"];
+                var str = "Hello";//localStorage["appSettings"];
                 if (str && str != "")
                 {
                     this._isSavingSettingsDisabled = true;
 
                     try
                     {
-                        var appSettings = <AppSettings>JSON.parse(str);
+                        var appSettings = this.loadSettingsHandler && this.loadSettingsHandler();//<AppSettings>JSON.parse(str);
 
                         //---- only use if versionNum of appSettings is the same as the current version ----
-                        if (appSettings.versionNum == appClass.buildId)
+                        if (appSettings && appSettings.versionNum == appClass.buildId)
                         {
 
                             if (appSettings.showDebugStatus !== undefined && appSettings.showDebugStatus != this._isShowingChartStatus)

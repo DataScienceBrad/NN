@@ -27,6 +27,9 @@ module beachPartyApp
 
         private coreApplicationInstance: beachParty.appMgrClass;
 
+        private saveSettingsHandler: (settings: any) => void;
+        private loadSettingsHandler: () => any;
+
         _chartIsLoaded = false;
         _isOrthoCamera = false;
         _useFacets = false;
@@ -165,9 +168,12 @@ module beachPartyApp
 
         //_chartMenuItems: any[] = null;
 
-        constructor()
+        constructor(saveSettingsHandler: (settings: any) => void, loadSettingsHandler: () => any)
         {
             super();
+
+            this.saveSettingsHandler = saveSettingsHandler;
+            this.loadSettingsHandler = loadSettingsHandler;
 
             appClass.instance = this;
 
@@ -265,7 +271,7 @@ module beachPartyApp
 
                 if (memObj)
                 {
-                    msg + "." + vp.formatters.comma(memObj.usedJSHeapSize);
+                    msg += "." + vp.formatters.comma(memObj.usedJSHeapSize);
                 }
 
                 this.quickStats(msg);
@@ -652,7 +658,7 @@ module beachPartyApp
             //---- this assumes that our app & BeachParty engine share the same server ----
             this._bpsHelper = bps.createBpsHelper("myChart");
 
-            settings = new appSettingsMgr(this._bpsHelper);
+            settings = new appSettingsMgr(this._bpsHelper, this.saveSettingsHandler, this.loadSettingsHandler);
 
             this._fileOpenMgr = new fileOpenMgr(this._bpsHelper);
 
@@ -1888,26 +1894,27 @@ module beachPartyApp
 
         loadInitialDataSet()
         {
-            fileOpenMgr.instance.autoloadFile(settings._initFilename);
+            console.log("fileOpenMgr.instance.autoloadFile(settings._initFilename) from App.ts method loadInitialDataSet");
+            //fileOpenMgr.instance.autoloadFile(settings._initFilename);
         }
 
         loadLastSession()
         {
             var preload = null;
 
-            if (localStorage)
+            if (true)
             {
-                var key = settings.getLastSessionKey();
-                var strPreload = localStorage[key];
+                // var key = settings.getLastSessionKey();
+                // var strPreload = localStorage[key];
 
-                if (strPreload)
-                {
-                    preload = JSON.parse(strPreload);
+                // if (strPreload)
+                // {
+                    preload = this.loadSettingsHandler && this.loadSettingsHandler(); //JSON.parse(strPreload);
                     if (preload)
                     {
                         this.loadInsightCore(preload);
                     }
-                }
+                // }
             }
 
             return preload;
@@ -3826,19 +3833,19 @@ module beachPartyApp
 
         loadAutomatedTest()
         {
-            localFileHelper.loadFile(".js", (text, fn) => 
-            {
-                try
-                {
-                    eval(text);         // this will set window.beachPartyTest
-
-                    settings.automatedTestName(fn);
-                }
-                catch (ex)
-                {
-                    throw ("Error parsing test file: " + ex);
-                }
-            });
+//             localFileHelper.loadFile(".js", (text, fn) => 
+//             {
+//                 try
+//                 {
+//                     eval(text);         // this will set window.beachPartyTest
+// 
+//                     settings.automatedTestName(fn);
+//                 }
+//                 catch (ex)
+//                 {
+//                     throw ("Error parsing test file: " + ex);
+//                 }
+//             });
         }
 
         buildBinAdjusters()

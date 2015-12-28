@@ -45,7 +45,7 @@ module powerbi.visuals.samples {
             return {
                 id: id,
                 selector: `${idSelector}${id}`
-            }
+            };
         } 
     }
 
@@ -150,6 +150,24 @@ module powerbi.visuals.samples {
                     properties: {
                         formatString: { type: { formatting: { formatString: true } } }
                     }
+                },
+                application: {
+                    displayName: "Application",
+                    properties: {
+                        settings: {
+                            displayName: "Settings",
+                            type: { text: true }
+                        }
+                    }
+                },
+                session: {
+                    displayName: "Session",
+                    properties: {
+                        settings: {
+                            displayName: "Settings",
+                            type: { text: true }
+                        }
+                    }
                 }
             }
         };
@@ -162,6 +180,8 @@ module powerbi.visuals.samples {
         };
 
         private viewport: IViewport;
+
+        private host: IVisualHostServices;
 
         private rootElement: D3.Selection;
         private mainElement: D3.Selection;
@@ -185,13 +205,15 @@ module powerbi.visuals.samples {
         }
 
         public init(visualsOptions: VisualInitOptions): void {
+            this.host = visualsOptions.host;
+
             this.addElements(visualsOptions.element.get(0));
 
             this.setSize(visualsOptions.viewport);
 
             this.rootElement.style("margin", shapes.Thickness.toCssString(this.margin));
 
-            this.application = new beachPartyApp.appClass();
+            this.application = new beachPartyApp.appClass(this.saveSettings.bind(this), this.loadSettings.bind(this));
             this.application.setViewport(this.viewport.width, this.viewport.height);
             this.application.run();
 
@@ -315,7 +337,6 @@ module powerbi.visuals.samples {
         private addLeftPanelElement(): void {
             let leftPanelElement: D3.Selection,
                 yStuffElement: D3.Selection,
-                yBinsElement: D3.Selection,
                 zStuffElement: D3.Selection;
 
             leftPanelElement = this.mainElement
@@ -416,7 +437,7 @@ module powerbi.visuals.samples {
 
             firstTr = table
                 .append("tr")
-                .attr("id", () => ids[0] === undefined ? "" : ids[0])
+                .attr("id", () => ids[0] === undefined ? "" : ids[0]);
 
             secondTr = table
                 .append("tr");
@@ -476,6 +497,34 @@ module powerbi.visuals.samples {
             });
         }
 
+        private saveSettings(settings): void {
+            if (!settings) {
+                return;
+            }
+
+            let settingInJson: string = JSON.stringify(settings),
+                enumeration = new ObjectEnumerationBuilder();
+
+            console.log(JSON.stringify(settings));
+
+            enumeration.pushInstance({
+                objectName: "application",
+                displayName: "Application",
+                selector: SelectionId.createNull(),
+                properties: {
+                    settings: settingInJson
+                }
+            });
+
+            this.host.persistProperties(enumeration.complete());
+        }
+
+        private loadSettings(): any {
+            return {
+                date: new Date()
+            };
+        }
+
         public update(visualUpdateOptions: VisualUpdateOptions): void {
             if (!visualUpdateOptions ||
                 !visualUpdateOptions.dataViews ||
@@ -499,6 +548,8 @@ module powerbi.visuals.samples {
 
         public converter(dataView: DataView): SandDanceDataView {
             let data: SandDanceData = {};
+
+            console.log("dataView: " + JSON.stringify(dataView));
 
             if (dataView &&
                 dataView.table &&
