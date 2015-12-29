@@ -5,6 +5,7 @@
 //---- this list of TS files is needed to control the order the files in which the files and processed and loaded ----
 
 /// <reference path="Bus.ts" />
+/// <reference path="settingsType.ts" />
 
 /// <reference path="classes/baseHostHelper.ts" />
 /// <reference path="classes/appHostHelper.ts" />

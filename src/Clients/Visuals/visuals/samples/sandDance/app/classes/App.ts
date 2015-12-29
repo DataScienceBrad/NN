@@ -27,8 +27,8 @@ module beachPartyApp
 
         private coreApplicationInstance: beachParty.appMgrClass;
 
-        private saveSettingsHandler: (settings: any) => void;
-        private loadSettingsHandler: () => any;
+        private saveSettingsHandler: (settings: any, type: sandDance.SettingsType)  => void;
+        private loadSettingsHandler: (type: sandDance.SettingsType) => any;
 
         _chartIsLoaded = false;
         _isOrthoCamera = false;
@@ -168,7 +168,7 @@ module beachPartyApp
 
         //_chartMenuItems: any[] = null;
 
-        constructor(saveSettingsHandler: (settings: any) => void, loadSettingsHandler: () => any)
+        constructor(saveSettingsHandler: (settings: any, type: sandDance.SettingsType) => void, loadSettingsHandler: (type: sandDance.SettingsType) => any)
         {
             super();
 
@@ -421,7 +421,7 @@ module beachPartyApp
 
                 settings.saveAppSettings();
 
-                this.resetMappingsForNewFile();
+                // this.resetMappingsForNewFile(); //TODO: remove ?
 
                 this.onDataChanged("dataFrame");
 
@@ -1898,7 +1898,7 @@ module beachPartyApp
             //fileOpenMgr.instance.autoloadFile(settings._initFilename);
         }
 
-        loadLastSession()
+        public loadLastSession()
         {
             var preload = null;
 
@@ -1909,7 +1909,7 @@ module beachPartyApp
 
                 // if (strPreload)
                 // {
-                    preload = this.loadSettingsHandler && this.loadSettingsHandler(); //JSON.parse(strPreload);
+                    preload = this.loadSettingsHandler && this.loadSettingsHandler(sandDance.SettingsType.session); //JSON.parse(strPreload);
                     if (preload)
                     {
                         this.loadInsightCore(preload);
@@ -1918,6 +1918,10 @@ module beachPartyApp
             }
 
             return preload;
+        }
+
+        public loadAppSettings() {
+            settings.loadAppSettings();
         }
 
         loadInsight()
@@ -1983,25 +1987,25 @@ module beachPartyApp
                 insight.preload.dataName = insight.preload.name;
             }
 
-            if (insight.loadAction == bps.LoadAction.all || insight.loadAction == bps.LoadAction.data
-                || insight.loadAction === undefined)
-            {
-                //---- load insight DATA ----
-
-                //---- clear local file data from last load ----
-                this._fileOpenMgr.loadedFileOpenText(null);
-
-                //this._bpsHelper.loadData(insight.preload, (e) =>
-                fileOpenMgr.instance.autoloadFile(insight.preload.dataName, insight.preload, (e) =>
-                {
-                    this.loadInsightPost(insight);
-                });
-            }
-            else
-            {
+//             if (insight.loadAction == bps.LoadAction.all || insight.loadAction == bps.LoadAction.data
+//                 || insight.loadAction === undefined)
+//             {
+//                 //---- load insight DATA ----
+// 
+//                 //---- clear local file data from last load ----
+//                 this._fileOpenMgr.loadedFileOpenText(null);
+// 
+//                 //this._bpsHelper.loadData(insight.preload, (e) =>
+//                 fileOpenMgr.instance.autoloadFile(insight.preload.dataName, insight.preload, (e) =>
+//                 {
+//                     this.loadInsightPost(insight);
+//                 });
+//             }
+//             else
+//             {
                 //---- no data needed - can call loadInsightPost SYNC ----
                 this.loadInsightPost(insight);
-            }
+            // }
         }
 
         copyMapping(md: bps.MappingData)
@@ -3166,7 +3170,7 @@ module beachPartyApp
 
         getColInfo(colName: string)
         {
-            var colInfo = <bps.ColInfo> null;
+            var colInfo = <bps.ColInfo> {};
 
             for (var i = 0; i < this._colInfos.length; i++)
             {

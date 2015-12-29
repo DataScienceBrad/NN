@@ -29,17 +29,17 @@
 module powerbi.visuals.sampleDataViews {
     import ValueType = powerbi.ValueType;
     import PrimitiveType = powerbi.PrimitiveType;
-    
+
     export class SandDanceData extends SampleDataViews implements ISampleDataViewsMethods {
 
         public name: string = "SandDanceData";
         public displayName: string = "Sand Dance Data";
 
-        public visuals: string[] = [ 'sandDance' ];
+        public visuals: string[] = ['sandDance'];
 
         public getDataViews(): DataView[] {
             var dataTypeNumber = ValueType.fromPrimitiveTypeAndCategory(PrimitiveType.Double);
-            var dataTypeString = ValueType.fromPrimitiveTypeAndCategory(PrimitiveType.Text);            
+            var dataTypeString = ValueType.fromPrimitiveTypeAndCategory(PrimitiveType.Text);
 
             var groupSource1: DataViewMetadataColumn = { displayName: 'Department', type: dataTypeString, index: 0 };
             var groupSource2: DataViewMetadataColumn = { displayName: 'Gender', type: dataTypeString, index: 2 };
@@ -51,8 +51,20 @@ module powerbi.visuals.sampleDataViews {
             var groupSource8: DataViewMetadataColumn = { displayName: 'TicketCost', type: dataTypeNumber, index: 8, objects: { general: { formatString: '#,0.00' } } };
             var groupSource9: DataViewMetadataColumn = { displayName: 'Age', type: dataTypeNumber, index: 9, objects: { general: { formatString: '#,0.00' } } };
 
+            var objects: DataViewObjects = {
+                application: {
+                    settings: "{\"versionNum\":\"45\",\"showDebugStatus\":false,\"showLastCycle\":true,\"showEventStats\":false,\"isErrorReportingDisabled\":false,\"shapeColor\":\"beach blue\",\"shapeImage\":\"none\",\"canvasColor\":\"black\",\"rememberLastFile\":null,\"rememberLastSession\":true,\"lastFileName\":null,\"initialChartType\":1,\"initialLayout\":1,\"isColPickerSorted\":true,\"playbackDuration\":3,\"isPlaybackLooping\":true,\"isWheelInertia\":true,\"isLightingAlwaysOn\":false,\"ambientLightLevel\":0.25,\"isContinuousDrawing\":false,\"isTooltipsEnabled\":false,\"is3dGridAlwaysOn\":false,\"showWheelDuringTransformMode\":false,\"isMenuTextVisible\":false,\"isMenuIconVisible\":true,\"isMenuChevronVisible\":false,\"drawingPrimitive\":\"auto\",\"panelOpacity\":0.9,\"cacheLocalFiles\":true,\"cacheWebFiles\":true,\"useNiceNumbers\":false,\"hoverParams\":{\"hoverMatch\":1,\"squareSize\":10,\"hoverEffect\":2,\"hoverColor\":\"purple\"},\"selectionParams\":{\"unselectedParams\":{\"colorEffect\":3,\"color\":\"yellow\",\"colorFactor\":0.2},\"selectedParams\":{\"colorEffect\":1,\"color\":\"yellow\",\"colorFactor\":0.2}},\"defaultBins\":9,\"animationData\":{\"isAnimationEnabled\":true,\"animationDuration\":0.45,\"isStaggeringEnabled\":true,\"maxStaggerTime\":0.45,\"easeFunction\":1,\"easeType\":1},\"chartFrameData\":{\"opacity\":1,\"labelColor\":\"white\",\"tickColor\":\"white\",\"padding\":{\"left\":1,\"top\":1,\"right\":15,\"bottom\":1},\"xAxis\":{\"isAxisVisible\":true,\"drawTicks\":true,\"drawLabels\":true,\"drawGridLines\":false},\"yAxis\":{\"isAxisVisible\":true,\"drawTicks\":true,\"drawLabels\":true,\"drawGridLines\":false},\"zAxis\":{\"isAxisVisible\":true,\"drawTicks\":true,\"drawLabels\":true,\"drawGridLines\":false}}}"
+                },
+                session: {
+                    settings: "{\"preload\":{\"primaryKeyCol\":null,\"hasHeader\":true,\"fileType\":0,\"fieldList\":[],\"tooltipFieldList\":null,\"showInFileOpen\":true,\"hasTimeData\":false,\"dateAdded\":\"2015-12-29T09:17:37.670Z\",\"colMappings\":{\"x\":{\"colName\":\"Age\",\"binCount\":9,\"binSorting\":0,\"forceCategory\":false,\"spread\":0,\"customScalingCallback\":null,\"breaks\":null,\"useNiceNumbers\":false,\"boundColInfo\":null,\"formatting\":null},\"y\":{\"colName\":\"\",\"binCount\":9,\"binSorting\":0,\"forceCategory\":false,\"spread\":0,\"customScalingCallback\":null,\"breaks\":null,\"useNiceNumbers\":false,\"boundColInfo\":null},\"color\":{\"colName\":\"Age\",\"binCount\":9,\"binSorting\":0,\"forceCategory\":false,\"spread\":0,\"customScalingCallback\":null,\"breaks\":null,\"useNiceNumbers\":false,\"boundColInfo\":null,\"paletteName\":\"RdBu\",\"isContinuous\":false,\"stepsRequested\":9,\"colorPalette\":[\"rgb(33,102,172)\",\"rgb(67,147,195)\",\"rgb(146,197,222)\",\"rgb(209,229,240)\",\"rgb(247,247,247)\",\"rgb(253,219,199)\",\"rgb(244,165,130)\",\"rgb(214,96,77)\",\"rgb(178,24,43)\"]},\"z\":{\"colName\":\"\",\"binCount\":3,\"binSorting\":0,\"forceCategory\":false,\"spread\":0,\"customScalingCallback\":null,\"breaks\":null,\"useNiceNumbers\":false,\"boundColInfo\":null},\"size\":{\"colName\":null,\"binCount\":9,\"binSorting\":0,\"forceCategory\":false,\"spread\":0,\"customScalingCallback\":null,\"breaks\":null,\"useNiceNumbers\":false,\"boundColInfo\":null,\"sizePalette\":[0.25,0.5,0.75,1],\"isContinuous\":false},\"image\":{\"colName\":null,\"binCount\":9,\"binSorting\":0,\"forceCategory\":false,\"spread\":0,\"customScalingCallback\":null,\"breaks\":null,\"useNiceNumbers\":false,\"boundColInfo\":null,\"imagePalette\":[\"filled circle\",\"filled square\",\"filled triangle\",\"circle\",\"square\",\"triangle\"]},\"facet\":{\"colName\":null,\"binCount\":9,\"binSorting\":0,\"forceCategory\":false,\"spread\":0,\"customScalingCallback\":null,\"breaks\":null,\"useNiceNumbers\":false,\"boundColInfo\":null,\"facetBounds\":null}},\"chartName\":\"Column\",\"subLayout\":\"Grid\",\"sizeFactor\":1,\"separationFactor\":1,\"shapeOpacity\":0.8,\"shapeColor\":\"beach blue\",\"shapeImage\":\"none\",\"sortCol\":null,\"isSortAscending\":true,\"selectedKeys\":[],\"filteredOutKeys\":[],\"worldTransform\":{\"0\":1,\"1\":0,\"2\":0,\"3\":0,\"4\":0,\"5\":1,\"6\":0,\"7\":0,\"8\":0,\"9\":0,\"10\":1,\"11\":0,\"12\":0,\"13\":0,\"14\":0,\"15\":1},\"rotationInertia\":[0,0,0],\"dataTips\":[]},\"name\":\"$lastSession\",\"notes\":\"\",\"loadAction\":0,\"notesSource\":3,\"searchText\":\"\",\"searchColumn\":\"Age\",\"isDetailsPanelOpen\":false,\"isSortPanelOpen\":false,\"isAppPanelOpen\":false,\"isColorPanelOpen\":false,\"isSlicerPanelOpen\":false,\"isShowing3DWheel\":false}"
+                }
+            };
+
             return [{
-                metadata: { columns: [groupSource1, groupSource2, groupSource3, groupSource4, groupSource5, groupSource6, groupSource7, groupSource8, groupSource9] },
+                metadata: {
+                    columns: [groupSource1, groupSource2, groupSource3, groupSource4, groupSource5, groupSource6, groupSource7, groupSource8, groupSource9],
+                    objects: objects
+                },
                 table: {
                     columns: [groupSource1, groupSource2, groupSource3, groupSource4, groupSource5, groupSource6, groupSource7, groupSource8, groupSource9],
                     rows: [
@@ -64,6 +76,6 @@ module powerbi.visuals.sampleDataViews {
 
         public randomize(): void {
         }
-        
+
     }
 }

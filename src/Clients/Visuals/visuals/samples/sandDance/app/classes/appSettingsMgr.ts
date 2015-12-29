@@ -53,10 +53,10 @@ module beachPartyApp
         _cacheLocalFiles: boolean;
         _cacheWebFiles: boolean;
 
-        private saveSettingsHandler: (settings: any) => void;
-        private loadSettingsHandler: () => any;
+        private saveSettingsHandler: (settings: any, type: sandDance.SettingsType) => void;
+        private loadSettingsHandler: (type: sandDance.SettingsType) => any;
 
-        constructor(bpsHelper: bps.chartHostHelperClass, saveSettingsHandler: (settings: any) => void, loadSettingsHandler: () => any) {
+        constructor(bpsHelper: bps.chartHostHelperClass, saveSettingsHandler: (settings: any, type: sandDance.SettingsType) => void, loadSettingsHandler: (type: sandDance.SettingsType) => any) {
             super();
 
             this.saveSettingsHandler = saveSettingsHandler;
@@ -194,7 +194,7 @@ module beachPartyApp
                 appSettings.animationData = this._animationData;
                 appSettings.chartFrameData = this._chartFrameData;
 
-                this.saveSettingsHandler(appSettings);
+                this.saveSettingsHandler(appSettings, sandDance.SettingsType.application);
 
                 // var str = JSON.stringify(appSettings);
                 // localStorage["appSettings"] = str;
@@ -221,11 +221,11 @@ module beachPartyApp
                 // var strPreload = JSON.stringify(preload);
                 // localStorage[key] = strPreload;
 
-                this.saveSettingsHandler(preload);
+                this.saveSettingsHandler(preload, sandDance.SettingsType.session);
             }
         }
 
-        loadAppSettings()//TODO: load settings from PowerBI.
+        public loadAppSettings()//TODO: load settings from PowerBI.
         {
             if (true)//localStorage
             {
@@ -236,7 +236,7 @@ module beachPartyApp
 
                     try
                     {
-                        var appSettings = this.loadSettingsHandler && this.loadSettingsHandler();//<AppSettings>JSON.parse(str);
+                        var appSettings = this.loadSettingsHandler && this.loadSettingsHandler(sandDance.SettingsType.application);//<AppSettings>JSON.parse(str);
 
                         //---- only use if versionNum of appSettings is the same as the current version ----
                         if (appSettings && appSettings.versionNum == appClass.buildId)
@@ -289,7 +289,7 @@ module beachPartyApp
 
                             if (appSettings.rememberLastFile !== undefined && appSettings.rememberLastFile != this._rememberLastFile)
                             {
-                                this.rememberLastFile(appSettings.rememberLastFile);
+                                // this.rememberLastFile(appSettings.rememberLastFile);
                             }
 
                             if (appSettings.rememberLastSession !== undefined && appSettings.rememberLastSession != this._rememberLastSession)

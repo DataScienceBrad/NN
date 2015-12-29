@@ -54,11 +54,17 @@ module powerbi.visuals.samples {
     }
 
     export interface SandDanceDataView {
+        settings: SandDanceSettings;
         data: SandDanceData;
     }
 
     export interface SandDanceConstructorOptions {
         margin?: IMargin;
+    }
+
+    export interface SandDanceSettings {
+        application: any;
+        session: any;
     }
 
     interface PanelTable {
@@ -497,32 +503,43 @@ module powerbi.visuals.samples {
             });
         }
 
-        private saveSettings(settings): void {
+        private saveSettings(settings: any, type: sandDance.SettingsType): void {
             if (!settings) {
                 return;
             }
 
             let settingInJson: string = JSON.stringify(settings),
-                enumeration = new ObjectEnumerationBuilder();
+                objectName: string;
+
+            objectName = type === sandDance.SettingsType.application
+                ? sandDance.SettingsType[0]
+                : sandDance.SettingsType[1];
 
             console.log(JSON.stringify(settings));
 
-            enumeration.pushInstance({
-                objectName: "application",
-                displayName: "Application",
-                selector: SelectionId.createNull(),
-                properties: {
-                    settings: settingInJson
-                }
+            this.host.persistProperties(<VisualObjectInstancesToPersist> {
+                replace: [{
+                    objectName: objectName,
+                    displayName: objectName,
+                    selector: null,
+                    properties: {
+                        settings: settingInJson
+                    }
+                }]
             });
-
-            this.host.persistProperties(enumeration.complete());
         }
 
-        private loadSettings(): any {
-            return {
-                date: new Date()
-            };
+        private loadSettings(type: sandDance.SettingsType): any {
+            if (!this.dataView ||
+                !this.dataView.settings) {
+                return {};
+            }
+
+            if (type === sandDance.SettingsType.application) {
+                return this.dataView.settings.application;
+            } else {
+                return this.dataView.settings.session;
+            }
         }
 
         public update(visualUpdateOptions: VisualUpdateOptions): void {
@@ -532,15 +549,22 @@ module powerbi.visuals.samples {
                 return;
             }
 
-            let dataView: SandDanceDataView = this.converter(visualUpdateOptions.dataViews[0]);;
+            let dataView: SandDanceDataView = this.converter(visualUpdateOptions.dataViews[0]);
 
             this.setSize(visualUpdateOptions.viewport);
             this.updateElements();
 
             this.application.update(this.viewport.width, this.viewport.height);
 
-            if (JSON.stringify(this.dataView) !== JSON.stringify(dataView)) {
+            if (!this.dataView || JSON.stringify(this.dataView.data) !== JSON.stringify(dataView.data)) {
                 this.application.updateDataView(dataView.data);
+            }
+
+            if (!this.dataView) {
+                this.dataView = dataView;
+
+                this.application.loadAppSettings();
+                this.application.loadLastSession();
             }
 
             this.dataView = dataView;
@@ -554,7 +578,7 @@ module powerbi.visuals.samples {
             if (dataView &&
                 dataView.table &&
                 dataView.table.columns &&
-                dataView.table.columns.length > 0&&
+                dataView.table.columns.length > 0 &&
                 dataView.table.rows) {
                 dataView.table.columns.forEach((column: DataViewMetadataColumn, index: number) => {
                     data[column.displayName] = dataView.table.rows.map((row: any[]) => {
@@ -563,7 +587,44 @@ module powerbi.visuals.samples {
                 });
             }
 
-            return { data };
+            return {
+                settings: this.parseSettings(dataView),
+                data: data
+            };
+        }
+
+        private parseSettings(dataView: DataView): SandDanceSettings {
+            if (!dataView ||
+                !dataView.metadata ||
+                !dataView.metadata.objects) {
+                return {
+                    application: {},
+                    session: {}
+                };
+            }
+
+            let settings: SandDanceSettings = <SandDanceSettings> {},
+                objects: DataViewObjects = dataView.metadata.objects,
+                settingsNames: string[] = [
+                    "application",
+                    "session"
+                ],
+                application: any,
+                session: any;
+
+            settingsNames.forEach((settingsName: string) => {
+                let currentSettings: any;
+
+                if (objects[settingsName] && objects[settingsName]["settings"]) {
+                    currentSettings = JSON.parse(<string> objects[settingsName]["settings"]);
+                } else {
+                    currentSettings = {};
+                }
+
+                settings[settingsName] = currentSettings;
+            });
+
+            return settings;
         }
 
         private setSize(viewport: IViewport): void {
