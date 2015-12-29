@@ -45,7 +45,7 @@ module beachPartyApp
             //vp.select("#myChart").attach("mouseover", (e) => this.onMouseOver(e));
 
             //---- CONTEXT MENU for toggling data tips on/off ----
-            vp.select(chartUxElem).attach("contextmenu", (e) => this.onPlotContextMenu(e));
+            // vp.select(chartUxElem).attach("contextmenu", (e) => this.onPlotContextMenu(e));
         }
 
         onDblClick(e)

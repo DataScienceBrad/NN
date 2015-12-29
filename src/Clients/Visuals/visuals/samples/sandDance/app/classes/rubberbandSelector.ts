@@ -82,7 +82,7 @@ module beachPartyApp
         hookEvents(canvasChanged: boolean)
         {
             //---- always process mouse up, so we can track right mouse button up/down state ----
-            vp.select(window).attach("mouseup", (e) => this.onMouseUp(e));
+            vp.select("#chartUxDiv").attach("mouseup", (e) => this.onMouseUp(e));
 
             this._canvasChanged = canvasChanged;
 
@@ -102,7 +102,7 @@ module beachPartyApp
                 });
 
                 //canvas.appendChild(this._rubberBand.getNative());
-                vp.select(".sandDance").append(this._rubberBand[0])
+                vp.select("#myChart").append(this._rubberBand[0])
                 //document.body.appendChild(this._rubberBand[0]);
             }
         }
@@ -126,7 +126,7 @@ module beachPartyApp
             //    ", height=" + rc.height);
 
             this._rubberBand
-                .css("position", "fixed")//TODO: remove this bad fix.
+                .css("position", "absolute")//TODO: remove this bad fix.
                 .css("left", left + "px")
                 .css("top", top + "px")
                 .width(rc.width + "px")
@@ -400,6 +400,8 @@ module beachPartyApp
         {
             //vp.utils.debug("raw rubberband mouseMove");
 
+            evt.stopPropagation();
+
             try
             {
                 /// this is triggered for all window mouse move events, so its important to only look at them
@@ -424,15 +426,15 @@ module beachPartyApp
                             var ptCurrent = vp.events.mousePosition(evt);
                         }
 
-                        var rc = vp.geom.rectFromPoints(ptCurrent, this._ptMouseDown);
-                            //chartUxDivBounds = vp.select("#chartUxDiv").getBounds(false);
-// 
-//                         rc.left -= chartUxDivBounds.left;
-//                         rc.top -= chartUxDivBounds.top;
+
+                        var rcBand = vp.geom.rectFromPoints(ptCurrent, this._ptMouseDown);
 
                         //vp.utils.debug("rubberBandSelector: onMove: pt="+  ptCurrent + ", rc=" + rc); 
 
-                        this.setRubberBand(rc);
+                        var rc = vp.select("#myChart").getBounds(false);
+                        var rcBandAdj = vp.geom.createRect(rcBand.left - rc.left, rcBand.top - rc.top, rcBand.width, rcBand.height);
+
+                        this.setRubberBand(rcBandAdj);
 
                         //---- if we're banding, do not pass event along ----
                         vp.events.cancelEventDefault(evt);
@@ -554,6 +556,9 @@ module beachPartyApp
                     /// new problem: we are not getting events OUTSIDE of our window.
 
                     vp.events.setCaptureWindow(this._onMouseMoveFunc, this._onMouseUpFunc);
+
+
+                    vp.select(".sandDance").attach("mousemove", this._onMouseMoveFunc);
 
                     vp.utils.debug("rubberbandSelector: SET CAPTURE");
                     this._isSetCaptureActive = true;

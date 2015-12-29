@@ -246,6 +246,10 @@ module powerbi.visuals.samples {
                 .append("div")
                 .classed(SandDance.ClassName, true);
 
+            // this.rootElement.on("mousemove", () => {
+            //     d3.event.stopPropagation();
+            // });
+
             this.mainElement = this.rootElement
                 .append("div");
 
