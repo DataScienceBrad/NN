@@ -287,7 +287,8 @@ module beachPartyApp
                 vp.select(this._valueText)
                     .addClass("numAdjusterActiveValue")
 
-                vp.events.setCaptureWindow((e) => this.onMouseMove(e), (e) => this.onMouseUp(e), ["myChart"]);
+                
+                vp.events.setCaptureWindow((e) => this.onMouseMove(e), (e) => this.onMouseUp(e)/*, ["myChart"]*/);
             }
 
             vp.events.cancelEventDefault(e);
@@ -297,6 +298,8 @@ module beachPartyApp
         onMouseMove(e)
         {
             //vp.utils.debug("numAdjuster.onMouseMove: delayTimer=" + this._delayTimer);
+
+            e.stopPropagation();
 
             if (!this._delayTimer)
             {

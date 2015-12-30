@@ -118,8 +118,9 @@ module beachPartyApp
 
                     //---- show tooltips if middle/right mouse button pressed, or if tooltips are enabled ----
                     var getRecord = (e.buttons != 0 || settings.isTooltipsEnabled());
+                    var scale = this._rubberBandSelector.getScale();
 
-                    this._bpsHelper.applyHover(mousePos.x, mousePos.y, getRecord, null, (msgBlock) =>
+                    this._bpsHelper.applyHover(mousePos.x / scale.x, mousePos.y / scale.y, getRecord, null, (msgBlock) =>
                     {
                         if (this._hoverPrimaryKey != msgBlock.primaryKey)
                         {
@@ -174,13 +175,20 @@ module beachPartyApp
             {
                 if (rcBand)
                 {
+                    let scale = this._rubberBandSelector.getScale();
+
                     //---- adjust rcBand so that it is relative to "myChart" ----
                     var rc = vp.select("#myChart").getBounds(false);
-                    var rcBandAdj = vp.geom.createRect(rcBand.left - rc.left, rcBand.top - rc.top, rcBand.width, rcBand.height);
+
+                    var rcBandAdj = vp.geom.createRect(
+                        (rcBand.left - rc.left) / scale.x,
+                        (rcBand.top - rc.top) / scale.y,
+                        rcBand.width,
+                        rcBand.height);
 
                     var sd = new SelectionDesc();
                     sd.legendSource = "rect drag";
-                    sd.rectSelect = rc;
+                    sd.rectSelect = rcBandAdj;
 
                     appClass.instance.setSelectionDesc(sd);
                     this._bpsHelper.rectSelect(rcBandAdj);

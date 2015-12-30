@@ -117,16 +117,29 @@ module beachPartyApp
             this._holdCallback = callback;
         }
 
+        public getScale(): { x: number, y: number } {
+            var sandDanceElement = vp.select(".sandDance").element(),
+                sandDanceRect = sandDanceElement.getBoundingClientRect();
+
+            return {
+                x: sandDanceRect.width / sandDanceElement.offsetWidth,
+                y: sandDanceRect.height / sandDanceElement.offsetHeight
+            }
+        }
+
         setRubberBand(rc)
         {
-            var left = rc.left;
-            var top = rc.top;
+
+            var scale = this.getScale();
+
+            var left = rc.left / scale.x;
+            var top = rc.top / scale.y;
 
             //vp.utils.debug("rubberBandSelector.setRubberBand: left=" + rc.left + ", top=" + rc.top + ", width=" + rc.width +
             //    ", height=" + rc.height);
 
             this._rubberBand
-                .css("position", "absolute")//TODO: remove this bad fix.
+                .css("position", "absolute")
                 .css("left", left + "px")
                 .css("top", top + "px")
                 .width(rc.width + "px")
@@ -314,7 +327,7 @@ module beachPartyApp
                         //---- adjust rcBand so it matches actual location ----
                         var rect = this._dragSelectCanvas.getBoundingClientRect();
 
-                        vp.utils.debug("rcBand: width=" + rcBand.width + ", height=" + rcBand.height);
+                        // vp.utils.debug("rcBand: width=" + rcBand.width + ", height=" + rcBand.height);
 
                         //---- allow for a direct click (no movement) ----
                         if (true)   //(rcBand.width > 3) && (rcBand.height > 3))
@@ -400,8 +413,6 @@ module beachPartyApp
         {
             //vp.utils.debug("raw rubberband mouseMove");
 
-            evt.stopPropagation();
-
             try
             {
                 /// this is triggered for all window mouse move events, so its important to only look at them
@@ -425,7 +436,6 @@ module beachPartyApp
                         {
                             var ptCurrent = vp.events.mousePosition(evt);
                         }
-
 
                         var rcBand = vp.geom.rectFromPoints(ptCurrent, this._ptMouseDown);
 
@@ -555,10 +565,10 @@ module beachPartyApp
                     /// the CAPTURE of mouseMove/mouseUP events.  Fixed that, and now setCaptureWindow() is working correctly... almost - 
                     /// new problem: we are not getting events OUTSIDE of our window.
 
-                    vp.events.setCaptureWindow(this._onMouseMoveFunc, this._onMouseUpFunc);
-
+                    // vp.events.setCaptureWindow(this._onMouseMoveFunc, this._onMouseUpFunc);
 
                     vp.select(".sandDance").attach("mousemove", this._onMouseMoveFunc);
+                    vp.select(".sandDance").attach("mouseup", this._onMouseUpFunc);
 
                     vp.utils.debug("rubberbandSelector: SET CAPTURE");
                     this._isSetCaptureActive = true;
