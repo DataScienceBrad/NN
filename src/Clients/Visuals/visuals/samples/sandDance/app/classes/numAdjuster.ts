@@ -41,6 +41,9 @@ module beachPartyApp
         _syncChanges: boolean;
         _spreadLow: boolean;
 
+        _onMouseMove: () => any;
+        _onMouseUp: () => any;
+
         /** if "syncChanges" is true, a dataChanged event on "value" is issued whenever the numAdjuster value is changed.  if false,
         event is only triggered on mouse up. */
         constructor(rootName: string, name: string, initialValue: number, minValue: number, maxValue: number, tooltip: string, style: AdjusterStyle,
@@ -81,6 +84,9 @@ module beachPartyApp
 
             //---- make hidden initially ----
             this.show(false);
+
+            this._onMouseMove = this.onMouseMove.bind(this);
+            this._onMouseUp = this.onMouseUp.bind(this);
         }
 
         getRoot()
@@ -287,8 +293,12 @@ module beachPartyApp
                 vp.select(this._valueText)
                     .addClass("numAdjusterActiveValue")
 
-                
-                vp.events.setCaptureWindow((e) => this.onMouseMove(e), (e) => this.onMouseUp(e)/*, ["myChart"]*/);
+                // vp.events.setCaptureWindow((e) => this.onMouseMove(e), (e) => this.onMouseUp(e)/*, ["myChart"]*/);
+
+                let sandDanceElement = vp.select(".sandDance");
+
+                sandDanceElement.attach("mousemove", this._onMouseMove);
+                sandDanceElement.attach("mouseup", this._onMouseUp);
             }
 
             vp.events.cancelEventDefault(e);
@@ -298,8 +308,6 @@ module beachPartyApp
         onMouseMove(e)
         {
             //vp.utils.debug("numAdjuster.onMouseMove: delayTimer=" + this._delayTimer);
-
-            e.stopPropagation();
 
             if (!this._delayTimer)
             {
@@ -415,7 +423,13 @@ module beachPartyApp
             this._isDragging = false;
             this._isMouseDown = true;
 
-            vp.events.releaseCaptureWindow();
+            // vp.events.releaseCaptureWindow();
+
+            let sandDanceElement = vp.select(".sandDance");
+
+            sandDanceElement.detach("mousemove", this._onMouseMove);
+            sandDanceElement.detach("mouseup", this._onMouseUp);
+
             vp.events.cancelEventDefault(e);
 
             vp.select(this._valueText)
