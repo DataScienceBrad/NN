@@ -7,7 +7,7 @@
 
 module beachPartyApp
 {
-    export class localFileHelper
+    export class LocalFileHelper
     {
         public static loadFile(fileExts: string, callback)
         {

@@ -5,11 +5,9 @@
 
 /// <reference path="../_references.ts" />
 
-var demoData: string;
-
 module glUtils
 {
-    export class glUniformClass
+    export class GlUniformClass
     {
         static uniformSetCount = 0;
 
@@ -28,7 +26,7 @@ module glUtils
             this._nameInShader = nameInShader;
 
             var uniformLoc = gl.getUniformLocation(program, nameInShader);
-            if (uniformLoc == -1)
+            if (uniformLoc === -1)
             {
                 glUtils.error("Cannot locate shader uniform: " + nameInShader);
             }
@@ -37,47 +35,47 @@ module glUtils
             this._typeStr = typeStr;
             var setter = null;
 
-            if (typeStr == "li")
+            if (typeStr === "li")
             {
                 setter = gl.uniform1i;
             }
-            else if (typeStr == "1f" || typeStr == "f")
+            else if (typeStr === "1f" || typeStr === "f")
             {
                 setter = gl.uniform1f;
             }
-            else if (typeStr == "2f")
+            else if (typeStr === "2f")
             {
                 setter = gl.uniform2f;
             }
-            else if (typeStr == "3f")
+            else if (typeStr === "3f")
             {
                 setter = gl.uniform3f;
             }
-            else if (typeStr == "4f")
+            else if (typeStr === "4f")
             {
                 setter = gl.uniform4f;
             }
-            else if (typeStr == "1fv" || typeStr == "fv")
+            else if (typeStr === "1fv" || typeStr === "fv")
             {
                 setter = gl.uniform1fv;
             }
-            else if (typeStr == "2fv")
+            else if (typeStr === "2fv")
             {
                 setter = gl.uniform2fv;
             }
-            else if (typeStr == "3fv")
+            else if (typeStr === "3fv")
             {
                 setter = gl.uniform3fv;
             }
-            else if (typeStr == "4fv")
+            else if (typeStr === "4fv")
             {
                 setter = gl.uniform4fv;
             }
-            else if (typeStr == "matrix3fv")
+            else if (typeStr === "matrix3fv")
             {
                 setter = gl.uniformMatrix3fv;
             }
-            else if (typeStr == "matrix4fv")
+            else if (typeStr === "matrix4fv")
             {
                 setter = gl.uniformMatrix4fv;
             }
@@ -103,7 +101,7 @@ module glUtils
             }
             else
             {
-                var eq = (value == this._value);
+                var eq = (value === this._value);
             }
 
             return eq;
@@ -120,7 +118,7 @@ module glUtils
                 //    ", changed=" + changed);
 
                 this._value = value;
-                glUniformClass.uniformSetCount++;
+                GlUniformClass.uniformSetCount++;
 
                 if (this._glSetter)
                 {
@@ -134,11 +132,11 @@ module glUtils
 
                     //vp.utils.debug("setValue uniformLoc=" + uniformLoc + ", value=" + value);
 
-                    if (this._typeStr == "matrix4fv")
+                    if (this._typeStr === "matrix4fv")
                     {
                         this._gl.uniformMatrix4fv(uniformLoc, gl.FALSE, value);
                     }
-                    else if (this._typeStr == "matrix3fv")
+                    else if (this._typeStr === "matrix3fv")
                     {
                         this._gl.uniformMatrix3fv(uniformLoc, gl.FALSE, value);
                     }

@@ -5,11 +5,9 @@
 
 /// <reference path="../_references.ts" />
 
-var demoData: string;
-
 module beachParty
 {
-    export class flatGrid extends baseGlVisClass
+    export class FlatGrid extends BaseGlVisClass
     {
         //---- all facets info ----
         _maxCountAllFacets = 0;
@@ -20,7 +18,7 @@ module beachParty
         _maxShapeSize = 1;
         _itemSize = 0;
 
-        constructor(view: dataViewClass, gl: any, chartState: any)
+        constructor(view: DataViewClass, gl: any, chartState: any)
         {
             super("flatGrid", view, gl, chartState);
 
@@ -29,7 +27,7 @@ module beachParty
 
         computeFacetStats(dc: DrawContext, nvFacetBuckets: any[])
         {
-            this._maxCountAllFacets = chartUtils.computeMaxCountOverFacets(dc, nvFacetBuckets);
+            this._maxCountAllFacets = ChartUtils.computeMaxCountOverFacets(dc, nvFacetBuckets);
             this._itemSize = dc.itemSize;
 
             return this._maxCountAllFacets;
@@ -92,7 +90,7 @@ module beachParty
 
             var width = this._maxShapeSize * this.scaleColData(nv.size, bufferIndex, dc.scales.size, 1);
             var height = width;
-            var depth = dc.defaultDepth2d      // test out 3d cube in a 2d shape
+            var depth = dc.defaultDepth2d;      // test out 3d cube in a 2d shape;
 
             var colorIndex = this.scaleColData(nv.colorIndex, bufferIndex, scales.colorIndex);
             var imageIndex = this.scaleColData(nv.imageIndex, bufferIndex, dc.scales.imageIndex);

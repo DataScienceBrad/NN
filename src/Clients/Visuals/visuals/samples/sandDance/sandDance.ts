@@ -200,7 +200,7 @@ module powerbi.visuals.samples {
         //TODO: add other elements.
 
         private coreApplication: beachParty.appMgrClass;
-        private application: beachPartyApp.appClass;
+        private application: beachPartyApp.AppClass;
 
         private dataView: SandDanceDataView;
 
@@ -219,7 +219,7 @@ module powerbi.visuals.samples {
 
             this.rootElement.style("margin", shapes.Thickness.toCssString(this.margin));
 
-            this.application = new beachPartyApp.appClass(this.saveSettings.bind(this), this.loadSettings.bind(this));
+            this.application = new beachPartyApp.AppClass(this.saveSettings.bind(this), this.loadSettings.bind(this));
             this.application.setViewport(this.viewport.width, this.viewport.height);
             this.application.run();
 
@@ -612,9 +612,7 @@ module powerbi.visuals.samples {
                 settingsNames: string[] = [
                     "application",
                     "session"
-                ],
-                application: any,
-                session: any;
+                ];
 
             settingsNames.forEach((settingsName: string) => {
                 let currentSettings: any;

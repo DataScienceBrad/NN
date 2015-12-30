@@ -8,7 +8,7 @@
 module beachParty
 {
     /// Note: dataFrame does NOT change the original data, but it cache numeric vectors on-demand for each column. 
-    export class dataFrameClass 
+    export class DataFrameClass 
     {
         ctr = "dataFrameClass";
 
@@ -21,7 +21,6 @@ module beachParty
         private _wdParams: bps.WorkingDataParams;
         private _sortKey: string = "none";        // colName + "up" or "down"
         private _pkToVectorIndex = {};
-        private _colsOnDemand = true;
 
         //---- a cache of vectors that have been converted to all numeric values ----
         private _numericVectorsCache: { [name: string]: NumericVector };
@@ -139,10 +138,10 @@ module beachParty
             }
 
             //---- valueMap: sort in descending order ----
-            vm = vm.orderByNum((e) => {return e.valueCount });
+            vm = vm.orderByNum((e) => {return e.valueCount; });
             vm.reverse();
 
-            if (maxRows != undefined)
+            if (maxRows !== undefined)
             {
                 vm = vm.slice(0, maxRows);
             }
@@ -156,7 +155,7 @@ module beachParty
             return isCol;
         }
 
-        append(df: dataFrameClass)
+        append(df: DataFrameClass)
         {
             for (var i = 0; i < df._names.length; i++)
             {
@@ -189,7 +188,7 @@ module beachParty
             for (var i = 0; i < str.length; i++)
             {
                 var ch = str[i];
-                if (ch == "_" || (ch >= "0" && ch <= "9") || (ch.toLocaleLowerCase() != ch.toLocaleUpperCase()))
+                if (ch === "_" || (ch >= "0" && ch <= "9") || (ch.toLocaleLowerCase() !== ch.toLocaleUpperCase()))
                 {
                     //---- valid name char ----
                 }
@@ -226,13 +225,13 @@ module beachParty
             var tokenType = scanner.tokenType();
             var token = scanner.token();
 
-            while (tokenType != TokenType.eof)
+            while (tokenType !== TokenType.eof)
             {
                 /// TODO: how can we support odd column name chars like "#"?
 
-                if (tokenType == TokenType.id)
+                if (tokenType === TokenType.id)
                 {
-                    if (lastToken != ".")
+                    if (lastToken !== ".")
                     {
                         var lowtok = token.toLowerCase();
                         var index = lowerColNames.indexOf(lowtok);
@@ -244,11 +243,11 @@ module beachParty
                         }
                         else
                         {
-                            if (lowtok == "math")
+                            if (lowtok === "math")
                             {
                                 token = "Math";     // correct case if needed
                             }
-                            else if (lowtok == "_primaryKey")
+                            else if (lowtok === "_primaryKey")
                             {
                                 token = "_primaryKey";
                             }
@@ -256,7 +255,7 @@ module beachParty
                     }
 
                 }
-                else if (token == "=")
+                else if (token === "=")
                 {
                     //---- common mistake - fix for user ----
                     token = "==";
@@ -283,8 +282,11 @@ module beachParty
             var expAdj = this.addRecordKeywordToColumnNames(exp);
             var expFunc = null;
 
-            var strMakeFunc = "expFunc = function(record) { return " + expAdj + ";}" 
+            var strMakeFunc = "expFunc = function(record) { return " + expAdj + ";}" ;
+
+            /* tslint:disable */
             eval(strMakeFunc);
+            /* tslint:enable */
 
             for (var i = 0; i < recordCount; i++)
             {
@@ -307,15 +309,15 @@ module beachParty
             //----  convert exp from string to func ----
             var expAdj = this.addRecordKeywordToColumnNames(exp);
             var expFunc = null;
+            /* tslint:disable */
             eval("expFunc = function(record) { return " + expAdj + ";}");
-
+            /* tslint:enable */
             for (var i = 0; i < recordCount; i++)
             {
                 var record = this.getRecordByVectorIndex(i);
-                var _primaryKey = i;
 
                 var value = expFunc(record);
-                if (value != true)
+                if (value !== true)
                 {
                     indexes.push(i);
                 }
@@ -363,9 +365,6 @@ module beachParty
                 }
                 else
                 {
-                    //---- use original field name ----
-                    var fldType = fld.fieldType;
-
                     //---- use the specified named column ----
                     var vector = this.getVector(newName, false).slice(0);  // copy vector
                     newMap[newName] = vector;
@@ -390,7 +389,7 @@ module beachParty
                 }
             }
 
-            var df = new dataFrameClass(newMap, newNames, colTypes);
+            var df = new DataFrameClass(newMap, newNames, colTypes);
             return df;
         }
 
@@ -415,7 +414,7 @@ module beachParty
 
             for (var i = 0; i < vector.length; i++)
             {
-                if (vector[i] == origValue)
+                if (vector[i] === origValue)
                 {
                     vector[i] = newValue;
                 }
@@ -430,7 +429,7 @@ module beachParty
 
             //---- NOTE: we can move this onto a background worker thread if/when needed----
 
-            var sortAsNumbers = (colType != "string");
+            var sortAsNumbers = (colType !== "string");
 
             if (!colName)
             {
@@ -442,7 +441,7 @@ module beachParty
             //---- extract keys to sort ----
             var keys = [];
 
-            if (colType == "string")
+            if (colType === "string")
             {
                 var vector = this.getVector(colName, false);
             }
@@ -486,11 +485,11 @@ module beachParty
                 vp.utils.debug("calling STRING sort: colName=" + colName + ", ascending=" + ascending + ", length=" + keys.length);
                 if (ascending)
                 {
-                    keys.sort(function (a, b) { return (a.key < b.key) ? -1 : ((a.key == b.key) ? 0 : 1); });
+                    keys.sort(function (a, b) { return (a.key < b.key) ? -1 : ((a.key === b.key) ? 0 : 1); });
                 }
                 else
                 {
-                    keys.sort(function (b, a) { return (a.key < b.key) ? -1 : ((a.key == b.key) ? 0 : 1); });
+                    keys.sort(function (b, a) { return (a.key < b.key) ? -1 : ((a.key === b.key) ? 0 : 1); });
                 }
             }
             //vp.utils.debug("sort returned");
@@ -503,11 +502,6 @@ module beachParty
                 var vector = this._vectorsByName[name];
 
                 this.reorderVectorInPlace(vector, keys);
-
-                if (name == "Order Date")
-                {
-                    var a = 54321;
-                }
             }
 
             this.rebuildPrimaryKeyIndex();
@@ -544,7 +538,7 @@ module beachParty
         addColumn(name, colType: string, vector?: any[])
         {
             //---- don't add new name if already present ----
-            if (this._names.indexOf(name) == -1)
+            if (this._names.indexOf(name) === -1)
             {
                 if (!vector)
                 {
@@ -606,7 +600,7 @@ module beachParty
                 }
             }
 
-            var df = new dataFrameClass(vectorsByName, names);
+            var df = new DataFrameClass(vectorsByName, names);
 
             return df;
         }
@@ -732,7 +726,7 @@ module beachParty
                     for (var i = 0; i < fields.length; i++)
                     {
                         var field = fields[i];
-                        if (field.name == colName)
+                        if (field.name === colName)
                         {
                             pf = field;
                             break;
@@ -775,7 +769,6 @@ module beachParty
             return numVector;
         }
 
-
         /** returns the type of column (date, number, string).  This value is calculated on demand, and then cached. */
         getColType(name: string)
         {
@@ -792,7 +785,7 @@ module beachParty
 
         copyData(recordIndexes?: number[])     
         {
-            var df = new dataFrameClass( {} );
+            var df = new DataFrameClass( {} );
 
             df._names = vp.utils.copyArray(this._names);
             df._colTypes = vp.utils.copyArray(this._colTypes);
@@ -840,22 +833,19 @@ module beachParty
         getPrimaryKeys(vector: any[], vectorType: bps.VectorType)
         {
             var keys = [];
-            var pkVector = this.getVector(primaryKeyName, false);
 
-            if (vectorType == bps.VectorType.sortOrder)
+            if (vectorType === bps.VectorType.sortOrder)
             {
                 for (var ri = 0; ri < vector.length; ri++)
                 {
                     var value = vector[ri];
                     if (value)
                     {
-                        var key = pkVector[ri];
-
                         keys.push(value);
                     }
                 }
             }
-            else if (vectorType == bps.VectorType.primaryKeyList)
+            else if (vectorType === bps.VectorType.primaryKeyList)
             {
                 keys = vector;
             }
@@ -878,7 +868,7 @@ module beachParty
                 colType = "string";
             }
 
-            var numericVector = dataFrameClass.buildNumericColFromVector(name, colData, colType,
+            var numericVector = DataFrameClass.buildNumericColFromVector(name, colData, colType,
                 forceNumeric, forceCategory, allKeys, this._wdParams);
 
             return numericVector;
@@ -887,14 +877,13 @@ module beachParty
         public static buildNumericColFromVector(name: string, colData: any[], colType: string, forceNumeric?: boolean,
             forceCategory?: boolean, allKeys?: string[], wdParams?: bps.WorkingDataParams)
         {
-            var count = (colData) ? colData.length: 0;
             var newData = [];       // (count) ? new Float32Array(count) : null;
 
             var numericVector = new NumericVector(newData, name, colType);
 
             if (colData && colData.length)
             {
-                if (colType == "number")
+                if (colType === "number")
                 {
                     //---- transfer NUMBER values, converting strings to parsed numbers ----
                     for (var i = 0; i < colData.length; i++)
@@ -903,14 +892,14 @@ module beachParty
                         newData[i] = value;
                     }
                 }
-                else if (colType == "date")
+                else if (colType === "date")
                 {
                     //---- transfer DATE values, converting strings to parsed date numbers and date objects to date numbers ----
                     for (var i = 0; i < colData.length; i++)
                     {
                         var value = colData[i];
 
-                        if (typeof value == "string")
+                        if (typeof value === "string")
                         {
                             value = Date.parse(value);
                         }
@@ -927,7 +916,7 @@ module beachParty
                     //---- string values ----
                     if (forceNumeric)
                     {
-                        var sortedKeys = dataFrameClass.getSortedKeys(name, wdParams);
+                        var sortedKeys = DataFrameClass.getSortedKeys(name, wdParams);
                         if (sortedKeys)
                         {
                             //---- overrides allKeys ----
@@ -935,7 +924,7 @@ module beachParty
                         }
 
                         //---- convert string to numeric, using dictionary keys & their indexes ----
-                        var keyIndexs = dataFrameClass.getStringKeyIndexes(colData, numericVector, allKeys);
+                        var keyIndexs = DataFrameClass.getStringKeyIndexes(colData, numericVector, allKeys);
 
                         if (keyIndexs && keyIndexs.length)
                         {
@@ -1032,7 +1021,7 @@ module beachParty
             var result = null;
             var statType = statInfo.statType;
 
-            if (statType == StatType.count)
+            if (statType === StatType.count)
             {
                 result = this.getRecordCount();
             }
@@ -1041,7 +1030,7 @@ module beachParty
                 var colName = statInfo.colName;
                 var statTransform = statInfo.colValueTransform;
 
-                var statName = (statType != StatType.none) ? StatType[statType] : "sum";
+                var statName = (statType !== StatType.none) ? StatType[statType] : "sum";
 
                 var aggregator = vp.data.createAggregator(statName);
                 aggregator.init();

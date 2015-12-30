@@ -7,7 +7,7 @@
 
 module beachPartyApp
 {
-    export class colorLegendClass extends beachParty.dataChangerClass
+    export class ColorLegendClass extends beachParty.dataChangerClass
     {
         //---- constants ----
         _maxPaletteHeight = 200;
@@ -25,9 +25,9 @@ module beachPartyApp
 
         _cm: bps.ColorMappingData;
         _bpsHelper: bps.chartHostHelperClass;
-        _app: appClass;                 // need to get latest ColInfo on legend build
+        _app: AppClass;                 // need to get latest ColInfo on legend build
 
-        constructor(app: appClass, rootName: string, bpsHelper: bps.chartHostHelperClass)
+        constructor(app: AppClass, rootName: string, bpsHelper: bps.chartHostHelperClass)
         {
             super();
 
@@ -37,7 +37,7 @@ module beachPartyApp
 
             var root = vp.select("#" + rootName)
                 .addClass("legend")
-                .css("margin-bottom", "20px")
+                .css("margin-bottom", "20px");
 
             //---- add colName as TITLE ----
             var title = root.append("div")
@@ -45,30 +45,30 @@ module beachPartyApp
                 .id("colorLegendTitle")
                 .attach("click", (e) =>
                 {
-                    appUtils.callPanelOpen(e, (e) => this.onDataChanged("colorPanelRequest"));
+                    AppUtils.callPanelOpen(e, (e) => this.onDataChanged("colorPanelRequest"));
                 });
 
             var table = root.append("table")
-                .addClass("legendHolder")
+                .addClass("legendHolder");
 
-            var row = table.append("tr")
+            var row = table.append("tr");
 
             //---- add PALETTE ----
             var paletteW = row.append("td")
                 .addClass("legendPalette")
                 .attr("valign", "top")
-                .css("width", "20px")
+                .css("width", "20px");
 
             //---- add TICKS ----
             var ticksW = row.append("td")
                 .addClass("legendTicks")
                 .css("width", "0px")
-                .css("position", "relative")
+                .css("position", "relative");
 
             //---- add LABELS ----
             var labelsW = row.append("td")
                 .addClass("legendLabels")
-                .css("position", "relative")
+                .css("position", "relative");
 
             ////---- add spacer TD as last column ----
             //var spacerW = row.append("td")
@@ -107,7 +107,7 @@ module beachPartyApp
         show(value: boolean)
         {
             vp.select(this._rootElem)
-                .css("display", (value) ? "" : "none")
+                .css("display", (value) ? "" : "none");
         }
 
         colorMapping(value?: bps.ColorMappingData)
@@ -129,10 +129,10 @@ module beachPartyApp
             var name = (cm) ? cm.colName : "";
 
             vp.select(this._rootElem)
-                .css("display", (name) ? "block" : "none")
+                .css("display", (name) ? "block" : "none");
 
             vp.select(this._titleElem)
-                .text(name)
+                .text(name);
 
             this.rebuildPalette();
 
@@ -159,7 +159,7 @@ module beachPartyApp
                 }
 
                 var colInfo = this._app.getColInfo(cm.colName);
-                var isNumeric = (colInfo.colType != "string");            // number or date
+                var isNumeric = (colInfo.colType !== "string");            // number or date
 
                 var entryHeight = this.drawColorPalette(cm, count, colorPalette, isNumeric);
                 this.drawTickMarks(cm, count, colorPalette, this._entryWidth, entryHeight);
@@ -169,11 +169,10 @@ module beachPartyApp
 
         drawTickMarks(cm: bps.ColorMappingData, count: number, colorPalette: any[], entryWidth: number, entryHeight: number)
         {
-            var breaks = cm.breaks;
             var ticksW = vp.select(this._ticksElem);
 
             ticksW
-                .clear()
+                .clear();
 
             var textTop = (entryHeight / 2) - 9;
             count++;
@@ -185,9 +184,9 @@ module beachPartyApp
                     .addClass("legendTick")
                     .css("position", "absolute")
                     .css("left", "-3px")
-                    .css("top", textTop + "px")
+                    .css("top", textTop + "px");
 
-                if (i == count - 1)
+                if (i === count - 1)
                 {
                     textTop--;          // fudge factor
                 }
@@ -203,10 +202,10 @@ module beachPartyApp
             this._textElems = [];
 
             labelsW
-                .clear()
+                .clear();
 
             var textTop = ((count-1) * entryHeight) + (entryHeight / 2) - 10;
-            var isNumeric = (colType != "string");
+            var isNumeric = (colType !== "string");
 
             if (isNumeric)
             {
@@ -216,11 +215,11 @@ module beachPartyApp
 
             var lastValue = null;
             
-            if (colType == "number")
+            if (colType === "number")
             {
                 var formatter = <any>vp.formatters.createCommaFormatter(2);
             }
-            else if (colType == "date")
+            else if (colType === "date")
             {
                 var minDate = cm.breaks[0];
                 var maxDate = cm.breaks[cm.breaks.length-1];
@@ -242,7 +241,7 @@ module beachPartyApp
                     text = formatter(text);
                 }
 
-                var tooltip = (text == "Other") ? "All other values mapped here" : text;
+                var tooltip = (text === "Other") ? "All other values mapped here" : text;
 
                 var labelW = labelsW.append("div")
                     .text(text)
@@ -252,11 +251,11 @@ module beachPartyApp
                     .css("max-width", "92px")
                     .css("top", textTop + "px")
                     .title(tooltip)
-                    .attach("click", (e) => this.searchForEntryValues(e))
+                    .attach("click", (e) => this.searchForEntryValues(e));
 
                 labelW[0].colName = cm.colName;
 
-                if (value == "Other")
+                if (value === "Other")
                 {
                     labelW[0].fromValue = lastValue;
                     labelW[0].toValue = lastValue;
@@ -264,7 +263,7 @@ module beachPartyApp
                 }
                 else if (isNumeric)
                 {
-                    labelW[0].fromValue = (i == 0) ? value : lastValue;
+                    labelW[0].fromValue = (i === 0) ? value : lastValue;
                     labelW[0].toValue = value;
                     labelW[0].searchType = bps.TextSearchType.betweenInclusive;
                 }
@@ -305,7 +304,7 @@ module beachPartyApp
             var paletteW = vp.select(this._paletteElem);
 
             paletteW
-                .clear()
+                .clear();
                 //.css("width", entryWidth + "px")
 
             if (cm.isContinuous)
@@ -315,7 +314,7 @@ module beachPartyApp
                 //---- go thru backwards, since we want the LIGHT colors at the top (and client palettes start with DARK) ----
                 for (var i = count - 1; i >= 0; i--)
                 {
-                    if (i != count - 1)
+                    if (i !== count - 1)
                     {
                         lg += ",";
                     }
@@ -331,14 +330,14 @@ module beachPartyApp
                 //---- CONTINUOUS ----
                 paletteW
                     .css("background", lg)
-                    .css("height", paletteHeight + "px")
+                    .css("height", paletteHeight + "px");
 
                 entryHeight = paletteHeight / count;
             }
             else
             {
                 paletteW
-                    .css("background", "")
+                    .css("background", "");
 
                 //---- STEPS ----
                 if (count * entryHeight > this._maxPaletteHeight)
@@ -360,7 +359,7 @@ module beachPartyApp
                         .css("width", entryWidth + "px")
                         .css("height", entryHeight + "px")
                         .customAttr("value", text)
-                        .attach("click", (e) => this.searchForEntryValues(e))
+                        .attach("click", (e) => this.searchForEntryValues(e));
 
                     colorEntryW[0].colorIndex = (isNumeric) ? (i + 1) : i;
 

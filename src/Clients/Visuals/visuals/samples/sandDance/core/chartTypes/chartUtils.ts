@@ -7,7 +7,7 @@
 
 module beachParty
 {
-    export class chartUtils
+    export class ChartUtils
     {
         static computeBestCountFactor(maxCount: number, shapesPerRow: number)
         {
@@ -37,7 +37,7 @@ module beachParty
                         break;
                     }
 
-                    if (i == 0 || over > maxOver)
+                    if (i === 0 || over > maxOver)
                     {
                         maxOver = over;
                         bestFactor = f;
@@ -61,12 +61,12 @@ module beachParty
             //---- compute single bin (for this facet) ----
             var requestedBins = cm.binCount;
 
-            var sortOptions = new binSortOptionsClass();
+            var sortOptions = new BinSortOptionsClass();
             sortOptions.sortDirection = cm.binSorting;
             sortOptions.sortByAggregateType = "count";
             var maxCount = 0;
 
-            var binResults = binHelper.createBins(data, binCol, requestedBins, cm.binCount, false, true, true, sortOptions, null, cm.useNiceNumbers, cm);
+            var binResults = BinHelper.createBins(data, binCol, requestedBins, cm.binCount, false, true, true, sortOptions, null, cm.useNiceNumbers, cm);
             if (binResults)
             {
                 var binCount = binResults.bins.length;
@@ -88,27 +88,25 @@ module beachParty
         {
             var requestedBins = cm.binCount;
 
-            var sortOptions = new binSortOptionsClass();
+            var sortOptions = new BinSortOptionsClass();
             sortOptions.sortDirection = cm.binSorting;
             sortOptions.sortByAggregateType = "count";
-            var maxCount = 0;
 
-            var binResults = binHelper.createBins(data, binCol, requestedBins, cm.binCount, false, true, true, sortOptions, null, cm.useNiceNumbers, cm);
+            var binResults = BinHelper.createBins(data, binCol, requestedBins, cm.binCount, false, true, true, sortOptions, null, cm.useNiceNumbers, cm);
 
             return binResults;
         }
 
         static computeSumForFacet(dc: DrawContext, data, cm: bps.MappingData, binColumn: string, sumByColumn: string)
         {
-            var sortOptions = new binSortOptionsClass();
+            var sortOptions = new BinSortOptionsClass();
             sortOptions.sortDirection = cm.binSorting;
             sortOptions.sortByAggregateType = "sum";
             sortOptions.sumByColumn = sumByColumn;
 
-            var maxCount = 0;
             var requestedBins = cm.binCount;
 
-            var binResults = binHelper.createBins(data, binColumn, requestedBins, requestedBins, false, true, true, sortOptions, null, cm.useNiceNumbers, cm);
+            var binResults = BinHelper.createBins(data, binColumn, requestedBins, requestedBins, false, true, true, sortOptions, null, cm.useNiceNumbers, cm);
             if (binResults)
             {
                 var binCount = binResults.bins.length;
@@ -207,7 +205,7 @@ module beachParty
                 binNames[i] = bins[i].name;
             }
 
-            if (scaleType == vp.scales.ScaleType.categoryIndex || scaleType == vp.scales.ScaleType.categoryKey)
+            if (scaleType === vp.scales.ScaleType.categoryIndex || scaleType === vp.scales.ScaleType.categoryKey)
             {
                 scale.categoryKeys(binNames);
             }
@@ -218,7 +216,7 @@ module beachParty
                 //---- order = 0 means bins are in random order, according to their conseq. min/max values ----
                 //---- order = -1 means descending order ----
 
-                var useCategoryForBins = (order != 1);
+                var useCategoryForBins = (order !== 1);
 
                 if (useCategoryForBins)
                 {
@@ -226,7 +224,7 @@ module beachParty
 
                     scale = vp.scales.createCategoryIndex()
                         .categoryKeys(binNames)
-                        .range(oldScale.rangeMin(), oldScale.rangeMax())
+                        .range(oldScale.rangeMin(), oldScale.rangeMax());
 
                     //---- enable scaling by keyIndex (default is key value) ----
                     //scale.scale = scale.categoryScale;
@@ -245,7 +243,7 @@ module beachParty
                         breakValues.push(numBin.min);
                         labels.push(numBin.minLabel);
 
-                        if (b == bins.length - 1)
+                        if (b === bins.length - 1)
                         {
                             breakValues.push(numBin.max);
                             labels.push(numBin.maxLabel);
@@ -255,7 +253,7 @@ module beachParty
                     anyScale._breaks = breakValues;
                     anyScale._labels = labels;
 
-                    if (scaleType == vp.scales.ScaleType.dateTime && !anyScale._formatter)
+                    if (scaleType === vp.scales.ScaleType.dateTime && !anyScale._formatter)
                     {
                         //---- use the formatString returned by the binning function ----
                         var formatString = (<BinResultNum>binResults).dateFormatString;
@@ -274,7 +272,7 @@ module beachParty
             return scale;
         }
 
-        static getScatterShapeSize(dc: DrawContext, recordCount?: number, view?: dataViewClass)
+        static getScatterShapeSize(dc: DrawContext, recordCount?: number, view?: DataViewClass)
         {
             var maxShapeSize = (view) ? view.defaultShapeSize() : null;
 

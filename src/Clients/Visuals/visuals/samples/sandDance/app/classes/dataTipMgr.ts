@@ -7,24 +7,24 @@
 
 module beachPartyApp
 {
-    export class dataTipMgrClass extends beachParty.dataChangerClass 
+    export class DataTipMgrClass extends beachParty.dataChangerClass 
     {
-        static instance: dataTipMgrClass;
+        static instance: DataTipMgrClass;
 
-        _dataTips: dataTipClass[] = [];
+        _dataTips: DataTipClass[] = [];
 
         constructor()
         {
             super();
 
-            dataTipMgrClass.instance = this;
+            DataTipMgrClass.instance = this;
         }
 
         addDataTip(colName: string, pt?: any)
         {
             var rootW = vp.select("#dataTipsRoot");
 
-            var dataTip = new dataTipClass(rootW[0], bps.chartHostHelperClass.instance);
+            var dataTip = new DataTipClass(rootW[0], bps.chartHostHelperClass.instance);
             this._dataTips.push(dataTip);
 
             dataTip.setColumnName(colName);
@@ -34,7 +34,7 @@ module beachPartyApp
                 var rc = dataTip.getPlotBounds();
                 var msg = "dataTip: " + vp.geom.rectToString(rc);
 
-                appClass.instance.quickStats(msg);
+                AppClass.instance.quickStats(msg);
             });
 
             if (pt)
@@ -53,7 +53,7 @@ module beachPartyApp
             for (var i = 0; i < this._dataTips.length; i++)
             {
                 var dt = this._dataTips[i];
-                if (dt._primaryKey == primaryKey)
+                if (dt._primaryKey === primaryKey)
                 {
                     dataTip = dt;
                     break;
@@ -63,7 +63,7 @@ module beachPartyApp
             return dataTip;
         }
 
-        closeDataTip(dataTip: dataTipClass)
+        closeDataTip(dataTip: DataTipClass)
         {
             dataTip.close();
             this._dataTips.remove(dataTip);
@@ -92,7 +92,7 @@ module beachPartyApp
         clearDataTips()
         {
             //---- remove old data tips ----
-            var rootW = vp.select("#dataTipsRoot")
+            vp.select("#dataTipsRoot")
                 .clear();
 
             this._dataTips = [];

@@ -9,7 +9,7 @@ module beachPartyApp
 {
     // import colorPalettesClass = beachParty.colorPalettesClass;
 
-    export class paletteHelper
+    export class PaletteHelper
     {
         public static buildColorBreaks(cm: bps.ColorMappingData, colInfo: bps.ColInfo, useNiceNumbers: boolean)
         {
@@ -25,7 +25,7 @@ module beachPartyApp
                     {
                         //palette = colorPalettesClass.getPaletteFromSettings(cm.paletteName, cm.stepsRequested, cm.isReversed);
 
-                        var isCategory = (cm.forceCategory || colInfo.colType == "string");
+                        var isCategory = (cm.forceCategory || colInfo.colType === "string");
 
                         if (isCategory)
                         {
@@ -69,7 +69,7 @@ module beachPartyApp
                         //---- the default size palette, for now ----
                         //palette = [.25, .5, .75, 1];
 
-                        var isCategory = (sm.forceCategory || colInfo.colType == "string");
+                        var isCategory = (sm.forceCategory || colInfo.colType === "string");
 
                         if (isCategory)
                         {
@@ -105,7 +105,7 @@ module beachPartyApp
                         //---- the default image palette, for now ----
                         //palette = ["filled circle", "filled square", "filled triangle", "circle", "square", "triangle"];
 
-                        var isCategory = (im.forceCategory || colInfo.colType == "string");
+                        var isCategory = (im.forceCategory || colInfo.colType === "string");
 
                         if (isCategory)
                         {
@@ -141,7 +141,7 @@ module beachPartyApp
 
             for (var i = 0; i < palette.length; i++)
             {
-                if (i == palette.length - 1 && keyCount > palette.length)
+                if (i === palette.length - 1 && keyCount > palette.length)
                 {
                     breaks.push("Other");
                 }

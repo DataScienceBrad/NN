@@ -7,7 +7,7 @@
 
 module beachParty
 {
-    export class shareMgrClass extends dataChangerClass
+    export class ShareMgrClass extends DataChangerClass
     {
         _sessionId: string;
         _changeNumber: number;
@@ -46,9 +46,9 @@ module beachParty
             {
                 //vp.utils.debug("******* shareMgr.changeFunc: e.key=" + e.key);
 
-                traceMgrClass.instance.addTrace("localStorage", e.key, TraceEventType.point);
+                TraceMgrClass.instance.addTrace("localStorage", e.key, TraceEventType.point);
 
-                if (e.key == this._itemId)
+                if (e.key === this._itemId)
                 {
                     this.processStorageChangedRecord(e.newValue);
                 }
@@ -77,7 +77,7 @@ module beachParty
         {
             var sdx = <ShareStateData>JSON.parse(sdStr);
 
-            if (sdx && sdx.changedById != this._sessionId)            // ignore my changes 
+            if (sdx && sdx.changedById !== this._sessionId)            // ignore my changes 
             {
                 //---- watch out for illegal times ----
                 var timeDiff = Math.abs(Date.now() - sdx.changeTime);

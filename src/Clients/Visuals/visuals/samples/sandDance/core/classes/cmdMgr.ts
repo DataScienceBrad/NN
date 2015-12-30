@@ -7,16 +7,16 @@
 
 module beachParty
 {
-    export class cmdMgrClass extends dataChangerClass
+    export class CmdMgrClass extends DataChangerClass
     {
         //_cmdHistory = [];
         _pendingVaasCmds = [];
         _clientCmdId = null;
 
-        _appMgr: appMgrClass;
-        _windowMgr: windowMgrClass;
+        _appMgr: AppMgrClass;
+        _windowMgr: WindowMgrClass;
 
-        constructor(appMgr: appMgrClass)
+        constructor(appMgr: AppMgrClass)
         {
             super();
 
@@ -24,7 +24,7 @@ module beachParty
         }
 
         /** set when windowMgr is first created (by appMgr). */
-        setWindowMgr(windowMgr: windowMgrClass)
+        setWindowMgr(windowMgr: WindowMgrClass)
         {
             this._windowMgr = windowMgr;
         }
@@ -85,12 +85,12 @@ module beachParty
                 var canvasElem = this._appMgr.getCanvas3dElem();
 
                 //---- process cmd from parent document (usually running VAAS) ----
-                if (cmd == "setbackground")
+                if (cmd === "setbackground")
                 {
                     vp.select(document.body)
                         .css("background", msgBlock.param);
                 }
-                else if (cmd == "setplotbackground")
+                else if (cmd === "setplotbackground")
                 {
                     vp.select(canvasElem)
                         .css("background", msgBlock.param);
@@ -112,74 +112,73 @@ module beachParty
             var dataFrame = dataMgr.getDataFrame();
             var windowMgr = this._appMgr._windowMgr;
 
-            traceMgrClass.instance.addTrace("msgFromClient", msgBlock.cmd, TraceEventType.point);
+            TraceMgrClass.instance.addTrace("msgFromClient", msgBlock.cmd, TraceEventType.point);
 
             var cmd = msgBlock.cmd.toLowerCase();               // allow for user mis-caseing 
             var boolParam = utils.toBool(msgBlock.param);
             var boolParam2 = utils.toBool(msgBlock.param2);
             var boolParam3 = utils.toBool(msgBlock.param3);
-            var boolParam4 = utils.toBool(msgBlock.param3);
 
             this._clientCmdId = msgBlock.cmdId;
 
             if (view)
             {
-                if (cmd == "setcanvascolor")
+                if (cmd === "setcanvascolor")
                 {
                     view.canvasColor(msgBlock.param);
                 }
-                else if (cmd == "setshapecolor")
+                else if (cmd === "setshapecolor")
                 {
                     view.shapeColor(msgBlock.param);
                 }
-                else if (cmd == "setsizefactor")
+                else if (cmd === "setsizefactor")
                 {
                     var animate = utils.toBool(msgBlock.param2);
                     view.userSizeFactor(+msgBlock.param, animate);
                 }
-                else if (cmd == "setseparationfactor")
+                else if (cmd === "setseparationfactor")
                 {
                     view.separationFactor(+msgBlock.param);
                 }
-                else if (cmd == "setdefaultshapesize")
+                else if (cmd === "setdefaultshapesize")
                 {
                     view.defaultShapeSize(+msgBlock.param);
                 }
-                else if (cmd == "setshapeopacity")
+                else if (cmd === "setshapeopacity")
                 {
                     view.shapeOpacity(+msgBlock.param);
                 }
-                else if (cmd == "settextopacity")
+                else if (cmd === "settextopacity")
                 {
                     view.textOpacity(+msgBlock.param);
                 }
-                else if (cmd == "subscribe")
+                else if (cmd === "subscribe")
                 {
                     var returnData = boolParam2;
                     var oneTimeOnly = boolParam3;
 
                     this._appMgr.clientSubscribe(msgBlock.param, returnData, oneTimeOnly);
                 }
-                else if (cmd == "testroundtriptime")
+                else if (cmd === "testroundtriptime")
                 {
                     vp.utils.debug("testRoundTrip received");
 
                     this._appMgr.sendDataChangedToHost("roundTrip");
                 }
-                else if (cmd == "getsystemviewdata")
+                else if (cmd === "getsystemviewdata")
                 {
                     var getSnapshot = boolParam;
                     var getRepro = boolParam2;
                     this.getSystemViewData(msgBlock.requestId, getSnapshot, getRepro, view);;
                 }
-                else if (cmd == "getengineevents")
+                else if (cmd === "getengineevents")
                 {
-                    var engineEvents = traceMgrClass.instance.getCmds();
+                    var engineEvents = TraceMgrClass.instance.getCmds();
                     var requestId = msgBlock.requestId;
 
                     this._appMgr.postMessageToParent({ msg: "getEngineEventsResponse", responseId: requestId, engineEvents: engineEvents });
                 }
-                else if (cmd == "getmemoryuse")
+                else if (cmd === "getmemoryuse")
                 {
                     var memObjs = <any>{};
 
@@ -193,7 +192,7 @@ module beachParty
                     memObjs.appMgr = this._appMgr;
                     memObjs.cmdMgr = this;
                     memObjs.windowMgr = this._windowMgr;
-                    memObjs.traceMgr = traceMgrClass.instance;
+                    memObjs.traceMgr = TraceMgrClass.instance;
                     memObjs.transformer = chart._transformer;
                     memObjs.transformMgr = view.getTransformMgr();
                     memObjs.shareMgr = dataMgr.getShareMgr();
@@ -205,7 +204,7 @@ module beachParty
 
                     this._appMgr.postMessageToParent({ msg: "getMemoryUseResponse", responseId: requestId, memUse: memUse });
                 }
-                else if (cmd == "setsystemviewdata")
+                else if (cmd === "setsystemviewdata")
                 {
                     var svd = <bps.SystemViewData>JSON.parse(msgBlock.param);
                     var filterChanged = false;
@@ -238,12 +237,12 @@ module beachParty
                         this._appMgr.postMessageToParent({ msg: "onSetSystemViewData", responseId: requestId });
                     }
                 }
-                else if (cmd == "loadknowndata")
+                else if (cmd === "loadknowndata")
                 {
                     var requestId = msgBlock.requestId;
                     var name = msgBlock.param;
 
-                    dataMgr.loadKnownAsync(name, null, (df: dataFrameClass) =>
+                    dataMgr.loadKnownAsync(name, null, (df: DataFrameClass) =>
                     {
                         if (requestId)
                         {
@@ -251,23 +250,23 @@ module beachParty
                         }
                     });
                 }
-                else if (cmd == "selectxtickbox")
+                else if (cmd === "selectxtickbox")
                 {
                     var index = +msgBlock.param;
                     view.getChart()._chartFrameHelper.selectXBoxByIndex(index);
                 }
-                else if (cmd == "selectytickbox")
+                else if (cmd === "selectytickbox")
                 {
                     var index = +msgBlock.param;
                     view.getChart()._chartFrameHelper.selectYBoxByIndex(index);
                 }
-                else if (cmd == "loaddata")
+                else if (cmd === "loaddata")
                 {
                     var wdParams = <bps.WorkingDataParams>vp.utils.parseJsonIntoObj(msgBlock.param, new bps.WorkingDataParams());
 
                     this.loadDataFromServer(wdParams, msgBlock.requestId, view);
                 }
-                else if (cmd == "updatedataview")
+                else if (cmd === "updatedataview")
                 {
                     if (msgBlock.param2)
                     {
@@ -287,7 +286,7 @@ module beachParty
                         this._appMgr.postMessageToParent({ msg: "setDataResponse", responseId: requestId });
                     }
                 }
-                else if (cmd == "setdata")
+                else if (cmd === "setdata")
                 {
                     var data;
                     
@@ -315,7 +314,7 @@ module beachParty
                         this._appMgr.postMessageToParent({ msg: "setDataResponse", responseId: requestId });
                     }
                 }
-                else if (cmd == "renderwebpagetopng")
+                else if (cmd === "renderwebpagetopng")
                 {
                     var pageUrl = msgBlock.param;
                     var width = +msgBlock.param2;
@@ -333,20 +332,20 @@ module beachParty
                     });
 
                 }
-                else if (cmd == "setcharttype")
+                else if (cmd === "setcharttype")
                 {
                     view.setChartType(msgBlock.param, msgBlock.param2);
                 }
-                else if (cmd == "addstylesheet")
+                else if (cmd === "addstylesheet")
                 {
                     var text = msgBlock.param;
                     vp.dom.createStyleSheet(text);
                 }
-                else if (cmd == "showwheelduringtransformmode")
+                else if (cmd === "showwheelduringtransformmode")
                 {
                     //windowMgr.showWheelDuringTransformMode(boolParam);
                 }
-                else if (cmd == "setmaxitemcount")
+                else if (cmd === "setmaxitemcount")
                 {
                     var enabled = boolParam;
                     var maxCount = +msgBlock.param2;
@@ -354,7 +353,7 @@ module beachParty
                     view.isMaxItemCountEnabled(enabled);
                     view.maxItemCount(maxCount);
                 }
-                else if (cmd == "setautorebuild")
+                else if (cmd === "setautorebuild")
                 {
                     var autoRebuild = boolParam;
                     var buildNow = boolParam2;
@@ -367,7 +366,7 @@ module beachParty
                         view.buildNow(skipFilterSecondState);       //true);
                     }
                 }
-                else if (cmd == "rectselect")
+                else if (cmd === "rectselect")
                 {
                     var rcBand = JSON.parse(msgBlock.param);
 
@@ -377,21 +376,21 @@ module beachParty
                     view.hitTestRectWithSelect(rcBandAdj);
                     this._appMgr.onRectSelection(rcBandAdj);                
                 }
-                else if (cmd == "setchartdebuginfo")
+                else if (cmd === "setchartdebuginfo")
                 {
                     view.showChartDebugInfo(boolParam);
                 }
-                else if (cmd == "setlightingparams")
+                else if (cmd === "setlightingparams")
                 {
                     var lightParams = JSON.parse(msgBlock.param);
                     view.lightingParams(lightParams);
                 }
-                else if (cmd == "setchartframedata")
+                else if (cmd === "setchartframedata")
                 {
                     var cfd = <bps.ChartFrameData>JSON.parse(msgBlock.param);
                     view.chartFrameData(cfd);
                 }
-                else if (cmd == "getrecordandbounds")
+                else if (cmd === "getrecordandbounds")
                 {
                     var primaryKey = msgBlock.param;
                     var colNames = <string[]> JSON.parse(msgBlock.param2);
@@ -409,7 +408,7 @@ module beachParty
 
                     this._appMgr.postMessageToParent(msgBlock4);
                 }
-                else if (cmd == "getplotbounds")
+                else if (cmd === "getplotbounds")
                 {
                     var requestId = msgBlock.requestId;
 
@@ -421,7 +420,7 @@ module beachParty
 
                     this._appMgr.postMessageToParent(msgBlock10);
                 }
-                else if (cmd == "getmostcentralrecord")
+                else if (cmd === "getmostcentralrecord")
                 {
                     var rcScreen = <ClientRect>JSON.parse(msgBlock.param);
                     var colList = <string[]>JSON.parse(msgBlock.param2);
@@ -433,67 +432,67 @@ module beachParty
                     var msgBlock3 = { msg: "recordAtScreenPos", responseId: requestId, colValues: result.colValues, recordIndex: result.recordIndex };
                     this._appMgr.postMessageToParent(msgBlock3);
                 }
-                else if (cmd == "setanimationdata")
+                else if (cmd === "setanimationdata")
                 {
                     var ad = <bps.AnimationData>JSON.parse(msgBlock.param);
                     view.animationData(ad);
                 }
-                else if (cmd == "setcolormapping")
+                else if (cmd === "setcolormapping")
                 {
                     var colorMapping = <bps.ColorMappingData>(msgBlock.param) ? JSON.parse(msgBlock.param) : new bps.ColorMappingData();
                     view.colorMapping(colorMapping);
                 }
-                else if (cmd == "setsizemapping")
+                else if (cmd === "setsizemapping")
                 {
                     var sizeMapping = <bps.SizeMappingData>(msgBlock.param) ? JSON.parse(msgBlock.param) : new bps.SizeMappingData();
                     view.sizeMapping(sizeMapping);
                 }
-                else if (cmd == "settextmapping")
+                else if (cmd === "settextmapping")
                 {
                     var textMapping = <bps.TextMappingData>(msgBlock.param) ? JSON.parse(msgBlock.param) : new bps.TextMappingData();
                     view.textMapping(textMapping);
                 }
-                else if (cmd == "setlinemapping")
+                else if (cmd === "setlinemapping")
                 {
                     var lineMapping = <bps.LineMappingData>(msgBlock.param) ? JSON.parse(msgBlock.param) : new bps.LineMappingData();
                     view.lineMapping(lineMapping);
                 }
-                else if (cmd == "setshapeimage")
+                else if (cmd === "setshapeimage")
                 {
                     view.shapeImageName(msgBlock.param);
                 }
-                else if (cmd == "settopercentoverride")
+                else if (cmd === "settopercentoverride")
                 {
                     view.toPercentOverride(msgBlock.param);
                 }
-                else if (cmd == "setanimoverride")
+                else if (cmd === "setanimoverride")
                 {
                     view.isAnimOverride(boolParam);
                 }
-                else if (cmd == "set3dgridvisible")
+                else if (cmd === "set3dgridvisible")
                 {
                     view.is3dGridVisible(boolParam);
                 }
-                else if (cmd == "setimagemapping")
+                else if (cmd === "setimagemapping")
                 {
                     var imageMapping = <bps.ImageMappingData>JSON.parse(msgBlock.param);
                     view.imageMapping(imageMapping);
                 }
-                else if (cmd == "setfacetmapping")
+                else if (cmd === "setfacetmapping")
                 {
                     var facetMapping = <bps.FacetMappingData>JSON.parse(msgBlock.param);
                     view.facetMapping(facetMapping);
                 }
-                else if (cmd == "setxmapping")
+                else if (cmd === "setxmapping")
                 {
                     var xMapping = <bps.MappingData> (msgBlock.param) ? JSON.parse(msgBlock.param) : new bps.MappingData(null);
                     view.xMapping(xMapping);
                 }
-                else if (cmd == "onlocalstoragechange")
+                else if (cmd === "onlocalstoragechange")
                 {
                     dataMgr.onLocalStorageChange();
                 }
-                else if (cmd == "getbindata")
+                else if (cmd === "getbindata")
                 {
                     var mapping = <bps.MappingData>JSON.parse(msgBlock.param);
                     var requestId = msgBlock.requestId;
@@ -506,26 +505,26 @@ module beachParty
                         this._appMgr.postMessageToParent(msgBlock);
                     });
                 }
-                else if (cmd == "setymapping")
+                else if (cmd === "setymapping")
                 {
                     var yMapping = <bps.MappingData> (msgBlock.param) ? JSON.parse(msgBlock.param) : new bps.MappingData(null);
                     view.yMapping(yMapping);
                 }
-                else if (cmd == "setzmapping")
+                else if (cmd === "setzmapping")
                 {
                     var zMapping = <bps.MappingData> (msgBlock.param) ? JSON.parse(msgBlock.param) : new bps.MappingData(null);
                     view.zMapping(zMapping);
                 }
-                else if (cmd == "setdrawingprimitive")
+                else if (cmd === "setdrawingprimitive")
                 {
                     var drawPrim = <bps.DrawPrimitive>bps.DrawPrimitive[<string>msgBlock.param];
                     view.drawingPrimitive(drawPrim);
                 }
-                else if (cmd == "setorthocamera")
+                else if (cmd === "setorthocamera")
                 {
                     view.isOrthoCamera(boolParam);
                 }
-                else if (cmd == "setshowing3dwheel")
+                else if (cmd === "setshowing3dwheel")
                 {
                     windowMgr.areTransformsEnabled(boolParam);
                 }
@@ -533,15 +532,15 @@ module beachParty
                 //{
                 //    view.lightingEnabled(boolParam);
                 //}
-                else if (cmd == "setusewireframe")
+                else if (cmd === "setusewireframe")
                 {
                     view.isWireframe(boolParam);
                 }
-                else if (cmd == "setuseculling")
+                else if (cmd === "setuseculling")
                 {
                     view.isCullingEnabled(boolParam);
                 }
-                else if (cmd == "setselection")
+                else if (cmd === "setselection")
                 {
                     var vector = <any[]> JSON.parse(msgBlock.param);
                     var vectorType = bps.VectorType[<string>msgBlock.param2];
@@ -550,17 +549,17 @@ module beachParty
                     var primaryKeys = dataFrame.getPrimaryKeys(vector, vectorType);
                     dataMgr.setSelectionDirect(primaryKeys, changeSource);
                 }
-                else if (cmd == "sethoverparams")
+                else if (cmd === "sethoverparams")
                 {
                     var hoverParams = <bps.HoverParams> JSON.parse(msgBlock.param);
                     view.hoverParams(hoverParams);
                 }
-                else if (cmd == "setselectionparams")
+                else if (cmd === "setselectionparams")
                 {
                     var selectionParams = <bps.SelectionParams> JSON.parse(msgBlock.param);
                     view.selectionParams(selectionParams);
                 }
-                else if (cmd == "setselectionmode")
+                else if (cmd === "setselectionmode")
                 {
                     var selectMode = <bps.SelectMode> JSON.parse(msgBlock.param);
                     dataMgr.selectMode(selectMode);
@@ -569,19 +568,19 @@ module beachParty
                 //{
                 //    view.areToolTipsEnabled(boolParam);
                 //}
-                else if (cmd == "setusetransforms")
+                else if (cmd === "setusetransforms")
                 {
                     this._windowMgr.areTransformsEnabled(boolParam);
                 }
-                else if (cmd == "setwheelinertia")
+                else if (cmd === "setwheelinertia")
                 {
                     transformMgr.isInertiaEnabled(boolParam);
                 }
-                else if (cmd == "sortdata")
+                else if (cmd === "sortdata")
                 {
                     dataMgr.sortData(msgBlock.param, utils.toBool(msgBlock.param2));
                 }
-                else if (cmd == "search")
+                else if (cmd === "search")
                 {
                     //var colName = msgBlock.param;
                     //var value = msgBlock.param2;
@@ -594,7 +593,7 @@ module beachParty
 
                     var requestId = msgBlock.requestId;
                     var results = dataMgr.searchColValue(searchParams);
-                    if (searchParams.searchAction == bps.SearchAction.returnMatches)
+                    if (searchParams.searchAction === bps.SearchAction.returnMatches)
                     {
                         var rcPlot = view.getPlotBoundsInPixels();
 
@@ -602,7 +601,7 @@ module beachParty
                         this._appMgr.postMessageToParent(msgBlockBack);
                     }
                 }
-                else if (cmd == "applyhover")
+                else if (cmd === "applyhover")
                 {
                     var x = +msgBlock.param;
                     var y = +msgBlock.param2;
@@ -624,46 +623,46 @@ module beachParty
 
                     this._appMgr.postMessageToParent(msgBlockHover);
                 }
-                else if (cmd == "clearselection")
+                else if (cmd === "clearselection")
                 {
                     dataMgr.clearSelection();
                 }
-                else if (cmd == "resetfilter")
+                else if (cmd === "resetfilter")
                 {
                     dataMgr.resetFilter();
                 }
-                else if (cmd == "resettransform")
+                else if (cmd === "resettransform")
                 {
                     //---- reset the 3D transform and rotation inertia ----
                     //transformMgr.resetTransform();
 
                     windowMgr.resetStuff();
                 }
-                else if (cmd == "isolateselection")
+                else if (cmd === "isolateselection")
                 {
                     dataMgr.isolateSelection();
                 }
-                else if (cmd == "excludeselection")
+                else if (cmd === "excludeselection")
                 {
                     dataMgr.excludeSelection();
                 }
-                else if (cmd == "getdatavectors")
+                else if (cmd === "getdatavectors")
                 {
                     var names = JSON.parse(msgBlock.param);
                     this.requestDataVectors(dataMgr, names);
                 }
-                else if (cmd == "getvaluemap")
+                else if (cmd === "getvaluemap")
                 {
                     this.getValueMap(dataMgr, msgBlock.param, +msgBlock.param2, msgBlock.requestId);
                 }
-                else if (cmd == "setcontinuousdrawing")
+                else if (cmd === "setcontinuousdrawing")
                 {
                     view.isContinuousDrawing(boolParam);
                 }
             }
         }
 
-        loadDataFromServer(wdParams: bps.WorkingDataParams, requestId: number, view: dataViewClass)
+        loadDataFromServer(wdParams: bps.WorkingDataParams, requestId: number, view: DataViewClass)
         {
             var dataMgr = this._appMgr._dataMgr;
 
@@ -675,14 +674,14 @@ module beachParty
             else
             {
                 //---- load file and then process the properties ----
-                dataMgr.openPreloadAsync(wdParams, (df: dataFrameClass) =>
+                dataMgr.openPreloadAsync(wdParams, (df: DataFrameClass) =>
                 {
                     this.loadDataPost(wdParams, requestId, view);
                 });
             }
         }
 
-        loadDataPost(wdParams: bps.WorkingDataParams, requestId: number, view: dataViewClass)
+        loadDataPost(wdParams: bps.WorkingDataParams, requestId: number, view: DataViewClass)
         {
             //---- don't draw twice; let client request the only draw in this sequence ----
             view.cancelRquestedDraw();
@@ -704,7 +703,7 @@ module beachParty
             return mat;
         }
 
-        getSystemViewData(requestId: number, getSnapshot: boolean, getRepro: boolean, view: dataViewClass)
+        getSystemViewData(requestId: number, getSnapshot: boolean, getRepro: boolean, view: DataViewClass)
         {
             var svd = new bps.SystemViewData();
             var dataMgr = this._appMgr._dataMgr;
@@ -781,7 +780,7 @@ module beachParty
         //    img.src = url;
         //}
 
-        requestDataVectors(dataMgr: dataMgrClass, names: string[])
+        requestDataVectors(dataMgr: DataMgrClass, names: string[])
         {
             var nv = <any>{};
             var dataFrame = dataMgr.getDataFrame();
@@ -798,7 +797,7 @@ module beachParty
             this._appMgr.postMessageToParent(msgBlock);
         }
 
-        getValueMap(dataMgr: dataMgrClass, colName: string, maxRows: number, requestId: string)
+        getValueMap(dataMgr: DataMgrClass, colName: string, maxRows: number, requestId: string)
         {
             var dataFrame = dataMgr.getDataFrame();
             var valueMap = dataFrame.getValueMap(colName, maxRows);

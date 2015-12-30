@@ -7,7 +7,7 @@
 
 module beachParty
 {
-    export class transformerClass extends dataChangerClass
+    export class TransformerClass extends DataChangerClass
     {
         _matProjection: Float32Array;  // vp.geom.matrix4;
         _matView: Float32Array;     // vp.geom.matrix4;
@@ -54,7 +54,6 @@ module beachParty
         rebuildProjectionMatrix(cameraPosZ: number)
         {
             var rads = vp.utils.toRadians(45);
-            var gl = this._gl;
 
             var cw = this._canvasWidth;
             var ch = this._canvasHeight;
@@ -95,9 +94,6 @@ module beachParty
                 }
                 else
                 {
-                    //---- this is the DEFAULT BEACHPARTY CAMERA ----
-                    var percentToUse = 1;   //.98;
-
                     //---- old method hard-coded the values, which were usually close to right ----
                     //var yb = percentToUse * 2.899;      // 2.8;
                     //var xb = aspect * yb;               // 4.2;
@@ -146,8 +142,6 @@ module beachParty
             var lookAt = vp.geom.createVector3(0, 0, -1);
             var up = vp.geom.createVector3(0, 1, 0);
 
-            var matrix4View = vp.geom.matrix4.createLookAt(cameraPos, lookAt, up);
-
             this._matView = new Float32Array(16);
             mat4.lookAt(this._matView, this.toFloatv3(cameraPos), this.toFloatv3(lookAt), this.toFloatv3(up));
 
@@ -186,7 +180,6 @@ module beachParty
 
             var geom = vp.geom;
             var matrix4 = geom.matrix4;
-            var vector3 = geom.vector3;
 
             var rads = vp.utils.toRadians(45);
             var aspect = width / height;
@@ -195,8 +188,8 @@ module beachParty
             var matView = matrix4.createLookAt(geom.createVector3(0, 0, 7), geom.createVector3(0, 0, 0), geom.createVector3(0, 1, 0));
             var matProjection = matrix4.createPerspectiveFovLH(rads, aspect, near, far);        // use LH for this test ONLY!
 
-            var ptNear = transformerClass.unprojectXna(vp.geom.createVector3(875, 575, 0), width, height, matWorld, matView, matProjection);
-            var ptFar = transformerClass.unprojectXna(vp.geom.createVector3(875, 575, .9999), width, height, matWorld, matView, matProjection);
+            var ptNear = TransformerClass.unprojectXna(vp.geom.createVector3(875, 575, 0), width, height, matWorld, matView, matProjection);
+            var ptFar = TransformerClass.unprojectXna(vp.geom.createVector3(875, 575, .9999), width, height, matWorld, matView, matProjection);
 
             vp.utils.debug("------------------");
             vp.utils.debug("ptNear: " + ptNear);
@@ -216,7 +209,7 @@ module beachParty
 
         public world(value?: Float32Array)
         {
-            if (arguments.length == 0)
+            if (arguments.length === 0)
             {
                 return this._matWorld;
             }
@@ -269,7 +262,7 @@ module beachParty
 
         postProjTransformAdjust(v: vp.geom.vector4)
         {
-            var w = (v.w == 0) ? 1 : v.w;
+            var w = (v.w === 0) ? 1 : v.w;
             
             return new vp.geom.vector3(v.x/w, v.y/w, v.z/w);
         }
@@ -287,7 +280,6 @@ module beachParty
         /** map a point from MODEL space to NDC space (-1 to 1). */
         public projectToNDC(x: number, y: number, z: number)
         {
-            var gl = this._gl;
             //var pos = new vp.geom.vector3(x, y, z);
             z = z || 0;
 
@@ -341,7 +333,6 @@ module beachParty
             return posScr;
         }
 
-
         /** map from NDC (-1 to 1) to WORLD space */
         public unprojectFromNDC(x: number, y: number)
         {
@@ -354,7 +345,7 @@ module beachParty
             var rayOrigin = ptNear;
 
             var ptDiffs = vp.geom.vector3.subtract(ptFar, ptNear);     
-            if (ptDiffs.x == 0 && ptDiffs.y == 0 && ptDiffs.z == 0)
+            if (ptDiffs.x === 0 && ptDiffs.y === 0 && ptDiffs.z === 0)
             {
                 pt = ptNear;            // ptNear=ptFar
             }
@@ -388,7 +379,7 @@ module beachParty
             var diffs = new Float32Array(3);
             vec3.subtract(diffs, ptFar, ptNear);        // ptNear, ptFar);
 
-            if (diffs[0] == 0 && diffs[1] == 0 && diffs[2] == 0)
+            if (diffs[0] === 0 && diffs[1] === 0 && diffs[2] === 0)
             {
                 pt = ptNear;            // ptNear=ptFar
             }
@@ -409,10 +400,9 @@ module beachParty
             //vp.utils.debug("getRayFromScreenPos: origin=" + origin);
             //vp.utils.debug("getRayFromScreenPos: dir=" + dir);
 
-            var ray = new rayClass(origin, dir);
+            var ray = new RayClass(origin, dir);
             return ray;
         }
-
 
         /** map from NDC (-1 to 1) to WORLD space (using glmatrix library) */
         public unprojectFromNDCEx(x: number, y: number)
@@ -428,7 +418,7 @@ module beachParty
             var diffs = new Float32Array(3);
             vec3.subtract(diffs, ptFar, ptNear);        // ptNear, ptFar);
 
-            if (diffs[0] == 0 && diffs[1] == 0 && diffs[2] == 0)
+            if (diffs[0] === 0 && diffs[1] === 0 && diffs[2] === 0)
             {
                 pt = ptNear;            // ptNear=ptFar
             }
@@ -513,7 +503,6 @@ module beachParty
             return mat;
         }
 
-
         /** static version of unprojectFromScreen(), XNA style. */
         public static unprojectXna(vScr, vpWidth: number, vpHeight: number, matWorld, matView, matProjection)
         {
@@ -540,12 +529,6 @@ module beachParty
             //---- transform position with mat ----
             var vector = new Float32Array(3);
             vec3.transformMat4(vector, position, mat);
-
-            //---- adjust vector with "a" ----
-            var m14 = mat[3];
-            var m24 = mat[7];
-            var m34 = mat[11];
-            var m44 = mat[15];
 
             //---- this part is handled by vec3.transformMat4 ----
             //var a = (((position[0] * m14) + (position[1] * m24)) + (position[2] * m34)) + m44;
@@ -635,7 +618,6 @@ module beachParty
         /** maps point from homogeneous space (-1 to +1) to screen space. */
         public viewportTransformPoint(v: vp.geom.vector3)
         {
-            var gl = this._gl;
             var width = this._canvasWidth;
             var height = this._canvasHeight;
 
@@ -649,7 +631,6 @@ module beachParty
         /** maps point from screen space to homogeneous space (-1 to +1). */
         public viewportUntransformPoint(v: vp.geom.vector3)
         {
-            var gl = this._gl;
             var width = this._canvasWidth;
             var height = this._canvasHeight;
 
@@ -733,7 +714,7 @@ module beachParty
         public translateMatrixEx(x: number, y: number, z: number)
         {
             var mat2 = vp.geom.matrix4.createTranslation(x, y, z);
-            this.multiplyTransform(mat2)
+            this.multiplyTransform(mat2);
         }
 
         public scaleMatrixAt(factor: number, atPos: vp.geom.vector3)
@@ -742,9 +723,9 @@ module beachParty
 
             //---- to scale at "atPos", we need to make atPos to the origin ----
             //---- translate by -atPos, scale, translate by +atPos ----
-            var mat1 = vp.geom.matrix4.createTranslation(-atPos.x, -atPos.y, -atPos.z);
+            // var mat1 = vp.geom.matrix4.createTranslation(-atPos.x, -atPos.y, -atPos.z);
             var mat2 = vp.geom.matrix4.createScale(factor, factor, factor);
-            var mat3 = vp.geom.matrix4.createTranslation(atPos.x, atPos.y, atPos.z);
+            // var mat3 = vp.geom.matrix4.createTranslation(atPos.x, atPos.y, atPos.z);
 
             //---- until this is reliable, just use a simple scaling ----
             //this.multiplyTransform(mat1);
@@ -844,11 +825,8 @@ module beachParty
         //---- test/debug only ----
         public testProject()
         {
-            var width = this._canvasWidth;
-            var height = this._canvasHeight;
-
             //---- center of screen ----
-            var rcenter = this.projectToScreen(0, 0, 0);         // should be about: myWidth/2, myHeight/2, z
+            this.projectToScreen(0, 0, 0);         // should be about: myWidth/2, myHeight/2, z
 
             //vp.utils.assert(vp.utils.floatEq(rcenter.x, width / 2));
             //vp.utils.assert(vp.utils.floatEq(rcenter.y, height / 2));
@@ -879,7 +857,6 @@ module beachParty
             //Debug.Assert(FloatEqual(blr.X, 2f));
             //Debug.Assert(FloatEqual(blr.Y, -1.4f));
         }
-
 
         //---- removed this, since we cannot combine it with the WorldViewProj matrix, as we thought, because ----
         //---- of the need to divide the transformed POINT by "w" after the WVP transform but before the ViewPort transform ----
@@ -1038,7 +1015,6 @@ module beachParty
 
         //    var a = 9;
         //}
-
 
     }
 

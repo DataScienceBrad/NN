@@ -7,7 +7,7 @@
 
 module beachPartyApp
 {
-    export class notesPanelClass extends basePanelClass
+    export class NotesPanelClass extends BasePanelClass
     {
         _notesElem: HTMLElement;
 
@@ -16,22 +16,22 @@ module beachPartyApp
             super("notesPanel", false, null, title, null, null, true, "Notes for this insight", false);
 
             var rootW = vp.select(this._root)
-                .css("opacity", ".7")
+                .css("opacity", ".7");
 
             if (notes && notes.length)
             {
                 //---- create the notes holder DIV ----
                 var notesHolderW = vp.select(this._root).append("div")
-                    .addClass("insightNotesHolder")
+                    .addClass("insightNotesHolder");
 
                 //---- create a "apsn" for each section of text/URL ----
 
                 //---- for now, just replace NEWLNE with <br> ----
                 notes = notes.replace(/\n/g, "<br />");
 
-                var notesW = notesHolderW.append("span")
+                notesHolderW.append("span")
                     .addClass("insightNotesSpan")
-                    .html(notes)
+                    .html(notes);
 
                 this._notesElem = notesHolderW[0];
             }
@@ -41,7 +41,7 @@ module beachPartyApp
             {
                 rootW
                     .width(bounds.width)
-                    .height(bounds.height)
+                    .height(bounds.height);
 
                 var left = bounds.left;
                 var top = bounds.top;

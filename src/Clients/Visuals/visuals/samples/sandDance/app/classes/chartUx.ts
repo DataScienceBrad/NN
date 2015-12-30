@@ -7,11 +7,11 @@
 
 module beachPartyApp
 {
-    export class chartUxClass extends beachParty.dataChangerClass
+    export class ChartUxClass extends beachParty.dataChangerClass
     {
         private _chartUxElem: HTMLElement;
 
-        private _rubberBandSelector: rubberBandSelectorClass;
+        private _rubberBandSelector: RubberBandSelectorClass;
         private _bpsHelper: bps.chartHostHelperClass;
         private _areToolTipsEnabled = false;
         private _hoverPrimaryKey;
@@ -57,7 +57,7 @@ module beachPartyApp
         onKeyDown(e)
         {
             //---- TODO: add 3D nav keys here ----
-            if (e.keyCode == vp.events.keyCodes.escape)
+            if (e.keyCode === vp.events.keyCodes.escape)
             {
                 //---- why does animatin get turned off here? ----
                 this._bpsHelper.resetTransform();
@@ -84,13 +84,13 @@ module beachPartyApp
 
                 if (primaryKey)
                 {
-                    var dataTip = dataTipMgrClass.instance.getDataTip(primaryKey);
+                    var dataTip = DataTipMgrClass.instance.getDataTip(primaryKey);
                     vp.utils.debug("chartUx: onMouseMove callback: dataTip=" + dataTip);
 
                     if (dataTip)
                     {
                         //---- REMOVE dataTip ----
-                        dataTipMgrClass.instance.closeDataTip(dataTip);
+                        DataTipMgrClass.instance.closeDataTip(dataTip);
                     }
                     else
                     {
@@ -98,7 +98,7 @@ module beachPartyApp
                         var colName = vp.select("#searchCol").text();
                         var pt = vp.events.mousePosition(e);
 
-                        dataTipMgrClass.instance.addDataTip(colName, pt);
+                        DataTipMgrClass.instance.addDataTip(colName, pt);
 
                         vp.events.cancelEventBubble(e);
                         vp.events.cancelEventDefault(e);
@@ -111,18 +111,18 @@ module beachPartyApp
         {
             if (true)       // !this._delayTimer)         // throttle mouse events
             {
-                var hoverEnabled = (settings.hoverEffect() != "none");
-                if (hoverEnabled && e.buttons != 1)            // not left button
+                var hoverEnabled = (settings.hoverEffect() !== "none");
+                if (hoverEnabled && e.buttons !== 1)            // not left button
                 {
                     var mousePos = vp.events.mousePosition(e, this._chartUxElem);
 
                     //---- show tooltips if middle/right mouse button pressed, or if tooltips are enabled ----
-                    var getRecord = (e.buttons != 0 || settings.isTooltipsEnabled());
+                    var getRecord = (e.buttons !== 0 || settings.isTooltipsEnabled());
                     var scale = this._rubberBandSelector.getScale();
 
                     this._bpsHelper.applyHover(mousePos.x / scale.x, mousePos.y / scale.y, getRecord, null, (msgBlock) =>
                     {
-                        if (this._hoverPrimaryKey != msgBlock.primaryKey)
+                        if (this._hoverPrimaryKey !== msgBlock.primaryKey)
                         {
                             this._hoverPrimaryKey = msgBlock.primaryKey;
 
@@ -168,7 +168,7 @@ module beachPartyApp
         buildRubberBand()
         {
             var chartUxElem = document.getElementById("chartUxDiv");
-            this._rubberBandSelector = new rubberBandSelectorClass(chartUxElem);
+            this._rubberBandSelector = new RubberBandSelectorClass(chartUxElem);
 
             //---- hook the RECT SELECT event ----
             this._rubberBandSelector.attachOnSelect((evt, rcBand, toggle, mouseDownOrigin) =>
@@ -190,7 +190,7 @@ module beachPartyApp
                     sd.legendSource = "rect drag";
                     sd.rectSelect = rcBandAdj;
 
-                    appClass.instance.setSelectionDesc(sd);
+                    AppClass.instance.setSelectionDesc(sd);
                     this._bpsHelper.rectSelect(rcBandAdj);
                 }
             });
@@ -225,13 +225,13 @@ module beachPartyApp
                     {
                         var key = keys[i];
                         var value = record[key];
-                        var colType = appClass.instance.getColType(key);
+                        var colType = AppClass.instance.getColType(key);
 
                         value = vp.formatters.formatByType(value, colType);
 
                         if (!key.startsWith("_"))
                         {
-                            if (ttMsg != "")
+                            if (ttMsg !== "")
                             {
                                 ttMsg += "\r\n";
                             }

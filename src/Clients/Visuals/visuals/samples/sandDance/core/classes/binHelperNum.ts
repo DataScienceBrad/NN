@@ -7,12 +7,12 @@
 
 module beachParty
 {
-    export class binHelperNum
+    export class BinHelperNum
     {
         /// returns an array of {min, max, count, density} bin objects for the specified data and binsize.
         public static createBins(nv: NamedVectors, colName: string, binCount: number, addIndexes?: boolean,
             returnBinAssignments?: boolean, formatter?: any, useNiceNumbers?: boolean, md?: bps.MappingData,
-            binSortOptions?: binSortOptionsClass): BinResultNum
+            binSortOptions?: BinSortOptionsClass): BinResultNum
         {
             if (md && md.breaks && md.breaks.length)
             {
@@ -41,7 +41,7 @@ module beachParty
             {
                 //---- support case where we are binning with numbers, but have a formatting string from Excel ----
                 //---- in this case, ignore the Excel format, and do our own local bin formatting ----
-                if (formatter && formatter._colType == "number")
+                if (formatter && formatter._colType === "number")
                 {
                     //var isAllIntegers = vp.data.isAllIntegers(colData);
                     if (true)       // isAllIntegers)
@@ -75,14 +75,14 @@ module beachParty
                 var dataMin = filteredData.min();
                 var dataMax = filteredData.max();
 
-                if (dataMin == dataMax)
+                if (dataMin === dataMax)
                 {
                     //binCount = 1;           // single value - force to just 1 data bucket
 
                     dataMax = dataMin + 1;          // make 2 values so that we can honor requested number of buckets
                 }
 
-                if (typeName == "number")
+                if (typeName === "number")
                 {
                     if (md.minBreak !== undefined && md.minBreak < dataMin)
                     {
@@ -102,7 +102,7 @@ module beachParty
                 {
                     var requestedCount = (md.isBinCountSoft) ? undefined : (binCount + 1);
 
-                    var nn = vp.scales.niceNumbersAlt.calculate(dataMin, dataMax, requestedCount)
+                    var nn = vp.scales.niceNumbersAlt.calculate(dataMin, dataMax, requestedCount);
                     dataMin = nn.min;
                     dataMax = nn.max;
 
@@ -123,7 +123,7 @@ module beachParty
 
                 if (!formatter)
                 {
-                    if (typeName == "date")
+                    if (typeName === "date")
                     {
                         //---- defer this until we get recommendedDateFormatter ----
                         //formatter = vp.formatters.createExcelFormatter("mm/dd/yy", "date");
@@ -147,11 +147,11 @@ module beachParty
 
                         var thisSize = bin.max - bin.min;
 
-                        if (i == 0)
+                        if (i === 0)
                         {
                             binSize = thisSize;
                         }
-                        else if (thisSize != binSize)
+                        else if (thisSize !== binSize)
                         {
                             fixedSizedBuckets = false;
                         }
@@ -161,12 +161,12 @@ module beachParty
                             bin.rowIndexes = [];
                         }
 
-                        bin.isFirst = (i == 0);
+                        bin.isFirst = (i === 0);
 
                         bins.push(bin);
                     }
 
-                    if (typeName == "date")
+                    if (typeName === "date")
                     {
                         if (!formatter)
                         {
@@ -177,7 +177,7 @@ module beachParty
                         }
                     }
                 }
-                else if (typeName == "date")
+                else if (typeName === "date")
                 {
                     //---- TODO: figure out best units to use here ----
                     //---- for now, we use HOURS or multiples thereof ----
@@ -227,7 +227,7 @@ module beachParty
                             bin.rowIndexes = [];
                         }
 
-                        bin.isFirst = (i == 0);
+                        bin.isFirst = (i === 0);
 
                         bins.push(bin);
                     }
@@ -255,7 +255,7 @@ module beachParty
                             bin.rowIndexes = [];
                         }
 
-                        bin.isFirst = (i == 0);
+                        bin.isFirst = (i === 0);
 
                         bins.push(bin);
                     }
@@ -294,7 +294,7 @@ module beachParty
                             for (var j = 0; j < bins.length; j++)
                             {
                                 var bin = bins[j];
-                                if (value <= bin.max || j == (bins.length-1))
+                                if (value <= bin.max || j === (bins.length-1))
                                 {
                                     fltIndex = j;
                                     break;
@@ -373,7 +373,7 @@ module beachParty
 
                 this.computeBinStats(bins, itemCount);
 
-                if (usingLocalFormatter && typeName == "number")
+                if (usingLocalFormatter && typeName === "number")
                 {
                     //---- ensure that label decimal precision is true to the bin's content ----
                     for (var i = 0; i < 5; i++)             // maximum of 5 times / extra decimals
@@ -405,7 +405,7 @@ module beachParty
                         var maxLabel = <string>formatter(bin.max);
                     }
 
-                    bin.name = ((i == 0) ? "" : "> ") + minLabel + " ... " + maxLabel;
+                    bin.name = ((i === 0) ? "" : "> ") + minLabel + " ... " + maxLabel;
 
                     bin.minLabel = minLabel;
                     bin.maxLabel = maxLabel;
@@ -431,8 +431,8 @@ module beachParty
                 bin.density = bin.count / dataItemCount;
             }
 
-            var maxCount = bins.max(function (data) { return data.count });
-            var maxDensity = bins.max(function (data) { return data.density });
+            var maxCount = bins.max(function (data) { return data.count; });
+            var maxDensity = bins.max(function (data) { return data.density; });
 
             for (var i = 0; i < bins.length; i++)
             {
@@ -456,7 +456,7 @@ module beachParty
                 var displayMin = +formatter(bin.min);
                 var displayMax = +formatter(bin.max);
 
-                if (i == 0)     // must be between min/max inclusive
+                if (i === 0)     // must be between min/max inclusive
                 {
                     if (bin.actualMin !== undefined)
                     {
@@ -484,6 +484,5 @@ module beachParty
             return needMoreDecimals;
         }
     }
-
 
 }

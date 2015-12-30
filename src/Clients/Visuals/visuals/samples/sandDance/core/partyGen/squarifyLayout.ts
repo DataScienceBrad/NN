@@ -9,7 +9,7 @@
 
 module beachParty
 {
-    export class squarifyLayoutClass
+    export class SquarifyLayoutClass
     {
         _values: number[];
         _rc: ClientRect;
@@ -169,7 +169,7 @@ module beachParty
                 //vp.utils.debug("squarify: c=" + c + ", wCurrent=" + wCurrent + ", wNext=" + wNext);
 
                 //if (this.worst(row, w) <= this.worst(row.concat(c), w))
-                if (row.length == 0 || (wNext <= wCurrent))
+                if (row.length === 0 || (wNext <= wCurrent))
                 {
                     children.removeAt(0);
                     row.push(c);

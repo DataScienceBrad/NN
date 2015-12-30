@@ -5,11 +5,9 @@
 
 /// <reference path="../_references.ts" />
 
-var demoData: string;
-
 module beachParty
 {
-    export class densityGrid extends baseGlVisClass
+    export class DensityGrid extends BaseGlVisClass
     {
         //---- all facet results ----
         _xFacetBinResults = null;
@@ -39,7 +37,7 @@ module beachParty
         _space: number;
         _maxShapeSize: number;
 
-        constructor(view: dataViewClass, gl: any, chartState: any)
+        constructor(view: DataViewClass, gl: any, chartState: any)
         {
             super("densityGrid", view, gl, chartState);
         }
@@ -62,27 +60,27 @@ module beachParty
                 {
                     var data = nvFacetBuckets[i];
 
-                    var xResults = chartUtils.binTheDataForCount(dc, data, xm, "x");
+                    var xResults = ChartUtils.binTheDataForCount(dc, data, xm, "x");
                     this._xFacetBinResults.push(xResults);
 
-                    var yResults = chartUtils.binTheDataForCount(dc, data, ym, "y");
+                    var yResults = ChartUtils.binTheDataForCount(dc, data, ym, "y");
                     this._yFacetBinResults.push(yResults);
                 }
             }
             else
             {
-                var xResults = chartUtils.binTheDataForCount(dc, dc.nvData, xm, "x");
+                var xResults = ChartUtils.binTheDataForCount(dc, dc.nvData, xm, "x");
                 this._xFacetBinResults.push(xResults);
 
-                var yResults = chartUtils.binTheDataForCount(dc, dc.nvData, ym, "y");
+                var yResults = ChartUtils.binTheDataForCount(dc, dc.nvData, ym, "y");
                 this._yFacetBinResults.push(yResults);
             }
 
             //---- adjust X scale ----
-            dc.scales.x = chartUtils.adjustScaleForBin(dc.scales.x, xResults);
+            dc.scales.x = ChartUtils.adjustScaleForBin(dc.scales.x, xResults);
 
             //---- adjust Y scale ----
-            dc.scales.y = chartUtils.adjustScaleForBin(dc.scales.y, yResults);
+            dc.scales.y = ChartUtils.adjustScaleForBin(dc.scales.y, yResults);
 
             return dc.filteredRecordCount;
         }
@@ -93,7 +91,6 @@ module beachParty
             //---- for this part, we need to process the items in their sorted order ----
 
             var filter = dc.layoutFilterVector;
-            var isFiltered = (filter != null);
 
             var allAssignX = resultX.assignments;
             var allAssignY = resultY.assignments;
@@ -102,9 +99,7 @@ module beachParty
             var binIndexesY = [];
             var binRelativeIndexes = [];
 
-            this._binCounts = {}              // will use string as our 3d index   (facet, x, y)
-
-            var facetAssignments = (dc.facetHelper) ? dc.facetHelper.binResult().assignments : null;
+            this._binCounts = {};              // will use string as our 3d index   (facet, x, y);
 
             for (var i = 0; i < filter.length; i++)
             {
@@ -152,9 +147,6 @@ module beachParty
                 maxCount = Math.max(count, maxCount);
             }
 
-            var width = dc.width;
-            var height = dc.height;
-
             var binsX = resultX.bins;
             var binsY = resultY.bins;
 
@@ -197,7 +189,6 @@ module beachParty
 
             this._binRelativeIndexes = binRelativeIndexes;
 
-
          
 
             return maxCount;
@@ -205,7 +196,6 @@ module beachParty
 
         preLayoutLoop(dc: DrawContext)
         {
-            var options = <sandDensityOptions>this._chartOptions;
             var nv = dc.nvData;
 
             //---- use pre-computed bins ----
@@ -234,15 +224,11 @@ module beachParty
             var itemWidth = (width - 2 * hMargin - (xBinCount - 1) * hBetween) / xBinCount;
             var itemHeight = (height - 2 * vMargin - (yBinCount - 1) * vBetween) / yBinCount;
 
-            var ySpace = .1 * itemHeight;
-            var binHeight = itemHeight - ySpace;
-
             this._itemWidth = itemWidth;
             this._itemHeight = itemHeight;
 
             var maxRecordsInABin = this.assignRecordsToBins(nv, xResult, yResult, dc);
             this._maxCount = maxRecordsInABin;
-            var rcBin = vp.geom.createRect(this._binLefts[0], this._binTops[0], this._itemWidth, this._itemHeight);
             this._xglobalmax = Math.max(Math.ceil(Math.sqrt(this._maxCount)), 1);
             this._yglobalmax = Math.max(Math.ceil(this._maxCount / this._xglobalmax), 1);
             this._xspace = this._itemWidth / (this._xglobalmax);
@@ -301,8 +287,6 @@ module beachParty
             var y = top - yrel * yspace;
   */
 
-
-
             var xlocalmax = Math.max(Math.ceil(Math.sqrt(binCount)), 1);
             var ylocalmax = Math.max(Math.ceil(binCount / xlocalmax), 1);
             /*
@@ -322,7 +306,7 @@ module beachParty
 
             var width = this._maxShapeSize;
             var height = width;
-            var depth = dc.defaultDepth2d   
+            var depth = dc.defaultDepth2d   ;
 
             var x = cx - maxWidth/ 2.0 + xrel * this._space ;
             var y = cy + maxHeight/2.0 - yrel * this._space ;

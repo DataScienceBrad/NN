@@ -5,11 +5,9 @@
 
 /// <reference path="../_references.ts" />
 
-var demoData: string;
-
 module beachParty
 {
-    export class flatCircle extends baseGlVisClass
+    export class FlatCircle extends BaseGlVisClass
     {
         _phyloSeed = 137.508;           // "golden angle"
         _maxCount = 0;
@@ -20,7 +18,7 @@ module beachParty
         _maxShapeSize = 1;
         _maxCountOverFacets = 0;
 
-        constructor(view: dataViewClass, gl: any, chartState: any)
+        constructor(view: DataViewClass, gl: any, chartState: any)
         {
             super("flatCircle", view, gl, chartState);
 
@@ -29,7 +27,7 @@ module beachParty
 
         computeFacetStats(dc: DrawContext, nvFacetBuckets: any[])
         {
-            this._maxCountOverFacets = chartUtils.computeMaxCountOverFacets(dc, nvFacetBuckets);
+            this._maxCountOverFacets = ChartUtils.computeMaxCountOverFacets(dc, nvFacetBuckets);
             return this._maxCountOverFacets;
         }
 
@@ -48,7 +46,7 @@ module beachParty
             this._center.x = dc.x + dc.width  / 2;
             this._center.y = dc.y + dc.height / 2;
 
-            this._maxShapeSize = chartUtils.getScatterShapeSize(dc, this._maxCountOverFacets, this._view);
+            this._maxShapeSize = ChartUtils.getScatterShapeSize(dc, this._maxCountOverFacets, this._view);
         }
 
         layoutDataForRecord(i: number, dc: DrawContext)
@@ -75,7 +73,7 @@ module beachParty
 
             var width = this._maxShapeSize * this.scaleColData(nv.size, i, dc.scales.size, 1);
             var height = width;
-            var depth = dc.defaultDepth2d      // test out 3d cube in a 2d shape
+            var depth = dc.defaultDepth2d;      // test out 3d cube in a 2d shape;
 
             var colorIndex = this.scaleColData(nv.colorIndex, i, dc.scales.colorIndex);
             var imageIndex = this.scaleColData(nv.imageIndex, i, dc.scales.imageIndex);

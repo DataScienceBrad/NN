@@ -7,13 +7,13 @@
 
 module beachParty
 {
-    export class hitTestRect
+    export class HitTestRect
     {
         private static ndcRects = null;
         private static buildTimer = null;
 
         //---- schedule a build the next time we are idle (should only be called AFTER animation is completed) ----
-        public static markCacheBuildNeeded(transformer: transformerClass, boxMgr: boundingBoxMgrClass)
+        public static markCacheBuildNeeded(transformer: TransformerClass, boxMgr: BoundingBoxMgrClass)
         {
             this.ndcRects = null;
             this.clearBuildTimer();
@@ -34,7 +34,7 @@ module beachParty
             }
         }
 
-        public static buildNdcRects(transformer: transformerClass, boxMgr: boundingBoxMgrClass)
+        public static buildNdcRects(transformer: TransformerClass, boxMgr: BoundingBoxMgrClass)
         {
             vp.utils.debug("-- buildNdcRects --");
 
@@ -65,7 +65,7 @@ module beachParty
             return dist;
         }
 
-        public static intersectUsingTransforms(rcScreen: ClientRect, transformer: transformerClass, boxMgr: boundingBoxMgrClass)
+        public static intersectUsingTransforms(rcScreen: ClientRect, transformer: TransformerClass, boxMgr: BoundingBoxMgrClass)
         {
             /// algorithm: transform each bounding box into NDC and then do simple rect/rect intersection test 
             if (!rcScreen)
@@ -79,7 +79,6 @@ module beachParty
             }
 
             var intersections = [];
-            var matWVP = transformer.getWorldViewProjection();
 
             //---- first, translate mouse rect from screen coordinates into NDC ----
             var mrLeftTop = transformer.viewportUntransformPoint(vp.geom.createVector3(rcScreen.left, rcScreen.top, 0));
@@ -129,9 +128,6 @@ module beachParty
                 var cy = (yMin + yMax) / 2;
                 var cz = (zMin + zMax) / 2;
 
-                var sin = Math.sin(box.theta);
-                var cos = Math.cos(box.theta);
-
                 //var matCenter = mat4.translate(-cx, -cy, -cz);
                 //var matPos = mat4.translate(cx, cy, cz);
 
@@ -176,7 +172,7 @@ module beachParty
             return pos3x;
         }
 
-        public static intersectUsingFrustrum(rcScreen: ClientRect, transformer: transformerClass, origBoxes: any[])
+        public static intersectUsingFrustrum(rcScreen: ClientRect, transformer: TransformerClass, origBoxes: any[])
         {
             /// Our algorithm removes boxes that are outside the bounding frustrum of rcScreen
             /// projected from the near to the far clipping planes.  Any objects that remain must be

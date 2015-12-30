@@ -5,25 +5,21 @@
 
 /// <reference path="../_references.ts" />
 
-var demoData: string;
-
 module beachParty
 {
-    var nextViewId = 0;
-
     /** manages changes to 3D transform of chart, including relative changes, 
       dampening, inerita, transformMode, and transformEnabled. */
-    export class transformMgrClass extends dataChangerClass
+    export class TransformMgrClass extends DataChangerClass
     {
-        private _transformer: transformerClass;
+        private _transformer: TransformerClass;
         private _gl;
         private _transformMode: TransformMode;
         private _isInertialEnabled = true;
 
         //---- damping of movement ----
-        private _xRotDamp: dampenerClass;
-        private _yRotDamp: dampenerClass;
-        private _zRotDamp: dampenerClass;
+        private _xRotDamp: DampenerClass;
+        private _yRotDamp: DampenerClass;
+        private _zRotDamp: DampenerClass;
 
         //---- this attempts to keep track of our current SCALE and OFFSET and we incrementally change them ----
         private _currentScale = 1;
@@ -36,25 +32,25 @@ module beachParty
             super();
 
             this._gl = gl;
-            this._transformer = new transformerClass(gl); 
+            this._transformer = new TransformerClass(gl); 
 
             this._transformMode = TransformMode.move;
 
             //---- hook up dampening ----
-            this._xRotDamp = new dampenerClass((actual) =>
+            this._xRotDamp = new DampenerClass((actual) =>
             {
                 this._transformer.rotateMatrixX(actual);
-            })
+            });
 
-            this._yRotDamp = new dampenerClass((actual) =>
+            this._yRotDamp = new DampenerClass((actual) =>
             {
                 this._transformer.rotateMatrixY(actual);
-            })
+            });
 
-            this._zRotDamp = new dampenerClass((actual) =>
+            this._zRotDamp = new DampenerClass((actual) =>
             {
                 this._transformer.rotateMatrixZ(actual);
-            })
+            });
 
             this.resetPanAndPinchDeltas();
         }
@@ -91,7 +87,7 @@ module beachParty
 
         inertia(value?: number[])
         {
-            if (arguments.length == 0)
+            if (arguments.length === 0)
             {
                 var x = this._xRotDamp.inertia();
                 var y = this._yRotDamp.inertia();
@@ -187,23 +183,23 @@ module beachParty
             {
                 //var inerita = this._isInertialEnabled;
 
-                if (this._transformMode == TransformMode.move)
+                if (this._transformMode === TransformMode.move)
                 {
                     this._transformer.translateMatrixEx(xdiff, ydiff, 0);
                 }
-                else if (this._transformMode == TransformMode.spin)
+                else if (this._transformMode === TransformMode.spin)
                 {
                     this.rotateMatrixZ(maxDiff);
                 }
-                else if (this._transformMode == TransformMode.turn)
+                else if (this._transformMode === TransformMode.turn)
                 {
                     this.rotateMatrixY(-maxDiff);
                 }
-                else if (this._transformMode == TransformMode.flip)
+                else if (this._transformMode === TransformMode.flip)
                 {
                     this.rotateMatrixX(maxDiff);
                 }
-                else if (this._transformMode == TransformMode.zoom)
+                else if (this._transformMode === TransformMode.zoom)
                 {
                     var factor = (maxDiff > 0) ? 1.3 : 1 / 1.3;
                     this.scaleCameraRelative(factor, mousePos);
@@ -360,7 +356,7 @@ module beachParty
         /** Scale the camera by a relative amount. */
         scaleCameraRelative(factor: number, mousePos)
         {
-            if (factor != 0)
+            if (factor !== 0)
             {
                 var doIt = true;
 

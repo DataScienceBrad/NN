@@ -7,7 +7,7 @@
 
 module beachPartyApp
 {
-    export class imageLegendClass extends beachParty.dataChangerClass
+    export class ImageLegendClass extends beachParty.dataChangerClass
     {
         //---- constants ----
         _maxPaletteHeight = 200;
@@ -23,9 +23,9 @@ module beachPartyApp
 
         _im: bps.ImageMappingData;
         _bpsHelper: bps.chartHostHelperClass;
-        _app: appClass;                 // need to get latest ColInfo on legend build
+        _app: AppClass;                 // need to get latest ColInfo on legend build
 
-        constructor(app: appClass, rootName: string, bpsHelper: bps.chartHostHelperClass)
+        constructor(app: AppClass, rootName: string, bpsHelper: bps.chartHostHelperClass)
         {
             super();
 
@@ -35,7 +35,7 @@ module beachPartyApp
 
             var root = vp.select("#" + rootName)
                 .addClass("legend")
-                .css("margin-bottom", "20px")
+                .css("margin-bottom", "20px");
 
             //---- add colName as TITLE ----
             var title = root.append("div")
@@ -44,30 +44,30 @@ module beachPartyApp
                 .attach("click", (e) =>
                 {
                     //---- request that the image panel be opened by the client
-                    appUtils.callPanelOpen(e, (e) => this.onDataChanged("imagePanelRequest"));
+                    AppUtils.callPanelOpen(e, (e) => this.onDataChanged("imagePanelRequest"));
                 });
 
             var table = root.append("table")
-                .addClass("legendHolder")
+                .addClass("legendHolder");
 
-            var row = table.append("tr")
+            var row = table.append("tr");
 
             //---- add PALETTE ----
             var paletteW = row.append("td")
                 .addClass("legendPalette")
                 .attr("valign", "top")
-                .css("width", "20px")
+                .css("width", "20px");
 
             //---- add TICKS ----
             var ticksW = row.append("td")
                 .addClass("legendTicks")
                 .css("width", "0px")
-                .css("position", "relative")
+                .css("position", "relative");
 
             //---- add LABELS ----
             var labelsW = row.append("td")
                 .addClass("legendLabels")
-                .css("position", "relative")
+                .css("position", "relative");
 
             ////---- add spacer TD as last column ----
             //var spacerW = row.append("td")
@@ -84,7 +84,7 @@ module beachPartyApp
         show(value: boolean)
         {
             vp.select(this._rootElem)
-                .css("display", (value) ? "" : "none")
+                .css("display", (value) ? "" : "none");
         }
 
         imageMapping(value?: bps.ImageMappingData)
@@ -106,10 +106,10 @@ module beachPartyApp
             var name = (cm) ? cm.colName : "";
 
             vp.select(this._rootElem)
-                .css("display", (name) ? "block" : "none")
+                .css("display", (name) ? "block" : "none");
 
             vp.select(this._titleElem)
-                .text(name)
+                .text(name);
 
             this.rebuildPalette();
 
@@ -136,7 +136,7 @@ module beachPartyApp
                 }
 
                 var colInfo = this._app.getColInfo(im.colName);
-                var isNumeric = (colInfo.colType != "string");            // number or date
+                var isNumeric = (colInfo.colType !== "string");            // number or date
 
                 var entryHeight = this.drawImagePalette(im, count, imagePalette, isNumeric);
                 this.drawTickMarks(im, count, imagePalette, this._entryWidth, entryHeight);
@@ -146,11 +146,10 @@ module beachPartyApp
 
         drawTickMarks(cm: bps.ImageMappingData, count: number, imagePalette: any[], entryWidth: number, entryHeight: number)
         {
-            var breaks = cm.breaks;
             var ticksW = vp.select(this._ticksElem);
 
             ticksW
-                .clear()
+                .clear();
 
             var textTop = (entryHeight / 2) - 9;
             count++;
@@ -162,9 +161,9 @@ module beachPartyApp
                     .addClass("legendTick")
                     .css("position", "absolute")
                     .css("left", "-3px")
-                    .css("top", textTop + "px")
+                    .css("top", textTop + "px");
 
-                if (i == count - 1)
+                if (i === count - 1)
                 {
                     textTop--;          // fudge factor
                 }
@@ -180,7 +179,7 @@ module beachPartyApp
             this._textElems = [];
 
             labelsW
-                .clear()
+                .clear();
 
             var textTop = ((count - 1) * entryHeight) + (entryHeight / 2) - 10;
 
@@ -203,7 +202,7 @@ module beachPartyApp
                     text = vp.formatters.comma(text, 2);
                 }
 
-                var tooltip = (text == "Other") ? "All other values mapped here" : text;
+                var tooltip = (text === "Other") ? "All other values mapped here" : text;
 
                 var labelW = labelsW.append("div")
                     .text(text)
@@ -213,11 +212,11 @@ module beachPartyApp
                     .css("max-width", "92px")
                     .css("top", textTop + "px")
                     .title(tooltip)
-                    .attach("click", (e) => this.searchForEntryValues(e))
+                    .attach("click", (e) => this.searchForEntryValues(e));
 
                 labelW[0].colName = cm.colName;
 
-                if (value == "Other")
+                if (value === "Other")
                 {
                     labelW[0].fromValue = lastValue;
                     labelW[0].toValue = lastValue;
@@ -225,7 +224,7 @@ module beachPartyApp
                 }
                 else if (isNumeric)
                 {
-                    labelW[0].fromValue = (i == 0) ? value : lastValue;
+                    labelW[0].fromValue = (i === 0) ? value : lastValue;
                     labelW[0].toValue = value;
                     labelW[0].searchType = bps.TextSearchType.betweenInclusive;
                 }
@@ -261,7 +260,7 @@ module beachPartyApp
         {
             var canvasW = vp.select(document.createElement("canvas"))
                 .attr("width", width)
-                .attr("height", height)
+                .attr("height", height);
 
             //---- get drawing context ----
             var canvas = <HTMLCanvasElement>canvasW[0];
@@ -274,7 +273,6 @@ module beachPartyApp
             return canvas;
         }
 
-
         drawImagePalette(im: bps.ImageMappingData, count: number, imagePalette: any[], isNumeric: boolean)
         {
             var entryWidth = this._entryWidth;
@@ -284,7 +282,7 @@ module beachPartyApp
             var paletteW = vp.select(this._paletteElem);
 
             paletteW
-                .clear()
+                .clear();
                 //.css("width", entryWidth + "px")
 
             //---- STEPS ----
@@ -294,7 +292,7 @@ module beachPartyApp
             }
 
             //---- build image as imageSheet ----
-            var textureMaker = new beachParty.textureMakerClass(im.imagePalette);
+            var textureMaker = new beachParty.TextureMakerClass(im.imagePalette);
             textureMaker.buildShapeMakers(im.imagePalette);
 
             var drawShapeSize = 32;
@@ -303,8 +301,6 @@ module beachPartyApp
             //---- go thru backwards, since we want the LIGHT images at the top (and client palettes start with DARK) ----
             for (var i = count - 1; i >= 0; i--)
             {
-                var imgIndex = i;
-
                 var text = (breaks) ? breaks[i] : "";
 
                 //---- get image from imageSheet ----
@@ -317,7 +313,7 @@ module beachPartyApp
                     .customAttr("value", text)
                     .attach("click", (e) => this.searchForEntryValues(e))
                     .css("margin-bottom", "-1px")           // overlap with next top border
-                    .css("position", "relative")
+                    .css("position", "relative");
 
                 cellW[0].imageIndex = (isNumeric) ? (i + 1) : i;
 
@@ -327,9 +323,7 @@ module beachPartyApp
                 var left = (entryWidth - shapeSize) / 2;
                 var top = (entryHeight - shapeSize) / 2;
 
-                var imgSrc = "images/koala.jpg";
-
-                var shape = cellW.append("img")
+                cellW.append("img")
                     .addClass("imagePaletteShape")
                     .css("width", shapeSize + "px")
                     .css("height", shapeSize + "px")
@@ -337,7 +331,7 @@ module beachPartyApp
                     .css("top", left + "px")
                     .css("left", top + "px")
                     .css("position", "absolute")
-                    .attr("src", canvas.toDataURL())
+                    .attr("src", canvas.toDataURL());
 
             }
 
@@ -346,4 +340,3 @@ module beachPartyApp
         }
     }
 }
-

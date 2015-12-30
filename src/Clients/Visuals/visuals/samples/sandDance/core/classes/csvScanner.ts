@@ -8,7 +8,7 @@
 
 module beachParty
 {
-    export class csvScannerClass
+    export class CsvScannerClass
     {
         static endOfLine = -1;
         static endOfFile = null;
@@ -24,7 +24,6 @@ module beachParty
         {
             this._delimiter = delimiter;
             this._quoteChar = quoteChar;
-            this._offset - 0;
 
             //---- make scanner simpler by collapsing multi char line endings ----
             this._text = text.replace(/\r\n/g, "\n");
@@ -32,7 +31,7 @@ module beachParty
 
         public scan()
         {
-            var value = <any> csvScannerClass.endOfFile;
+            var value = <any> CsvScannerClass.endOfFile;
 
             var offset = this._offset;
             var start = offset;
@@ -42,7 +41,7 @@ module beachParty
             {
                 var ch = text[offset++];
 
-                if (ch == this._quoteChar)
+                if (ch === this._quoteChar)
                 {
                     //---- scan QUOTED value ----
                     value = "";
@@ -52,9 +51,9 @@ module beachParty
                     {
                         ch = text[offset++];
 
-                        if (ch == this._quoteChar)
+                        if (ch === this._quoteChar)
                         {
-                            if (offset < text.length && text[offset] == this._quoteChar)
+                            if (offset < text.length && text[offset] === this._quoteChar)
                             {
                                 //---- EMBEDDED quote ----
                                 value += ch;
@@ -70,11 +69,11 @@ module beachParty
                                 {
                                     var ch = text[offset];
 
-                                    if (ch == this._delimiter)
+                                    if (ch === this._delimiter)
                                     {
                                         offset++;       // "use" delimiter now
                                     }
-                                    else if (ch != "\n")
+                                    else if (ch !== "\n")
                                     {
                                         throw "expected delimiter or newline at end of quoted string, but found: " + ch;
                                     }
@@ -89,11 +88,11 @@ module beachParty
                         }
                     }
                 }
-                else if (ch == "\n")
+                else if (ch === "\n")
                 {
-                    value = csvScannerClass.endOfLine;
+                    value = CsvScannerClass.endOfLine;
                 }
-                else if (ch == this._delimiter)
+                else if (ch === this._delimiter)
                 {
                     value = "";
                 }
@@ -104,12 +103,12 @@ module beachParty
                     {
                         var ch = text[offset++];
 
-                        if (ch == this._delimiter)
+                        if (ch === this._delimiter)
                         {
                             value = text.substr(start, offset - start - 1);
                             break;
                         }
-                        else if (ch == "\n")
+                        else if (ch === "\n")
                         {
                             //---- don't consume the newline until our next call ----
                             offset--;
@@ -131,22 +130,4 @@ module beachParty
             return (this._offset >= this._text.length);
         }
     }
-
-    function testCsvScanner()
-    {
-        var scanner = new csvScannerClass('abc;def;ghi\n1;2;3\naaa;"bbb";ccc\naaa;"bb""bb";ccc\n', ";", "\"");
-        
-        while (true)
-        {
-            var value = scanner.scan();
-            vp.utils.debug("csvScan: value=" + value);
-
-            if (value == csvScannerClass.endOfFile)
-            {
-                break;
-            }
-        }
-    }
-
-    //testCsvScanner();
 } 

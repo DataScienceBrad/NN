@@ -7,7 +7,7 @@
 
 module beachPartyApp
 {
-    export class testMgrClass extends beachParty.dataChangerClass
+    export class TestMgrClass extends beachParty.dataChangerClass
     {
         testResultsKey = "testResults";
 
@@ -32,11 +32,11 @@ module beachPartyApp
         _cmdId: string;
 
         //---- OTHER ----
-        _app: appClass;
+        _app: AppClass;
         _cmdTimer = null;
         _perfRecords: PerfRecord[];
 
-        constructor(app: appClass, test: any)
+        constructor(app: AppClass, test: any)
         {
             super();
 
@@ -152,7 +152,7 @@ module beachPartyApp
                     this._perfRecords.push(pr);
                 }
 
-                if (this._cmdId == cmdId)        //   cycleNum == this._waitingForCycleNum)
+                if (this._cmdId === cmdId)        //   cycleNum == this._waitingForCycleNum)
                 {
                     this._waitingForCycleNum = undefined;
 
@@ -207,7 +207,7 @@ module beachPartyApp
             else if (cmd.loadData)
             {
                 var dataName = this.getParam(cmd.loadData, "name");
-                fileOpenMgr.instance.autoloadFile(dataName);
+                FileOpenMgr.instance.autoloadFile(dataName);
                 this. _currentViewName = "Scatter";
             }
             else if (cmd.setView)
@@ -298,7 +298,7 @@ module beachPartyApp
             }
             else if (cmd.showDetails !== undefined)
             {
-                var show = (cmd.showDetails == true);
+                var show = (cmd.showDetails === true);
                 if (show)
                 {
                     this._app.openDetailsPanel();
@@ -380,7 +380,7 @@ module beachPartyApp
             var perfResults = this.loadPerfResultsFromLocalStorage();
             if (perfResults)
             {
-                fileOpenMgr.instance.uploadData(perfResults, "testResults", undefined, (e) =>
+                FileOpenMgr.instance.uploadData(perfResults, "testResults", undefined, (e) =>
                 {
                     this._app.changeToChart("Scatter", null, Gesture.automatedTest);
                     this._app.changeXMapping("time");

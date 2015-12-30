@@ -7,9 +7,9 @@
 
 module bps
 {
-    export class chartHostHelperClass extends baseHostHelperClass
+    export class ChartHostHelperClass extends BaseHostHelperClass
     {
-        static instance: chartHostHelperClass;
+        static instance: ChartHostHelperClass;
 
         _clientAppId: string;
 
@@ -20,20 +20,20 @@ module bps
 
             this._clientAppId = clientAppId;
 
-            chartHostHelperClass.instance = this;
+            ChartHostHelperClass.instance = this;
         }
 
         preprocessMsg(msgBlock)
         {
             var processIt = false;
 
-            if (msgBlock.fromHost == "appHost")
+            if (msgBlock.fromHost === "appHost")
             {
                 this.processMsgFromAppHost(msgBlock);
             }
             else //if (msgBlock.visId == this._chartId)
             {
-                if (msgBlock.msg == "engineLoaded")
+                if (msgBlock.msg === "engineLoaded")
                 {
                     this.onIFrameLoaded();
                 }
@@ -48,7 +48,7 @@ module bps
         {
             //debug("===> Got cmd from HOST in client app: cmd=" + msgBlock.cmd);
 
-            if (msgBlock.cmd == "setData") 
+            if (msgBlock.cmd === "setData") 
             { 
                 var data = <any>JSON.parse(msgBlock.param);
                 var wdParams = <bps.WorkingDataParams>JSON.parse(msgBlock.param2);
@@ -104,7 +104,6 @@ module bps
         {
             this.postVisMsg("getValueMap", colName, maxValues + "", undefined, undefined, undefined, null, callback);
         }
-
 
         /** search for (and select) records, matching "value" and "maxValue" on the column "colName".  The searchType specifes the 
         type of search to be performed.  The "searchAction" can be used to return the matching objects instead of selecting them. */
@@ -896,7 +895,6 @@ module bps
         text: bps.TextMappingData;
         image: bps.ImageMappingData;
 
-
         constructor(x: string, y: string, color?: string)
         {
             this.x = new MappingData(x);
@@ -997,7 +995,7 @@ module bps
             for (var i = 0; i < this.fieldList.length; i++)
             {
                 var fi = this.fieldList[i];
-                if (fi.name == name)
+                if (fi.name === name)
                 {
                     fix = fi;
                     break;
@@ -1139,7 +1137,6 @@ module bps
             this.notesSource = NotesSource.both;
         }
     }
-
 
     export enum MarkerType
     {
@@ -1400,13 +1397,13 @@ module bps
     {
         text: string;     // text displayed when this data was extracted
         offset: any;      // optional: offset within parent canvas (if not bound to a record)
-        colName: string   // optional: name of column this is bound to
+        colName: string;   // optional: name of column this is bound to;
         primaryKey: string;        // optional: primary key of record that this is bound to
     }
 
     export function createBpsHelper(bpsChartOrIFrameId: string, bpsDomain?: string, baseServerDir?: string, fromDomain?: string, clientAppId?: string)
     {
-        var helper = new chartHostHelperClass(bpsChartOrIFrameId, bpsDomain, baseServerDir, fromDomain, clientAppId);
+        var helper = new ChartHostHelperClass(bpsChartOrIFrameId, bpsDomain, baseServerDir, fromDomain, clientAppId);
         return helper;
     }
 

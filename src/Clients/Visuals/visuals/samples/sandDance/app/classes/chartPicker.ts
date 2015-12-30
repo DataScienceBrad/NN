@@ -7,7 +7,7 @@
 
 module beachPartyApp
 {
-    export class chartPickerClass extends basePanelClass
+    export class ChartPickerClass extends BasePanelClass
     {
         _tableElem: HTMLElement;
         _callback = null;
@@ -22,10 +22,10 @@ module beachPartyApp
 
             //---- create the table ----
             var tableW = vp.select(this._root).append("table")
-                .addClass("chartPicker")
+                .addClass("chartPicker");
 
             //---- first row of CHARTS ----
-            var rowW = tableW.append("tr")
+            var rowW = tableW.append("tr");
 
             this.addChart(rowW, "Scatter", "fnChartPickerScatter", "Plot data in X and Y");
             this.addChart(rowW, "Column", "fnChartPickerCol", "Organize shapes into verticalcolumns");
@@ -35,10 +35,10 @@ module beachPartyApp
 
             //---- spacing row ----
             var rowW = tableW.append("tr")
-                .css("height", "10px")
+                .css("height", "10px");
 
             //---- second row of CHARTS ----
-            var rowW = tableW.append("tr")
+            var rowW = tableW.append("tr");
 
             this.addChart(rowW, "Density", "fnChartPickerDensity", "Organize shapes into X and Y bins");
             this.addChart(rowW, "Violin", "fnChartPickerViolin", "Organize shapes into X and Y bins, with width of bins representing the count");
@@ -61,9 +61,9 @@ module beachPartyApp
                 .attach("click", (e) =>
                 {
                     this.onClick(e);
-                })
+                });
 
-            var imgW = tdW.append("div")
+            tdW.append("div")
                 .addClass("chartPickerImage")
                 .attr("data-src", imgSrc)
                 //.css("width", "80px")
@@ -73,13 +73,13 @@ module beachPartyApp
                     e.preventDefault();
                 });
 
-            var titleW = tdW.append("div")
+            tdW.append("div")
                 .addClass("chartPickerTitle")
-                .text(title)
+                .text(title);
 
-            if (this._currentChart == title)
+            if (this._currentChart === title)
             {
-                tdW.attr("data-selected", "true")
+                tdW.attr("data-selected", "true");
             }
 
             tdW[0].returnName = valueText;

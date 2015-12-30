@@ -158,7 +158,6 @@ module utils
         var keysByIndex: { [keyIndex: number]: string } = {};
         var rowsByKey: { [key: string]: number[] } = {};
         var keysByRow = [];
-        var nextKeyId = 0;
         var sortedKeys = fromNV.keyInfo.sortedKeys;
         var toVector = toNV.values;
 
@@ -182,7 +181,7 @@ module utils
                     rowsByKey[key] = rows;
 
                     var si = sortedKeys.indexOf(key);
-                    if (si == -1)
+                    if (si === -1)
                     {
                         sortedKeys.push(key);
                     }
@@ -199,9 +198,6 @@ module utils
 
     export function onFileOpenError(fileName: string, ex: string)
     {
-        //---- separate error msg from stack trace ----
-        var fullMsg = ex;
-
         ex = ex.replace(/&#39;/g, "'");
 
         var index = ex.indexOf("\r\n");
@@ -224,7 +220,6 @@ module utils
         throw errorMsg;
     }
 
-
     export function getDataLength(nv: beachParty.NamedVectors, applyFilter?: boolean)
     {
         var length = (nv) ? nv.length : 0;
@@ -244,7 +239,7 @@ module utils
 
         if (vp.utils.isString(value))
         {
-            bValue = (value.toLowerCase() == "true");
+            bValue = (value.toLowerCase() === "true");
         }
 
         return <boolean>bValue;
@@ -293,7 +288,7 @@ module utils
         var colType = (dataVector) ? dataVector.colType : null;
         var scale: vp.scales.baseScale = null;
 
-        if (colType == "string")
+        if (colType === "string")
         {
             //---- create CATEGORY scale ----
             
@@ -306,9 +301,9 @@ module utils
 
             scale = vp.scales.createCategoryKey()
                 .categoryKeys(catKeys)
-                .range(rangeMin, rangeMax)
+                .range(rangeMin, rangeMax);
         }
-        else if (colType == "date")
+        else if (colType === "date")
         {
             var result = getMinMax(dataVector, filterVector);
 
@@ -317,7 +312,7 @@ module utils
                 .domainMin(result.min)
                 .domainMax(result.max)
                 .rangeMin(rangeMin)
-                .rangeMax(rangeMax)
+                .rangeMax(rangeMax);
         }
         else      
         {
@@ -334,7 +329,7 @@ module utils
                 .domainMin(result.min)
                 .domainMax(result.max)
                 .rangeMin(rangeMin)
-                .rangeMax(rangeMax)
+                .rangeMax(rangeMax);
         }
 
         this.buildFormatter(md, scale, colType);
@@ -361,7 +356,7 @@ module utils
         var colType = (dataVector) ? dataVector.colType : null;
         var scale: vp.scales.baseScale = null;
 
-        if (colType == "string")        // isContinuous)
+        if (colType === "string")        // isContinuous)
         {
             //---- create CATEGORY scale ----
             //var catKeys = dataVector.keyInfo.sortedKeys;
@@ -369,7 +364,7 @@ module utils
 
             scale = vp.scales.createCategoryKey()
                 .categoryKeys(catKeys)
-                .palette(palette)
+                .palette(palette);
         }
         else      
         {
@@ -394,7 +389,7 @@ module utils
                 .domainMin(minVal)
                 .domainMax(maxVal)
                 .palette(palette)
-                .isPaletteDiscrete(! isContinuous)
+                .isPaletteDiscrete(! isContinuous);
         }
 
         this.buildFormatter(md, scale, colType);
@@ -408,11 +403,10 @@ module utils
             .domainMin(min)
             .domainMax(max)
             .rangeMin(rangeMin)
-            .rangeMax(rangeMax)
+            .rangeMax(rangeMax);
 
         return linearScale;
     }
-
 
     export function getCubeDefaultSize(shapeCount: number)
     {
@@ -471,7 +465,6 @@ module utils
             if (filterVector)
             {
                 //---- use "colData" for building assignments, but "filteredData" for bin boundaries ----
-                var filteredData = [];
                 var filterValues = filterVector.values;
                 var inKeys = {};
 
@@ -514,13 +507,11 @@ module utils
     export function prepElementForSearch(element: any, colName: string, scale: any, binResults: any, index, lastValue: any, isCat: boolean,
         record: any, id: string)
     {
-        var useCatForBins = scale._useCategoryForBins;
-
         if (binResults)
         {
             var bin = (binResults) ? (binResults.bins[index]) : null;
 
-            if ((isCat || scale._useCategoryForBins) && id == "label")
+            if ((isCat || scale._useCategoryForBins) && id === "label")
             {
                 utils.prepWithBinDirect(element, colName, isCat, bin, id);
             }
@@ -531,7 +522,7 @@ module utils
         }
         else
         {
-            var firstBucket = (bin) ? bin.isFirst : (index == 1);
+            var firstBucket = (bin) ? bin.isFirst : (index === 1);
             var value = record.breakValue;
 
             lastValue = utils.prepWithValueLast(element, colName, lastValue, value, isCat, firstBucket, id);
@@ -669,7 +660,7 @@ module utils
         if (fn)
         {
             var ext = fn.substr(-4).toLowerCase();        // last 4 chars
-            isImg = (ext == ".png" || ext == ".jpg" || ext == ".bmp");
+            isImg = (ext === ".png" || ext === ".jpg" || ext === ".bmp");
         }
 
         return isImg;
@@ -681,7 +672,7 @@ module utils
 
         if (map)
         {
-            if (forceCheck || !objList || objList.indexOf(map) == -1)
+            if (forceCheck || !objList || objList.indexOf(map) === -1)
             {
                 if (!forceCheck && objList != null)
                 {
@@ -782,7 +773,6 @@ module utils
         return memUseMap;
     }
 
-
     /** store SearchParams data on the specified element so it can later be used for a search operation. */
     export function prepWithValueLast(elem: any, colName: string, lastValue: any, currValue: any,
         isCategory: boolean, firstBucket: boolean, id: string)
@@ -806,7 +796,7 @@ module utils
             sp.minValue = lastValue;
             sp.maxValue = currValue;
 
-            if (sp.minValue != sp.maxValue)
+            if (sp.minValue !== sp.maxValue)
             {
                 if (lastValue === null)
                 {
@@ -854,4 +844,3 @@ module utils
         //searchType: bps.TextSearchType;
     }
 }
-

@@ -5,11 +5,9 @@
 
 /// <reference path="../_references.ts" />
 
-var demoData: string;
-
 module beachParty
 {
-    export class violinClass extends baseGlVisClass
+    export class ViolinClass extends BaseGlVisClass
     {
         //---- all facet results ----
         _xFacetBinResults = null;
@@ -36,7 +34,7 @@ module beachParty
 
         //_chartOptions = new sandDensityOptions(5, 5, "Circle");
 
-        constructor(view: dataViewClass, gl: any, chartState: any)
+        constructor(view: DataViewClass, gl: any, chartState: any)
         {
             super("sandViolin", view, gl, chartState);
         }
@@ -59,27 +57,27 @@ module beachParty
                 {
                     var data = nvFacetBuckets[i];
 
-                    var xResults = chartUtils.binTheDataForCount(dc, data, xm, "x");
+                    var xResults = ChartUtils.binTheDataForCount(dc, data, xm, "x");
                     this._xFacetBinResults.push(xResults);
 
-                    var yResults = chartUtils.binTheDataForCount(dc, data, ym, "y");
+                    var yResults = ChartUtils.binTheDataForCount(dc, data, ym, "y");
                     this._yFacetBinResults.push(yResults);
                 }
             }
             else
             {
-                var xResults = chartUtils.binTheDataForCount(dc, dc.nvData, xm, "x");
+                var xResults = ChartUtils.binTheDataForCount(dc, dc.nvData, xm, "x");
                 this._xFacetBinResults.push(xResults);
 
-                var yResults = chartUtils.binTheDataForCount(dc, dc.nvData, ym, "y");
+                var yResults = ChartUtils.binTheDataForCount(dc, dc.nvData, ym, "y");
                 this._yFacetBinResults.push(yResults);
             }
 
             //---- adjust X scale ----
-            dc.scales.x = chartUtils.adjustScaleForBin(dc.scales.x, xResults);
+            dc.scales.x = ChartUtils.adjustScaleForBin(dc.scales.x, xResults);
 
             //---- adjust Y scale ----
-            dc.scales.y = chartUtils.adjustScaleForBin(dc.scales.y, yResults);
+            dc.scales.y = ChartUtils.adjustScaleForBin(dc.scales.y, yResults);
 
             return dc.filteredRecordCount;
         }
@@ -90,7 +88,6 @@ module beachParty
             //---- for this part, we need to process the items in their sorted order ----
 
             var filter = dc.layoutFilterVector;
-            var isFiltered = (filter != null);
 
             var allAssignX = resultX.assignments;
             var allAssignY = resultY.assignments;
@@ -98,7 +95,7 @@ module beachParty
             var binIndexesX = [];
             var binIndexesY = [];
 
-            var binCounts = {}              // will use string as our 3d index   (facet, x, y)
+            var binCounts = {};              // will use string as our 3d index   (facet, x, y);
 
             var facetAssignments = (dc.facetHelper) ? dc.facetHelper.binResult().assignments : null;
             var lastFacetIndex = 0;
@@ -119,13 +116,13 @@ module beachParty
                     if (facetAssignments)
                     {
                         var facetIndex = facetAssignments[shapeIndex];
-                        if (i == 0)
+                        if (i === 0)
                         {
                             lastFacetIndex = facetIndex;
                         }
                         else
                         {
-                            if (facetIndex != lastFacetIndex)
+                            if (facetIndex !== lastFacetIndex)
                             {
                                 vp.utils.debug("----> ERROR: facetIndex changed");
                             }
@@ -162,9 +159,6 @@ module beachParty
                 var count = binCounts[key];
                 maxCount = Math.max(count, maxCount);
             }
-
-            var width = dc.width;
-            var height = dc.height;
 
             var binsX = resultX.bins;
             var binsY = resultY.bins;
@@ -235,7 +229,6 @@ module beachParty
 
         preLayoutLoop(dc: DrawContext)
         {
-            var options = <sandDensityOptions>this._chartOptions;
             var nv = dc.nvData;
 
             //---- use pre-computed bins ----
@@ -263,7 +256,7 @@ module beachParty
             this._binHeight = itemHeight;
             this._boxHeight = boxHeight;
 
-            var maxRecordsInABin = this.assignRecordsToBins(nv, xResult, yResult, dc);
+            this.assignRecordsToBins(nv, xResult, yResult, dc);
         }
 
         layoutDataForRecord(recordIndex: number, dc: DrawContext)
@@ -299,7 +292,7 @@ module beachParty
             var width = dc.maxShapeSize * this.scaleColData(nv.size, recordIndex, dc.scales.size, 1);
 
             var height = width;
-            var depth = dc.defaultDepth2d   
+            var depth = dc.defaultDepth2d   ;
 
             var colorIndex = this.scaleColData(nv.colorIndex, recordIndex, dc.scales.colorIndex);
             var imageIndex = this.scaleColData(nv.imageIndex, recordIndex, dc.scales.imageIndex);

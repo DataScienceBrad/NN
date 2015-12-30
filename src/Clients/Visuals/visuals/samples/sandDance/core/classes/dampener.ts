@@ -7,7 +7,7 @@
 
 module beachParty
 {
-    export class dampenerClass
+    export class DampenerClass
     {
         static windowDuration = 500;            // ms
          
@@ -19,20 +19,20 @@ module beachParty
         _firstActual: number;
         _isOperationActive = false;
         _firstTargetFrame = true;
-        _slidingWindow: slidingWindowClass;
+        _slidingWindow: SlidingWindowClass;
 
         constructor(applyCallback)
         {
             this._applyCallback = applyCallback; 
 
-            this._slidingWindow = new slidingWindowClass(dampenerClass.windowDuration);
+            this._slidingWindow = new SlidingWindowClass(DampenerClass.windowDuration);
 
             this.startUiOperation();
         }
 
         inertia(value?: number)
         {
-            if (arguments.length == 0)
+            if (arguments.length === 0)
             {
                 return (this._isOperationActive) ? 0 : this._firstActual;
             }
@@ -42,7 +42,7 @@ module beachParty
 
         hasInertia()
         {
-            var has = (!this._isOperationActive) && (this._firstActual != 0);
+            var has = (!this._isOperationActive) && (this._firstActual !== 0);
             return has;
         }
 
@@ -64,7 +64,6 @@ module beachParty
             //---- if we didn't move the requd distance in last "windowDuration" ms, clear the inertia ----
             var samples = this._slidingWindow.getSamples();
             var count = samples.length;
-            var dist = Math.abs(samples.sum((samp) => +samp.value));
 
             //vp.utils.debug("--> length=" + count + ", dist=" + dist);
 
@@ -101,7 +100,7 @@ module beachParty
 
             if (this._isOperationActive)
             {
-                if (this._accum != this._target)
+                if (this._accum !== this._target)
                 {
                     var frameTarget = vp.data.lerp(this._dampenFactor, this._accum, this._target);
                     var actual = frameTarget - this._accum;
@@ -130,7 +129,7 @@ module beachParty
                 hasInertia = (Math.abs(this._firstActual) > epsilon);
             }
 
-            return hasInertia
+            return hasInertia;
         }
 
         public static createCycle(group: SVGGElement, data: string[])

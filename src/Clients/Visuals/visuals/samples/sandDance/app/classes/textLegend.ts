@@ -7,7 +7,7 @@
 
 module beachPartyApp
 {
-    export class textLegendClass extends beachParty.dataChangerClass
+    export class TextLegendClass extends beachParty.dataChangerClass
     {
         //_colorPalette: any[];
         //_isContinuous: boolean;
@@ -26,17 +26,17 @@ module beachPartyApp
             super();
 
             this._tm = tm;
-            var root = vp.select("#" + rootName)
+            var root = vp.select("#" + rootName);
 
             //---- add colName as TITLE ----
             var title = root.append("span")
                 .addClass("legendTitle textButton")
                 .id("textLegendTitle")
-                .text(tm.colName)
+                .text(tm.colName);
 
             //---- add PALETTE ----
             var palette = root.append("div")
-                .addClass("legendPalette")
+                .addClass("legendPalette");
 
             this._rootElem = root[0];
             this._titleElem = title[0];
@@ -64,10 +64,10 @@ module beachPartyApp
             var name = tm.colName;
 
             vp.select(this._rootElem)
-                .css("display", (name) ? "block" : "none")
+                .css("display", (name) ? "block" : "none");
 
             vp.select(this._titleElem)
-                .text(name)
+                .text(name);
 
             this.rebuildPalette();
                 

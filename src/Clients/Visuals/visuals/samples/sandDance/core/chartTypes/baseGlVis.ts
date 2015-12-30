@@ -5,8 +5,6 @@
 
 /// <reference path="../_references.ts" />
 
-var demoData: string;
-
 module beachParty
 {
     import LayoutResult = bps.LayoutResult;
@@ -20,7 +18,7 @@ module beachParty
     // Chart Layout rules:
     //     see scaterPlot.ts
     //------------------------------------
-    export class baseGlVisClass extends dataChangerClass      //implements IDataViewer
+    export class BaseGlVisClass extends DataChangerClass      //implements IDataViewer
     {
         //---- PROGRAM / SHADER stuff ----
         private _vertexShaderId: string;
@@ -61,7 +59,7 @@ module beachParty
         private _pkToDrawIndex = null;
         private _textRects = [];
         //private _boundingBoxes = <BoundingBox[]>[];
-        private _boundingBoxMgr: boundingBoxMgrClass;
+        private _boundingBoxMgr: BoundingBoxMgrClass;
 
         //---- what to gather on each draw cycle ----
         private _buildLayoutResults = false;
@@ -84,10 +82,10 @@ module beachParty
         _chartOptions: any;
         _chartClass: string;
         _prevChartClass: string;
-        _chartFrameHelper: chartFrameHelperClass;
+        _chartFrameHelper: ChartFrameHelperClass;
         _hideAxes = false;
         _gridLinesBuffer = null;
-        _view: dataViewClass;
+        _view: DataViewClass;
         private _svgChartGroup: SVGGElement;
 
         //---- UNIFORM (shader constants) ----
@@ -145,11 +143,11 @@ module beachParty
         private _nv: NamedVectors;
 
         //---- manages the projection, view, and world matrices for our class ----
-        _transformer: transformerClass;
+        _transformer: TransformerClass;
 
         //---- DATA ----
-        private _dataMgr: dataMgrClass;
-        _dataFrame: dataFrameClass;
+        private _dataMgr: DataMgrClass;
+        _dataFrame: DataFrameClass;
         private _maxRecords = 0;
 
         //---- chart BUILD FLAGS ----
@@ -167,7 +165,7 @@ module beachParty
         _isLastDrawOfCycle = false;
 
         //---- FACETS ----
-        private _facetHelper: facetHelperClass = null;
+        private _facetHelper: FacetHelperClass = null;
         _facetLabelRects = [];
 
         //---- misc LAST flags ----
@@ -207,7 +205,7 @@ module beachParty
         _cycleFrameCount = 0;
         _nextBuildId = 0;
 
-        constructor(chartClass: string, view: dataViewClass, gl: any, chartState: ChartState)
+        constructor(chartClass: string, view: DataViewClass, gl: any, chartState: ChartState)
         {
             super();
 
@@ -226,7 +224,7 @@ module beachParty
 
             if (!this._boundingBoxMgr)
             {
-                this._boundingBoxMgr = new boundingBoxMgrClass();
+                this._boundingBoxMgr = new BoundingBoxMgrClass();
             }
 
             //this._uniformsChanged = new UniformsChanged();
@@ -287,7 +285,6 @@ module beachParty
 
         private registerForEvents()
         {
-            var view = this._view;
             this._view.registerForRemovableChange("shapeOpacity", this, () => this.onShapeOpacityChanged());
             this._view.registerForRemovableChange("textOpacity", this, () => this.onShapeOpacityChanged());
             this._view.registerForRemovableChange("canvasColor", this, () => this.onCanvasColorChanged());
@@ -375,7 +372,7 @@ module beachParty
 
         onSelectionChanged()
         {
-            if (this._markBuildNeededCount == 0)
+            if (this._markBuildNeededCount === 0)
             {
                 this._isSelectionChangeOnly = true;
             }
@@ -397,7 +394,7 @@ module beachParty
             {
                 var chartFrameGroup = this._view.getSvgChartFrameGroup();
 
-                this._chartFrameHelper = new chartFrameHelperClass(chartFrameGroup, this._dataMgr,
+                this._chartFrameHelper = new ChartFrameHelperClass(chartFrameGroup, this._dataMgr,
                     this._transformer);
             }
         }
@@ -457,13 +454,13 @@ module beachParty
             else
             {
                 var imgName = this._view.shapeImageName();
-                if (imgName && imgName != "none")
+                if (imgName && imgName !== "none")
                 {
                     texPalette = [imgName];
                 }
             }
 
-            if (texPalette != this._texPalette)
+            if (texPalette !== this._texPalette)
             {
                 this.onTexPaletteChanged(texPalette);
 
@@ -479,7 +476,7 @@ module beachParty
             if (texPalette && texPalette.length)
             {
                 var isShapeNames = (!texPalette[0].contains("."));
-                var textureMaker = new textureMakerClass(texPalette);
+                var textureMaker = new TextureMakerClass(texPalette);
 
                 textureMaker.registerForChange("loaded", (e) =>
                 {
@@ -496,7 +493,7 @@ module beachParty
                 this.onTextureLoaded(null, 0);
 
                 vp.select("#imgDebug")
-                    .css("display", "none")
+                    .css("display", "none");
             }
         }
 
@@ -608,7 +605,7 @@ module beachParty
             {
                 //var rcx = this._transformer._rcxWorld;
 
-                this._facetHelper = new facetHelperClass(colName, facetCount, fm.binCount, fm.facetBounds,
+                this._facetHelper = new FacetHelperClass(colName, facetCount, fm.binCount, fm.facetBounds,
                     this._transformer, fm);
             }
             else
@@ -656,7 +653,7 @@ module beachParty
             this.setTimerForNextFrame();
         }
 
-        clearInvalidMapping(md: bps.MappingData, dataFrame: dataFrameClass)
+        clearInvalidMapping(md: bps.MappingData, dataFrame: DataFrameClass)
         {
             var colName = md.colName;
             if (colName)
@@ -768,7 +765,7 @@ module beachParty
             //this.markBuildNeeded();
             //this._omitAnimOnNextBuild = true;
 
-            traceMgrClass.instance.addTrace("drawNeeded", reason, TraceEventType.point);
+            TraceMgrClass.instance.addTrace("drawNeeded", reason, TraceEventType.point);
 
             this._isDrawNeeded = true;
         }
@@ -874,23 +871,23 @@ module beachParty
 
             if (selectionExists)
             {
-                if (cp.colorEffect == bps.ColorEffect.setColor)
+                if (cp.colorEffect === bps.ColorEffect.setColor)
                 {
                     value = cp.rgb;
                 }
-                else if (cp.colorEffect == bps.ColorEffect.adjustHue)
+                else if (cp.colorEffect === bps.ColorEffect.adjustHue)
                 {
                     var hsl = vp.color.hslFromRgb(rgb);
                     hsl = hsl.adjustHue(cp.colorFactor);
                     value = hsl.toRgb();
                 }
-                else if (cp.colorEffect == bps.ColorEffect.adjustSaturation)
+                else if (cp.colorEffect === bps.ColorEffect.adjustSaturation)
                 {
                     var hsl = vp.color.hslFromRgb(rgb);
                     hsl = hsl.adjustSaturation(cp.colorFactor);
                     value = hsl.toRgb();
                 }
-                else if (cp.colorEffect == bps.ColorEffect.adjustValue)
+                else if (cp.colorEffect === bps.ColorEffect.adjustValue)
                 {
                     var hsl = vp.color.hslFromRgb(rgb);
                     hsl = hsl.adjustValue(cp.colorFactor);
@@ -990,12 +987,8 @@ module beachParty
 
             if (this._refreshData || (! this._dataFrame))
             {
-                var oldCount = (this._dataFrame) ? this._dataFrame.getRecordCount() : 0;
-
                 this._dataFrame = this._dataMgr.getDataFrame();
                 this._maxRecords = null;
-
-                var recordCount = this._dataFrame.getRecordCount();
 
                 this.onDataOrPrimitiveChanged(true);
 
@@ -1025,18 +1018,13 @@ module beachParty
 
             var buildId = this._nextBuildId++;
 
-            traceMgrClass.instance.addTrace("chartBuild", this._chartClass, TraceEventType.start, "b" + buildId);
+            TraceMgrClass.instance.addTrace("chartBuild", this._chartClass, TraceEventType.start, "b" + buildId);
 
             //---- normal build starts here ----
             vp.utils.debug("----- buildChart ---------");
             var buildStart = vp.utils.now();
 
             this._view.onBuildStarted();
-
-            //vp.utils.debug("buildChart() starting; this._refreshData=" + this._refreshData + ", this._isSelectionChangeOnly = "
-            //    + this._isSelectionChangeOnly);
-
-            var appMgr = this._view.getAppMgr();
 
             try
             {
@@ -1057,7 +1045,7 @@ module beachParty
                 this._firstChartBuilt = true;
                 //this._rebuildTexture = false;
 
-                traceMgrClass.instance.addTrace("chartBuild", this._chartClass, TraceEventType.end, "b" + buildId);
+                TraceMgrClass.instance.addTrace("chartBuild", this._chartClass, TraceEventType.end, "b" + buildId);
             }
 
             this.addToBuildPerf("total", buildStart);
@@ -1069,7 +1057,7 @@ module beachParty
             this._drawPrimitive = value;
 
             var usePointCubes = false;
-            this._usingPointCubes = (this._drawPrimitive == bps.DrawPrimitive.point && usePointCubes);
+            this._usingPointCubes = (this._drawPrimitive === bps.DrawPrimitive.point && usePointCubes);
 
             this.computeCulling();
 
@@ -1089,7 +1077,7 @@ module beachParty
         {
             this._isCullingEnabled = false;
 
-            if (this._drawPrimitive == bps.DrawPrimitive.cube || this._drawPrimitive == bps.DrawPrimitive.smartCube)
+            if (this._drawPrimitive === bps.DrawPrimitive.cube || this._drawPrimitive === bps.DrawPrimitive.smartCube)
             {
                 if (this._view.isCullingEnabled())
                 {
@@ -1114,7 +1102,7 @@ module beachParty
             //vp.utils.debug("markBuildNeeded called: reason=" + reason);
             this._markBuildNeededCount++;
 
-            traceMgrClass.instance.addTrace("buildNeeded", reason, TraceEventType.point);
+            TraceMgrClass.instance.addTrace("buildNeeded", reason, TraceEventType.point);
 
             if (this._view.isAutoRebuild())
             {
@@ -1131,7 +1119,7 @@ module beachParty
 
                 if (this._isCycleActive)
                 {
-                    traceMgrClass.instance.addTrace("animInterrupt", this._chartClass, TraceEventType.point);
+                    TraceMgrClass.instance.addTrace("animInterrupt", this._chartClass, TraceEventType.point);
 
                     //---- terminate the current cycle so we can draw with new settings ----
                     this.onEndOfCycle(vp.utils.now() - this._lastFrameTime);
@@ -1238,7 +1226,7 @@ module beachParty
                 glUtils.addUniform(uniforms, gl, program, "cubeTexCoords", "2fv", cubeMesh.uvFrontOnly);
                 glUtils.addUniform(uniforms, gl, program, "cubeTriangles", "1fv", cubeMesh.triangles);
 
-                var dpv = (this._drawPrimitive == bps.DrawPrimitive.point) ? 1.0 : 0.0;
+                var dpv = (this._drawPrimitive === bps.DrawPrimitive.point) ? 1.0 : 0.0;
                 glUtils.addUniform(uniforms, gl, program, "drawingPoints", "1f", dpv);
 
                 glUtils.addUniform(uniforms, gl, program, "ambientFactor", "1f");
@@ -1301,7 +1289,7 @@ module beachParty
 
         applyUniformsToShaders()
         {
-            glUtils.glUniformClass.uniformSetCount = 0;
+            glUtils.GlUniformClass.uniformSetCount = 0;
 
             //---- local variables, for easy access ----
             var view = this._view;
@@ -1334,8 +1322,8 @@ module beachParty
             {
                 //---- toPercentTheta ----
                 var toPercentTheta = this._toPercent;
-                var isPrevLine = (this._prevChartClass == "linePlotClass");
-                var isCurrLine = (this._chartClass == "linePlotClass");
+                var isPrevLine = (this._prevChartClass === "linePlotClass");
+                var isCurrLine = (this._chartClass === "linePlotClass");
 
                 if (isPrevLine)
                 {
@@ -1441,7 +1429,7 @@ module beachParty
                 var ptFactor = 1;
 
                 //---- for POINT drawing, we need to compute the size in PIXELS (vs. WORLD space) ----
-                if (this._drawPrimitive == bps.DrawPrimitive.point)
+                if (this._drawPrimitive === bps.DrawPrimitive.point)
                 {
                     ptFactor = this._transformer.worldSizeToScreen(ptFactor);
                 }
@@ -1604,7 +1592,6 @@ module beachParty
         //    }
         //}
 
-
         /** make a (single vertex per record) copy of the latest (from/to) vertex data.  */
         copyVertexDataToTemp()
         {
@@ -1704,9 +1691,9 @@ module beachParty
             for (var i = 0; i < keys.length; i++)
             {
                 var name = keys[i];
-                var attr = <glUtils.glAttributeClass>attrs[name];
+                var attr = <glUtils.GlAttributeClass>attrs[name];
 
-                if (attr._attrLoc != -1)
+                if (attr._attrLoc !== -1)
                 {
                     var numberCount = vertexCount * attr._sizeInFloats;
 
@@ -1856,7 +1843,6 @@ module beachParty
 
             this._vertexCount = vertexCount;
             this._verticesPerRecord = verticesPerRecord;
-            var rebuiltProgram = false;
 
             if (false)      // this._drawPrimitive == bps.DrawPrimitive.point)
             {
@@ -1878,7 +1864,7 @@ module beachParty
         {
             var shaderChanged = false;
 
-            if (this._vertexShaderId != fnVertex || this._fragmentShaderId != fnFragment)
+            if (this._vertexShaderId !== fnVertex || this._fragmentShaderId !== fnFragment)
             {
                 this._vertexShaderId = fnVertex;
                 this._fragmentShaderId = fnFragment;
@@ -1986,15 +1972,15 @@ module beachParty
                 var requestedFacets = facetHelper._requestedFacets;
                 var maxFacets = facetHelper._maxCategoryFacets;
 
-                var sortOptions = new binSortOptionsClass();
+                var sortOptions = new BinSortOptionsClass();
                 sortOptions.sortDirection = this._view.facetMapping().binSorting;
                 sortOptions.sortByAggregateType = "count";
 
                 var fm = this._view.facetMapping();
                 var useNiceNumbers = fm.useNiceNumbers;
 
-                facetBinResults = binHelper.createBins(nv, "facet", requestedFacets, maxFacets, fm.forceCategory, true, true, sortOptions, null, useNiceNumbers, fm);
-                nvBuckets = binHelper.splitBinsIntoNamedVectors(facetBinResults, nv);
+                facetBinResults = BinHelper.createBins(nv, "facet", requestedFacets, maxFacets, fm.forceCategory, true, true, sortOptions, null, useNiceNumbers, fm);
+                nvBuckets = BinHelper.splitBinsIntoNamedVectors(facetBinResults, nv);
 
                 facetHelper.binResult(facetBinResults);
                 facetCount = facetHelper.facetCount();
@@ -2207,8 +2193,7 @@ module beachParty
             var dc = <DrawContext>result.dc;
             var nvBuckets = <any[]>result.nvBuckets;
             var facetHelper = this._facetHelper;
-            var facetCount = result.facetCount;     //   (facetHelper) ? facetHelper.facetCount() : 1;
-            var facetBinResults = result.facetBinResults;
+            var facetCount = result.facetCount;
 
             //---- clear 2D canvas and prepare Text and Line drawing context ----
             ctx.clearRect(0, 0, this._frameWidth, this._frameHeight);
@@ -2252,7 +2237,7 @@ module beachParty
             //this.dumpVertexBuffers("BEFORE TO-Buffers", verticesPerRecord, buffers);
 
             //---- if sort order has changed, REORDER record data in FROM buffer ----
-            if (this._fromBuffersHaveData && drawOrderKey != this._drawOrderKey)
+            if (this._fromBuffersHaveData && drawOrderKey !== this._drawOrderKey)
             {
                 fromAttributes = this.getAttributesForCycle(! this._usingPrimaryBuffers);
                 fromBuffers = this.getNamedBuffers(fromAttributes);
@@ -2491,7 +2476,6 @@ module beachParty
             this.preLayoutLoop(dc);
 
             var nv = dc.nvData;
-            var ad = this._animationData;
 
             start = this.addToBuildPerf("preLayout", start);
 
@@ -2519,11 +2503,6 @@ module beachParty
                 this.fillBuffersForRecord(buffers, dr, facetOffset, nv, dc, verticesPerRecord, primaryKey, drawBufferIndex, fri,
                     rect);
 
-                if (drawBufferIndex == 490)
-                {
-                    var adummy = 9;
-                }
-
                 this._pkToDrawIndex[primaryKey] = drawBufferIndex;
                 //start = this.addToBuildPerf("fill", start);
                 drawBufferIndex++;
@@ -2548,7 +2527,7 @@ module beachParty
 
         drawLinesBetweenShapes(dc: DrawContext, buffers: NamedBuffers, facetOffset: any)
         {
-            if (this._chartClass == "scatterPlotClass" || this._chartClass == "sandRadialClass")
+            if (this._chartClass === "scatterPlotClass" || this._chartClass === "sandRadialClass")
             {
                 var lm = this._lm;
                 var lineVector = this._dataFrame.getVector(lm.colName, false);
@@ -2587,7 +2566,7 @@ module beachParty
                 {
                     var values = g.values;
 
-                    if (values.length > 1 && values[0].lineKey != "")
+                    if (values.length > 1 && values[0].lineKey !== "")
                     {
                         var last = values[0];
                         var ptLast = this.getCenterOfShapeInScreenCoords(last.primaryKey + "");
@@ -2646,7 +2625,7 @@ module beachParty
             var next3 = 3 * next1;
             var ad = this._animationData;
 
-            if (vectorIndex == 0)
+            if (vectorIndex === 0)
             {
                 //---- this code is NECESSARY to enable JIT-ing (make a DOM API call) ----
                 var ctxJit = this._view.getContext2d();
@@ -2667,9 +2646,9 @@ module beachParty
 
                 //---- if we are moving from a COLUMN to a SCATTER, we want to process the HIGH Y values first (values are sorted by Y), so we flip the order ----
                 //---- likewise, if we moving from a BAR to a SCATTER, we want to process the HIGH X values first (values are sorted by X) ----
-                var fromCol = (dc.fromChartType == "columnCountClass" || dc.fromChartType == "columnSumClass");
-                var fromBar = (dc.fromChartType == "barCountClass" || dc.fromChartType == "barSumClass");
-                var flipOrder = (fromCol && dc.toChartType == "scatterPlotClass") || (fromBar && dc.toChartType == "scatterPlotClass");
+                var fromCol = (dc.fromChartType === "columnCountClass" || dc.fromChartType === "columnSumClass");
+                var fromBar = (dc.fromChartType === "barCountClass" || dc.fromChartType === "barSumClass");
+                var flipOrder = (fromCol && dc.toChartType === "scatterPlotClass") || (fromBar && dc.toChartType === "scatterPlotClass");
 
                 //---- we also change flipOrder when usingPrimaryBuffers=true, since the value of "toPercent" will be flipped in the shader ----
                 if (this._usingPrimaryBuffers)          //   flipOrder == this._usingPrimaryBuffers)
@@ -2858,8 +2837,6 @@ module beachParty
 
         drawTextForItem(ctx: CanvasRenderingContext2D, vectorIndex: number, rect, nv, dr, primaryKey: string)
         {
-            var lastColorIndex = null;
-
             if (rect && nv.text && dr.opacity)
             {
                 var nvText = <NumericVector>nv.text;
@@ -2904,7 +2881,7 @@ module beachParty
             return bb;
         }
 
-        public hitTestRay(ray: rayClass, mousePt): HitTestResult[]
+        public hitTestRay(ray: RayClass, mousePt): HitTestResult[]
         {
             var itemsFound = [];
             var textRects = this._textRects;
@@ -2954,7 +2931,7 @@ module beachParty
             {
                 var b = boxes[i];
 
-                if (i == 0 || b.dist < minDist)
+                if (i === 0 || b.dist < minDist)
                 {
                     minDist = b.dist;
                     box = b;
@@ -2974,7 +2951,7 @@ module beachParty
             //---- ensure the _boundingBoxes match the current data set ----
             var filteredInCount = utils.getDataLength(this._nv, true);
 
-            if (this._boundingBoxMgr.getCount() == filteredInCount)
+            if (this._boundingBoxMgr.getCount() === filteredInCount)
             {
                 //---- adjust for margins ----
                 if (isChartRelative)
@@ -2993,7 +2970,7 @@ module beachParty
 
                 rcScreen = vp.geom.createRect(left, top, rcScreen.width, rcScreen.height);
 
-                boxes = hitTestRect.intersectUsingTransforms(rcScreen, this._transformer, this._boundingBoxMgr);
+                boxes = HitTestRect.intersectUsingTransforms(rcScreen, this._transformer, this._boundingBoxMgr);
 
                 if (onlyMostCentral)
                 {
@@ -3017,7 +2994,7 @@ module beachParty
             return rc;
         }
 
-        getCol(dataFrame: dataFrameClass, attrName: string, getOrigData?: boolean): NumericVector
+        getCol(dataFrame: DataFrameClass, attrName: string, getOrigData?: boolean): NumericVector
         {
             var vector = null;
 
@@ -3029,7 +3006,7 @@ module beachParty
             return vector;
         }
 
-        buildNamedVectors(dataFrame: dataFrameClass)
+        buildNamedVectors(dataFrame: DataFrameClass)
         {
             //var attrInfos = this._attrInfos;
             var length = dataFrame.getRecordCount();
@@ -3176,7 +3153,7 @@ module beachParty
                 var maxIndex = colorCount - 1;
                 var catKeys = null;
 
-                if (colType == "string" || cm.forceCategory)
+                if (colType === "string" || cm.forceCategory)
                 {
                     //---- create CATEGORY scale ----
 
@@ -3230,7 +3207,9 @@ module beachParty
                     {
                         //----  convert from string to func ----
                         var foo = null;
+                        /* tslint:disable */
                         eval("foo = " + cm.customScalingCallback);
+                        /* tslint:enable */
 
                         var customScale: any = {};
                         customScale.scale = foo;
@@ -3256,7 +3235,7 @@ module beachParty
                     var minVal = 0;
                     var maxVal = 0;
 
-                    if (cm.breaks && cm.breaks.length && nv.colorIndex.colType != "string")
+                    if (cm.breaks && cm.breaks.length && nv.colorIndex.colType !== "string")
                     {
                         //---- get min/max from breaks ----
                         var len = cm.breaks.length;
@@ -3271,21 +3250,21 @@ module beachParty
                         maxVal = result.max;
                     }
 
-                    if (cm.spread == bps.MappingSpread.low)
+                    if (cm.spread === bps.MappingSpread.low)
                     {
                         //---- SPREAD LOW scale  ----
                         scale = vp.scales.createLowBias()
                             .domainMin(minVal)
                             .domainMax(maxVal)
-                            .range(0, maxIndex)
+                            .range(0, maxIndex);
                     }
-                    else if (cm.spread == bps.MappingSpread.high)
+                    else if (cm.spread === bps.MappingSpread.high)
                     {
                         //---- SPREAD HIGH scale ----
                         scale = vp.scales.createHighBias()
                             .domainMin(minVal)
                             .domainMax(maxVal)
-                            .range(0, maxIndex)
+                            .range(0, maxIndex);
 
                     }
                     else
@@ -3294,7 +3273,7 @@ module beachParty
                         scale = vp.scales.createLinear()
                             .domainMin(minVal)
                             .domainMax(maxVal)
-                            .range(0, maxIndex)
+                            .range(0, maxIndex);
                     }
                 }
             }
@@ -3312,7 +3291,7 @@ module beachParty
             {
                 var colValue = <any> vector.values[index];
 
-                var needKey = scale.scaleType() == vp.scales.ScaleType.categoryKey;
+                var needKey = scale.scaleType() === vp.scales.ScaleType.categoryKey;
                 if (needKey)
                 {
                     colValue = vector.keyInfo.keysByIndex[colValue];
@@ -3408,12 +3387,12 @@ module beachParty
 
             var isWireframe = this._view.isWireframe();
 
-            if (this._drawPrimitive == bps.DrawPrimitive.point)
+            if (this._drawPrimitive === bps.DrawPrimitive.point)
             {
                 gl.drawArrays(gl.POINTS, 0, this._vertexCount);
                 this.drawHoverShapeOnTop(gl.POINTS);
             }
-            else if (isWireframe || this._drawPrimitive == bps.DrawPrimitive.line)
+            else if (isWireframe || this._drawPrimitive === bps.DrawPrimitive.line)
             {
                 gl.drawArrays(gl.LINE_STRIP, 0, this._vertexCount);
                 this.drawHoverShapeOnTop(gl.LINE_STRIP);
@@ -3429,7 +3408,7 @@ module beachParty
         {
             //---- draw hover shape on top ----
             var hp = this._view.hoverParams();
-            if (hp.hoverEffect != bps.HoverEffect.none)
+            if (hp.hoverEffect !== bps.HoverEffect.none)
             {
                 var drawOnTop = false;
                 var hpk = this._view.hoverPrimaryKey();
@@ -3444,7 +3423,7 @@ module beachParty
                     var hp = this._view.hoverParams();
                     var hoverColor = hp.hoverColor;
 
-                    if (!hoverColor || hoverColor == "none" || hp.hoverEffect == bps.HoverEffect.sameColor)
+                    if (!hoverColor || hoverColor === "none" || hp.hoverEffect === bps.HoverEffect.sameColor)
                     {
                         hvi = -1;
                         drawOnTop = true;
@@ -3473,8 +3452,7 @@ module beachParty
 
                     if (this._gl.getError())
                     {
-                        //---- break in debugger ----
-                        var foo = (<any>window).bar.ski;
+                        //TODO: Add errors to log.
                     }
                 }
             }
@@ -3517,7 +3495,6 @@ module beachParty
             //---- top back X line ----
             this.addGridLine(buffer, x1, y2, z2, x2, y2, z2);
 
-
             //---- left front Y line ----
             this.addGridLine(buffer, x1, y1, z1, x1, y2, z1);
 
@@ -3529,7 +3506,6 @@ module beachParty
 
             //---- right back Y line ----
             this.addGridLine(buffer, x2, y1, z2, x2, y2, z2);
-
 
             //---- bottom left Z line ----
             this.addGridLine(buffer, x1, y1, z1, x1, y1, z2);
@@ -3666,7 +3642,7 @@ module beachParty
                     .css("border-left", "0px solid #555")
                     .css("border-bottom", "0px solid #555")
                     .css("border-top", "1px solid #555")
-                    .css("border-right", "1px solid #555")
+                    .css("border-right", "1px solid #555");
             }
 
             //---- set bounds of CANVAS2D ----
@@ -3700,13 +3676,13 @@ module beachParty
             var value = t;
 
             //---- divide into IN and OUT cases ----
-            if ((t < .5) && (easeType != bps.EaseType.out))
+            if ((t < .5) && (easeType !== bps.EaseType.out))
             {
                 var coreValue = easeFunc(t * 2);
                 value = coreValue * .5;
             }
 
-            if ((t >= .5) && (easeType != bps.EaseType.in))
+            if ((t >= .5) && (easeType !== bps.EaseType.in))
             {
                 var coreValue = easeFunc(2 * (1 - t));
                 value = .5 + (1 - coreValue) * .5;
@@ -3769,7 +3745,7 @@ module beachParty
 
             if (!this._isSelectionChangeOnly)
             {
-                hitTestRect.markCacheBuildNeeded(this._transformer, this._boundingBoxMgr);
+                HitTestRect.markCacheBuildNeeded(this._transformer, this._boundingBoxMgr);
             }
 
             this._isSelectionChangeOnly = false;             // until first "rebuildNeeded()" call
@@ -3796,7 +3772,7 @@ module beachParty
                 var dataFrame = this._dataFrame;
                 if (!dataFrame)
                 {
-                    dataFrame = this._dataMgr.getDataFrame()
+                    dataFrame = this._dataMgr.getDataFrame();
                 }
 
                 var xm = this._view.xMapping();
@@ -3902,7 +3878,7 @@ module beachParty
 
             //vp.utils.debug("toPercentUneased=" + toPercentUneased);
 
-            if (toPercentUneased == maxPercent && this._isCycleActive)
+            if (toPercentUneased === maxPercent && this._isCycleActive)
             {
                 ////---- cycle ended ----
                 //this.onEndOfCycle(elapsed);
@@ -3956,10 +3932,10 @@ module beachParty
             {
                 var frameCount = this._frameCount;
                 this._frameRate = Math.floor(frameCount * 1000 / duration);
-                if (this._frameRate > 80)
-                {
-                    var a = 9999;
-                }
+                // if (this._frameRate > 80)
+                // {
+                //     var a = 9999;
+                // }
 
                 this._frameCount = 0;
 
@@ -3971,7 +3947,7 @@ module beachParty
 
                     var msg = "total=" + round(perf.total) + " ms, configDevice=" + round(perf.configDevice) + ", clear="
                         + round(perf.clear) + ", applyUniforms=" + round(perf.applyUniforms) + ", applyCount=" +
-                        glUtils.glUniformClass.uniformSetCount + ", drawBuffers="
+                        glUtils.GlUniformClass.uniformSetCount + ", drawBuffers="
                         + round(perf.drawBuffers) + ", stats=" + round(perf.onFrame);
 
                     this._drawFrameStatsMsg = msg;
@@ -4045,14 +4021,13 @@ module beachParty
 
         drawFrameCore()
         {
-            var windowMgr = this._view._windowMgr;
             var gl = this._gl;
 
             var start = vp.utils.now();
 
             var buildId = this._nextBuildId - 1;
 
-            traceMgrClass.instance.addTrace("drawFrame", this._chartClass, TraceEventType.start, "f" + buildId + "-" + this._frameCount);
+            TraceMgrClass.instance.addTrace("drawFrame", this._chartClass, TraceEventType.start, "f" + buildId + "-" + this._frameCount);
 
             //---- apply various params that may have changed ----
             glUtils.configDevice(gl, this._frameWidth, this._frameHeight, this._clearColor, this._isBlendingEnabled, this._isCullingEnabled);
@@ -4068,7 +4043,7 @@ module beachParty
 
             start = this.addToDrawPerf("applyUniforms", start);
 
-            if (this._drawPrimitive == bps.DrawPrimitive.smartCube)
+            if (this._drawPrimitive === bps.DrawPrimitive.smartCube)
             {
                 //---- 12 passes over 3 vertices/cube ----
                 for (var i = 0; i < 12; i++)
@@ -4101,7 +4076,7 @@ module beachParty
             {
                 if (this._transformer._transformChanged)
                 {
-                    hitTestRect.markCacheBuildNeeded(this._transformer, this._boundingBoxMgr);
+                    HitTestRect.markCacheBuildNeeded(this._transformer, this._boundingBoxMgr);
                     this._transformer._transformChanged = false;
                 }
 
@@ -4113,7 +4088,7 @@ module beachParty
 
             this.onDataChanged("drawFrameCore");
 
-            traceMgrClass.instance.addTrace("drawFrame", this._chartClass, TraceEventType.end, "f" + buildId + "-" + this._frameCount);
+            TraceMgrClass.instance.addTrace("drawFrame", this._chartClass, TraceEventType.end, "f" + buildId + "-" + this._frameCount);
         }
     }
 
@@ -4128,7 +4103,7 @@ module beachParty
         height: number;
         depth: number;
 
-        facetHelper: facetHelperClass;
+        facetHelper: FacetHelperClass;
         nvData: NamedVectors;
         scales: NamedScales;
 
@@ -4179,9 +4154,9 @@ module beachParty
         //---- for consistent/correct access ----
         layoutFilterVector: number[];
 
-        constructor(rcxWorld: Rect3d, facetHelper: facetHelperClass, nvData: NamedVectors, scales: NamedScales,
+        constructor(rcxWorld: Rect3d, facetHelper: FacetHelperClass, nvData: NamedVectors, scales: NamedScales,
             recordCount: number, filteredRecordCount: number, /*attrInfos: any,*/ userSizeFactor: number,
-            fromChartType: string, toChartType: string, itemSize: number, view: dataViewClass)
+            fromChartType: string, toChartType: string, itemSize: number, view: DataViewClass)
         {
             //---- minimums ----
             this.x = rcxWorld.left;
@@ -4213,7 +4188,7 @@ module beachParty
             //this.combinedSizeFactor = combinedSizeFactor;
 
             //---- is there a difference between itemSize and maxShapeSize? ----
-            this.maxShapeSize = chartUtils.getScatterShapeSize(this, null, view);
+            this.maxShapeSize = ChartUtils.getScatterShapeSize(this, null, view);
             this.itemSize = this.maxShapeSize;     //   itemSize;
             this.itemHalf = this.itemSize / 2;
 
@@ -4315,7 +4290,7 @@ module beachParty
 
             for (var i = 0; i < this.values.length; i++)
             {
-                if (this.values[i] == value)
+                if (this.values[i] === value)
                 {
                     count++;
                 }
@@ -4324,7 +4299,7 @@ module beachParty
             return count;
         }
 
-        copy(indexes: number[]) : NumericVector
+        copy(indexes: number[]): NumericVector
         {
             var newValues = new Float32Array(indexes.length);
 
@@ -4337,7 +4312,7 @@ module beachParty
 
             var nv = new NumericVector(newValues, this.colName, this.colType);
 
-            if (this.colType == "string")
+            if (this.colType === "string")
             {
                 utils.rebuildStringKeyIndexes(nv, indexes, this);
             }
@@ -4348,23 +4323,23 @@ module beachParty
 
     export interface IAttributes
     {
-        xyz?: glUtils.glAttributeClass;
-        xyz2?: glUtils.glAttributeClass;
-        colorIndex?: glUtils.glAttributeClass;
-        colorIndex2?: glUtils.glAttributeClass;
-        theta?: glUtils.glAttributeClass;
-        theta2?: glUtils.glAttributeClass;
-        opacity?: glUtils.glAttributeClass;
-        opacity2?: glUtils.glAttributeClass;
-        size?: glUtils.glAttributeClass;
-        size2?: glUtils.glAttributeClass;
-        imageIndex?: glUtils.glAttributeClass;
-        imageIndex2?: glUtils.glAttributeClass;
+        xyz?: glUtils.GlAttributeClass;
+        xyz2?: glUtils.GlAttributeClass;
+        colorIndex?: glUtils.GlAttributeClass;
+        colorIndex2?: glUtils.GlAttributeClass;
+        theta?: glUtils.GlAttributeClass;
+        theta2?: glUtils.GlAttributeClass;
+        opacity?: glUtils.GlAttributeClass;
+        opacity2?: glUtils.GlAttributeClass;
+        size?: glUtils.GlAttributeClass;
+        size2?: glUtils.GlAttributeClass;
+        imageIndex?: glUtils.GlAttributeClass;
+        imageIndex2?: glUtils.GlAttributeClass;
 
         //---- single buffers ----
-        vectorIndex?: glUtils.glAttributeClass;
-        vertexId?: glUtils.glAttributeClass;
-        staggerOffset?: glUtils.glAttributeClass;
+        vectorIndex?: glUtils.GlAttributeClass;
+        vertexId?: glUtils.GlAttributeClass;
+        staggerOffset?: glUtils.GlAttributeClass;
     }
 
     export class NamedVectors
@@ -4423,7 +4398,7 @@ module beachParty
             for (var i = 0; i < keys.length; i++)
             {
                 var key = keys[i];
-                if (key != "length" && this[key] != null)
+                if (key !== "length" && this[key] != null)
                 {
                     var numericVector = <NumericVector>this[key];
                     var vector = numericVector.copy(indexes);
@@ -4461,7 +4436,7 @@ module beachParty
     /** this is data that needs to be transferred between the previous chart instance and the newly created instance. */
     export class ChartState
     {
-        _glAttributes: glUtils.glAttributeClass[];
+        _glAttributes: glUtils.GlAttributeClass[];
         _usingPrimaryBuffers: boolean;
         _pkToDrawIndex: any;
         _drawPrimitive: bps.DrawPrimitive;
@@ -4469,16 +4444,16 @@ module beachParty
         _colorFloats2: number[];
         _maxColors: number;
         _maxColors2: number;
-        _dataFrame: dataFrameClass;
+        _dataFrame: DataFrameClass;
         _animCycleCount: number;
         _toPercent: number;
         _prevChartClass: string;
-        _chartFrameHelper: chartFrameHelperClass;
+        _chartFrameHelper: ChartFrameHelperClass;
         _refreshData: boolean;
         _sizeFactorLast: number;
         _opacityLast: number;
         _lastWorld: Float32Array;
-        _boundingBoxMgr: boundingBoxMgrClass;
+        _boundingBoxMgr: BoundingBoxMgrClass;
         _nextBuildId: number;
         _drawOrderKey: string;
         _arrayMemory: number;

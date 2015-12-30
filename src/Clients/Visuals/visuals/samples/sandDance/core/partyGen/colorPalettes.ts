@@ -31,14 +31,13 @@ See the Apache Version 2.0 License for specific language governing permissions a
 
 module beachParty
 {
-
-    export class colorPalettesClass
+    export class ColorPalettesClass
     {
         public static MaxQualitativeColors = 12;
 
         public static getColorSchemeNames(colorSchemeType: string): string[]
         {
-            var colorSchemes = colorPalettesClass.colorBrewerSchemes; // For shorthand
+            var colorSchemes = ColorPalettesClass.colorBrewerSchemes; // For shorthand
             var colorSchemeNames: string[] = [];
 
             switch (colorSchemeType)
@@ -63,10 +62,9 @@ module beachParty
             return (colorSchemeNames);
         }
 
-
         public static getColorSchemeByName(colorSchemeName: string): any
         {
-            var colorSchemes = colorPalettesClass.colorBrewerSchemes; // For shorthand
+            var colorSchemes = ColorPalettesClass.colorBrewerSchemes; // For shorthand
 
             if (colorSchemes[colorSchemeName] != null)
             {
@@ -132,7 +130,6 @@ module beachParty
             return palette;
         }
 
-
         // Qualitative schemes are special in that they don't all contain the same number of palettes:
         //   4 schemes contain palettes with 2 to 8 colors
         //   2 schemes contain palettes with 2 to 9 colors
@@ -143,17 +140,17 @@ module beachParty
         // This method provides a way to convert the relative scheme index into an ABSOLUTE scheme index.
         public static getQualitativeColorSchemeIndex(relativeSchemeIndex: number, numColors: number): number
         {
-            var colorSchemeNames = colorPalettesClass.getColorSchemeNames("qualitative");
+            var colorSchemeNames = ColorPalettesClass.getColorSchemeNames("qualitative");
             var countOfSchemesWithRequiredNumberOfColors = 0;
 
             for (var i = 0; i < colorSchemeNames.length; i++)
             {
                 var colorSchemeName = colorSchemeNames[i];
-                var colorScheme = colorPalettesClass.getColorSchemeByName(colorSchemeName);
+                var colorScheme = ColorPalettesClass.getColorSchemeByName(colorSchemeName);
 
-                if (colorScheme[numColors] || (numColors == 1))
+                if (colorScheme[numColors] || (numColors === 1))
                 {
-                    if (countOfSchemesWithRequiredNumberOfColors == relativeSchemeIndex)
+                    if (countOfSchemesWithRequiredNumberOfColors === relativeSchemeIndex)
                     {
                         return (i);
                     }
@@ -161,29 +158,27 @@ module beachParty
                 }
             }
             throw "Unable to find the absolute scheme index for relative index " + relativeSchemeIndex + " in 'Qualitative' schemes containing " + numColors + " colors";
-            return (0);
         }
-
 
         // Makes an array of SandDance palettes using ALL the schemes of type "qualitative", but including only those schemes that contain a palette with numQualitativeColors.
         // Note: A SandDance palette is an array of [r,g,b] color arrays.
         public static getQualitativePalettes(numQualitativeColors: number, invertPalettes: boolean): any[]
         {
-            return (colorPalettesClass.getPalettesFromColorSchemeType("qualitative", numQualitativeColors, invertPalettes));
+            return (ColorPalettesClass.getPalettesFromColorSchemeType("qualitative", numQualitativeColors, invertPalettes));
         }
 
         public static getPaletteFromSteps(paletteName: string, scheme: any, stepsRequested: number)
         {
             var palette = [];
 
-            if (stepsRequested == 1)
+            if (stepsRequested === 1)
             {
                 // Palette[0] has 2 colors, so if only one color is desired then we create a single-color SandDance palette using the first color of Palette[0]
                 var schemeIndex = (scheme.length > 1) ? 1 : 0;
 
                 palette.push(scheme[schemeIndex][0]); 
             }
-            else if (stepsRequested == 2 && scheme.length > 1)
+            else if (stepsRequested === 2 && scheme.length > 1)
             {
                 // Palette[1] has 3 colors; use first and last.  Don't use Palette[0] - it was built incorrectly.
                 var schemeIndex = (scheme.length > 1) ? 1 : 0;
@@ -207,21 +202,19 @@ module beachParty
         // Note: A SandDance palette is an array of [r,g,b] color arrays.
         public static getPalettesFromColorSchemeType(colorSchemeType: string, numDesiredColors: number, invertPalettes: boolean): any[]
         {
-            var colorSchemeNames = colorPalettesClass.getColorSchemeNames(colorSchemeType);
+            var colorSchemeNames = ColorPalettesClass.getColorSchemeNames(colorSchemeType);
             var palettes: any[] = [];
 
             if (numDesiredColors < 1)
             {
                 throw "The specified number of desired colors must be at least 1";
-                numDesiredColors = 1;
             }
 
             for (var i = 0; i < colorSchemeNames.length; i++)
             {
                 var name = colorSchemeNames[i];
 
-                var candidatePaletteArray = colorPalettesClass.getPalettesFromColorScheme(colorSchemeType, i, invertPalettes);
-                var maxColorsInPaletteArray = candidatePaletteArray.length + 1;
+                var candidatePaletteArray = ColorPalettesClass.getPalettesFromColorScheme(colorSchemeType, i, invertPalettes);
 
                 var palette = this.getPaletteFromSteps(name, candidatePaletteArray, numDesiredColors);
                 palettes.push(palette);
@@ -230,12 +223,11 @@ module beachParty
             return (palettes);
         }
 
-
         // Makes an array of SandDance palettes using ALL the palettes in the color scheme of the specified type/index.
         // Note: A SandDance palette is an array of [r,g,b] color arrays.
         public static getPalettesFromColorScheme(colorSchemeType: string, colorSchemeIndex: number, invertPalettes: boolean): any[]
         {
-            var colorSchemeNames = colorPalettesClass.getColorSchemeNames(colorSchemeType);
+            var colorSchemeNames = ColorPalettesClass.getColorSchemeNames(colorSchemeType);
 
             // If colorSchemeIndex is greater than the number of schemes [of the specified type] then we default to scheme 0
             if ((colorSchemeIndex < 0) || (colorSchemeIndex >= colorSchemeNames.length))
@@ -244,18 +236,17 @@ module beachParty
             }
 
             var colorSchemeName = colorSchemeNames[colorSchemeIndex];
-            var paletteArray = colorPalettesClass.getPalettesFromColorSchemeName(colorSchemeName, invertPalettes);
+            var paletteArray = ColorPalettesClass.getPalettesFromColorSchemeName(colorSchemeName, invertPalettes);
 
             return (paletteArray);
         }
-
 
         // Makes an array of SandDance palettes using ALL the palettes in the named color scheme.
         // Note: A SandDance palette is an array of [r,g,b] color arrays.
         public static getPalettesFromColorSchemeName(colorSchemeName: string, invertPalettes: boolean): any[]
         {
             var palettes: any[] = [];
-            var colorScheme = colorPalettesClass.getColorSchemeByName(colorSchemeName);
+            var colorScheme = ColorPalettesClass.getColorSchemeByName(colorSchemeName);
             var colorSchemePaletteNames = vp.utils.keys(colorScheme);
 
             /// palettes in this class are defined from LIGHT to DARK but clients expect them as DARK to LIGHT, so we 
@@ -267,7 +258,6 @@ module beachParty
                 var colorSchemePaletteName = colorSchemePaletteNames[colorSchemePaletteNameIndex]; // Eg. "3"
                 var colorSchemePalette: string[] = colorScheme[colorSchemePaletteName]; // An array of strings of the form "rgb(rrr,ggg,bbb)"
                 var palette: any[] = []; // An array of rgb arrays
-
 
                 // Convert each color in the color-scheme palette from "rgb(r,g,b)" to [r,g,b], then add that color array to our palette
                 for (var i = 0; i < colorSchemePalette.length; i++)
@@ -286,7 +276,7 @@ module beachParty
                         }
                         else
                         {
-                            palette.push(rgbString)
+                            palette.push(rgbString);
                         }
                     }
                     catch (err)
@@ -301,17 +291,16 @@ module beachParty
             return (palettes);
         }
 
-
-        private static getRgbColorArrayFromRgbColorString(rgbColorString: string): number[]
+        protected static getRgbColorArrayFromRgbColorString(rgbColorString: string): number[]
         {
             var colorsArray = rgbColorString.replace("rgb(", "").replace(")", "").split(','); // rgbColorStrings is an array of string of the form "rgb(rrr, ggg, bbb)"
             var rgbArray: number[] = [];
 
-            if (colorsArray.length == 3)
+            if (colorsArray.length === 3)
             {
-                rgbArray.push(parseInt(colorsArray[0]));
-                rgbArray.push(parseInt(colorsArray[1]));
-                rgbArray.push(parseInt(colorsArray[2]));
+                rgbArray.push(parseInt(colorsArray[0], 0));
+                rgbArray.push(parseInt(colorsArray[1], 0));
+                rgbArray.push(parseInt(colorsArray[2], 0));
             }
             else
             {
@@ -320,7 +309,6 @@ module beachParty
 
             return (rgbArray);
         }
-
 
         // This is the "heart" of colorbrewer_schemes.js 
         public static colorBrewerSchemes =
@@ -385,7 +373,7 @@ module beachParty
             YlGnBu: { 2: ['rgb(237,248,177)', 'rgb(44,127,184)'], 3: ['rgb(237,248,177)', 'rgb(127,205,187)', 'rgb(44,127,184)'], 4: ['rgb(255,255,204)', 'rgb(161,218,180)', 'rgb(65,182,196)', 'rgb(34,94,168)'], 5: ['rgb(255,255,204)', 'rgb(161,218,180)', 'rgb(65,182,196)', 'rgb(44,127,184)', 'rgb(37,52,148)'], 6: ['rgb(255,255,204)', 'rgb(199,233,180)', 'rgb(127,205,187)', 'rgb(65,182,196)', 'rgb(44,127,184)', 'rgb(37,52,148)'], 7: ['rgb(255,255,204)', 'rgb(199,233,180)', 'rgb(127,205,187)', 'rgb(65,182,196)', 'rgb(29,145,192)', 'rgb(34,94,168)', 'rgb(12,44,132)'], 8: ['rgb(255,255,217)', 'rgb(237,248,177)', 'rgb(199,233,180)', 'rgb(127,205,187)', 'rgb(65,182,196)', 'rgb(29,145,192)', 'rgb(34,94,168)', 'rgb(12,44,132)'], 9: ['rgb(255,255,217)', 'rgb(237,248,177)', 'rgb(199,233,180)', 'rgb(127,205,187)', 'rgb(65,182,196)', 'rgb(29,145,192)', 'rgb(34,94,168)', 'rgb(37,52,148)', 'rgb(8,29,88)'] },
             YlOrBu: { 2: ['rgb(255,247,188)', 'rgb(217,95,14)'], 3: ['rgb(255,247,188)', 'rgb(254,196,79)', 'rgb(217,95,14)'], 4: ['rgb(255,255,212)', 'rgb(254,217,142)', 'rgb(254,153,41)', 'rgb(204,76,2)'], 5: ['rgb(255,255,212)', 'rgb(254,217,142)', 'rgb(254,153,41)', 'rgb(217,95,14)', 'rgb(153,52,4)'], 6: ['rgb(255,255,212)', 'rgb(254,227,145)', 'rgb(254,196,79)', 'rgb(254,153,41)', 'rgb(217,95,14)', 'rgb(153,52,4)'], 7: ['rgb(255,255,212)', 'rgb(254,227,145)', 'rgb(254,196,79)', 'rgb(254,153,41)', 'rgb(236,112,20)', 'rgb(204,76,2)', 'rgb(140,45,4)'], 8: ['rgb(255,255,229)', 'rgb(255,247,188)', 'rgb(254,227,145)', 'rgb(254,196,79)', 'rgb(254,153,41)', 'rgb(236,112,20)', 'rgb(204,76,2)', 'rgb(140,45,4)'], 9: ['rgb(255,255,229)', 'rgb(255,247,188)', 'rgb(254,227,145)', 'rgb(254,196,79)', 'rgb(254,153,41)', 'rgb(236,112,20)', 'rgb(204,76,2)', 'rgb(153,52,4)', 'rgb(102,37,6)']  },
             YlOrRd: { 2: ['rgb(255,237,160)', 'rgb(240,59,32)'], 3: ['rgb(255,237,160)', 'rgb(254,178,76)', 'rgb(240,59,32)'], 4: ['rgb(255,255,178)', 'rgb(254,204,92)', 'rgb(253,141,60)', 'rgb(227,26,28)'], 5: ['rgb(255,255,178)', 'rgb(254,204,92)', 'rgb(253,141,60)', 'rgb(240,59,32)', 'rgb(189,0,38)'], 6: ['rgb(255,255,178)', 'rgb(254,217,118)', 'rgb(254,178,76)', 'rgb(253,141,60)', 'rgb(240,59,32)', 'rgb(189,0,38)'], 7: ['rgb(255,255,178)', 'rgb(254,217,118)', 'rgb(254,178,76)', 'rgb(253,141,60)', 'rgb(252,78,42)', 'rgb(227,26,28)', 'rgb(177,0,38)'], 8: ['rgb(255,255,204)', 'rgb(255,237,160)', 'rgb(254,217,118)', 'rgb(254,178,76)', 'rgb(253,141,60)', 'rgb(252,78,42)', 'rgb(227,26,28)', 'rgb(177,0,38)'], 9: ['rgb(255,255,204)', 'rgb(255,237,160)', 'rgb(254,217,118)', 'rgb(254,178,76)', 'rgb(253,141,60)', 'rgb(252,78,42)', 'rgb(227,26,28)', 'rgb(189,0,38)', 'rgb(128,0,38)'] },
-        }
+        };
 
     }
 

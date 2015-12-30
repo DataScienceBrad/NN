@@ -9,7 +9,7 @@ module beachPartyApp
 {
     var nextId = 1;
 
-    export class jsonPanelClass extends basePanelClass
+    export class JsonPanelClass extends BasePanelClass
     {
         _groupDataName: string;         // for groups of radio buttons
         _lastRowW = null;
@@ -41,13 +41,13 @@ module beachPartyApp
             if (json.minHeight)
             {
                 vp.select(this._root)
-                    .css("min-height", json.minHeight + "px")
+                    .css("min-height", json.minHeight + "px");
             }
 
             if (json.minWidth)
             {
                 vp.select(this._root)
-                    .css("min-width", json.minWidth + "px")
+                    .css("min-width", json.minWidth + "px");
             }
 
             var rootW = vp.select(this._root);
@@ -69,21 +69,11 @@ module beachPartyApp
         setFocusToFirstControl()
         {
             var lowElem = null;
-            var lowIndex = null;
 
             for (var i = 0; i < this._controls.length; i++)
             {
                 var control = this._controls[i];
-                //var strIndex = control.getAttribute("tabIndex");
-                //if (strIndex)
-                //{
-                //    var index = +strIndex;
-                //    if (lowIndex == null || index < lowIndex)
-                //    {
-                //        lowIndex = index;
-                //        lowElem = control;
-                //    }
-                //}
+
                 lowElem = control;
                 break;
             }
@@ -99,10 +89,10 @@ module beachPartyApp
             var firstTabButton = null;
 
             //---- create container for tab buttons ----
-            var tabButtonContainerW = parentW.append("div")
+            var tabButtonContainerW = parentW.append("div");
 
             tabButtonContainerW
-                .addClass("tabButtonContainer")
+                .addClass("tabButtonContainer");
 
             for (var i = 0; i < tabs.length; i++)
             {
@@ -119,14 +109,14 @@ module beachPartyApp
                     .attach("click", (e) =>
                     {
                         this.onTabSelected(e.target);
-                    })
+                    });
 
                 //---- add tab content ----
                 var contentId = id + "Content";
 
-                var tabContentW = this.createTabContent(parentW, contentId, tab.rows)
+                this.createTabContent(parentW, contentId, tab.rows);
 
-                if (i == 0)
+                if (i === 0)
                 {
                     firstTabButton = tabButtonW[0];
                 }
@@ -142,10 +132,10 @@ module beachPartyApp
             if (this._currentTabContentElem)
             {
                 vp.select(this._currentTabContentElem)
-                    .css("display", "none")
+                    .css("display", "none");
 
                 vp.select(this._currentTabButtonElem)
-                    .removeClass("tabButtonOpen")
+                    .removeClass("tabButtonOpen");
 
                 this._currentTabContentElem = null;
                 this._currentTabButtonElem = null;
@@ -155,15 +145,15 @@ module beachPartyApp
             var buttonId = tabButton.id;
             var contentId = buttonId + "Content";
 
-            var tabContentW = vp.select("#" + contentId)
+            var tabContentW = vp.select("#" + contentId);
 
             if (tabContentW.length)
             {
                 tabContentW
-                    .css("display", "")         // makes it default to visible
+                    .css("display", "");         // makes it default to visible;
 
                 var tabButtonW = vp.select("#" + buttonId)
-                    .addClass("tabButtonOpen")
+                    .addClass("tabButtonOpen");
 
                 this._currentTabContentElem = tabContentW[0];
                 this._currentTabButtonElem = tabButtonW[0];
@@ -173,14 +163,14 @@ module beachPartyApp
         addRow(tableW: any)
         {
             var rowW = tableW.append("tr")
-                .addClass("panelRow")
+                .addClass("panelRow");
 
             if (this._rowSpacing)
             {
                 //---- always add a spacer row, to allow us to control space between rows -----
                 tableW.append("tr")
                     .addClass("panelRowSpacer")
-                    .css("height", this._rowSpacing)
+                    .css("height", this._rowSpacing);
             }
 
             return rowW;
@@ -194,31 +184,31 @@ module beachPartyApp
             {
                 //---- create "outer" table under parentW (to hold rowSpan content and normal innerTable) ----
                 var outerTableW = parentW.append("table")
-                    .css("position", "relative")
+                    .css("position", "relative");
 
                 var outerRowW = this.addRow(outerTableW);
 
-                if (rowSpanPos == "left")
+                if (rowSpanPos === "left")
                 {
                     rowSpanTdW = outerRowW.append("td")
                         .css("vertical-align", "top")
-                        .id("rowSpanHolder")
+                        .id("rowSpanHolder");
                         //.attr("rowSpan", "99")
                 }
 
                 var tdMiddle = outerRowW.append("td")
-                    .css("vertical-align", "top")
+                    .css("vertical-align", "top");
 
                 var normalTableW = tdMiddle
                     .append("table")
                     .css("vertical-align", "top")
-                    .css("position", "relative")
+                    .css("position", "relative");
 
-                if (rowSpanPos == "right")
+                if (rowSpanPos === "right")
                 {
                     rowSpanTdW = outerRowW.append("td")
                         .css("vertical-align", "top")
-                        .id("rowSpanHolder")
+                        .id("rowSpanHolder");
                         //.attr("rowSpan", "99")
                 }
 
@@ -226,7 +216,7 @@ module beachPartyApp
                 {
                     //---- add table/row ----
                     var tabW = rowSpanTdW = rowSpanTdW.append("table")
-                        .css("position", "relative")
+                        .css("position", "relative");
 
                     rowSpanTdW = this.addRow(tabW);
                 }
@@ -235,7 +225,7 @@ module beachPartyApp
             else
             {
                 var normalTableW = parentW.append("table")
-                    .css("position", "relative")
+                    .css("position", "relative");
             }
 
             return { normalTableW: normalTableW, rowSpanTdW: rowSpanTdW };
@@ -247,13 +237,13 @@ module beachPartyApp
 
             var tableW = result.normalTableW
                 .addClass("panelContent")
-                .attach("mousedown", (e) => this.onFocus(e))
+                .attach("mousedown", (e) => this.onFocus(e));
 
             if (id)
             {
                 tableW
                     .css("display", "none")
-                    .id(id)
+                    .id(id);
             }
 
             for (var i = 0; i < rows.length; i++)
@@ -271,7 +261,7 @@ module beachPartyApp
             if (!thisObj[memberName])
             {
                 //---- if member not found in dataOwner, fallback to appClass ----
-                thisObj = appClass.instance;
+                thisObj = AppClass.instance;
             }
 
             return thisObj;
@@ -317,7 +307,7 @@ module beachPartyApp
         buildRow(parentW: vp.dom.IWrapperOuter, tableW: vp.dom.IWrapperOuter, row: any)
         {
             var rowW = null;
-            var startNewRow = ((row.sameCell !== true) && (!row.col) || (row.col == 1));
+            var startNewRow = ((row.sameCell !== true) && (!row.col) || (row.col === 1));
             var control = null;
 
             //if (this._startNewRowPending)
@@ -328,7 +318,7 @@ module beachPartyApp
 
             if (row.rowSpan)
             {
-                rowW = this.addRow(tableW)
+                rowW = this.addRow(tableW);
                 var tdW = rowW.append("td");
 
                 //var result = this.startNewTable(parentW, row.rowSpan);
@@ -340,19 +330,19 @@ module beachPartyApp
             else if (row.separator)
             {
                 parentW.append("div")
-                    .addClass("panelSeparator")
+                    .addClass("panelSeparator");
 
                 var result = this.startNewTable(parentW);
 
                 tableW = result.normalTableW
-                    .addClass("panelContent")
+                    .addClass("panelContent");
 
-                rowW = this.addRow(tableW)
+                rowW = this.addRow(tableW);
 
             }
             else if (startNewRow)
             {
-                rowW = this.addRow(tableW)
+                rowW = this.addRow(tableW);
             }
             else
             {
@@ -362,14 +352,14 @@ module beachPartyApp
             //rowW    
             //    .css("position", "relative")
 
-            var tdW = (row.sameCell) ? this._lastTdW : rowW.append("td")
+            var tdW = (row.sameCell) ? this._lastTdW : rowW.append("td");
             this._lastTdW = tdW;
 
             if (row.fillClient)
             {
                 tdW
                     .attr("rowSpan", "999")
-                    .attr("colSpan", "999")
+                    .attr("colSpan", "999");
             }
 
             if (row.col)
@@ -379,15 +369,15 @@ module beachPartyApp
                 //    .css("position", "relative")
                 //    .css("left", "-55px")
 
-                if (row.col == 1)
+                if (row.col === 1)
                 {
                     if (this._isCol1Indent)
                     {
-                        tdW.css("padding-left", "40px")
+                        tdW.css("padding-left", "40px");
                     }
                     else
                     {
-                        tdW = rowW.append("td")
+                        tdW = rowW.append("td");
                             //.css("position", "relative")
                             //.css("left", "-55px")
                     }
@@ -398,10 +388,10 @@ module beachPartyApp
             if (row.emptyRow)
             {
                 tdW.append("div")
-                    .addClass("emptyRow")
+                    .addClass("emptyRow");
 
                 tdW
-                    .attr("colSpan", "99")
+                    .attr("colSpan", "99");
             }
             else if (row.prompt)
             {
@@ -557,7 +547,7 @@ module beachPartyApp
 
                 var textW = tdW.append("span")
                     .addClass("panelValue")
-                    .text(value)
+                    .text(value);
 
                 var thisObj = this.getDataOwner(row.dataName);
                 thisObj.registerForRemovableChange(row.dataName, this, (e) =>
@@ -573,23 +563,23 @@ module beachPartyApp
                 .css("overflow-x", "hidden")
                 .addClass("customList")
                 .addClass("colorList")
-                .css("vertical-align", "top")
+                .css("vertical-align", "top");
                 //.css("background", "yellow")
 
             var height = row.height;
             if (height !== undefined)
             {
-                listW.css("height", height)
+                listW.css("height", height);
             }
 
-            if (row.width != undefined)
+            if (row.width !== undefined)
             {
-                listW.css("width", row.width + "px")
+                listW.css("width", row.width + "px");
             }
 
-            if (row.colSpan != undefined)
+            if (row.colSpan !== undefined)
             {
-                tdW.attr("colspan", row.colSpan)
+                tdW.attr("colspan", row.colSpan);
             }
 
             if (row.refreshEvent)
@@ -646,7 +636,7 @@ module beachPartyApp
                 .addClass("panelButton")
                 .text(row.button)
                 .title(row.tip)
-                .attr("tabIndex", "0")
+                .attr("tabIndex", "0");
 
             //---- store on-click properties on each instance ----
             buttonW[0].dataName = row.dataName;
@@ -658,9 +648,9 @@ module beachPartyApp
                 this._acceptDataName = row.dataName;
             }
 
-            if (row.leftMargin != undefined)
+            if (row.leftMargin !== undefined)
             {
-                buttonW.css("margin-left", row.leftMargin + "px")
+                buttonW.css("margin-left", row.leftMargin + "px");
             }
 
             buttonW.attach("click", (e) =>
@@ -668,15 +658,15 @@ module beachPartyApp
                 this.onClickButton(e);
 
                 this.onUserAction();
-            })
+            });
 
             buttonW.attach("keydown", (e) =>
             {
-                if (e.keyCode == vp.events.keyCodes.enter)
+                if (e.keyCode === vp.events.keyCodes.enter)
                 {
                     this.onClickButton(e);
                 }
-            })
+            });
 
             this.applyCommonProperties(buttonW, tdW, row);
         }
@@ -687,7 +677,7 @@ module beachPartyApp
             var imgW = tdW.append("img")
                 .addClass("panelImage")
                 .attr("src", src)
-                .title(row.tip)
+                .title(row.tip);
 
             this.applyCommonProperties(imgW, tdW, row);
         }
@@ -715,7 +705,7 @@ module beachPartyApp
             {
                 if (elem.dataName)
                 {
-                    this.callMethod(elem.dataName)
+                    this.callMethod(elem.dataName);
                 }
             }
 
@@ -745,12 +735,12 @@ module beachPartyApp
 
             if (row.width)
             {
-                elemW.css("width", row.width)
+                elemW.css("width", row.width);
             }
 
             if (row.height)
             {
-                elemW.css("height", row.height)
+                elemW.css("height", row.height);
             }
 
             if (row.tabIndex)
@@ -786,7 +776,7 @@ module beachPartyApp
                     var value = this.getValue(row.disabled);
 
                     //---- not sure if this is form control, so disable using both methods ----
-                    elemW.attr("data-disabled", value)
+                    elemW.attr("data-disabled", value);
 
                     if (value)
                     {
@@ -809,7 +799,7 @@ module beachPartyApp
                 value = value.capitalize();
             }
 
-            if (prompt && prompt != "")
+            if (prompt && prompt !== "")
             {
                 this.createLabel(tdW, prompt, row.tip);
 
@@ -832,11 +822,11 @@ module beachPartyApp
                 {
                     var newValue = vp.dom.value(e.target);
                     this.callMethod(row.dataName, newValue);
-                })
+                });
 
-            if (row.leftMargin != undefined)
+            if (row.leftMargin !== undefined)
             {
-                textW.css("margin-left", row.leftMargin + "px")
+                textW.css("margin-left", row.leftMargin + "px");
             }
 
             this.applyCommonProperties(textW, tdW, row);
@@ -861,20 +851,20 @@ module beachPartyApp
             //---- create label ----
             var spanW = tdW.append("span")
                 .addClass("panelPrompt")
-                .title(tip)
+                .title(tip);
 
             if (isHtml)
             {
-                spanW.html(prompt)
+                spanW.html(prompt);
             }
             else
             {
-                spanW.text(prompt)
+                spanW.text(prompt);
             }
 
             //---- make this cell top-aligned ----
             tdW
-                .css("vertical-align", "top")
+                .css("vertical-align", "top");
         }
 
         createTextArea(prompt: string, rowW: vp.dom.IWrapperOuter, tdW: vp.dom.IWrapperOuter, row: any)
@@ -904,7 +894,7 @@ module beachPartyApp
                 {
                     var newValue = vp.dom.value(e.target);
                     this.callMethod(row.dataName, newValue);
-                })
+                });
 
             this.applyCommonProperties(textW, tdW, row);
 
@@ -920,12 +910,10 @@ module beachPartyApp
 
         createNumAdjuster(prompt: string, rowW: vp.dom.IWrapperOuter, tdW: vp.dom.IWrapperOuter, row: any)
         {
-            var value = this.getValue(row.dataName);
-
             tdW.append("span")
                 .addClass("panelPrompt")
                 .text(prompt)
-                .title(row.tip)
+                .title(row.tip);
 
             var parentId = "numAdjuster" + nextId++;
 
@@ -937,24 +925,24 @@ module beachPartyApp
                 //---- add num adjuster in a new table <td> ----
                 tdW2 = rowW.append("td")
                     .css("position", "relative")
-                    .css("left", "-12px")       // make it align correctly with other controls starting in new column
+                    .css("left", "-12px");       // make it align correctly with other controls starting in new column;
             }
             else
             {
                 tdW2 = tdW;
             }
 
-            var parent = tdW2.append("span")
+            tdW2.append("span")
                 .id(parentId)
                 .css("margin-top", "-10px")
                 .css("margin-bottom", "8px")
                 .css("margin-left", "10px")
                 .css("position", "relative")
-                .css("top", "8px")
+                .css("top", "8px");
 
             var initValue = this.getValue(row.dataName);
 
-            var numAdjuster = new numAdjusterClass(parentId, "", initValue, row.min, row.max, row.tip,
+            var numAdjuster = new NumAdjusterClass(parentId, "", initValue, row.min, row.max, row.tip,
                 AdjusterStyle.bottomInPanel, row.roundValues, row.syncChanges, row.spreadLow);
 
             numAdjuster.show(true);
@@ -963,7 +951,7 @@ module beachPartyApp
             var thisObj = this.getDataOwner(row.dataName);
             thisObj.registerForRemovableChange(row.dataName, this, (name, dataChanger) =>
             {
-                if (dataChanger._className != "numAdjusterClass")       //  (dataChanger != numAdjuster)
+                if (dataChanger._className !== "numAdjusterClass")       //  (dataChanger != numAdjuster)
                 {
                     var value = this.getValue(row.dataName);
                     numAdjuster.value(value);
@@ -989,7 +977,7 @@ module beachPartyApp
             {
                 var value = (mid.text) ? mid.text : mid;
 
-                ddText.text(value)
+                ddText.text(value);
                 this.setValue(propName, value);
 
                 this.onUserAction();
@@ -1004,7 +992,7 @@ module beachPartyApp
             {
                 var value = (mid.text) ? mid.text : mid;
 
-                ddText.text(value)
+                ddText.text(value);
                 this.setValue(propName, value);
 
                 //this.onUserAction();
@@ -1021,10 +1009,10 @@ module beachPartyApp
                 var value = <string>(mid.text) ? mid.text : mid;
 
                 //---- user select "value" from enum dropdown ----
-                textW.text(value)
+                textW.text(value);
 
                 //---- sometimes we upperCase first letter for UI, but we start all BeachParty enum values with lower case ----
-                var lcValue = appUtils.lowerCaseFirstLetter(value);
+                var lcValue = AppUtils.lowerCaseFirstLetter(value);
 
                 this.setValue(propName, lcValue);
 
@@ -1041,7 +1029,7 @@ module beachPartyApp
                 var value = <string>(mid.text) ? mid.text : mid;
 
                 //---- user select "value" from enum dropdown ----
-                textW.text(value)
+                textW.text(value);
 
                 this.setValue(propName, value);
 
@@ -1055,7 +1043,7 @@ module beachPartyApp
         {
             var picker = this.callPanelCreator("createShapePicker", (text) =>
             {
-                ddText.text(text)
+                ddText.text(text);
                 this.setValue(propName, text);
 
                 this.onUserAction();
@@ -1071,16 +1059,16 @@ module beachPartyApp
             if (prompt)
             {
                 // ----create prompt for dropdown ----
-                var ddPrompt = tdW.append("span")
+                tdW.append("span")
                     .addClass("panelPrompt")
                     .title(row.tip)
                     .text(prompt)
                     .css("vertical-align", "right")
-                    .css("margin-right", "4px")
+                    .css("margin-right", "4px");
 
                 if (!row.sameCol)
                 {
-                    tdW = rowW.append("td")
+                    tdW = rowW.append("td");
                 }
             }
 
@@ -1093,30 +1081,29 @@ module beachPartyApp
                 .addClass("panelButton")
                 .title(row.tip)
                 .css("cursor", "pointer")
-                .css("white-space", "nowrap")
+                .css("white-space", "nowrap");
 
             // ----create TEXT part of button ----
             var ddText = ddButton.append("span")
                 .addClass("panelButtonText")
                 .css("vertical-align", "middle")
-                .css("text-align", "left")
+                .css("text-align", "left");
 
-            if (row.width != undefined)
+            if (row.width !== undefined)
             {
                 ddText
                     .css("display", "inline-block")
-                    .width(row.width)
+                    .width(row.width);
             }
-
 
             //---- to workaround issue of mouse "dead zones" around img, try embedding it inside a in-line block span ----
             var divW = ddButton.append("span")
                 .addClass("panelButtonChevron")
                 .css("display", "inline-block")
-                .css("cursor", "pointer")
+                .css("cursor", "pointer");
 
             //---- add dropdown CHEVRON icon ----
-            var chevronW = divW.append("div")
+            divW.append("div")
                 // .attr("src", "Images/smallChevron3.png")
                 .addClass("chevron-background")
                 .css("margin-left", "4px")
@@ -1126,24 +1113,22 @@ module beachPartyApp
                 {
                     //---- prevent drag of icon ----
                     e.preventDefault();
-                })
-
+                });
 
             ddButton
                 .attach("click", (e) =>
                 {
                     onOpenCallback(row.dataName, ddText, /*chevronW*/buttonContainer, e);//rowW
-                })
-
+                });
 
             //---- set initial value ----
             var value = this.getValue(row.dataName);
             if (row.enumPicker !== undefined)
             {
                 //---- change all enum values to start with a capital letter ----
-                value = appUtils.capitalizeFirstLetter(value);
+                value = AppUtils.capitalizeFirstLetter(value);
             }
-            ddText.text(value)
+            ddText.text(value);
 
             //---- listen to associated property changes & update HTML ----
             var thisObj = this.getDataOwner(row.dataName);
@@ -1153,9 +1138,9 @@ module beachPartyApp
                 if (row.enumPicker !== undefined)
                 {
                 //---- change all enum values to start with a capital letter ----
-                    value = appUtils.capitalizeFirstLetter(value);
+                    value = AppUtils.capitalizeFirstLetter(value);
                 }
-                ddText.text(value)
+                ddText.text(value);
 
             });
         }
@@ -1164,7 +1149,7 @@ module beachPartyApp
         {
             var picker = this.callPanelCreator("createColumnPicker", null, true, (mid) =>
             {
-                ddTextW.text(mid.text)
+                ddTextW.text(mid.text);
                 this.setValue(propName, mid.text);
             });
 
@@ -1181,14 +1166,14 @@ module beachPartyApp
                 this.onUserAction();
             });
 
-            if (row.width != undefined)
+            if (row.width !== undefined)
             {
-                vp.select(listBox._root).css("width", row.width + "px")
+                vp.select(listBox._root).css("width", row.width + "px");
             }
 
-            if (row.height != undefined)
+            if (row.height !== undefined)
             {
-                vp.select(listBox._root).css("height", row.height + "px")
+                vp.select(listBox._root).css("height", row.height + "px");
             }
 
             return listBox;
@@ -1199,18 +1184,18 @@ module beachPartyApp
             if (prompt)
             {
                 // ----create prompt for dropdown ----
-                var ddPrompt = tdW.append("span")
+                tdW.append("span")
                     .addClass("panelPrompt")
                     .title(row.tip)
                     .text(prompt)
                     .css("vertical-align", "right")
-                    .css("margin-right", "4px")
+                    .css("margin-right", "4px");
 
                 if (!row.sameCol)
                 {
                     //---- for column picker list, we start a new line ----
-                    tdW = rowW.append("td")
-                    tdW.append("br")
+                    tdW = rowW.append("td");
+                    tdW.append("br");
                 }
             }
 
@@ -1240,10 +1225,10 @@ module beachPartyApp
 
         callPanelCreator(creatorMethod: string, p1, p2?, p3?, p4?, p5?)
         {
-            return appClass.instance[creatorMethod](p1, p2, p3, p4, p5);
+            return AppClass.instance[creatorMethod](p1, p2, p3, p4, p5);
         }
 
-        openPicker(picker: beachPartyApp.popupMenuClass, chevronW)
+        openPicker(picker: beachPartyApp.PopupMenuClass, chevronW)
         {
             if (picker)
             {
@@ -1262,7 +1247,7 @@ module beachPartyApp
             var cbName = "checkbox" + nextId++;
 
             tdW
-                .attr("colSpan", "2")
+                .attr("colSpan", "2");
 
             //---- create CHECKBOX ----
             var cbW = tdW.append("input")
@@ -1274,7 +1259,7 @@ module beachPartyApp
                 {
                     e.preventDefault();
                     cbW[0].click();
-                })
+                });
 
             var lab = tdW.append("label")
                 .addClass("panelPrompt")
@@ -1289,7 +1274,7 @@ module beachPartyApp
                     lab[0].click();
 
                     this.onUserAction();
-                })
+                });
 
             cbW.attach("click", (e) =>
             {
@@ -1317,7 +1302,6 @@ module beachPartyApp
                 }
                 else
                 {
-                    var elem = <HTMLElement>cbW[0];
                     cbW[0].checked = false;
                 }
 
@@ -1335,7 +1319,7 @@ module beachPartyApp
                 row.dataName = this._groupDataName;
             }
 
-            var isUserAction = (row.userAction == undefined || row.userAction == true);
+            var isUserAction = (row.userAction === undefined || row.userAction === true);
 
             //---- create RADIOBUTTON ----
             var cb = tdW.append("input")
@@ -1348,11 +1332,11 @@ module beachPartyApp
                 {
                     e.preventDefault();
                     cb[0].click();
-                })
+                });
 
-            if (row.leftMargin != undefined)
+            if (row.leftMargin !== undefined)
             {
-                cb.css("margin-left", row.leftMargin + "px")
+                cb.css("margin-left", row.leftMargin + "px");
             }
 
             var lab = tdW.append("label")
@@ -1371,7 +1355,7 @@ module beachPartyApp
                     {
                         this.onUserAction();
                     }
-                })
+                });
 
             //---- on CLICK, update OWNER property ----
             cb.attach("click", (e) =>
@@ -1402,7 +1386,7 @@ module beachPartyApp
         updateRadio(dataName: string, myValue: any, rbElem: HTMLInputElement)
         {
             var value = this.getValue(dataName);
-            if (value == myValue)
+            if (value === myValue)
             {
                 rbElem.checked = true;
             }
@@ -1412,11 +1396,9 @@ module beachPartyApp
 
     export function buildJsonPanel(openerIds: string, dataOwner: beachParty.dataChangerClass, panelName: string, openPanel: boolean, left?: number,
         top?: number, right?: number, bottom?: number, toggleOpen = true, isCol1Indent = true, hideClose = false,
-        addAutoClose = false, addNormalClose?: boolean): jsonPanelClass
+        addAutoClose = false, addNormalClose?: boolean): JsonPanelClass
     {
-        var panel: jsonPanelClass = null;
-
-        var panelW = vp.select("#" + panelName + "Panel");
+        var panel: JsonPanelClass = null;
 
         //var w = <any>window;//TODO: window?
 
@@ -1424,7 +1406,7 @@ module beachPartyApp
 
         // var desc = w.panelDescriptions[panelName];
 
-        panel = new jsonPanelClass(openerIds, dataOwner, panelName, desc, undefined, isCol1Indent, hideClose, addAutoClose, addNormalClose);
+        panel = new JsonPanelClass(openerIds, dataOwner, panelName, desc, undefined, isCol1Indent, hideClose, addAutoClose, addNormalClose);
 
         var rc = vp.dom.getBounds(panel.getRootElem(), true);
 

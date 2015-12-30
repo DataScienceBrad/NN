@@ -5,22 +5,20 @@
 
 /// <reference path="../_references.ts" />
 
-var demoData: string;
-
 module beachParty
 {
-    export class baseControlClass extends dataChangerClass implements IDragableControl
+    export class BaseControlClass extends DataChangerClass implements IDragableControl
     {
         _group: SVGGElement;
 
-        _windowMgr: windowMgrClass;
+        _windowMgr: WindowMgrClass;
         _xOffset = 0;
         _yOffset = 0;
         _ignoringClicks = false;
-        _menu: menuInfoClass;
+        _menu: MenuInfoClass;
         _controlType: string;
 
-        constructor(controlType: string, menu: menuInfoClass)
+        constructor(controlType: string, menu: MenuInfoClass)
         {
             super();
 
@@ -34,16 +32,16 @@ module beachParty
             return rc;
         }
 
-        getDataMgr(): dataChangerClass
+        getDataMgr(): DataChangerClass
         {
             var dataMgr = null;
 
-            if (this._menu instanceof propertyInfoClass)
+            if (this._menu instanceof PropertyInfoClass)
             {
-                var pic = <propertyInfoClass>this._menu;
+                var pic = <PropertyInfoClass>this._menu;
                 dataMgr = pic.dataMgr;
 
-                if (dataMgr == "view")
+                if (dataMgr === "view")
                 {
                     dataMgr = this._windowMgr.getCurrentView();
                 }

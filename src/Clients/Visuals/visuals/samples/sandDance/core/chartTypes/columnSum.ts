@@ -6,11 +6,9 @@
 
 /// <reference path="../_references.ts" />
 
-var demoData: string;
-
 module beachParty
 {
-    export class columnSumClass extends baseGlVisClass
+    export class ColumnSumClass extends BaseGlVisClass
     {
         //---- all facets info ----
         _facetBinResults: any[];
@@ -37,7 +35,7 @@ module beachParty
         _yMin = 0;
         _yMax = 0;
 
-        constructor(view: dataViewClass, gl: any, chartState: any)
+        constructor(view: DataViewClass, gl: any, chartState: any)
         {
             super("columnSumClass", view, gl, chartState);
         }
@@ -62,7 +60,7 @@ module beachParty
                 for (var i = 0; i < facetCount; i++)
                 {
                     var data = nvFacetBuckets[i];
-                    var results = chartUtils.computeSumForFacet(dc, data, xm, "x", "y");
+                    var results = ChartUtils.computeSumForFacet(dc, data, xm, "x", "y");
 
                     this._facetBinResults.push(results.binResults);
                     maxPosSum = Math.max(maxPosSum, results.maxPosSum);
@@ -71,7 +69,7 @@ module beachParty
             }
             else
             {
-                var results = chartUtils.computeSumForFacet(dc, dc.nvData, xm, "x", "y");
+                var results = ChartUtils.computeSumForFacet(dc, dc.nvData, xm, "x", "y");
 
                 this._facetBinResults.push(results.binResults);
                 maxPosSum = Math.max(maxPosSum, results.maxPosSum);
@@ -93,7 +91,7 @@ module beachParty
         {
             //---- adjust X scale to reflect BINS ----
             var results = this._facetBinResults[0];
-            dc.scales.x = chartUtils.adjustScaleForBin(dc.scales.x, results);
+            dc.scales.x = ChartUtils.adjustScaleForBin(dc.scales.x, results);
              
             //---- adjust Y scale to reflect MAX SUM ----
             var oldScale = dc.scales.y;
@@ -105,7 +103,7 @@ module beachParty
                 .rangeMin(oldScale.rangeMin())
                 .rangeMax(oldScale.rangeMax())
                 .domainMin(nn.min)
-                .domainMax(nn.max)
+                .domainMax(nn.max);
 
             //---- mark scale as having pre-computed tickCount ----
             var anyScale = <any>dc.scales.y;
@@ -118,12 +116,11 @@ module beachParty
             //---- for this part, we need to process the items in their sorted order ----
 
             var filter = dc.layoutFilterVector;
-            var isFiltered = (filter != null);
 
             var binAssignments = resultX.assignments;
 
             var itemHeights = [];           // the height of each item (per its Y column value)
-            var itemBottoms = []            // the bottom value of each item with its bin 
+            var itemBottoms = [];            // the bottom value of each item with its bin ;
             var binPosOffsets = [];         // next position for an item in positive part of each bin
             var binNegOffsets = [];         // next position for an item in negative part of each bin
 
@@ -167,9 +164,6 @@ module beachParty
 
             this._itemHeights = itemHeights;
             this._itemBottoms = itemBottoms;
-
-            var facetWidth = dc.width;
-            var facetHeight = dc.height;
 
             var binsX = resultX.bins;
 
@@ -225,7 +219,7 @@ module beachParty
                 var facetResult = this._facetBinResults[dc.facetIndex];
                 var availHeight = yMax - yMin;
 
-                var result = chartUtils.computeColumnBinSize(facetResult, dc.width, availHeight);
+                var result = ChartUtils.computeColumnBinSize(facetResult, dc.width, availHeight);
                 this._binWidth = result.binWidth;
                 this._binHeight = result.binHeight;
                 this._xMargin = result.xMargin;
@@ -267,7 +261,7 @@ module beachParty
 
             var height = inverseSizeFactor * trueHeight;
             var width = inverseSizeFactor * this._binWidth;      
-            var depth = dc.defaultDepth2d      // test out 3d cube in a 2d shape
+            var depth = dc.defaultDepth2d;      // test out 3d cube in a 2d shape;
 
             var colorIndex = this.scaleColData(nv.colorIndex, itemIndex, dc.scales.colorIndex);
             var imageIndex = this.scaleColData(nv.imageIndex, itemIndex, dc.scales.imageIndex);

@@ -7,7 +7,7 @@
 
 module beachPartyApp
 {
-    export class dataTipClass extends beachParty.dataChangerClass implements IAppControl
+    export class DataTipClass extends beachParty.dataChangerClass implements IAppControl
     {
         _root: HTMLDivElement;
         _img: HTMLImageElement;
@@ -20,7 +20,7 @@ module beachPartyApp
         _plotBounds: any;
         _ptMouseDown: any;              // screen coordinates of mouse when we clicked on tooltip
         _isRealDrag = false;            // true if datatip has been dragged more than just accidental movement during a click
-        _dataTipPanel: dataTipPanelClass;
+        _dataTipPanel: DataTipPanelClass;
 
         constructor(parentElem: HTMLElement, bpsHelper: bps.chartHostHelperClass)
         {
@@ -53,7 +53,7 @@ module beachPartyApp
                 .css("left", "-1px")
                 .attach("mousedown", (e) =>
                 {
-                })
+                });
 
             this._root = rootW[0];
             this._img = imgW[0];
@@ -71,17 +71,17 @@ module beachPartyApp
                     new MenuItemData("Delete", "Delete this data tip"),
                 ];
 
-            var pm = new popupMenuClass(null, "pmInsights", items, (e, menu, textIndex, menuIndex) =>
+            var pm = new PopupMenuClass(null, "pmInsights", items, (e, menu, textIndex, menuIndex) =>
             {
                 var name = (<MenuItemData> items[menuIndex]).text;
 
-                if (name == "Delete")
+                if (name === "Delete")
                 {
-                    dataTipMgrClass.instance.closeDataTip(this);
+                    DataTipMgrClass.instance.closeDataTip(this);
                 }
-                else if (name == "Properties")
+                else if (name === "Properties")
                 {
-                    this._dataTipPanel = new dataTipPanelClass(this);
+                    this._dataTipPanel = new DataTipPanelClass(this);
 
                     var rc = vp.select(this._img).getBounds(false);
                     this._dataTipPanel.show(rc.right, rc.bottom);
@@ -90,12 +90,12 @@ module beachPartyApp
             }, true);
 
             var pt = vp.events.mousePosition(e);
-            pm.show(pt.x, pt.y)
+            pm.show(pt.x, pt.y);
         }
 
         onMouseDown(e)
         {
-            if (e.which == 1)
+            if (e.which === 1)
             {
                 //---- LEFT CLICK ----
                 var offset = vp.events.mousePosition(e, this._img);
@@ -144,10 +144,10 @@ module beachPartyApp
             //---- and in case the record binding fails ----
             vp.select(this._root)
                 .css("left", dtd.offset.left + "px")
-                .css("top", dtd.offset.top + "px")
+                .css("top", dtd.offset.top + "px");
 
              vp.select(this._text)
-                .text(dtd.text)
+                .text(dtd.text);
 
             this._primaryKey = dtd.primaryKey;
             this._columnName = dtd.colName;
@@ -167,7 +167,7 @@ module beachPartyApp
         show(value?: boolean)
         {
             vp.select(this._root)
-                .css("display", (value) ? "" : "none")
+                .css("display", (value) ? "" : "none");
         }
 
         updateTextAndOffset(primaryKey?: string)
@@ -206,7 +206,7 @@ module beachPartyApp
                         vp.select(this._root)
                             .css("left", x + "px")
                             .css("top", y + "px")
-                            .css("display", "")
+                            .css("display", "");
 
                         this.buildTextFromColumnValues(requestedColumnNames, msgBlock.colValues);
                     }
@@ -214,7 +214,7 @@ module beachPartyApp
                     {
                         //---- hide it until we have a place to put it ----
                         vp.select(this._root)
-                            .css("display", "none")
+                            .css("display", "none");
                     }
                 });
             }
@@ -253,7 +253,7 @@ module beachPartyApp
                 for (var i = 0; i < colValues.length; i++)
                 {
                     var colName = colNames[i];
-                    var colType = appClass.instance.getColType(colName);
+                    var colType = AppClass.instance.getColType(colName);
 
                     var value = colValues[i];
                     var strValue = vp.formatters.formatByType(value, colType);
@@ -268,9 +268,9 @@ module beachPartyApp
             }
 
             //---- set text / HTML ----
-            var textW = vp.select(this._text)
+            var textW = vp.select(this._text);
 
-                textW.html(html)
+                textW.html(html);
 
                 ////---- position bottom of text 40 pixels above img ----
                 //var rc = textW.getBounds(false);
@@ -328,7 +328,7 @@ module beachPartyApp
 
             vp.select(this._root)
                 .css("left", x + "px")
-                .css("top", y + "px")
+                .css("top", y + "px");
 
             this.onDataChanged("position");
 
@@ -370,7 +370,7 @@ module beachPartyApp
         close()
         {
             vp.select(this._root)
-                .remove()
+                .remove();
         }
     }
 }

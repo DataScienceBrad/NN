@@ -5,8 +5,6 @@
 
 /// <reference path="../_references.ts" />
 
-var demoData: string;
-
 module glUtils
 {
     export function error(msg: string)
@@ -41,9 +39,6 @@ module glUtils
 
     export function findAndCompileShader(gl: any, shaderId: string, isVertexShader: boolean)
     {
-        var url = beachParty.getMyPath() + "/" + shaderId + "?foo=" + Date.now();
-        //var shaderStr = <string>beachParty.fileAccess.readFile(url, beachParty.fileFormat.text);//TODO: read file from cache instead the net.
-
         var shaderStr: string = shadersCache.getShaderCodeByName(shaderId);
 
         var shader = null;
@@ -57,7 +52,6 @@ module glUtils
             shader = gl.createShader(gl.FRAGMENT_SHADER);
             //shaderStr = "void main(void) { 	if ( 2.0 > 3.0) 		discard;  }";
         }
-
 
         gl.shaderSource(shader, shaderStr);
         gl.compileShader(shader);
@@ -95,7 +89,7 @@ module glUtils
 
     export function addAttribute(attributeMap: any, gl, program, nameInShader: string, sizeInFloats: number)
     {
-        var attr = new glAttributeClass(gl, program, nameInShader, sizeInFloats);
+        var attr = new GlAttributeClass(gl, program, nameInShader, sizeInFloats);
         attributeMap[nameInShader] = attr;
 
         return attr;
@@ -103,7 +97,7 @@ module glUtils
 
     export function addUniform(uniformMap: any, gl, program, nameInShader: string, typeStr: string, initialValue?: any)
     {
-        var uniform = new glUniformClass(gl, program, nameInShader, typeStr, initialValue);
+        var uniform = new GlUniformClass(gl, program, nameInShader, typeStr, initialValue);
         uniformMap[nameInShader] = uniform;
 
         return uniform;

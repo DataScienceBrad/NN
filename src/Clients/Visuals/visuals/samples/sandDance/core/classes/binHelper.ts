@@ -7,11 +7,11 @@
  
 module beachParty
 {
-    export class binHelper
+    export class BinHelper
     {
         public static createBins(nv: NamedVectors, colName: string, numericBinCount: number,
             maxCategoryBins: number, forceCategory?: boolean, addIndexes?: boolean, buildAssignments?: boolean,
-            binSortOptions?: binSortOptionsClass, formatter?: any, useNiceNumbers?: boolean, md?: bps.MappingData): BinResult
+            binSortOptions?: BinSortOptionsClass, formatter?: any, useNiceNumbers?: boolean, md?: bps.MappingData): BinResult
         {
             var result = <BinResult> null;
 
@@ -21,20 +21,20 @@ module beachParty
             {
                 var typeName = colData.colType;
 
-                if ((forceCategory) || (typeName == "string"))
+                if ((forceCategory) || (typeName === "string"))
                 {
                     var requestCount = numericBinCount;         //    Math.max(numericBinCount, maxCategoryBins);
 
                     //---- BIN the CATEGORY data ----
-                    result = binHelperCat.createCatBins(nv, colName, requestCount, addIndexes, buildAssignments, binSortOptions, md);
+                    result = BinHelperCat.createCatBins(nv, colName, requestCount, addIndexes, buildAssignments, binSortOptions, md);
                 }
                 else
                 {
                     //---- BIN the NUMERIC data ----
-                    result = binHelperNum.createBins(nv, colName, numericBinCount, addIndexes, buildAssignments, formatter, useNiceNumbers,
+                    result = BinHelperNum.createBins(nv, colName, numericBinCount, addIndexes, buildAssignments, formatter, useNiceNumbers,
                         md, binSortOptions);
 
-                    if (binSortOptions && binSortOptions.sortDirection != bps.BinSorting.none)
+                    if (binSortOptions && binSortOptions.sortDirection !== bps.BinSorting.none)
                     {
                         this.sortBins(result, binSortOptions, nv);
                     }
@@ -74,7 +74,7 @@ module beachParty
                 var fromNV = nv[key];
                 var toNV: NumericVector = null;
 
-                if (key != "length" && fromNV)
+                if (key !== "length" && fromNV)
                 {
                     var fromVector = fromNV.values;
                     var toVector = <any>[];
@@ -90,7 +90,7 @@ module beachParty
                     }
 
                     //---- if STRING, we need to recompute TEXT vector properties: rowsByKey and KeysByRow ---- 
-                    if (toNV.colType == "string")
+                    if (toNV.colType === "string")
                     {
                         utils.rebuildStringKeyIndexes(toNV, indexes, fromNV);
                     }
@@ -103,13 +103,12 @@ module beachParty
             return bucket;
         }
 
-        public static sortBins(binningResults: any, binSortOptions: binSortOptionsClass, nv: NamedVectors)
+        public static sortBins(binningResults: any, binSortOptions: BinSortOptionsClass, nv: NamedVectors)
         {
-            if (((binSortOptions.sortByAggregateType != "count") && (binSortOptions.sortByAggregateType != "sum")) ||
-                (binSortOptions.sortDirection == bps.BinSorting.none))
+            if (((binSortOptions.sortByAggregateType !== "count") && (binSortOptions.sortByAggregateType !== "sum")) ||
+                (binSortOptions.sortDirection === bps.BinSorting.none))
             {
                 throw "One or more of the supplied binSortOptions values is invalid";
-                return;
             }
 
             var result = binningResults;
@@ -123,10 +122,10 @@ module beachParty
                 preSortBinIDs[bin.name] = i;
             }
 
-            if (binSortOptions.sortByAggregateType == "count")
+            if (binSortOptions.sortByAggregateType === "count")
             {
                 //---- Sort the bins by COUNT ----
-                if (binSortOptions.sortDirection == bps.BinSorting.ascending)
+                if (binSortOptions.sortDirection === bps.BinSorting.ascending)
                 {
                     result.bins.sort((x, y) =>
                     {
@@ -135,7 +134,7 @@ module beachParty
                         return (0);
                     });
                 }
-                if (binSortOptions.sortDirection == bps.BinSorting.descending)
+                if (binSortOptions.sortDirection === bps.BinSorting.descending)
                 {
                     result.bins.sort((x, y) =>
                     {
@@ -145,10 +144,10 @@ module beachParty
                     });
                 }
             }
-            else if (binSortOptions.sortByAggregateType == "sum")
+            else if (binSortOptions.sortByAggregateType === "sum")
             {
                 //---- Sort the bins by COUNT ----
-                if (binSortOptions.sortDirection == bps.BinSorting.ascending)
+                if (binSortOptions.sortDirection === bps.BinSorting.ascending)
                 {
                     result.bins.sort((x, y) =>
                     {
@@ -157,7 +156,7 @@ module beachParty
                         return (0);
                     });
                 }
-                if (binSortOptions.sortDirection == bps.BinSorting.descending)
+                if (binSortOptions.sortDirection === bps.BinSorting.descending)
                 {
                     result.bins.sort((x, y) =>
                     {
@@ -189,14 +188,12 @@ module beachParty
         }
     }
 
-
-    export class binSortOptionsClass
+    export class BinSortOptionsClass
     {
         sortDirection: bps.BinSorting;     
         sortByAggregateType: string;    // "count" or "sum"
         sumByColumn: string;            // Only used when sortByAggregateType is "sum"
     }
-
 
     export class BinInfo
     {
@@ -278,7 +275,6 @@ module beachParty
         assignments: number[];      // bin numbers for each record number index
         isTagBinning: boolean;
     }
-
 
     export class BinResultNum extends BinResult
     {

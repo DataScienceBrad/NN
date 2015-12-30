@@ -8,14 +8,12 @@
 module beachParty
 {
     /** Manages the UI events (mouse and touch) for the chart.  These should eventually ALL be moved to the client. */
-    export class windowMgrClass extends dataChangerClass
+    export class WindowMgrClass extends DataChangerClass
     {
-        private _dataMgr: dataMgrClass;
-        private _view: dataViewClass;
+        private _dataMgr: DataMgrClass;
+        private _view: DataViewClass;
         private _svgDoc: HTMLElement;
         private _canvasElem: HTMLCanvasElement;
-        private _enableDragObj = false;
-        private _isDragging = false;
         private _ptLastDown = { x: 0, y: 0 };
         private _svgWidth = 0;
         private _svgHeight = 0;
@@ -23,8 +21,8 @@ module beachParty
         private _showFileInfo = true;
         private _ptTouch = { x: 0, y: 0 };
         private _areTransformsEnabled = false;
-        private _transformWheel: transformWheelClass;
-        private _transformMgr: transformMgrClass; 
+        private _transformWheel: TransformWheelClass;
+        private _transformMgr: TransformMgrClass; 
         private _isMouseDown = false;
         private _hammertime = null;
         private _showWheelDuringTransformMode = true;
@@ -38,14 +36,14 @@ module beachParty
         _isCtrlKeyDown = false;
 
         _ieTouchCount = 0;
-        _appMgr: appMgrClass;
+        _appMgr: AppMgrClass;
         _isVaas = false;
 
         _fileInfoElem: HTMLElement;
         _visStatsElem: HTMLElement;
         _gpuStatsElem: HTMLElement;
 
-        constructor(appMgr: appMgrClass, dataView: dataViewClass, svgDoc: HTMLElement, canvasElem: HTMLCanvasElement, dataMgr: dataMgrClass,
+        constructor(appMgr: AppMgrClass, dataView: DataViewClass, svgDoc: HTMLElement, canvasElem: HTMLCanvasElement, dataMgr: DataMgrClass,
             fileInfoElem: HTMLElement, visStatsElem: HTMLElement, gpuStatsElem: HTMLElement, isVaas: boolean)
         {
             super();
@@ -87,13 +85,11 @@ module beachParty
                 else
                 {
                     throw ("Error reading data file: " + fn + ", " + e.response);
-                    this.setChartInfo("<no file loaded>");
                 }
             });
 
-
             var wheelSize = 100;        // this will get resized
-            this._transformWheel = new transformWheelClass(this, svgDoc, wheelSize);
+            this._transformWheel = new TransformWheelClass(this, svgDoc, wheelSize);
             this._transformWheel.isActive(false);
 
             svgDoc.ondblclick = (e) =>
@@ -102,7 +98,7 @@ module beachParty
                 {
                     this.resetStuff();
                 }
-            }
+            };
 
             this.onDataStreamChanged();
 
@@ -116,7 +112,7 @@ module beachParty
             {
                 vp.select(document.body)
                     .attach("dragover", (e) => e.preventDefault())
-                    .attach("drop", (e) => this.processEngineDroppedTextOrFile(e))
+                    .attach("drop", (e) => this.processEngineDroppedTextOrFile(e));
             }, 1);
         }
 
@@ -136,9 +132,6 @@ module beachParty
                 //---- avoid processing image files (especially if its an accidental drag of our of 1 of our icons) ----
                 if (!utils.isImageFile(name))
                 {
-                    var fileType = file.type;
-                    var size = file.size;
-
                     var reader = new FileReader();
                     reader.onload = (e) =>
                     {
@@ -154,7 +147,7 @@ module beachParty
                         wdParams.dataName = file.name;
 
                         this._dataMgr.setDataDirect(text, wdParams);
-                    }
+                    };
                 }
 
                 //---- start the ASYNC read of the dropped file ----
@@ -375,7 +368,7 @@ module beachParty
             {
                 //alert("got touchend");
 
-                if (e.touches == null || e.touches.length == 0)
+                if (e.touches === null || e.touches.length === 0)
                 {
                     this._isPinching = false;
                     this.onDragChanged();
@@ -395,7 +388,7 @@ module beachParty
                     this._ieTouchCount--;
                 }
 
-                if (this._ieTouchCount == 0)
+                if (this._ieTouchCount === 0)
                 {
                     this._isPinching = false;
                     this.onDragChanged();
@@ -619,8 +612,6 @@ module beachParty
                 //---- this is PLOT relative ----
                 var rcRotation = this.getRotationBounds();
 
-                //---- adjust pt to be plot relative ----
-                var rcPlot = this._view.getPlotBoundsInPixels();
                 //var ptAdjust = { x: pt.x - rcPlot.left, y: pt.y - rcPlot.top };
 
                 vp.utils.debug("plot relative pt: " + pt.x + ", " + pt.y);
@@ -651,9 +642,6 @@ module beachParty
         {
             if (this._areTransformsEnabled)
             {
-                var rotStep = Math.PI / 64;
-                var view = this._view;
-
                 var lastTouch = this._ptTouch;
                 var thisTouch = this.avgTouchPosition(e);
 
@@ -665,9 +653,6 @@ module beachParty
                 var partTouched = this.get3dWheelPartTouched(this._ptLastDown);
 
                 this._ptTouch = thisTouch;
-
-                var xDir = (deltaX >= 0) ? 1 : -1;
-                var yDir = (deltaY >= 0) ? 1 : -1;
 
                 var delta = (Math.abs(deltaX) > Math.abs(deltaY)) ? deltaX : deltaY;
                 var speedFactor = 1 / 100;
@@ -698,25 +683,25 @@ module beachParty
                 //    }
                 //}
 
-                if ((e.srcEvent.ctrlKey && e.srcEvent.shiftKey) || (partTouched == "circle"))
+                if ((e.srcEvent.ctrlKey && e.srcEvent.shiftKey) || (partTouched === "circle"))
                 {
                     //---- CTRL + SHIFT + drag = SPIN ----
                     this._transformMgr.rotateMatrixZ(delta * speedFactor);
                 }
 
-                if ((e.srcEvent.ctrlKey) || (partTouched == "hBar") || (partTouched == "middle"))
+                if ((e.srcEvent.ctrlKey) || (partTouched === "hBar") || (partTouched === "middle"))
                 {
                     //---- CTRL + drag = TURN ----
                     this._transformMgr.rotateMatrixY(-deltaX * speedFactor);
                 }
 
-                if ((e.srcEvent.shiftKey) || (partTouched == "vBar") || (partTouched == "middle"))
+                if ((e.srcEvent.shiftKey) || (partTouched === "vBar") || (partTouched === "middle"))
                 {
                     //---- SHIFT + drag = FLIP ----
                     this._transformMgr.rotateMatrixX(-deltaY * speedFactor);
                 }
 
-                if ((!e.srcEvent.shiftKey) && (!e.srcEvent.ctrlKey) && (partTouched == ""))
+                if ((!e.srcEvent.shiftKey) && (!e.srcEvent.ctrlKey) && (partTouched === ""))
                 {
                     //---- MOVE ----
                     var mousePos = vp.events.mousePosition(e, this._canvasElem);
@@ -802,23 +787,23 @@ module beachParty
 
                 this._isCtrlKeyDown = e.ctrlKey;
 
-                if (e.keyCode == vp.events.keyCodes.down)
+                if (e.keyCode === vp.events.keyCodes.down)
                 {
                     transformMgr.translateCamera(0, -.1, 0);
                 }
-                else if (e.keyCode == vp.events.keyCodes.up)
+                else if (e.keyCode === vp.events.keyCodes.up)
                 {
                     transformMgr.translateCamera(0, .1, 0);
                 }
-                else if (e.keyCode == vp.events.keyCodes.left)
+                else if (e.keyCode === vp.events.keyCodes.left)
                 {
                     transformMgr.translateCamera(-.1, 0, 0);
                 }
-                else if (e.keyCode == vp.events.keyCodes.right)
+                else if (e.keyCode === vp.events.keyCodes.right)
                 {
                     transformMgr.translateCamera(.1, 0, 0);
                 }
-                else if (e.keyCode == vp.events.keyCodes.escape)
+                else if (e.keyCode === vp.events.keyCodes.escape)
                 {
                     //view.resetCamera();
                     this.resetStuff();
@@ -832,50 +817,50 @@ module beachParty
 
                     this._appMgr.onEscapeKey();
                 }
-                else if (e.keyCode == vp.events.keyCodes.A)
+                else if (e.keyCode === vp.events.keyCodes.A)
                 {
                     transformMgr.rotateMatrixY(rotStep);
                 }
-                else if (e.keyCode == vp.events.keyCodes.D)
+                else if (e.keyCode === vp.events.keyCodes.D)
                 {
                     transformMgr.rotateMatrixY(-rotStep);
                 }
-                else if (e.keyCode == vp.events.keyCodes.W)
+                else if (e.keyCode === vp.events.keyCodes.W)
                 {
                     transformMgr.rotateMatrixX(rotStep);
                 }
-                else if (e.keyCode == vp.events.keyCodes.S)
+                else if (e.keyCode === vp.events.keyCodes.S)
                 {
                     transformMgr.rotateMatrixX(-rotStep);
                 }
-                else if (e.keyCode == vp.events.keyCodes.Q)
+                else if (e.keyCode === vp.events.keyCodes.Q)
                 {
                     transformMgr.rotateMatrixZ(rotStep);
                 }
-                else if (e.keyCode == vp.events.keyCodes.E)
+                else if (e.keyCode === vp.events.keyCodes.E)
                 {
                     transformMgr.rotateMatrixZ(-rotStep);
                 }
-                else if (e.keyCode == vp.events.keyCodes.R)
+                else if (e.keyCode === vp.events.keyCodes.R)
                 {
                     var mousePos = vp.events.mousePosition(e, this._svgDoc);
 
                     transformMgr.scaleCameraRelative(1 / 1.3, mousePos);
                 }
-                else if (e.keyCode == vp.events.keyCodes.F)
+                else if (e.keyCode === vp.events.keyCodes.F)
                 {
                     var mousePos = vp.events.mousePosition(e, this._svgDoc);
 
                     transformMgr.scaleCameraRelative(1.3, mousePos);
                 }
-                else if (e.keyCode == vp.events.keyCodes.pageUp)
+                else if (e.keyCode === vp.events.keyCodes.pageUp)
                 {
                     var sf = this._view.userSizeFactor();
                     this._view.userSizeFactor(sf * 1.3);
 
                     e.preventDefault();
                 }
-                else if (e.keyCode == vp.events.keyCodes.pageDown)
+                else if (e.keyCode === vp.events.keyCodes.pageDown)
                 {
                     var sf = this._view.userSizeFactor();
                     this._view.userSizeFactor(sf / 1.3);
@@ -895,7 +880,7 @@ module beachParty
                 var pt = this.avgTouchPosition(e);
                 var partTouched = this.get3dWheelPartTouched(pt);
 
-                vp.select(this._svgDoc).css("cursor", (partTouched == "middle") ? "cell" : "move");
+                vp.select(this._svgDoc).css("cursor", (partTouched === "middle") ? "cell" : "move");
 
                 this.setNextMsgDelay();
             }
@@ -948,4 +933,3 @@ module beachParty
         }
     }
 }
-

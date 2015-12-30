@@ -8,9 +8,9 @@
 
 module beachParty
 {
-    export class traceMgrClass
+    export class TraceMgrClass
     {
-        static instance: traceMgrClass;
+        static instance: TraceMgrClass;
 
         _cmds: any[];
 
@@ -19,14 +19,14 @@ module beachParty
 
         constructor()
         {
-            traceMgrClass.instance = this;
+            TraceMgrClass.instance = this;
             this._cmds = [];
         }
 
         addTrace(eventName: string, name: string, eventType: TraceEventType, durationId = "")
         {
             //---- since we cannot currently control the shape palette, simplfy the event types ----
-            if (eventType == TraceEventType.point)
+            if (eventType === TraceEventType.point)
             {
                 var et = "point";
             }
@@ -68,4 +68,3 @@ module beachParty
     }
 
 }
-

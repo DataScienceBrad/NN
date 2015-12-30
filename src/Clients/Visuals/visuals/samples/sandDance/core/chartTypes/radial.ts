@@ -5,17 +5,15 @@
 
 /// <reference path="../_references.ts" />
 
-var demoData: string;
-
 module beachParty
 {
-    export class radialClass extends baseGlVisClass
+    export class RadialClass extends BaseGlVisClass
     {
         _cx = 0;
         _cy = 0;
         _maxShapeSize = 1;
 
-        constructor(view: dataViewClass, gl: any, chartState: any)
+        constructor(view: DataViewClass, gl: any, chartState: any)
         {
             super("sandRadial", view, gl, chartState);
 
@@ -65,7 +63,7 @@ module beachParty
 
             var width = this._maxShapeSize * this.scaleColData(nv.size, i, scales.size, 1);
             var height = width;
-            var depth = dc.defaultDepth2d   
+            var depth = dc.defaultDepth2d   ;
 
             var colorIndex = this.scaleColData(nv.colorIndex, i, scales.colorIndex);
             var imageIndex = this.scaleColData(nv.imageIndex, i, dc.scales.imageIndex);

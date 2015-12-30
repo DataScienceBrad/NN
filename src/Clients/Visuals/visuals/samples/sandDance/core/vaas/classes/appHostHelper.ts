@@ -7,7 +7,7 @@
 
 module bps
 {
-    export class appHostHelperClass extends baseHostHelperClass
+    export class AppHostHelperClass extends BaseHostHelperClass
     {
         _clientAppId: string;
 
@@ -24,9 +24,9 @@ module bps
             var processIt = false;
             // (<any>window).bar.ski = 3;
 
-            if (msgBlock.clientAppId == this._clientAppId)
+            if (msgBlock.clientAppId === this._clientAppId)
             {
-                if (msgBlock.msg == "clientAppLoaded")
+                if (msgBlock.msg === "clientAppLoaded")
                 {
                     this.onIFrameLoaded();
                 }

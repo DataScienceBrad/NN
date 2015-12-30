@@ -7,7 +7,7 @@
 
 module beachPartyApp
 {
-    export class listBoxClass extends beachParty.dataChangerClass
+    export class ListBoxClass extends beachParty.dataChangerClass
     {
         _root: HTMLElement;
 
@@ -19,23 +19,21 @@ module beachPartyApp
             var textItemIndex = 0;
             var indexes = { menuItemIndex: menuItemIndex, textItemIndex: textItemIndex };
 
-            var maxHeight = window.innerHeight * .6;
-
             var rootW = vp.select(parent).append("div")
                 .addClass("listBox")
                 .css("overflow-y", "auto")
-                .css("overflow-x", "hidden")
+                .css("overflow-x", "hidden");
                 //.css("max-height", maxHeight + "px")
 
             this._root = rootW[0];
 
             var listW = rootW.append("div")
-                .addClass("listBoxList")
+                .addClass("listBoxList");
 
             for (var i = 0; i < items.length; i++)
             {
                 var item = items[i];
-                popupMenuClass.addItem(listW, item, indexes, false, (e, menu, textIndex, menuIndex) =>
+                PopupMenuClass.addItem(listW, item, indexes, false, (e, menu, textIndex, menuIndex) =>
                 {
                     var mid = <MenuItemData>items[menuIndex];
                     clickCallback(mid);

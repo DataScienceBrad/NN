@@ -105,7 +105,6 @@ module sandDance {
                     ]
                 },
 
-
                 {
                     tabName: "Data", tip: "Options for data", rows:
                     [

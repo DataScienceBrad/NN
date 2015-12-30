@@ -7,7 +7,7 @@
 
 module beachPartyApp
 {
-    export class appSettingsMgr extends beachParty.dataChangerClass 
+    export class AppSettingsMgr extends beachParty.dataChangerClass 
     {
         _bpsHelper: bps.chartHostHelperClass;
         _isSavingSettingsDisabled = true;
@@ -16,7 +16,7 @@ module beachPartyApp
 
         //---- settings ----
         _shapeColor: string;
-        _shapeOpacity = appClass.defaultOpacity;
+        _shapeOpacity = AppClass.defaultOpacity;
         _shapeImage: string;
         _canvasColor = "black";
         _drawingPrimitive: bps.DrawPrimitive = bps.DrawPrimitive.cube;
@@ -142,7 +142,7 @@ module beachPartyApp
         {
             if (!this._isSavingSettingsDisabled && !settings._persistChangesDisabledFromUrlParams)
             {
-                var appSettings = new AppSettings(appClass.buildId);
+                var appSettings = new AppSettings(AppClass.buildId);
 
                 appSettings.showDebugStatus = this._isShowingChartStatus;
                 appSettings.showLastCycle = this._isShowingLastCycleStats;
@@ -210,8 +210,7 @@ module beachPartyApp
         {
             if (true) //localStorage
             {
-                var key = this.getLastSessionKey();
-                var preload = undoMgrClass.instance.getCurrentInsight();
+                var preload = UndoMgrClass.instance.getCurrentInsight();
 
                 if (preload)
                 {
@@ -230,7 +229,7 @@ module beachPartyApp
             if (true)//localStorage
             {
                 var str = "Hello";//localStorage["appSettings"];
-                if (str && str != "")
+                if (str && str !== "")
                 {
                     this._isSavingSettingsDisabled = true;
 
@@ -239,166 +238,166 @@ module beachPartyApp
                         var appSettings = this.loadSettingsHandler && this.loadSettingsHandler(sandDance.SettingsType.application);//<AppSettings>JSON.parse(str);
 
                         //---- only use if versionNum of appSettings is the same as the current version ----
-                        if (appSettings && appSettings.versionNum == appClass.buildId)
+                        if (appSettings && appSettings.versionNum === AppClass.buildId)
                         {
 
-                            if (appSettings.showDebugStatus !== undefined && appSettings.showDebugStatus != this._isShowingChartStatus)
+                            if (appSettings.showDebugStatus !== undefined && appSettings.showDebugStatus !== this._isShowingChartStatus)
                             {
                                 this.isShowingChartStatus(appSettings.showDebugStatus);
                             }
 
-                            if (appSettings.showLastCycle !== undefined && appSettings.showLastCycle != this._isShowingLastCycleStats)
+                            if (appSettings.showLastCycle !== undefined && appSettings.showLastCycle !== this._isShowingLastCycleStats)
                             {
                                 this.isShowingLastCycle(appSettings.showLastCycle);
                             }
 
-                            if (appSettings.showEventStats !== undefined && appSettings.showEventStats != this._isShowingEventStats)
+                            if (appSettings.showEventStats !== undefined && appSettings.showEventStats !== this._isShowingEventStats)
                             {
                                 this.isShowingEventStats(appSettings.showEventStats);
                             }
 
-                            if (appSettings.isErrorReportingDisabled !== undefined && appSettings.isErrorReportingDisabled != this._isErrorReportingDisabled)
+                            if (appSettings.isErrorReportingDisabled !== undefined && appSettings.isErrorReportingDisabled !== this._isErrorReportingDisabled)
                             {
                                 this.isErrorReportingDisabled(appSettings.isErrorReportingDisabled);
                             }
 
-                            if (appSettings.shapeColor !== undefined && appSettings.shapeColor != this._shapeColor)
+                            if (appSettings.shapeColor !== undefined && appSettings.shapeColor !== this._shapeColor)
                             {
                                 this.shapeColor(appSettings.shapeColor);
                             }
 
-                            if (appSettings.canvasColor !== undefined && appSettings.canvasColor != this._canvasColor)
+                            if (appSettings.canvasColor !== undefined && appSettings.canvasColor !== this._canvasColor)
                             {
                                 this.canvasColor(appSettings.canvasColor);
                             }
 
-                            if (appSettings.isColPickerSorted !== undefined && appSettings.isColPickerSorted != this._isColPickerSorted)
+                            if (appSettings.isColPickerSorted !== undefined && appSettings.isColPickerSorted !== this._isColPickerSorted)
                             {
                                 this.isColPickerSorted(appSettings.isColPickerSorted);
                             }
 
-                            if (appSettings.playbackDuration !== undefined && appSettings.playbackDuration != this._playbackDuration)
+                            if (appSettings.playbackDuration !== undefined && appSettings.playbackDuration !== this._playbackDuration)
                             {
                                 this.playbackDuration(appSettings.playbackDuration);
                             }
 
-                            if (appSettings.isPlaybackLooping !== undefined && appSettings.isPlaybackLooping != this._isPlaybackLooping)
+                            if (appSettings.isPlaybackLooping !== undefined && appSettings.isPlaybackLooping !== this._isPlaybackLooping)
                             {
                                 this.isPlaybackLooping(appSettings.isPlaybackLooping);
                             }
 
-                            if (appSettings.rememberLastFile !== undefined && appSettings.rememberLastFile != this._rememberLastFile)
+                            if (appSettings.rememberLastFile !== undefined && appSettings.rememberLastFile !== this._rememberLastFile)
                             {
                                 // this.rememberLastFile(appSettings.rememberLastFile);
                             }
 
-                            if (appSettings.rememberLastSession !== undefined && appSettings.rememberLastSession != this._rememberLastSession)
+                            if (appSettings.rememberLastSession !== undefined && appSettings.rememberLastSession !== this._rememberLastSession)
                             {
                                 this.rememberLastSession(appSettings.rememberLastSession);
                             }
 
-                            if (appSettings.cacheLocalFiles !== undefined && appSettings.cacheLocalFiles != this._cacheLocalFiles)
+                            if (appSettings.cacheLocalFiles !== undefined && appSettings.cacheLocalFiles !== this._cacheLocalFiles)
                             {
                                 this.cacheLocalFiles(appSettings.cacheLocalFiles);
                             }
 
-                            if (appSettings.cacheWebFiles !== undefined && appSettings.cacheWebFiles != this._cacheWebFiles)
+                            if (appSettings.cacheWebFiles !== undefined && appSettings.cacheWebFiles !== this._cacheWebFiles)
                             {
                                 this.cacheWebFiles(appSettings.cacheWebFiles);
                             }
 
-                            if (appSettings.initialChartType !== undefined && appSettings.initialChartType != this._initialChartType)
+                            if (appSettings.initialChartType !== undefined && appSettings.initialChartType !== this._initialChartType)
                             {
                                 this.initialChartType(bps.ChartType[appSettings.initialChartType]);
                             }
 
-                            if (appSettings.initialLayout !== undefined && appSettings.initialLayout != this._initialLayout)
+                            if (appSettings.initialLayout !== undefined && appSettings.initialLayout !== this._initialLayout)
                             {
                                 this.initialLayout(bps.Layout[appSettings.initialLayout]);
                             }
 
-                            if (appSettings.isWheelInertia !== undefined && appSettings.isWheelInertia != this._isWheelInertia)
+                            if (appSettings.isWheelInertia !== undefined && appSettings.isWheelInertia !== this._isWheelInertia)
                             {
                                 this.isWheelInertia(appSettings.isWheelInertia);
                             }
 
-                            if (appSettings.isLightingAlwaysOn !== undefined && appSettings.isLightingAlwaysOn != this._isLightingAlwaysOn)
+                            if (appSettings.isLightingAlwaysOn !== undefined && appSettings.isLightingAlwaysOn !== this._isLightingAlwaysOn)
                             {
                                 this.isLightingAlwaysOn(appSettings.isLightingAlwaysOn);
                             }
 
-                            if (appSettings.ambientLightLevel !== undefined && appSettings.ambientLightLevel != this._lightingParams.ambientLight.lightFactor)
+                            if (appSettings.ambientLightLevel !== undefined && appSettings.ambientLightLevel !== this._lightingParams.ambientLight.lightFactor)
                             {
                                 this.ambientLightLevel(appSettings.ambientLightLevel);
                             }
 
-                            if (appSettings.isContinuousDrawing !== undefined && appSettings.isContinuousDrawing != this._isContinuousDrawing)
+                            if (appSettings.isContinuousDrawing !== undefined && appSettings.isContinuousDrawing !== this._isContinuousDrawing)
                             {
                                 this.isContinuousDrawing(appSettings.isContinuousDrawing);
                             }
 
-                            if (appSettings.showWheelDuringTransformMode !== undefined && appSettings.showWheelDuringTransformMode != this._showWheelDuringTransformMode)
+                            if (appSettings.showWheelDuringTransformMode !== undefined && appSettings.showWheelDuringTransformMode !== this._showWheelDuringTransformMode)
                             {
                                 this.showWheelDuringTransformMode(appSettings.showWheelDuringTransformMode);
                             }
 
-                            if (appSettings.drawingPrimitive !== undefined && appSettings.drawingPrimitive != this.drawingPrimitive())
+                            if (appSettings.drawingPrimitive !== undefined && appSettings.drawingPrimitive !== this.drawingPrimitive())
                             {
                                 this.drawingPrimitive(appSettings.drawingPrimitive);
                             }
 
-                            if (appSettings.isMenuTextVisible !== undefined && appSettings.isMenuTextVisible != this._isMenuTextVisible)
+                            if (appSettings.isMenuTextVisible !== undefined && appSettings.isMenuTextVisible !== this._isMenuTextVisible)
                             {
                                 this.isMenuTextVisible(appSettings.isMenuTextVisible);
                             }
 
-                            if (appSettings.panelOpacity !== undefined && appSettings.panelOpacity != this._panelOpacity)
+                            if (appSettings.panelOpacity !== undefined && appSettings.panelOpacity !== this._panelOpacity)
                             {
                                 this.panelOpacity(appSettings.panelOpacity);
                             }
 
-                            if (appSettings.isMenuIconVisible !== undefined && appSettings.isMenuIconVisible != this._isMenuIconVisible)
+                            if (appSettings.isMenuIconVisible !== undefined && appSettings.isMenuIconVisible !== this._isMenuIconVisible)
                             {
                                 this.isMenuIconVisible(appSettings.isMenuIconVisible);
                             }
 
-                            if (appSettings.isMenuChevronVisible !== undefined && appSettings.isMenuChevronVisible != this._isMenuChevronVisible)
+                            if (appSettings.isMenuChevronVisible !== undefined && appSettings.isMenuChevronVisible !== this._isMenuChevronVisible)
                             {
                                 this.isMenuChevronVisible(appSettings.isMenuChevronVisible);
                             }
 
-                            if (appSettings.isTooltipsEnabled !== undefined && appSettings.isTooltipsEnabled != this._isTooltipsEnabled)
+                            if (appSettings.isTooltipsEnabled !== undefined && appSettings.isTooltipsEnabled !== this._isTooltipsEnabled)
                             {
                                 this.isTooltipsEnabled(appSettings.isTooltipsEnabled);
                             }
 
-                            if (appSettings.is3dGridAlwaysOn !== undefined && appSettings.is3dGridAlwaysOn != this._is3dGridAlwaysOn)
+                            if (appSettings.is3dGridAlwaysOn !== undefined && appSettings.is3dGridAlwaysOn !== this._is3dGridAlwaysOn)
                             {
                                 this.is3dGridAlwaysOn(appSettings.is3dGridAlwaysOn);
                             }
 
-                            if (appSettings.shapeImage !== undefined && appSettings.shapeImage != this._shapeImage)
+                            if (appSettings.shapeImage !== undefined && appSettings.shapeImage !== this._shapeImage)
                             {
                                 this.shapeImage(appSettings.shapeImage);
                             }
 
-                            if (appSettings.defaultBins !== undefined && appSettings.defaultBins != this._defaultBins)
+                            if (appSettings.defaultBins !== undefined && appSettings.defaultBins !== this._defaultBins)
                             {
                                 this.defaultBins(appSettings.defaultBins);
                             }
 
-                            if (appSettings.useNiceNumbers !== undefined && appSettings.useNiceNumbers != this._useNiceNumbers)
+                            if (appSettings.useNiceNumbers !== undefined && appSettings.useNiceNumbers !== this._useNiceNumbers)
                             {
                                 this.useNiceNumbers(appSettings.useNiceNumbers);
                             }
 
-                            if (appSettings.hoverParams !== undefined && appSettings.hoverParams != this._hoverParams)
+                            if (appSettings.hoverParams !== undefined && appSettings.hoverParams !== this._hoverParams)
                             {
                                 this._hoverParams = appSettings.hoverParams;
                                 this.onHoverParamsChanged();
                             }
 
-                            if (appSettings.selectionParams !== undefined && appSettings.selectionParams != this._selectionParams)
+                            if (appSettings.selectionParams !== undefined && appSettings.selectionParams !== this._selectionParams)
                             {
                                 this._selectionParams = appSettings.selectionParams;
                                 this.onSelectionParamsChanged();
@@ -446,10 +445,10 @@ module beachPartyApp
 
         onShapeColorChanged()
         {
-            var cr = (this._shapeColor == "beach blue" || this._shapeColor == "beachblue") ? "#0cf" : this._shapeColor;
+            var cr = (this._shapeColor === "beach blue" || this._shapeColor === "beachblue") ? "#0cf" : this._shapeColor;
             this._bpsHelper.setShapeColor(cr);
 
-            appClass.instance.onAppShapeColorChanged();
+            AppClass.instance.onAppShapeColorChanged();
             this.saveAppSettings();
 
             this.onDataChanged("shapeColor");
@@ -490,7 +489,7 @@ module beachPartyApp
 
         onCanvasColorChanged()
         {
-            var cr = (this._canvasColor == "beach blue" || this._canvasColor == "beachblue") ? "#0cf" : this._canvasColor;
+            var cr = (this._canvasColor === "beach blue" || this._canvasColor === "beachblue") ? "#0cf" : this._canvasColor;
             this._bpsHelper.setCanvasColor(cr);
             this.saveAppSettings();
 
@@ -505,12 +504,12 @@ module beachPartyApp
             }
 
             var dpValue = bps.DrawPrimitive[value];
-            if (dpValue != this._drawingPrimitive)
+            if (dpValue !== this._drawingPrimitive)
             {
                 this._drawingPrimitive = dpValue;
                 this.saveAppSettings();
 
-                appClass.instance.setAutualDrawingPrimitive();
+                AppClass.instance.setAutualDrawingPrimitive();
 
                 this.onDataChanged("drawingPrimitive");
             }
@@ -518,7 +517,7 @@ module beachPartyApp
 
         isContinuousDrawing(value?: boolean)
         {
-            if (arguments.length == 0)
+            if (arguments.length === 0)
             {
                 return this._isContinuousDrawing;
             }
@@ -577,7 +576,7 @@ module beachPartyApp
 
         easeFunction(value?: string)
         {
-            if (arguments.length == 0)
+            if (arguments.length === 0)
             {
                 return bps.EaseFunction[this._animationData.easeFunction];
             }
@@ -590,7 +589,7 @@ module beachPartyApp
 
         easeType(value?: string)
         {
-            if (arguments.length == 0)
+            if (arguments.length === 0)
             {
                 return bps.EaseType[this._animationData.easeType];
             }
@@ -635,7 +634,7 @@ module beachPartyApp
 
         hoverMatch(value?: string)
         {
-            if (arguments.length == 0)
+            if (arguments.length === 0)
             {
                 return bps.HoverMatch[this._hoverParams.hoverMatch];
             }
@@ -648,7 +647,7 @@ module beachPartyApp
 
         hoverEffect(value?: string)
         {
-            if (arguments.length == 0)
+            if (arguments.length === 0)
             {
                 return bps.HoverEffect[this._hoverParams.hoverEffect];
             }
@@ -661,7 +660,7 @@ module beachPartyApp
 
         hoverColor(value?: string)
         {
-            if (arguments.length == 0)
+            if (arguments.length === 0)
             {
                 return this._hoverParams.hoverColor;
             }
@@ -674,7 +673,7 @@ module beachPartyApp
 
         hoverSize(value?: number)
         {
-            if (arguments.length == 0)
+            if (arguments.length === 0)
             {
                 return this._hoverParams.squareSize;
             }
@@ -693,9 +692,9 @@ module beachPartyApp
 
         isTooltipsEnabled(value?: boolean)
         {
-            if (arguments.length == 0)
+            if (arguments.length === 0)
             {
-                var enabled = (this._isTooltipsEnabled && !appClass.instance._isEngineDrawing);
+                var enabled = (this._isTooltipsEnabled && !AppClass.instance._isEngineDrawing);
                 return enabled;
             }
 
@@ -707,7 +706,7 @@ module beachPartyApp
 
         selectedColorEffect(value?: string)
         {
-            if (arguments.length == 0)
+            if (arguments.length === 0)
             {
                 return bps.ColorEffect[this._selectionParams.selectedParams.colorEffect];
             }
@@ -720,7 +719,7 @@ module beachPartyApp
 
         unselectedColorEffect(value?: string)
         {
-            if (arguments.length == 0)
+            if (arguments.length === 0)
             {
                 return bps.ColorEffect[this._selectionParams.unselectedParams.colorEffect];
             }
@@ -733,7 +732,7 @@ module beachPartyApp
 
         selectedColor(value?: string)
         {
-            if (arguments.length == 0)
+            if (arguments.length === 0)
             {
                 return this._selectionParams.selectedParams.color;
             }
@@ -746,7 +745,7 @@ module beachPartyApp
 
         unselectedColor(value?: string)
         {
-            if (arguments.length == 0)
+            if (arguments.length === 0)
             {
                 return this._selectionParams.unselectedParams.color;
             }
@@ -759,7 +758,7 @@ module beachPartyApp
 
         selectedColorFactor(value?: number)
         {
-            if (arguments.length == 0)
+            if (arguments.length === 0)
             {
                 return this._selectionParams.selectedParams.colorFactor;
             }
@@ -772,7 +771,7 @@ module beachPartyApp
 
         unselectedColorFactor(value?: number)
         {
-            if (arguments.length == 0)
+            if (arguments.length === 0)
             {
                 return this._selectionParams.unselectedParams.colorFactor;
             }
@@ -791,7 +790,7 @@ module beachPartyApp
 
         isMenuTextVisible(value?: boolean)
         {
-            if (arguments.length == 0)
+            if (arguments.length === 0)
             {
                 return this._isMenuTextVisible;
             }
@@ -806,17 +805,17 @@ module beachPartyApp
             }
             else
             {
-                vp.select("#iconBarRow")
+                vp.select("#iconBarRow");
                 this._appStyleSheet.addRule(".textOfCombo", "display: none");
             }
 
             this.onDataChanged("isMenuTextVisible");
-            appClass.instance.layoutScreen();            // make sure everything lines up after change
+            AppClass.instance.layoutScreen();            // make sure everything lines up after change
         }
 
         isMenuIconVisible(value?: boolean)
         {
-            if (arguments.length == 0)
+            if (arguments.length === 0)
             {
                 return this._isMenuIconVisible;
             }
@@ -834,12 +833,12 @@ module beachPartyApp
             }
 
             this.onDataChanged("isMenuIconVisible");
-            appClass.instance.layoutScreen();            // make sure everything lines up after change
+            AppClass.instance.layoutScreen();            // make sure everything lines up after change
         }
 
         isMenuChevronVisible(value?: boolean)
         {
-            if (arguments.length == 0)
+            if (arguments.length === 0)
             {
                 return this._isMenuChevronVisible;
             }
@@ -874,7 +873,7 @@ module beachPartyApp
 
         panelOpacity(value?: number)
         {
-            if (arguments.length == 0)
+            if (arguments.length === 0)
             {
                 return this._panelOpacity;
             }
@@ -900,12 +899,12 @@ module beachPartyApp
 
         on3dViewChanged()
         {
-            var chartName = appClass.instance._chartName;
+            var chartName = AppClass.instance._chartName;
 
-            var is3dView = (chartName == "Density" || chartName == "Radial" || chartName == "Violin" ||
-                chartName == "Stacks" || chartName == "Scatter-3D" || chartName == "Scatter");
+            var is3dView = (chartName === "Density" || chartName === "Radial" || chartName === "Violin" ||
+                chartName === "Stacks" || chartName === "Scatter-3D" || chartName === "Scatter");
 
-            var use3DGrid = (chartName == "Stacks" || chartName == "Scatter-3D");
+            var use3DGrid = (chartName === "Stacks" || chartName === "Scatter-3D");
 
             this._lightingParams.isLightingEnabled = (this._isLightingAlwaysOn || is3dView);
             this.onLightingParamsChanged();
@@ -932,7 +931,7 @@ module beachPartyApp
 
         showWheelDuringTransformMode(value?: boolean)
         {
-            if (arguments.length == 0)
+            if (arguments.length === 0)
             {
                 return this._showWheelDuringTransformMode;
             }
@@ -977,7 +976,7 @@ module beachPartyApp
 
         cacheLocalFiles(value?: boolean)
         {
-            if (arguments.length == 0)
+            if (arguments.length === 0)
             {
                 return this._cacheLocalFiles;
             }
@@ -989,7 +988,7 @@ module beachPartyApp
 
         cacheWebFiles(value?: boolean)
         {
-            if (arguments.length == 0)
+            if (arguments.length === 0)
             {
                 return this._cacheWebFiles;
             }
@@ -1001,7 +1000,7 @@ module beachPartyApp
 
         useNiceNumbers(value?: boolean)
         {
-            if (arguments.length == 0)
+            if (arguments.length === 0)
             {
                 return this._useNiceNumbers;
             }
@@ -1010,12 +1009,12 @@ module beachPartyApp
             this.onDataChanged("useNiceNumbers");
             this.saveAppSettings();
 
-            appClass.instance.onUseNiceNumbersChanged();
+            AppClass.instance.onUseNiceNumbersChanged();
         }
 
         defaultBins(value?: number)
         {
-            if (arguments.length == 0)
+            if (arguments.length === 0)
             {
                 return this._defaultBins;
             }
@@ -1024,7 +1023,7 @@ module beachPartyApp
             this.onDataChanged("defaultBins");
             this.saveAppSettings();
 
-            appClass.instance.applyDefaultBins();
+            AppClass.instance.applyDefaultBins();
         }
 
         playbackDuration(value?: number)
@@ -1037,7 +1036,7 @@ module beachPartyApp
             this._playbackDuration = value;
             this.saveAppSettings();
 
-            appClass.instance.onAppPlaybackDurationChanged();
+            AppClass.instance.onAppPlaybackDurationChanged();
 
             this.onDataChanged("playbackDuration");
         }
@@ -1052,14 +1051,14 @@ module beachPartyApp
             this._isPlaybackLooping = value;
             this.saveAppSettings();
 
-            appClass.instance.onAppPlaybackLoopngChanged();
+            AppClass.instance.onAppPlaybackLoopngChanged();
 
             this.onDataChanged("isPlaybackLooping");
         }
 
         rememberLastFile(value?: boolean)
         {
-            if (arguments.length == 0)
+            if (arguments.length === 0)
             {
                 return this._rememberLastFile;
             }
@@ -1071,7 +1070,7 @@ module beachPartyApp
 
         rememberLastSession(value?: boolean)
         {
-            if (arguments.length == 0)
+            if (arguments.length === 0)
             {
                 return this._rememberLastSession;
             }
@@ -1104,7 +1103,6 @@ module beachPartyApp
             this.onDataChanged("initialLayout");
             this.saveAppSettings();
         }
-
 
         isShowingChartStatus(value?: boolean)
         {
@@ -1199,7 +1197,7 @@ module beachPartyApp
 
             this._shapeOpacity = value;
 
-            appClass.instance.onAppShapeOpacityChanged();
+            AppClass.instance.onAppShapeOpacityChanged();
 
             this._bpsHelper.setShapeOpacity(value);
             this.onDataChanged("shapeOpacity");
@@ -1207,7 +1205,7 @@ module beachPartyApp
 
         automatedTestName(value?: string)
         {
-            if (arguments.length == 0)
+            if (arguments.length === 0)
             {
                 return this._automatedTestName;
             }
@@ -1222,7 +1220,7 @@ module beachPartyApp
             this.resetAppSettings();
             this.saveAppSettings();
 
-            appClass.instance.loadInitialDataSet();
+            AppClass.instance.loadInitialDataSet();
         }
 
     }

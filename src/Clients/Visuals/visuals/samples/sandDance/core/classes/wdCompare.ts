@@ -7,7 +7,7 @@
 
 module beachParty
 {
-    export class wdCompare 
+    export class WdCompare 
     {
         public static valueEntriesMatch(entry1: bps.ValueMapEntry, entry2: bps.ValueMapEntry)
         {
@@ -15,13 +15,13 @@ module beachParty
 
             if ((!entry1) || (!entry2))
             {
-                match = (entry1 == entry2);
+                match = (entry1 === entry2);
             }
-            else if (entry1.originalValue != entry2.originalValue)
+            else if (entry1.originalValue !== entry2.originalValue)
             {
                 match = false;
             }
-            else if (entry1.newValue != entry2.newValue)
+            else if (entry1.newValue !== entry2.newValue)
             {
                 match = false;
             }
@@ -35,11 +35,11 @@ module beachParty
 
             if ((!map1) || (!map2))
             {
-                match = (map1 == map2);
+                match = (map1 === map2);
             }
             else
             {
-                if (map1.length != map2.length)
+                if (map1.length !== map2.length)
                 {
                     match = false;
                 }
@@ -68,21 +68,21 @@ module beachParty
 
             if ((!f1) || (!f2))
             {
-                match = (f1 == f2);
+                match = (f1 === f2);
             }
-            else if (f1.name != f2.name)
+            else if (f1.name !== f2.name)
             {
                 match = false;
             }
-            else if (f1.calcFieldExp != f2.calcFieldExp)
+            else if (f1.calcFieldExp !== f2.calcFieldExp)
             {
                 match = false;
             }
-            else if (f1.description != f2.description)
+            else if (f1.description !== f2.description)
             {
                 match = false;
             }
-            else if (f1.fieldType != f2.fieldType)
+            else if (f1.fieldType !== f2.fieldType)
             {
                 match = false;
             }
@@ -104,11 +104,11 @@ module beachParty
 
             if ((!list1) || (!list2))
             {
-                match = (list1 == list2);
+                match = (list1 === list2);
             }
             else
             {
-                if (list1.length != list2.length)
+                if (list1.length !== list2.length)
                 {
                     match = false;
                 }

@@ -5,11 +5,9 @@
 
 /// <reference path="../_references.ts" />
 
-var demoData: string;
-
 module beachParty
 {
-    export class textureMakerClass extends dataChangerClass
+    export class TextureMakerClass extends DataChangerClass
     {
         static textureCache = <any> {};
         static nextTextureId = 1;
@@ -55,11 +53,11 @@ module beachParty
         {
             this._gl = gl;
             var texture = null;
-            if (texPalette.length == 1)
+            if (texPalette.length === 1)
             {
                 //---- cache only supports single entries ----
                 var singleName = texPalette[0];
-                texture = textureMakerClass.textureCache[singleName];
+                texture = TextureMakerClass.textureCache[singleName];
             }
 
             if (texture)
@@ -300,7 +298,7 @@ module beachParty
             //---- create canvas we can draw on ----
             var canvasW = vp.select(document.createElement("canvas"))
                 .attr("width", totalWidth)
-                .attr("height", height)
+                .attr("height", height);
 
             //---- get drawing context ----
             var canvas = <HTMLCanvasElement>canvasW[0];
@@ -322,8 +320,6 @@ module beachParty
         /** create an image sheet from the shapes to be drawn. */
         public createShapeImages(size: number, strokeSize: number)
         {
-            var shapeCount = this._makers.length;
-
             //---- use next highest power of 2, to keep images looking good ----
             var potShapeCount = this._potCount;
             var actualSize = Math.max(1, size);
@@ -334,7 +330,7 @@ module beachParty
             //---- create canvas we can draw on ----
             var canvasW = vp.select(document.createElement("canvas"))
                 .attr("width", totalWidth)
-                .attr("height", totalHeight)
+                .attr("height", totalHeight);
 
             //---- get drawing context ----
             var canvas = <HTMLCanvasElement>canvasW[0];
@@ -366,10 +362,10 @@ module beachParty
                     this._imagesLoaded++;
                     vp.utils.debug("URL image loaded:" + url);
 
-                    if (this._imagesLoaded == urls.length)
+                    if (this._imagesLoaded === urls.length)
                     {
                         //---- all needed images have now been loaded ----
-                        if (urls.length == 1)
+                        if (urls.length === 1)
                         {
                             //---- simple case; don't need to create a sheet ----
                             this.loadTextureFromSheet(img);
@@ -403,13 +399,13 @@ module beachParty
 
         cacheTextureIfPossible()
         {
-            if (this._texPalette.length == 1)
+            if (this._texPalette.length === 1)
             {
                 var name = this._texPalette[0];
-                textureMakerClass.textureCache[name] = this._texture;
+                TextureMakerClass.textureCache[name] = this._texture;
             }
 
-            this._texture._id = textureMakerClass.nextTextureId++;
+            this._texture._id = TextureMakerClass.nextTextureId++;
 
             this._texture.toString = (e) =>
             {

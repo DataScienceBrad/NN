@@ -8,7 +8,7 @@
 module beachParty
 {
     /** This code adpoted from XNA 4 Ray and BoundingBox classes (Microsoft). */
-    export class rayClass
+    export class RayClass
     {
         position: vp.geom.point3;
         direction: vp.geom.vector3;
@@ -151,5 +151,3 @@ module beachParty
         }
     }
 }
-            
-             

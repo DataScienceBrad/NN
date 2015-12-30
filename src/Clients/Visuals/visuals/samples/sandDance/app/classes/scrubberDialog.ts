@@ -7,7 +7,7 @@
 
 module beachPartyApp
 {
-    export class scrubberDialogClass extends basePanelClass
+    export class ScrubberDialogClass extends BasePanelClass
     {
         static maxRows = 9;
 
@@ -16,15 +16,15 @@ module beachPartyApp
         _displayElem: HTMLElement;
         _descElem: HTMLElement;
         _valuesTableElem: HTMLTableElement;
-        _typeCombo: pickerClass;
+        _typeCombo: PickerClass;
 
         _origColInfos: bps.ColInfo[];           // full set of columns (unscrubbed)
         _startingColInfos: bps.ColInfo[];       // SCRUBBED columns, on input
-        _editColInfos: editColInfo[];           // current state of SCRUBBED columns
+        _editColInfos: EditColInfo[];           // current state of SCRUBBED columns
 
         _showOnlyVisible = false;
         _searchText = null;
-        _selectedEditItem: editColInfo = null;
+        _selectedEditItem: EditColInfo = null;
         _listItemElems = [];
         _resetValueMapsWhenLoaded = false;
         _selectedValueIndex = -1;
@@ -41,28 +41,26 @@ module beachPartyApp
             this._origColInfos = origColInfos;
             this._startingColInfos = colInfos;
 
-            var rootW = vp.select(this._root)
-
-            var maxHeight = 125;
+            var rootW = vp.select(this._root);
 
             var panelTableW = rootW.append("table")
-                .css("border-bottom", "1px solid gray")
+                .css("border-bottom", "1px solid gray");
 
-            var panelRow = panelTableW.append("tr")
+            var panelRow = panelTableW.append("tr");
 
             //---- add LEFT PANEL ----
             var leftPanelW = panelRow.append("td")
-                .css("border-right", "1px solid gray")
+                .css("border-right", "1px solid gray");
 
             //---- add RIGHT PANEL ----
             var rightPanelW = panelRow.append("td")
             //.css("border", "1px solid gray")
                 .css("width", "200px")
-                .attr("valign", "top")
+                .attr("valign", "top");
 
             //---- add TABS to right panel ----
             var tabsHolderW = rightPanelW.append("div")
-                .addClass("tabButtonContainer")
+                .addClass("tabButtonContainer");
 
             //---- PROPERTIES tab ----
             var propsW = tabsHolderW.append("span")
@@ -73,10 +71,10 @@ module beachPartyApp
                 .attach("click", (e) =>
                 {
                     this.onTabSelected(e.target);
-                })
+                });
 
             //---- VALUES tab ----
-            var valuesW = tabsHolderW.append("span")
+            tabsHolderW.append("span")
                 .addClass("tabButton")
                 .text("Values")
                 .id("values")
@@ -84,17 +82,17 @@ module beachPartyApp
                 .attach("click", (e) =>
                 {
                     this.onTabSelected(e.target);
-                })
+                });
 
             var divW = rightPanelW.append("div")
                 .css("height", "254px")     // keep constant height (as content height changes)
-                .css("width", "290px")
+                .css("width", "290px");
 
             this.addPropertyControls(divW, "propertiesContent");
             this.addValueControls(divW, "valuesContent");
 
             //---- RESET button ----
-            var resetW = rightPanelW.append("td").append("span")
+            rightPanelW.append("td").append("span")
                 .addClass("panelButton")
                 //.css("width", "55px")
                 .text("Reset column")
@@ -131,7 +129,7 @@ module beachPartyApp
                 .css("border", "1px solid gray")
                 .css("margin", "6px")
                 //.css("max-height", maxHeight + "px")
-                .css("height", "200px")             // fix height to avoid resizing dialog when toggle VISIBLE filter
+                .css("height", "200px");             // fix height to avoid resizing dialog when toggle VISIBLE filter;
 
             //var listW = listW.append("div")
             //    .addClass("listBoxList")
@@ -150,10 +148,10 @@ module beachPartyApp
             if (this._currentTabContentElem)
             {
                 vp.select(this._currentTabContentElem)
-                    .css("display", "none")
+                    .css("display", "none");
 
                 vp.select(this._currentTabButtonElem)
-                    .removeClass("tabButtonOpen")
+                    .removeClass("tabButtonOpen");
 
                 this._currentTabContentElem = null;
                 this._currentTabButtonElem = null;
@@ -163,15 +161,15 @@ module beachPartyApp
             var buttonId = tabButton.id;
             var contentId = buttonId + "Content";
 
-            var tabContentW = vp.select("#" + contentId)
+            var tabContentW = vp.select("#" + contentId);
 
             if (tabContentW.length)
             {
                 tabContentW
-                    .css("display", "")         // makes it default to visible
+                    .css("display", "");         // makes it default to visible;
 
                 var tabButtonW = vp.select("#" + buttonId)
-                    .addClass("tabButtonOpen")
+                    .addClass("tabButtonOpen");
 
                 this._currentTabContentElem = tabContentW[0];
                 this._currentTabButtonElem = tabButtonW[0];
@@ -186,10 +184,10 @@ module beachPartyApp
                 .css("max-height", "254px")
                 .css("overflow-y", "auto")
                 .css("display", "none")     // hide initially
-                .css("white-space", "nowrap")
+                .css("white-space", "nowrap");
 
             //---- up/down holder ----
-            var upDownW = divW.append("div")
+            var upDownW = divW.append("div");
 
             //---- add DOWN button ----
             var upW = upDownW.append("span")
@@ -203,7 +201,7 @@ module beachPartyApp
                 .attach("click", (e) =>
                 {
                     this.moveSelectedValue(1);
-                })
+                });
 
             //---- add UP button ----
             var upW = upDownW.append("span")
@@ -215,10 +213,10 @@ module beachPartyApp
                 .attach("click", (e) =>
                 {
                     this.moveSelectedValue(-1);
-                })
+                });
 
             var tableW = divW.append("table")
-                .css("border-collapse", "collapse")
+                .css("border-collapse", "collapse");
 
             this._valuesTableElem = tableW[0];
         }
@@ -227,22 +225,22 @@ module beachPartyApp
         {
             var upDisabled = (this._selectedValueIndex <= 0);
 
-            var downDisabled = (this._selectedValueIndex == -1);
+            var downDisabled = (this._selectedValueIndex === -1);
             if ((!downDisabled) && this._selectedEditItem && this._selectedEditItem.sortedKeys)
             {
                 downDisabled = (this._selectedValueIndex >= this._selectedEditItem.sortedKeys.length - 1);
             }
 
             vp.select(this._root, "#upButton")
-                .attr("data-disabled", upDisabled ? "true" : "false")
+                .attr("data-disabled", upDisabled ? "true" : "false");
 
             vp.select(this._root, "#downButton")
-                .attr("data-disabled", downDisabled ? "true" : "false")
+                .attr("data-disabled", downDisabled ? "true" : "false");
         }
 
         moveSelectedValue(delta: number)
         {
-            if (this._selectedValueIndex != -1)
+            if (this._selectedValueIndex !== -1)
             {
                 var fromIndex = this._selectedValueIndex;
                 var sortedKeys = this._selectedEditItem.sortedKeys;
@@ -274,16 +272,16 @@ module beachPartyApp
             var tableW = rootW.append("table")
                 //.css("border", "1px solid blue")
                 .css("margin", "10px")
-                .attr("id", id)
+                .attr("id", id);
 
             //---- 2nd row ----
             var nextRowW = tableW.append("tr")
-                .css("height", "30px")
+                .css("height", "30px");
 
             //---- prompt: DISPLAY ----
             var promptW = nextRowW.append("td")
                 .addClass("panelPrompt")
-                .text("Display:")
+                .text("Display:");
 
             //---- TEXT ----
             var displayW = nextRowW.append("td").append("input")
@@ -293,21 +291,21 @@ module beachPartyApp
                 .attach("keyup", (e) =>
                 {
                     this._selectedEditItem.displayName = e.target.value;
-                })
+                });
 
             this._displayElem = displayW[0];
 
             //---- 3nd row ----
-            var nextRowW = tableW.append("tr")
+            var nextRowW = tableW.append("tr");
 
             //---- prompt: TYPE ----
             var promptW = nextRowW.append("td")
                 .addClass("panelPrompt")
-                .text("Type:")
+                .text("Type:");
 
             //---- don't use HTML SELECT elements - they don't style well on Windows ----
             var tdW = nextRowW.append("td");
-            var picker = new pickerClass(tdW[0], null, ["string", "number", "date"], "string", "set how this column's values are recognized", false);
+            var picker = new PickerClass(tdW[0], null, ["string", "number", "date"], "string", "set how this column's values are recognized", false);
 
             picker.registerForChange("value", (e) =>
             {
@@ -316,7 +314,7 @@ module beachPartyApp
 
                 selectedItem.colType = newType;
 
-                if (newType == "string")
+                if (newType === "string")
                 {
                     selectedItem.min = null;
                     selectedItem.max = null;
@@ -331,13 +329,13 @@ module beachPartyApp
             this._typeCombo = picker;
 
             //---- 4nd row ----
-            var nextRowW = tableW.append("tr")
+            var nextRowW = tableW.append("tr");
 
             //---- prompt: DESC ----
             var promptW = nextRowW.append("td")
                 .addClass("panelPrompt")
                 .text("Desc:")
-                .attr("valign", "top")
+                .attr("valign", "top");
 
             //---- TEXTAREA ----
             var textAreaW = nextRowW.append("td").append("textarea")
@@ -346,21 +344,21 @@ module beachPartyApp
                 .attach("keyup", (e) =>
                 {
                     this._selectedEditItem.desc = e.target.value;
-                })
+                });
 
             this._descElem = textAreaW[0];
 
             //---- 5nd row ----
             var nextRowW = tableW.append("tr")
-                .css("height", "15px")
+                .css("height", "15px");
 
-            var nextRowW = tableW.append("tr")
+            var nextRowW = tableW.append("tr");
 
-            var promptW = nextRowW.append("td")
+            var promptW = nextRowW.append("td");
 
         }
 
-        resetColumn(ei: editColInfo)
+        resetColumn(ei: EditColInfo)
         {
             //---- copy info from matching entry in colInfos ----
             var ci = ei.origCol;
@@ -394,15 +392,15 @@ module beachPartyApp
             var nextRowW = rootW.append("div")
                 .css("margin-top", "10px")
                 .css("margin-bottom", "10px")
-                .css("margin-left", "10px")
+                .css("margin-left", "10px");
 
             //---- SEARCH prompt ----
-            var promptW = nextRowW.append("span")
+            nextRowW.append("span")
                 .addClass("panelPrompt")
-                .text("Search:")
+                .text("Search:");
 
             //---- TEXTBOX ----
-            var cbW = nextRowW.append("input")
+            nextRowW.append("input")
                 .attr("type", "text")
                 .addClass("panelText")
                 .title("Search for columns containing this text")
@@ -417,7 +415,7 @@ module beachPartyApp
                 .attach("keyup", (e) =>
                 {
                     this.doSearch(e);
-                })
+                });
          
         }
 
@@ -437,17 +435,17 @@ module beachPartyApp
                 .attach("click", (e) =>
                 {
                     this.toggleShowFilter(e);
-                })
+                });
 
             //---- add "show only visible columns" CHECKBOX ----
             var cbW = nextRowW.append("input")
                 .attr("type", "checkbox")
                 .addClass("panelCheckbox")
-                .css("margin-left", "10px")
+                .css("margin-left", "10px");
 
-            var cbTextW = nextRowW.append("span")
+            nextRowW.append("span")
                 .addClass("panelPrompt")
-                .text("Show only visible columns")
+                .text("Show only visible columns");
 
             nextRowW[0].checkBox = cbW[0];
         }
@@ -457,7 +455,7 @@ module beachPartyApp
             //---- start new row ----
             var nextRowW = rootW.append("div")
                 .css("margin-top", "10px")
-                .css("margin-bottom", "20px")
+                .css("margin-bottom", "20px");
 
             //---- add SHOW ALL button ----
             var showAllW = nextRowW.append("span")
@@ -470,7 +468,7 @@ module beachPartyApp
                 .attach("click", (e) =>
                 {
                     this.showAllColumns(true);
-                })
+                });
 
             //---- add HIDE ALL button ----
             var showAllW = nextRowW.append("span")
@@ -482,10 +480,10 @@ module beachPartyApp
                 .attach("click", (e) =>
                 {
                     this.showAllColumns(false);
-                })
+                });
 
             //---- add RESET button ----
-            var resetW = nextRowW.append("span")
+            nextRowW.append("span")
                 .addClass("panelButton")
                 .css("margin-left", "10px")
                 .css("width", "55px")
@@ -494,7 +492,7 @@ module beachPartyApp
                 .attach("click", (e) =>
                 {
                     this.resetAllColumns();
-                })
+                });
         }
 
         addOkCancelButtons(rootW: vp.dom.IWrapperOuter)
@@ -502,7 +500,7 @@ module beachPartyApp
             //---- start dialog button row ----
             var buttonRowW = rootW.append("div")
                 .css("margin-top", "10px")
-                .css("margin-bottom", "10px")
+                .css("margin-bottom", "10px");
 
             //---- add CANCEL button ----
             var okW = buttonRowW.append("span")
@@ -515,7 +513,7 @@ module beachPartyApp
                 .attach("click", (e) =>
                 {
                     this.closeDialog(false);
-                })
+                });
 
             //---- add OK button ----
             var okW = buttonRowW.append("span")
@@ -527,7 +525,7 @@ module beachPartyApp
                 .attach("click", (e) =>
                 {
                     this.closeDialog(true);
-                })
+                });
 
         }
 
@@ -556,7 +554,7 @@ module beachPartyApp
         buildEditColInfos(resetColumns: boolean)
         {
             //---- we need to start with origColInfos, and then apply any changes from SCRUBBED input=colInfos ----
-            var newInfos = <editColInfo[]>[];
+            var newInfos = <EditColInfo[]>[];
             var editMap = {};
 
             //---- first, build list using origColInfos ----
@@ -564,7 +562,7 @@ module beachPartyApp
             {
                 var gi = this._origColInfos[i];
 
-                var newCi = new editColInfo(gi.name, gi.desc, gi.colType, vp.utils.copyArray(gi.sortedKeys), gi.min, gi.max);
+                var newCi = new EditColInfo(gi.name, gi.desc, gi.colType, vp.utils.copyArray(gi.sortedKeys), gi.min, gi.max);
                 
                 newCi.isVisible = resetColumns;
                 newCi.origCol = gi;
@@ -664,23 +662,23 @@ module beachPartyApp
                         .attach("click", (e) =>
                         {
                             this.toggleItem(e);
-                        })
+                        });
 
                     var checkboxW = itemW.append("input")
                         .attr("type", "checkbox")
-                        .addClass("panelCheckbox")
+                        .addClass("panelCheckbox");
 
                     if (ei.isVisible)
                     {
                         checkboxW
-                            .attr("checked", "true")
+                            .attr("checked", "true");
                     }
 
                     var promptW = itemW.append("span")
                         .addClass("checkboxText")
                         .text(ei.name)
                         .css("position", "relative")
-                        .css("top", "-2px")
+                        .css("top", "-2px");
 
                     cbList.push(itemW[0]);
 
@@ -688,7 +686,7 @@ module beachPartyApp
                     itemW[0].prompt = promptW[0];
                     itemW[0].editInfo = ei;
                     
-                    if (ei == this._selectedEditItem)
+                    if (ei === this._selectedEditItem)
                     {
                         this.markItemSelected(itemW[0], true);
                         this.loadColumnProps(ei);
@@ -718,7 +716,7 @@ module beachPartyApp
         toggleShowFilter(e)
         {
             var elem = e.target;
-            var isCheckbox = (elem.tagName == "INPUT");
+            var isCheckbox = (elem.tagName === "INPUT");
 
             if (!elem.checkBox)
             {
@@ -752,7 +750,7 @@ module beachPartyApp
         }
 
         /** find the HTML elem (div) that represents the specified ei. */
-        getItemElem(ei: editColInfo)
+        getItemElem(ei: EditColInfo)
         {
             var elem = null;
 
@@ -760,7 +758,7 @@ module beachPartyApp
             {
                 var itemElem = this._listItemElems[i];
 
-                if (itemElem.editInfo == ei)
+                if (itemElem.editInfo === ei)
                 {
                     elem = itemElem;
                     break;
@@ -770,7 +768,7 @@ module beachPartyApp
             return elem;
         }
 
-        selectItem(editItem: editColInfo)
+        selectItem(editItem: EditColInfo)
         {
             //---- turn off selection on current item ----
             if (this._selectedEditItem)
@@ -795,7 +793,7 @@ module beachPartyApp
             this.loadColumnValues(editItem);
         }
 
-        loadColumnProps(ei: editColInfo)
+        loadColumnProps(ei: EditColInfo)
         {
             if (ei == null)
             {
@@ -805,15 +803,13 @@ module beachPartyApp
             }
             else
             {
-                var colTypes = ["string", "number", "date"];
-
                 vp.select(this._displayElem).value(ei.displayName);
                 this._typeCombo.value(ei.colType);
                 vp.select(this._descElem).value(ei.desc);
             }
         }
 
-        loadColumnValues(ei: editColInfo, resetSelection = true)
+        loadColumnValues(ei: EditColInfo, resetSelection = true)
         {
             var table = this._valuesTableElem;
 
@@ -839,7 +835,7 @@ module beachPartyApp
                 else
                 {
                     //---- request valueMap from engine ----
-                    beachPartyApp.appClass.instance._bpsHelper.getValueMap(ei.name, scrubberDialogClass.maxRows, (msgBlock) =>
+                    beachPartyApp.AppClass.instance._bpsHelper.getValueMap(ei.name, ScrubberDialogClass.maxRows, (msgBlock) =>
                     {
                         var valueMap = <bps.ValueMapEntry[]> msgBlock.valueMap;
 
@@ -866,7 +862,7 @@ module beachPartyApp
                 for (var j = 0; j < valueMap.length; j++)
                 {
                     var entry = valueMap[j];
-                    if (entry.originalValue == key)
+                    if (entry.originalValue === key)
                     {
                         newMap.push(entry);
                         break;
@@ -913,13 +909,13 @@ module beachPartyApp
             else
             {
                 //---- build sortedKeys from valueMap ----
-                selectedItem.sortedKeys = valueMap.map((e) => { return e.originalValue });
+                selectedItem.sortedKeys = valueMap.map((e) => { return e.originalValue; });
             }
 
             selectedItem.valueMap = valueMap;
-            var maxRows = scrubberDialogClass.maxRows;
+            var maxRows = ScrubberDialogClass.maxRows;
 
-            var tableW = vp.select(table)
+            var tableW = vp.select(table);
                     maxRows = Math.min(maxRows, valueMap.length);
 
             var valueRows = [];
@@ -929,32 +925,32 @@ module beachPartyApp
                 var vme = valueMap[i];
                 var trW = tableW.append("tr")
                     .addClass("listItem")
-                    .attach("click", (e) => this.onValueRowClick(e))
+                    .attach("click", (e) => this.onValueRowClick(e));
 
-                if (this._selectedValueIndex == i)
+                if (this._selectedValueIndex === i)
                 {
-                    trW.attr("data-selected", "true")
+                    trW.attr("data-selected", "true");
                 }
                 else
                 {
-                    trW.attr("data-selected", "false")
+                    trW.attr("data-selected", "false");
                 }
 
                 //---- add COLUMN VALUES ----
                 trW.append("td")
                     .addClass("tableValue")
                     .text(vme.originalValue)
-                    .css("text-align", "right")
+                    .css("text-align", "right");
 
                 trW.append("td")
                     .addClass("tableValue")
                     .text("(" + vme.valueCount + ")")
                     .css("padding-left", "4px")
-                    .css("padding-right", "4px")
+                    .css("padding-right", "4px");
 
                 var newValueW = trW.append("td")
                     .addClass("tableValue")
-                    .css("padding-left", "4px")
+                    .css("padding-left", "4px");
                     //.css("padding-right", "4px")
 
                 var newValue = (vme.newValue) ? vme.newValue : vme.originalValue;
@@ -973,7 +969,7 @@ module beachPartyApp
                     .attach("keyup", (e) =>
                     {
                         this.onValueEdited(e);
-                    })
+                    });
 
                 textboxW[0].valueIndex = i;
                 trW[0].valueIndex = i;
@@ -998,10 +994,10 @@ module beachPartyApp
 
         selectValue(index: number)
         {
-            if (this._selectedValueIndex != -1)
+            if (this._selectedValueIndex !== -1)
             {
                 vp.select(this._valueRows[this._selectedValueIndex])
-                    .attr("data-selected", "false")
+                    .attr("data-selected", "false");
             }
 
             this._selectedValueIndex = index;
@@ -1009,7 +1005,7 @@ module beachPartyApp
             if (index > -1)
             {
                 vp.select(this._valueRows[index])
-                    .attr("data-selected", "true")
+                    .attr("data-selected", "true");
             }
 
             this.onSelectedValueChanged();
@@ -1032,7 +1028,6 @@ module beachPartyApp
         toggleItem(e)
         {
             var elem = e.target;
-            var isCheckbox = (elem.tagName == "INPUT");
 
             if (!elem.checkBox)
             {
@@ -1062,7 +1057,7 @@ module beachPartyApp
             }
         }
 
-        updateColSortedKeysToNewValues(ei: editColInfo)
+        updateColSortedKeysToNewValues(ei: EditColInfo)
         {
             if (ei.sortedKeys)
             {
@@ -1077,7 +1072,7 @@ module beachPartyApp
             }
         }
 
-        getValueMapEntry(ei: editColInfo, value: string, matchOrig = true)
+        getValueMapEntry(ei: EditColInfo, value: string, matchOrig = true)
         {
             var mapEntry = <bps.ValueMapEntry>null;
 
@@ -1088,7 +1083,7 @@ module beachPartyApp
                     var entry = ei.valueMap[i];
                     var matchValue = (matchOrig || entry.newValue === undefined) ? entry.originalValue : entry.newValue;
 
-                    if (matchValue == value)
+                    if (matchValue === value)
                     {
                         mapEntry = ei.valueMap[i];
                         break;
@@ -1101,7 +1096,7 @@ module beachPartyApp
     }
 
     /** these fields represent the column properties and values that can be changed in this dialog. */
-    export class editColInfo extends bps.ColInfo
+    export class EditColInfo extends bps.ColInfo
     {
         isVisible: boolean;
         displayName: string;

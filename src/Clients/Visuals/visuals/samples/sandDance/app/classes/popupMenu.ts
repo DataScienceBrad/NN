@@ -7,7 +7,7 @@
 
 module beachPartyApp
 {
-    export class popupMenuClass extends basePopupClass
+    export class PopupMenuClass extends BasePopupClass
     {
         public context = null;
 
@@ -16,7 +16,7 @@ module beachPartyApp
         {
             super(openerIds, ownerElem);
 
-            var maxPanelHeight = appClass.maxPanelHeight;
+            var maxPanelHeight = AppClass.maxPanelHeight;
 
             //---- close and remove any existing popup menus before creating this one ----
             //vp.select("popupMenu")
@@ -25,11 +25,11 @@ module beachPartyApp
             var rootW = vp.select(document.createElement("div"))
                 .attr("id", id)
                 .css("position", "absolute")
-                .addClass("popupMenu")
+                .addClass("popupMenu");
 
             //---- holder of menu items ----
             var holderW = rootW.append("div")
-                .addClass("menuItemHolder")
+                .addClass("menuItemHolder");
 
             var textItemIndex = 0;
             var menuItemIndex = 0;
@@ -38,7 +38,7 @@ module beachPartyApp
             for (var i = 0; i < names.length; i++)
             {
                 var info = names[i];
-                popupMenuClass.addItem(holderW, info, indexes, hideAfterCallback, callback, (e) => this.close(), iconWidth);
+                PopupMenuClass.addItem(holderW, info, indexes, hideAfterCallback, callback, (e) => this.close(), iconWidth);
             }
 
             let currentOwnerElement: vp.dom.IWrapperOuter = null;
@@ -62,7 +62,7 @@ module beachPartyApp
             holderW
                 .css("margin-top", verticalMargin + "px")
                 .css("margin-bottom", verticalMargin + "px")
-                .css("height", holderHeight + "px")
+                .css("height", holderHeight + "px");
         }
 
         changeRootClass(newClass: string)
@@ -92,11 +92,11 @@ module beachPartyApp
                 padding = md.padding;
             }
 
-            if (name == "-")
+            if (name === "-")
             {
                 var menuItemW = parentW.append("hr")
                     .addClass("popupMenuHR")
-                    .attr("_menuIndex", indexes.menuItemIndex++)
+                    .attr("_menuIndex", indexes.menuItemIndex++);
             }
             else
             {
@@ -122,7 +122,7 @@ module beachPartyApp
 
                     if (iconWidth !== undefined)
                     {
-                        imgW.css("width", iconWidth + "px")
+                        imgW.css("width", iconWidth + "px");
                     }
 
                 }
@@ -131,7 +131,7 @@ module beachPartyApp
                     .addClass("popupMenuItem")
                     .text(name)
                     .attr("_menuIndex", indexes.menuItemIndex)
-                    .attr("_textIndex", indexes.textItemIndex)
+                    .attr("_textIndex", indexes.textItemIndex);
 
                 if (padding)
                 {
@@ -157,7 +157,7 @@ module beachPartyApp
                         mi = mi.parentElement;
                     }
 
-                    if (mi.getAttribute("data-disabled") != "true")
+                    if (mi.getAttribute("data-disabled") !== "true")
                     {
                         if (!hideAfterCallback)
                         {

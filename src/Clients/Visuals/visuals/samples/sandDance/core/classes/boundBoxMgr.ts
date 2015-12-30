@@ -10,7 +10,7 @@ module beachParty
     /// Why?  An array of BoundingBox class objects requires 156 bytes per object in IE11.  By breaking up data into 
     /// Float32Arrays, we can reduce object size to 44 bytes per object.
 
-    export class boundingBoxMgrClass 
+    export class BoundingBoxMgrClass 
     {
         private _mins;
         private _maxes;
@@ -25,7 +25,7 @@ module beachParty
 
         adjustSizeAndClearList(count: number)
         {
-            if (!this._primaryKeys || this._primaryKeys.length != count)
+            if (!this._primaryKeys || this._primaryKeys.length !== count)
             {
                 this._mins = new Float32Array(3 * count);
                 this._maxes = new Float32Array(3 * count);

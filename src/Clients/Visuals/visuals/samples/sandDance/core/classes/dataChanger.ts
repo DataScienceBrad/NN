@@ -34,7 +34,7 @@ module beachParty
     /// the owner/model classes are.  It makes model classes easier to maintain, and enables view classes to be reusable.  The 
     /// messy event-connection code is handled by the "connectModelView()" calls.
 
-    export class dataChangerClass implements IDataChanger
+    export class DataChangerClass implements IDataChanger
     {
         _callbacks: any = {};                           // used to register listeners for changes to our data
         _pendingDataChange: any = {};                   // used to set "changer" for an upcoming "onDataChanged()" call
@@ -54,10 +54,10 @@ module beachParty
                 this._callbacks[name] = callbacks;
             }
 
-            var entry = new callbackEntry(null, callback);
+            var entry = new CallbackEntry(null, callback);
 
             //---- don't add if already there ----
-            if (callbacks.indexOf(entry) == -1)
+            if (callbacks.indexOf(entry) === -1)
             {
                 callbacks.push(entry);
             }
@@ -74,10 +74,10 @@ module beachParty
                 this._callbacks[name] = callbacks;
             }
 
-            var entry = new callbackEntry(context, callback);
+            var entry = new CallbackEntry(context, callback);
 
             //---- don't add if already there ----
-            if (callbacks.indexOf(entry) == -1)
+            if (callbacks.indexOf(entry) === -1)
             {
                 callbacks.push(entry);
             }
@@ -90,12 +90,12 @@ module beachParty
             if (name)
             {
                 //---- unhook caller from named event ----
-                var callbacks = <callbackEntry[]> this._callbacks[name];
+                var callbacks = <CallbackEntry[]> this._callbacks[name];
 
                 for (var i = callbacks.length - 1; i >= 0; i--)
                 {
                     var entry = callbacks[i];
-                    if (entry.context == context)
+                    if (entry.context === context)
                     {
                         callbacks.removeAt(i);
                     }
@@ -150,15 +150,15 @@ module beachParty
 
         triggerCallbacks(name: string, changedBy: string, params: string[])
         {
-            var callbacks = <callbackEntry[]>this._callbacks[name];
+            var callbacks = <CallbackEntry[]>this._callbacks[name];
             if (callbacks)
             {
                 for (var i = 0; i < callbacks.length; i++)
                 {
-                    var entry = <callbackEntry>callbacks[i];
+                    var entry = <CallbackEntry>callbacks[i];
                     var callback = entry.callback;
 
-                    if (!entry.context || entry.context != changedBy)
+                    if (!entry.context || entry.context !== changedBy)
                     {
                         //callback(name, changedBy);
                         var newParams = [name, changedBy];
@@ -183,7 +183,7 @@ module beachParty
         }
     }
 
-    export function connectModelView(model: dataChangerClass, modelDataName: string, view: dataChangerClass, viewDataName: string)
+    export function connectModelView(model: DataChangerClass, modelDataName: string, view: DataChangerClass, viewDataName: string)
     {
         //--- send changes from model to view ----
         model.registerForRemovableChange(modelDataName, view, (name, changer) =>
@@ -202,7 +202,7 @@ module beachParty
         });
     }
 
-    export class callbackEntry
+    export class CallbackEntry
     {
         context: any;
         callback: any;

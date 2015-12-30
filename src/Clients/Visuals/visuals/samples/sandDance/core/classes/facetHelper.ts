@@ -7,7 +7,7 @@
 
 module beachParty
 {
-    export class facetHelperClass
+    export class FacetHelperClass
     {
         _colName: string;
         _requestedFacets: number;
@@ -16,11 +16,11 @@ module beachParty
         _binResult: BinResult;
         _facetCount: number;
         _customScreenBounds: any[];        
-        _transformer: transformerClass;
+        _transformer: TransformerClass;
         _fm: bps.FacetMappingData;
 
         constructor(colName: string, requestedFacets: number, maxCategoryFacets: number, customScreenBounds: any[],
-            transformer: transformerClass, fm: bps.FacetMappingData)
+            transformer: TransformerClass, fm: bps.FacetMappingData)
         {
             this._colName = colName;
             this._requestedFacets = requestedFacets;
@@ -30,7 +30,7 @@ module beachParty
             this._fm = fm;
         }
 
-        setBinCountFromData(dataFrame: dataFrameClass, nv: NamedVectors, dataVector: NumericVector, fm: bps.FacetMappingData)
+        setBinCountFromData(dataFrame: DataFrameClass, nv: NamedVectors, dataVector: NumericVector, fm: bps.FacetMappingData)
         {
             /// before we do the facet binning, we need to peek ahead and see the number of keys in all of the data ----
             var dataType = dataVector.colType;
@@ -39,7 +39,7 @@ module beachParty
             {
                 facetCount = this._fm.breaks.length;
             }
-            else if (dataType == "string")
+            else if (dataType === "string")
             {
                 var facetCount = Math.min(this._maxCategoryFacets, dataVector.keyInfo.keyCount); 
                 facetCount = Math.min(this._requestedFacets, facetCount);
@@ -58,7 +58,7 @@ module beachParty
                 //---- number - cannot reply on this._requestedFacets - binHelperNum.createBins() might adjust (e.g., date) ----
                 //var facetCount = this._requestedFacets;
 
-                var results = binHelperNum.createBins(nv, "facet", this._requestedFacets, null, null, null, null, fm);
+                var results = BinHelperNum.createBins(nv, "facet", this._requestedFacets, null, null, null, null, fm);
                 var facetCount = results.bins.length;
             }
 
@@ -102,7 +102,6 @@ module beachParty
             if (customScreenBounds && customScreenBounds.length)
             {
                 var rowCount = 1;       // hard to say
-                var colCount = 1;       // hard to say
 
                 for (var i = 0; i < customScreenBounds.length; i++)
                 {
@@ -162,7 +161,6 @@ module beachParty
                 var cellWidth = (width - hMargin * (cellsPerRow - 1)) / cellsPerRow;
                 var cellHeight = (height - vMargin * (rowCount - 1)) / rowCount;
 
-                var margin2 = 2 * hMargin;
                 var yStart = yMax + 2*vMargin - labelHeight;
 
                 for (var i = 0; i < count; i++)

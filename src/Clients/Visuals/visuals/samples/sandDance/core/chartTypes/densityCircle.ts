@@ -5,11 +5,9 @@
 
 /// <reference path="../_references.ts" />
 
-var demoData: string;
-
 module beachParty
 {
-    export class densityCircle extends baseGlVisClass
+    export class DensityCircle extends BaseGlVisClass
     {
         //---- all facet results ----
         _xFacetBinResults = null;
@@ -35,7 +33,7 @@ module beachParty
 
         _binRelativeIndexes: number[];
 
-        constructor(view: dataViewClass, gl: any, chartState: any)
+        constructor(view: DataViewClass, gl: any, chartState: any)
         {
             super("densityCircle", view, gl, chartState);
         }
@@ -58,27 +56,27 @@ module beachParty
                 {
                     var data = nvFacetBuckets[i];
 
-                    var xResults = chartUtils.binTheDataForCount(dc, data, xm, "x");
+                    var xResults = ChartUtils.binTheDataForCount(dc, data, xm, "x");
                     this._xFacetBinResults.push(xResults);
 
-                    var yResults = chartUtils.binTheDataForCount(dc, data, ym, "y");
+                    var yResults = ChartUtils.binTheDataForCount(dc, data, ym, "y");
                     this._yFacetBinResults.push(yResults);
                 }
             }
             else
             {
-                var xResults = chartUtils.binTheDataForCount(dc, dc.nvData, xm, "x");
+                var xResults = ChartUtils.binTheDataForCount(dc, dc.nvData, xm, "x");
                 this._xFacetBinResults.push(xResults);
 
-                var yResults = chartUtils.binTheDataForCount(dc, dc.nvData, ym, "y");
+                var yResults = ChartUtils.binTheDataForCount(dc, dc.nvData, ym, "y");
                 this._yFacetBinResults.push(yResults);
             }
 
             //---- adjust X scale ----
-            dc.scales.x = chartUtils.adjustScaleForBin(dc.scales.x, xResults);
+            dc.scales.x = ChartUtils.adjustScaleForBin(dc.scales.x, xResults);
 
             //---- adjust Y scale ----
-            dc.scales.y = chartUtils.adjustScaleForBin(dc.scales.y, yResults);
+            dc.scales.y = ChartUtils.adjustScaleForBin(dc.scales.y, yResults);
 
             return dc.filteredRecordCount;
         }
@@ -101,8 +99,6 @@ module beachParty
         {
             //---- determine each item's position ("itemIndex") within its bin ----
             //---- for this part, we need to process the items in their sorted order ----
-
-            var isFiltered = (dc.layoutFilterVector != null);
             var filter = dc.layoutFilterVector;
 
             //var isFiltered = dc.data.isFilteredOutOfLayout();
@@ -114,9 +110,7 @@ module beachParty
             var binIndexesY = [];
             var binRelativeIndexes = [];
 
-            var binCounts = {}              // will use string as our 3d index   (facet, x, y)
-
-            var facetAssignments = (dc.facetHelper) ? dc.facetHelper.binResult().assignments : null;
+            var binCounts = {};              // will use string as our 3d index   (facet, x, y);
 
             for (var i = 0; i < filter.length; i++)
             {
@@ -165,9 +159,6 @@ module beachParty
                 maxCount = Math.max(count, maxCount);
             }
 
-            var width = dc.width;
-            var height = dc.height;
-
             var binsX = resultX.bins;
             var binsY = resultY.bins;
 
@@ -215,7 +206,6 @@ module beachParty
 
         preLayoutLoop(dc: DrawContext)
         {
-            var options = <sandDensityOptions>this._chartOptions;
             var nv = dc.nvData;
 
             //---- use pre-computed bins ----
@@ -284,7 +274,7 @@ module beachParty
             var width = dc.maxShapeSize * this.scaleColData(nv.size, recordIndex, dc.scales.size, 1);
 
             var height = width;
-            var depth = dc.defaultDepth2d   
+            var depth = dc.defaultDepth2d   ;
 
             var colorIndex = this.scaleColData(nv.colorIndex, recordIndex, dc.scales.colorIndex);
             var imageIndex = this.scaleColData(nv.imageIndex, recordIndex, dc.scales.imageIndex);
@@ -296,7 +286,6 @@ module beachParty
             };
         }
     }
-
 
 }
  

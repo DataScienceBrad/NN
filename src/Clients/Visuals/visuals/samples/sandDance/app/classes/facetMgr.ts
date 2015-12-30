@@ -7,7 +7,7 @@
 
 module beachPartyApp
 {
-    export class facetMgrClass extends beachParty.dataChangerClass 
+    export class FacetMgrClass extends beachParty.dataChangerClass 
     {
         _facetLayouts: bps.FacetLayoutInfo[];
 
@@ -41,7 +41,7 @@ module beachPartyApp
                     var divW = rootW.append("div")
                         .css("position", "absolute")
                         .css("text-align", "center")
-                        .bounds(rc.left, rc.top + 6, rc.width, rc.height)
+                        .bounds(rc.left, rc.top + 6, rc.width, rc.height);
 
                     var labelW = divW.append("span")
                         .addClass("textButton facetLabel")
@@ -51,7 +51,7 @@ module beachPartyApp
                             var elem = e.target;
                             var sp = <bps.SearchParams>elem.searchParams;
 
-                            appClass.instance.doSearch("Facet", sp.colName, sp.minValue, sp.maxValue, sp.searchType);
+                            AppClass.instance.doSearch("Facet", sp.colName, sp.minValue, sp.maxValue, sp.searchType);
                         });
 
                     labelW[0].searchParams = fl.searchParams;

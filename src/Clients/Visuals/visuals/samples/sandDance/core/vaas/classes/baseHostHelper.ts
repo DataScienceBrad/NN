@@ -14,10 +14,9 @@
 
 module bps
 {
-    var htmlTagProcessed = false;
     var nextRequestId = 1;
 
-    export class baseHostHelperClass
+    export class BaseHostHelperClass
     {
         _hookers: any = {};
         _iframe: HTMLIFrameElement;
@@ -45,15 +44,15 @@ module bps
 
             this._hostId = hostId;
 
-            var domain = baseHostHelperClass.getDomain(bpsDomain);
+            var domain = BaseHostHelperClass.getDomain(bpsDomain);
             this._domain = domain;
 
             //---- hook messages from vis ----
             window.addEventListener("message", (e) => { this.onMsgFromVis(e.data); });
             
             hostBus.addEventListener("message", (e) => { this.onMsgFromVis(e.data); });
-
-             var elem = <HTMLElement> document.getElementById(bpsChartOrIFrameId);
+// 
+//              var elem = <HTMLElement> document.getElementById(bpsChartOrIFrameId);
 //             if (!elem)
 //             {
 //                 throw "Error: cannot find element id=" + bpsChartOrIFrameId;
@@ -95,7 +94,7 @@ module bps
                 domainName = (!location.hostname) ? "localhost" : location.hostname;
             }
 
-            if (domainName.substr(0, 7) == "http://" || domainName.substr(0, 8) == "https://")
+            if (domainName.substr(0, 7) === "http://" || domainName.substr(0, 8) === "https://")
             {
                 var domain = domainName;
             }
@@ -205,7 +204,7 @@ module bps
         onMsgFromVis(strMsg)
         {
             //---- ignore FaceBook msgs from their iframe ----
-            var isForUs = (strMsg.slice && strMsg.slice(0, 4) != "_FB_");
+            var isForUs = (strMsg.slice && strMsg.slice(0, 4) !== "_FB_");
 
             if (isForUs)      
             {
@@ -237,11 +236,11 @@ module bps
             {
                 var key = msgBlock.visId + "." + msgBlock.msg;
 
-                if (msgBlock.msg == "engineLoaded")
+                if (msgBlock.msg === "engineLoaded")
                 {
                     this.onIFrameLoaded();
                 }
-                else if (msgBlock.msg == "clientAppLoaded")
+                else if (msgBlock.msg === "clientAppLoaded")
                 {
                     this.onIFrameLoaded();
                 }
@@ -289,7 +288,6 @@ module bps
             this.postVisMsg("subscribe", strEvent, returnData + "", oneTimeOnly + "");
         }
 
-
         /** <bps-chart> element has chart properties specified as custom attributes of the element. */
         private processBpsChartAttributes(elem: HTMLElement, iFrame: HTMLIFrameElement)
         {
@@ -299,7 +297,7 @@ module bps
             {
                 var attr = elem.attributes[i];
 
-                if (attr.name == "style")
+                if (attr.name === "style")
                 {
                     iFrame.setAttribute("style", attr.value);
                 }
@@ -351,8 +349,6 @@ module bps
                 elem.appendChild(iFrame);
                 isBpsTag = true;
             }
-
-            var visId = elem.getAttribute("id");
 
             if (!baseServerDir)
             {
@@ -407,12 +403,12 @@ module bps
             }
 
             //---- by default, expand iframe to fill parent element size (bps-chart) ----
-            if (iFrame.style.width == "")
+            if (iFrame.style.width === "")
             {
                 iFrame.style.width = "100%";
             }
 
-            if (iFrame.style.height == "")
+            if (iFrame.style.height === "")
             {
                 iFrame.style.height = "100%";
             }
@@ -423,6 +419,5 @@ module bps
             iFrame.src = src;
         }
     }
-
 
 }

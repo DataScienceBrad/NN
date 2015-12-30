@@ -5,11 +5,9 @@
 
 /// <reference path="../_references.ts" />
 
-var demoData: string;
-
 module beachParty
 {
-    export class transformWheelClass extends baseControlClass
+    export class TransformWheelClass extends BaseControlClass
     {
         //---- SVG elements ----
         _group: SVGGElement;
@@ -18,13 +16,13 @@ module beachParty
         _hBar: SVGLineElement;
 
         _svgParent: any;
-        _windowMgr: windowMgrClass;
+        _windowMgr: WindowMgrClass;
         _center: SVGRect;
         _partTouched = "";
         _isActive = true;
         _wheelSize = 0;
 
-        constructor(windowMgr: windowMgrClass, svgParent: any, wheelSize: number)
+        constructor(windowMgr: WindowMgrClass, svgParent: any, wheelSize: number)
         {
             super("transformerWheel", null);
 
@@ -33,7 +31,7 @@ module beachParty
 
             //---- create GROUP ----
             var groupW = vp.select(svgParent).append("g")
-                .addClass("transformWheel")
+                .addClass("transformWheel");
             this._group = groupW[0];
 
             this.show(false);       // initially hidden
@@ -51,7 +49,7 @@ module beachParty
             //---- CIRCLE ----
             var circle = groupW.append("circle")
                 .addClass("transformWheelCircle")
-                .attr("r", wheelSize/2)
+                .attr("r", wheelSize/2);
 
             this._circle = circle[0];
 
@@ -59,7 +57,7 @@ module beachParty
             var vBar = groupW.append("line")
                 .addClass("transformWheelVBar")
                 .from(0, -size2)
-                .to(0, size2)
+                .to(0, size2);
 
             this._vBar = vBar[0];
 
@@ -67,7 +65,7 @@ module beachParty
             var hBar = groupW.append("line")
                 .addClass("transformWheelHBar")
                 .from(-size2, 0)
-                .to(size2, 0)
+                .to(size2, 0);
 
             this._hBar = hBar[0];
 
@@ -81,7 +79,7 @@ module beachParty
             hBar.attach("pointerdown", (e) => this.onPartMouseDown(e, "hBar"));
             vBar.attach("pointerdown", (e) => this.onPartMouseDown(e, "vBar"));
 
-            circle.attach("mouseup", (e) => {this.onPartMouseUp(e, "circle")});
+            circle.attach("mouseup", (e) => {this.onPartMouseUp(e, "circle");});
             hBar.attach("mouseup", (e) => this.onPartMouseUp(e, "hBar"));
             vBar.attach("mouseup", (e) => this.onPartMouseUp(e, "vBar"));
 
@@ -90,7 +88,7 @@ module beachParty
 
         wheelSize(value?: number)
         {
-            if (arguments.length == 0)
+            if (arguments.length === 0)
             {
                 return value;
             }
@@ -102,7 +100,7 @@ module beachParty
 
         isActive(value?: boolean)
         {
-            if (arguments.length == 0)
+            if (arguments.length === 0)
             {
                 return this._isActive;
             }
@@ -140,7 +138,7 @@ module beachParty
 
             if (this._isActive)
             {
-                if (part == "vBar" || part == "hBar")
+                if (part === "vBar" || part === "hBar")
                 {
                     var pt = vp.events.mousePosition(e, this._group);
 
@@ -201,7 +199,7 @@ module beachParty
 
             vp.select(this._group)
                 .css("opacity", opacity + "")
-                .css("pointer-events", (value) ? "" : "none")
+                .css("pointer-events", (value) ? "" : "none");
         }
     }
 } 

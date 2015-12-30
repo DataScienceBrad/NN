@@ -5,18 +5,16 @@
 
 /// <reference path="../_references.ts" />
 
-var demoData: string;
-
 module beachParty
 {
     var useLinePrim = false;
 
-    export class linePlotClass extends baseGlVisClass
+    export class LinePlotClass extends BaseGlVisClass
     {
         _ptLast = null;
         _inverseSizeFactor = 0;
 
-        constructor(view: dataViewClass, gl: any, chartState: any)
+        constructor(view: DataViewClass, gl: any, chartState: any)
         {
             super("linePlotClass", view, gl, chartState);
 
@@ -57,7 +55,7 @@ module beachParty
             var sx = this.scaleColData(nv.x, i, scales.x);
             var sy = this.scaleColData(nv.y, i, scales.y);
             var z = -0;     // for correct rotation about Y axis
-            var depth = dc.defaultDepth2d      // test out 3d cube in a 2d shape
+            var depth = dc.defaultDepth2d;      // test out 3d cube in a 2d shape;
 
             if (useLinePrim)
             {
@@ -83,8 +81,7 @@ module beachParty
                     var x = result.cx;
                     var y = result.cy;
                     var width = this._inverseSizeFactor * result.width;     // prevent shader from scaling this width
-                    var height = .005;            // 1;
-                    var theta = result.theta;
+                    var height = .005;
 
                     ////---- rotate about z ----
                     //var sin = Math.sin(theta);

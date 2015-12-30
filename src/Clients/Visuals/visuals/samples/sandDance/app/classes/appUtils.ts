@@ -7,12 +7,12 @@
 
 module beachPartyApp
 {
-    export class appUtils
+    export class AppUtils
     {
         public static getLastNodeOfUrl(url: string)
         {
             var index = url.lastIndexOf("/");
-            if (index == -1)
+            if (index === -1)
             {
                 var index = url.lastIndexOf("\\");
             }

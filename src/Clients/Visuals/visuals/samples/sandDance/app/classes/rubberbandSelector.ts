@@ -17,7 +17,7 @@ module beachPartyApp
     
     Also, this control implements its own context menu (when the mouse is not moved for a certain time).  The goal
     is to eventually use the standard browser context menu event in its place. */
-    export class rubberBandSelectorClass extends beachParty.dataChangerClass      
+    export class RubberBandSelectorClass extends beachParty.dataChangerClass      
     {
         //---- state ----
         _id = nextSelectorId++;
@@ -56,7 +56,7 @@ module beachPartyApp
                 .id("rubberBandSelector")
                 .addClass("rubberBand")
                 .css("z-index", "9999")
-                .css("display", "none")
+                .css("display", "none");
 
             this._rubberBand = rubberBand;
 
@@ -95,14 +95,14 @@ module beachPartyApp
 
                 vp.select(canvas).attach("keydown", (e) =>
                 {
-                    if (e.keyCode == vp.events.keyCodes.escape)
+                    if (e.keyCode === vp.events.keyCodes.escape)
                     {
                         this.cancelBanding(true, e);
                     }
                 });
 
                 //canvas.appendChild(this._rubberBand.getNative());
-                vp.select("#myChart").append(this._rubberBand[0])
+                vp.select("#myChart").append(this._rubberBand[0]);
                 //document.body.appendChild(this._rubberBand[0]);
             }
         }
@@ -124,7 +124,7 @@ module beachPartyApp
             return {
                 x: sandDanceRect.width / sandDanceElement.offsetWidth,
                 y: sandDanceRect.height / sandDanceElement.offsetHeight
-            }
+            };
         }
 
         setRubberBand(rc)
@@ -144,14 +144,14 @@ module beachPartyApp
                 .css("top", top + "px")
                 .width(rc.width + "px")
                 .height(rc.height + "px")
-                .css("display", "block")
+                .css("display", "block");
         }
 
         showRubberBand(value: boolean)
         {
             if (this._rubberBand)
             {
-                this._rubberBand.css("display", (value) ? "block" : "none")
+                this._rubberBand.css("display", (value) ? "block" : "none");
             }
         }
 
@@ -200,7 +200,7 @@ module beachPartyApp
             //---- click on inactive window? ----
             if (!this._isEnabled)
             {
-                if (this._mouseDownOrigin != "outsideChart")
+                if (this._mouseDownOrigin !== "outsideChart")
                 {
                     this.handleClickOnInactiveView(evt);
                 }
@@ -290,11 +290,10 @@ module beachPartyApp
 
             if (this._isEnabled)
             {
-                if (evt.which == 1)
+                if (evt.which === 1)
                 {
                     this._isLeftButtonDown = false;
                 }
-
 
                 /// this is triggered for all window mouse move events, so its important to only look at them
                 /// when we have started a banding operation.
@@ -313,7 +312,7 @@ module beachPartyApp
 
                         var toggle = this.isToggleKey(evt);
 
-                        if (evt.type == "touchend")
+                        if (evt.type === "touchend")
                         {
                             var ptCurrent = this.changedTouchPosition(evt, null);
                         }
@@ -323,9 +322,6 @@ module beachPartyApp
                         }
 
                         var rcBand = vp.geom.rectFromPoints(ptCurrent, this._ptMouseDown);
-
-                        //---- adjust rcBand so it matches actual location ----
-                        var rect = this._dragSelectCanvas.getBoundingClientRect();
 
                         // vp.utils.debug("rcBand: width=" + rcBand.width + ", height=" + rcBand.height);
 
@@ -392,7 +388,7 @@ module beachPartyApp
                 y -= elem.offsetTop;
             }
 
-            return { x: x, y: y }
+            return { x: x, y: y };
         }
 
         touchPosition(e, elem?: HTMLElement) 
@@ -406,7 +402,7 @@ module beachPartyApp
                 y -= elem.offsetTop;
             }
 
-            return { x: x, y: y }
+            return { x: x, y: y };
         }
 
         onRubberMove(evt)
@@ -428,7 +424,7 @@ module beachPartyApp
                     }
                     else
                     {
-                        if (evt.type == "touchmove")
+                        if (evt.type === "touchmove")
                         {
                             var ptCurrent = this.touchPosition(evt, null);
                         }
@@ -499,7 +495,7 @@ module beachPartyApp
         {
             if (this._isEnabled)
             {
-                this.onRubberDown(e)
+                this.onRubberDown(e);
             }
         }
 
@@ -507,7 +503,7 @@ module beachPartyApp
         {
             vp.utils.debug("--> rubberBandSelector.onDown: id=" + this._id + ",isEnabled=" + this._isEnabled);
 
-            if ((evt.which == 1) || (evt.type == "touchstart"))
+            if ((evt.which === 1) || (evt.type === "touchstart"))
             {
                 if (!evt.ctrlKey)         // for now, CTRL prevents dragging/selecting
                 {
@@ -515,7 +511,7 @@ module beachPartyApp
                 }
             }
 
-            if (evt.which == 3) 
+            if (evt.which === 3) 
             {
                 this._isRightButtonDown = true;
             }
@@ -529,13 +525,11 @@ module beachPartyApp
                 }
                 else if (this._isEnabled)
                 {
-                    var toggle = this.isToggleKey(evt);
-
                     //---- prevent text selection by browser during our drag operation (for Chrome, FireFox) ----
                     //enableElementSelection(document.body, false);
 
                     //---- use chart-relative point & then add chart-relative offset of each series ----
-                    if (evt.type == "touchstart")
+                    if (evt.type === "touchstart")
                     {
                         this._ptMouseDown = this.touchPosition(evt, null);
                     }
@@ -614,10 +608,10 @@ module beachPartyApp
 
         /// public property: isEnabled
         isEnabled(): boolean;
-        isEnabled(value: boolean): rubberBandSelectorClass;
+        isEnabled(value: boolean): RubberBandSelectorClass;
         isEnabled(value?: boolean): any
         {
-            if (arguments.length == 0)
+            if (arguments.length === 0)
             {
                 return this._isEnabled;
             }
@@ -635,11 +629,11 @@ module beachPartyApp
         }
 
         dragSelectElement(): HTMLElement;
-        dragSelectElement(value: HTMLElement): rubberBandSelectorClass;
+        dragSelectElement(value: HTMLElement): RubberBandSelectorClass;
         dragSelectElement(value?: HTMLElement): any
         {
 
-            if (arguments.length == 0)
+            if (arguments.length === 0)
             {
                 return this._dragSelectCanvas;
             }
@@ -650,8 +644,8 @@ module beachPartyApp
 
     }
 
-    export function createRubberBandSelector(canvas: HTMLElement): rubberBandSelectorClass
+    export function createRubberBandSelector(canvas: HTMLElement): RubberBandSelectorClass
     {
-        return new rubberBandSelectorClass(canvas);
+        return new RubberBandSelectorClass(canvas);
     }
 } 

@@ -10,9 +10,9 @@ module beachPartyApp
     /** this class is designed around an initial app state being pushed after the app init process is complete.  This becomes the
      * permanent _stack[0] entry (which is used to "undo" the first user action).
      */
-    export class undoMgrClass extends beachParty.dataChangerClass
+    export class UndoMgrClass extends beachParty.dataChangerClass
     {
-        static instance: undoMgrClass;
+        static instance: UndoMgrClass;
 
         _stack: UndoEntry[] = [];
         _index = -1;
@@ -23,7 +23,7 @@ module beachPartyApp
         {
             super();
 
-            undoMgrClass.instance = this;
+            UndoMgrClass.instance = this;
         }
 
         getCurrentInsight(): bps.InsightData
@@ -102,7 +102,6 @@ module beachPartyApp
         getRedoTooltip()
         {
             var tip = "Redo the previously undone action (currently unavailable)";
-
 
             if (this._index < this._stack.length - 1)
             {

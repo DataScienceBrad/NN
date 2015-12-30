@@ -7,7 +7,7 @@
 
 module beachPartyApp
 {
-    export class numSpreaderClass        //extends basePanelClass
+    export class NumSpreaderClass        //extends basePanelClass
     {
         _root: HTMLElement;
         _colNameElem: HTMLSpanElement;
@@ -40,7 +40,7 @@ module beachPartyApp
             var rootW = vp.select(parentElem)
                 .append("span")
                 .addClass("numSpreaderPanel")
-                .css("height", "15px")
+                .css("height", "15px");
 
             ////---- add the PERCENT TEXT ----
             //var sliderTextW = rootW.append("span")
@@ -66,7 +66,7 @@ module beachPartyApp
                 .css("position", "relative")
                 .css("top", "3px")
                 .attach("change", (e) => this.onSliderChange())
-                .attach("mouseup", (e) => this.onRangeClick(e))
+                .attach("mouseup", (e) => this.onRangeClick(e));
 
             ////---- add the COL NAME ----
             //var colNameW = rootW.append("span")
@@ -87,7 +87,7 @@ module beachPartyApp
                 .css("position", "relative")
                 .css("top", "-2px")
                 .title("Search in specified value range")
-                .attach("click", (e) => this.onRangeClick(e))
+                .attach("click", (e) => this.onRangeClick(e));
 
             this._root = rootW[0];
             //this._colNameElem = colNameW[0];
@@ -159,7 +159,7 @@ module beachPartyApp
             var vd = valueDelta / 50;
             var decimals = (vd >= 1) ? 0 : (-Math.ceil(Math.log10(vd)));
 
-            if (percent == 0)
+            if (percent === 0)
             {
                 decimals = undefined;
             }

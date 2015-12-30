@@ -18,6 +18,6 @@ module sandDance {
             [
                 { text: "", tip: "The error message", dataName: "currentErrorMsg", width: "300px", readOnly: true },
             ]
-        }
+        };
     };
 }

@@ -9,7 +9,7 @@ module beachParty
 {
     var bestCache: any = {};        // caches pts for layout consistency between changes
 
-    export class bestPoisson
+    export class BestPoisson
     {
         grid: any[];
         cellWidth: number;
@@ -104,7 +104,7 @@ module beachParty
                 var pt = [rc.left + width * Math.random(), rc.top + height * Math.random()];
                 var dist = this.findClosest(pts, pt);
 
-                if (i == 0 || dist > bestDist)
+                if (i === 0 || dist > bestDist)
                 {
                     bestPt = pt;
                     bestDist = dist;

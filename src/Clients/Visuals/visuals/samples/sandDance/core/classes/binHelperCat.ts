@@ -7,18 +7,17 @@
 
 module beachParty
 {
-    export class binHelperCat
+    export class BinHelperCat
     {
         public static createCatBins(nv: NamedVectors, colName: string, maxCategoryBins: number,
-            addIndexes: boolean, buildAssignments: boolean, binSortOptions?: binSortOptionsClass, md?: bps.MappingData): BinResult
+            addIndexes: boolean, buildAssignments: boolean, binSortOptions?: BinSortOptionsClass, md?: bps.MappingData): BinResult
         {
             var bins = [];
             var assignments = [];
 
             var colDataInfo = <NumericVector> nv[colName];
-            var typeName = colDataInfo.colType;
             var filter = (nv.layoutFilter) ? nv.layoutFilter.values : null;
-            var isUsingTags = (md && md.tagDelimiter != undefined && md.tagDelimiter != bps.TagDelimiter.none);
+            var isUsingTags = (md && md.tagDelimiter !== undefined && md.tagDelimiter !== bps.TagDelimiter.none);
             var keyList = <string[]>null;
             var keysSorted = true;
 
@@ -59,7 +58,7 @@ module beachParty
             }
 
             //---- now sort keys as needed ----
-            var sortByKeyNames = (binSortOptions == undefined || binSortOptions.sortDirection == bps.BinSorting.none);
+            var sortByKeyNames = (binSortOptions === undefined || binSortOptions.sortDirection === bps.BinSorting.none);
             if (sortByKeyNames)
             {
                 if (!keysSorted)
@@ -115,7 +114,7 @@ module beachParty
                 var name = keyList[i];
                 var isOther = false;
 
-                if ((i == binCount - 1) && (useOtherBin))
+                if ((i === binCount - 1) && (useOtherBin))
                 {
                     //name = "Other";
                     isOther = true;
@@ -207,19 +206,19 @@ module beachParty
 
                         //var binIndex = (keyIndexes[key] == undefined) ? -1 : <number>keyIndexes[key]; //var binIndex = keys.indexOf(key);
 
-                        if (binIndex >= binCount || binIndex == -1)
+                        if (binIndex >= binCount || binIndex === -1)
                         {
                             //---- put in last (OTHER) bin ----
                             binIndex = binCount - 1;
                         }
 
-                        if (binIndex == -1)
+                        if (binIndex === -1)
                         {
                             // If the items have been filtered, then keysByRow will not contain an entry for the filtered-out items.
                             // As a result, 'key' will be undefined and indexOf(key) will return -1.  Since there is no bin for this
                             // item, there is nothing left to do. 
                             // See bug #9792.
-                            if (byVector[i] == -1) // Confirms that the item is filtered out
+                            if (byVector[i] === -1) // Confirms that the item is filtered out
                             {
                                 continue;
                             }
@@ -259,8 +258,7 @@ module beachParty
             return result;
         }
 
-
-        static groupTags(nv: NamedVectors, colName: string, filter: any, md: bps.MappingData, binSortOptions: binSortOptionsClass,
+        static groupTags(nv: NamedVectors, colName: string, filter: any, md: bps.MappingData, binSortOptions: BinSortOptionsClass,
             keys: string[], assignments: any[], buildAssignments: boolean)
         {
             var groups = {};
@@ -311,13 +309,13 @@ module beachParty
             return groups;
         }
 
-        static groupRecordsByKey(nv: NamedVectors, colName: string, filter: any, binSortOptions?: binSortOptionsClass)
+        static groupRecordsByKey(nv: NamedVectors, colName: string, filter: any, binSortOptions?: BinSortOptionsClass)
         {
             var groups = {};
             var colDataInfo = <NumericVector> nv[colName];
             var numVector = colDataInfo.values;
             var typeName = colDataInfo.colType;
-            var isString = (typeName == "string");
+            var isString = (typeName === "string");
             var keysByRow = (colDataInfo.keyInfo) ? colDataInfo.keyInfo.keysByRow : null;
 
             var aggColName = (binSortOptions) ? (binSortOptions.sumByColumn) : null;
@@ -326,7 +324,7 @@ module beachParty
                 var aggColDataInfo = <NumericVector> nv[aggColName];
                 var aggNumVector = aggColDataInfo.values;
                 var aggTypeName = aggColDataInfo.colType;
-                var aggIsString = (aggTypeName == "string");
+                var aggIsString = (aggTypeName === "string");
                 var aggKeysByRow = (aggColDataInfo.keyInfo) ? aggColDataInfo.keyInfo.keysByRow : null;
             }
 
@@ -348,7 +346,7 @@ module beachParty
                     }
 
                     var list = groups[groupValue];
-                    if (list == undefined)
+                    if (list === undefined)
                     {
                         list = [];
                         groups[groupValue] = list;
@@ -361,10 +359,10 @@ module beachParty
             return groups;
         }
 
-        static sortByContent(keyList: string[], groups: any, binSortOptions: binSortOptionsClass)
+        static sortByContent(keyList: string[], groups: any, binSortOptions: BinSortOptionsClass)
         {
-            var count = (binSortOptions.sortByAggregateType == "count");
-            var sum = (binSortOptions.sortByAggregateType == "sum");
+            var count = (binSortOptions.sortByAggregateType === "count");
+            var sum = (binSortOptions.sortByAggregateType === "sum");
 
             //---- compute agg value for each list in group, as indexed by keyList ----
             for (var i = 0; i < keyList.length; i++)
@@ -388,9 +386,9 @@ module beachParty
             }
 
             //---- sort the keyList by "aggValue" ----
-            var newKeyList = keyList.slice(0)           // copy before sorting (protect original sources)
+            var newKeyList = keyList.slice(0);           // copy before sorting (protect original sources);
 
-            if (binSortOptions.sortDirection == bps.BinSorting.ascending)
+            if (binSortOptions.sortDirection === bps.BinSorting.ascending)
             {
                 newKeyList.sort((xx, yy) =>
                 {
@@ -402,7 +400,7 @@ module beachParty
                     return (0);
                 });
             }
-            else if (binSortOptions.sortDirection == bps.BinSorting.descending)
+            else if (binSortOptions.sortDirection === bps.BinSorting.descending)
             {
                 newKeyList.sort((xx, yy) =>
                 {
@@ -419,4 +417,3 @@ module beachParty
         }
     }
 }
-

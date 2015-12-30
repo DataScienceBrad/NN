@@ -24,7 +24,7 @@ module beachParty
         separator,
     }
 
-    export class menuInfoClass
+    export class MenuInfoClass
     {
         name: string;               // text displayed for menu
         menuId: string;             // parent.child name
@@ -54,7 +54,7 @@ module beachParty
         }
     }
 
-    export class menuSeparator extends menuInfoClass
+    export class MenuSeparator extends MenuInfoClass
     {
         constructor()
         {
@@ -62,10 +62,10 @@ module beachParty
         }
     }
 
-    export class propertyInfoClass extends menuInfoClass
+    export class PropertyInfoClass extends MenuInfoClass
     {
         propertyName: string;
-        dataMgr: dataChangerClass;
+        dataMgr: DataChangerClass;
 
         constructor(name: string, tooltip: string, actionType: ActionType, propertyName: string, dataMgr: any, isLayoutHorizontal?: boolean, disabled?: boolean)
         {
@@ -84,7 +84,7 @@ module beachParty
         }
     }
 
-    export class pushButtonInfoClass extends menuInfoClass
+    export class PushButtonInfoClass extends MenuInfoClass
     {
         actionCallback: any;
 
@@ -96,11 +96,11 @@ module beachParty
         }
     }
 
-    export class subMenuInfoClass extends menuInfoClass
+    export class SubMenuInfoClass extends MenuInfoClass
     {
-        menuGroup: menuInfoClass[];
+        menuGroup: MenuInfoClass[];
 
-        constructor(name: string, tooltip: string, actionType: ActionType, menuGroup: menuInfoClass[], isLayoutHorizontal?: boolean, disabled?: boolean)
+        constructor(name: string, tooltip: string, actionType: ActionType, menuGroup: MenuInfoClass[], isLayoutHorizontal?: boolean, disabled?: boolean)
         {
             super(name, tooltip, actionType, isLayoutHorizontal, disabled);
 
@@ -108,7 +108,7 @@ module beachParty
         }
     }
 
-    export class gaugeInfoClass extends propertyInfoClass
+    export class GaugeInfoClass extends PropertyInfoClass
     {
         min: number;
         max: number;

@@ -7,7 +7,7 @@
 
 module beachPartyApp
 {
-    export class facetLegendClass extends beachParty.dataChangerClass
+    export class FacetLegendClass extends beachParty.dataChangerClass
     {
         _fm: bps.MappingData;
 
@@ -19,7 +19,7 @@ module beachPartyApp
             super();
 
             this._fm = cm;
-            var root = vp.select("#" + rootName)
+            var root = vp.select("#" + rootName);
 
             //---- add colName as TITLE ----
             var title = root.append("span")
@@ -30,7 +30,6 @@ module beachPartyApp
                 {
                     this.onDataChanged("facetColPickerRequest");
                 });
-
 
             this._rootElem = root[0];
             this._titleElem = title[0];
@@ -57,10 +56,10 @@ module beachPartyApp
             var name = cm.colName;
 
             vp.select(this._rootElem)
-                .css("display", (name) ? "block" : "none")
+                .css("display", (name) ? "block" : "none");
 
             vp.select(this._titleElem)
-                .text(name)
+                .text(name);
         }
     }
 }

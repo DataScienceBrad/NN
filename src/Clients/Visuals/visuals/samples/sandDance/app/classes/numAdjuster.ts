@@ -7,9 +7,7 @@
 
 module beachPartyApp
 {
-    var gaugeCircleRadius = 50;
-
-    export class numAdjusterClass extends beachParty.dataChangerClass
+    export class NumAdjusterClass extends beachParty.dataChangerClass
     {
         _root: HTMLElement;
         _nameText: HTMLElement;
@@ -130,33 +128,33 @@ module beachPartyApp
             var backgrondClassName = "";
             var data = null;
 
-            if (this._style == AdjusterStyle.left)
+            if (this._style === AdjusterStyle.left)
             {
                 data = leftData;
                 backgrondClassName = "fnAdjustDialLeft";
             }
-            else if (this._style == AdjusterStyle.top)
+            else if (this._style === AdjusterStyle.top)
             {
                 data = topData;
                 backgrondClassName = "fnAdjustDialTop";
             }
-            else if (this._style == AdjusterStyle.right)
+            else if (this._style === AdjusterStyle.right)
             {
                 data = rightData;
                 backgrondClassName = "fnAdjustDialRight";
             }
-            else if (this._style == AdjusterStyle.bottom)
+            else if (this._style === AdjusterStyle.bottom)
             {
                 data = bottomData;
                 backgrondClassName = "fnAdjustDialBottom";
             }
-            else if (this._style == AdjusterStyle.bottomInPanel)
+            else if (this._style === AdjusterStyle.bottomInPanel)
             {
                 data = bottomInPanelData;
                 backgrondClassName = "fnAdjustDialBottom";
                 inPanel = true;
             }
-            else if (this._style == AdjusterStyle.topInPanel)
+            else if (this._style === AdjusterStyle.topInPanel)
             {
                 data = topInPanelData;
                 backgrondClassName = "fnAdjustDialTop";
@@ -165,11 +163,11 @@ module beachPartyApp
 
             //---- add SEMI-CIRCLE image ----
             var styleForImg = this._style;
-            if (this._style == AdjusterStyle.bottomInPanel)
+            if (this._style === AdjusterStyle.bottomInPanel)
             {
                 styleForImg = AdjusterStyle.bottom;
             }
-            else if (this._style == AdjusterStyle.topInPanel)
+            else if (this._style === AdjusterStyle.topInPanel)
             {
                 styleForImg = AdjusterStyle.top;
             }
@@ -185,7 +183,7 @@ module beachPartyApp
                 {
                     //---- prevent drag of icon ----
                     e.preventDefault();
-                })
+                });
 
             //---- add NAME ----
             var nameW = root.append("span")
@@ -194,7 +192,7 @@ module beachPartyApp
                 .css("position", "relative")
                 .css("top", data.nameY + "px")          // "-4px")
                 .css("width", "40px")
-                .css("text-align", "center")
+                .css("text-align", "center");
 
             //---- add VALUE TEXT ----
             var valueW = root.append("span")
@@ -202,12 +200,12 @@ module beachPartyApp
                 .text(this._value + "")
                 .css("position", "absolute")
                 .css("left", data.valueX + "px")
-                .css("top", data.valueY + "px")
+                .css("top", data.valueY + "px");
 
-            if (this._style == AdjusterStyle.topInPanel || this._style == AdjusterStyle.bottomInPanel)
+            if (this._style === AdjusterStyle.topInPanel || this._style === AdjusterStyle.bottomInPanel)
             {
                 valueW
-                    .addClass("numAdjusterInPanel")
+                    .addClass("numAdjusterInPanel");
             }
 
             this._xCircle = data.ptX;
@@ -217,7 +215,7 @@ module beachPartyApp
             //---- add DRAG LINE ----
             var lineW = root.append("span")
                 .addClass("numAdjusterLine")
-                .css("position", "absolute")
+                .css("position", "absolute");
 
             this._imgCircle = imgW[0];
             this._nameText = nameW[0];
@@ -269,7 +267,7 @@ module beachPartyApp
                 .css("width", width + "px")
                 .css("left", left + "px")
                 .css("top", top + "px")
-                .transform(rotateStr)
+                .transform(rotateStr);
         }
 
         updateValueText()
@@ -291,7 +289,7 @@ module beachPartyApp
                 this._ptDown = vp.events.mousePosition(e);
 
                 vp.select(this._valueText)
-                    .addClass("numAdjusterActiveValue")
+                    .addClass("numAdjusterActiveValue");
 
                 // vp.events.setCaptureWindow((e) => this.onMouseMove(e), (e) => this.onMouseUp(e)/*, ["myChart"]*/);
 
@@ -335,7 +333,7 @@ module beachPartyApp
 
                     vp.select(this._draggingLine)
                     //.to(pt.x, pt.y)
-                        .css("display", "block")
+                        .css("display", "block");
 
                     //---- calculate angle from pt to center of circle ----
                     var theta = Math.atan2(yDiff, xDiff);
@@ -433,10 +431,10 @@ module beachPartyApp
             vp.events.cancelEventDefault(e);
 
             vp.select(this._valueText)
-                .removeClass("numAdjusterActiveValue")
+                .removeClass("numAdjusterActiveValue");
 
             vp.select(this._draggingLine)
-                .css("display", "none")
+                .css("display", "none");
 
             this.onDataChanged("value");
             this.onDataChanged("valueMouseUp");

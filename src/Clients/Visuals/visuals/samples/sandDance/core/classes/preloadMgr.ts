@@ -8,7 +8,7 @@
 module beachParty
 {
     /// Note: dataFrame does NOT change the original data, but it cache numeric vectors on-demand for each column. 
-    export class preloadMgrClass 
+    export class PreloadMgrClass 
     {
         private _preloads: bps.Preload[];
 
@@ -31,7 +31,7 @@ module beachParty
             for (var i = 0; i < this._preloads.length; i++)
             {
                 var pl = this._preloads[i];
-                if (pl.name.toLowerCase() == name)
+                if (pl.name.toLowerCase() === name)
                 {
                     preload = pl;
                     break;
@@ -45,7 +45,7 @@ module beachParty
         {
             var preloads: bps.Preload[] = [];
             this._preloads = preloads;
-            var isNextEdition = (appMgrClass.current._edition != "client");
+            var isNextEdition = (AppMgrClass.current._edition !== "client");
 
             //---- DEMOVOTE ----
             var demoVote = new bps.Preload("DemoVote", "demovote.txt", "US Census data merged with 2012 Election results", "Longitude", "Latitude", "Scatter");

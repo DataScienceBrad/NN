@@ -5,23 +5,21 @@
 
 /// <reference path="../_references.ts" />
 
-var demoData: string;
-
 module beachParty
 {
-    export class chartFrameHelperClass extends dataChangerClass   
+    export class ChartFrameHelperClass extends DataChangerClass   
     {
          _root: SVGGElement;
 
         _chartFrame: vp.chartFrame.chartFrameEx;
         _chartFrameData: bps.ChartFrameData;
-        _dataMgr: dataMgrClass;
-        _transformer: transformerClass;
+        _dataMgr: DataMgrClass;
+        _transformer: TransformerClass;
 
         _xTickBoxElements: HTMLElement[];
         _yTickBoxElements: HTMLElement[];
 
-        constructor(parent: SVGGElement, dataMgr: dataMgrClass, transformer: transformerClass)
+        constructor(parent: SVGGElement, dataMgr: DataMgrClass, transformer: TransformerClass)
         {
             super();
 
@@ -73,7 +71,6 @@ module beachParty
             this.doSearch(e, "Y");
         }
 
-
         chartFrameRoot()
         {
             return this._root;
@@ -87,68 +84,65 @@ module beachParty
             var xData = vp.chartFrame.createAxisData(vp.scales.createLinear());
             var yData = vp.chartFrame.createAxisData(vp.scales.createLinear());
 
-            //var daFrame = plotServices.currentTheme().getDrawingAttributes("chartFrame");
-            var daFrame = null;     
-
             vp.select(svgParent)
-                .clear()
+                .clear();
 
             //---- create CHART FRAME control ----
-            var chartFrame = vp.chartFrame.createChartFrameEx(svgParent, xData, yData)
+            var chartFrame = vp.chartFrame.createChartFrameEx(svgParent, xData, yData);
 
             this._chartFrame = chartFrame;
         }
 
         /** converts a WORLD space scale to a SCREEN space scale. */
-        cloneScale(oldScale: vp.scales.baseScale, attr: glUtils.glAttributeClass, rangeMin: number, rangeMax: number)
+        cloneScale(oldScale: vp.scales.baseScale, attr: glUtils.GlAttributeClass, rangeMin: number, rangeMax: number)
         {
             var myScale = null;
             var scaleType = bps.MappingSpread.normal;
             var oldScaleType = oldScale.scaleType();
 
-            if (oldScaleType == vp.scales.ScaleType.linear)
+            if (oldScaleType === vp.scales.ScaleType.linear)
             {
-                if (scaleType == bps.MappingSpread.low)
+                if (scaleType === bps.MappingSpread.low)
                 {
-                    myScale = vp.scales.createLowBias()
+                    myScale = vp.scales.createLowBias();
                 }
-                else if (scaleType == bps.MappingSpread.high)
+                else if (scaleType === bps.MappingSpread.high)
                 {
-                    myScale = vp.scales.createHighBias()
+                    myScale = vp.scales.createHighBias();
                 }
                 else 
                 {
-                    myScale = vp.scales.createLinear()
+                    myScale = vp.scales.createLinear();
                 }
 
                 myScale
                     .domainMin(oldScale.domainMin())
                     .domainMax(oldScale.domainMax())
                     .rangeMin(rangeMin)
-                    .rangeMax(rangeMax)
+                    .rangeMax(rangeMax);
             }
-            else if (oldScaleType == vp.scales.ScaleType.dateTime)
+            else if (oldScaleType === vp.scales.ScaleType.dateTime)
             {
 
                 myScale = vp.scales.createDate()
                     .domainMin(oldScale.domainMin())
                     .domainMax(oldScale.domainMax())
                     .rangeMin(rangeMin)
-                    .rangeMax(rangeMax)
+                    .rangeMax(rangeMax);
             }
             else        // category
             {
                 var catKeys = vp.utils.keys(oldScale.categoryKeys());
 
-                if (oldScaleType == vp.scales.ScaleType.categoryIndex)
+                if (oldScaleType === vp.scales.ScaleType.categoryIndex)
                 {
                     myScale = vp.scales.createCategoryIndex()
-                        .categoryKeys(catKeys)
+                        .categoryKeys(catKeys);
                 }
-                else if (oldScaleType == vp.scales.ScaleType.categoryKey)
+                else if (oldScaleType === vp.scales.ScaleType.categoryKey)
                 {
                     myScale = vp.scales.createCategoryKey()
-                        .categoryKeys(catKeys)
+                        .categoryKeys(catKeys);
                 }
                 else
                 {
@@ -156,7 +150,7 @@ module beachParty
                 }
 
                 myScale
-                    .range(rangeMin, rangeMax)
+                    .range(rangeMin, rangeMax);
             }
 
             //---- convert expandSpace from 3D units to pixels ----
@@ -169,14 +163,14 @@ module beachParty
             return myScale;
         }
 
-        createAxisData(scale: vp.scales.baseScale, attr: glUtils.glAttributeClass, rangeMin: number, rangeMax: number)
+        createAxisData(scale: vp.scales.baseScale, attr: glUtils.GlAttributeClass, rangeMin: number, rangeMax: number)
         {
             /// CAUTION: "scale" was built in world space, but rangeMin/rangeMax are in screen pixels.
             
             //---- todo: put a real, user-controllable value here ----
             var tickCount = 9;      // scale.getActualBreaks().length;
 
-            if (scale.scaleType() == vp.scales.ScaleType.categoryIndex)
+            if (scale.scaleType() === vp.scales.ScaleType.categoryIndex)
             {
                 tickCount++;
             }
@@ -192,7 +186,7 @@ module beachParty
             //---- support case where we are scaling with numbers, but have a formatting string from Excel ----
             //---- in this case, ignore the Excel format, and do our own local formatting because when user has filtered view, ----
             //---- we can provide a closer fit to the values shown.  We may revisit this in the future ----
-            if (formatter && formatter._colType == "number")
+            if (formatter && formatter._colType === "number")
             {
                 //---- remove the "General" formatter and create a smarter local formatter below ----
                 formatter = null;
@@ -221,14 +215,14 @@ module beachParty
                 //---- when breaks are specified, they override domainMin/domainMax specifications ----
                 newScale
                     .domainMin(breaks[0])
-                    .domainMax(breaks[len - 1])
+                    .domainMax(breaks[len - 1]);
             }
             else if (anyScale._tickCount)
             {
                 tickCount = anyScale._tickCount;
             }
 
-            var isCategory = (scale.scaleType() == vp.scales.ScaleType.categoryIndex || scale.scaleType() == vp.scales.ScaleType.categoryKey);
+            var isCategory = (scale.scaleType() === vp.scales.ScaleType.categoryIndex || scale.scaleType() === vp.scales.ScaleType.categoryKey);
             if (isCategory)
             {
                 var catKeys = scale.categoryKeys();
@@ -291,11 +285,11 @@ module beachParty
             var yAxisData = this.createAxisData(scales.y, yAttr, height, 0);
 
             vp.select(this._root)
-                .css("opacity", cfd.opacity + "")
+                .css("opacity", cfd.opacity + "");
 
             chartFrame
                 .xAxisData(xAxisData)
-                .yAxisData(yAxisData)
+                .yAxisData(yAxisData);
 
             var isGridVisible = (cfd.xAxis.drawGridLines || cfd.yAxis.drawGridLines);
 
@@ -311,28 +305,25 @@ module beachParty
                 .isTopAxisVisible(false)
                 .isRightAxisVisible(false)
                 .isGridLinesVisible(isGridVisible && !hideAxes)
-                .axesOnOutside(usingFacets)
+                .axesOnOutside(usingFacets);
 
             if (isGridVisible)
             {
                 chartFrame.gridLines()
                     .isXVisible(cfd.xAxis.drawGridLines)
-                    .isYVisible(cfd.yAxis.drawGridLines)
+                    .isYVisible(cfd.yAxis.drawGridLines);
             }
 
             var chartType = dc.toChartType;
 
             if (!hideAxes)
             {
-                var isLeft = true;
-                var tickSize = 16;
-
                 var areLeftLabelsClickable = true;      // (this.clickableLabelGroups().indexOf("leftAxis") != -1);
                 var areBottomLabelsClickable = true;    // (this.clickableLabelGroups().indexOf("bottomAxis") != -1);
 
                 //---- set options on LEFT AXIS ----
                 var leftAxis = chartFrame.leftAxis()
-                    .labelOverflow(vp.chartFrame.LabelOverflow.ellipses)
+                    .labelOverflow(vp.chartFrame.LabelOverflow.ellipses);
 
                 var xBinResults = (scales.x) ? scales.x._binResults : null;
                 var yBinResults = (scales.y) ? scales.y._binResults : null;
@@ -341,10 +332,9 @@ module beachParty
                 {
                     var yCol = (dc.yCalcName) ? dc.yCalcName: dc.nvData.y.colName;
 
-                    var yIsCat = (dc.nvData.y.colType == "string");     // || (<any>dc.scales.y)._useCategoryForBins);
+                    var yIsCat = (dc.nvData.y.colType === "string");     // || (<any>dc.scales.y)._useCategoryForBins);
 
                     var yLast = null;
-                    var yLastIndex = yAxisData.tickCount() - 1;
 
                     var showTickBoxes = true;
                     this._yTickBoxElements = [];
@@ -358,7 +348,7 @@ module beachParty
                         .isTickBoxesVisible(showTickBoxes) 
                         .onShade((element, record, index, isNew) =>
                         {
-                            if (index == 0) 
+                            if (index === 0) 
                             {
                                 yLast = null;
                             }
@@ -371,7 +361,7 @@ module beachParty
                                         .attach("click", (e) => this.doSearch(e, "Y"))
                                         .css("cursor", "pointer")
                                         .attr("simpleHighlight", "true")
-                                        .addClass("clickableAxisLabel")
+                                        .addClass("clickableAxisLabel");
 
                                     yLast = utils.prepElementForSearch(element, yCol, scales.y, yBinResults, index, yLast, yIsCat, record,
                                         "label");
@@ -387,7 +377,7 @@ module beachParty
                                         var itemCount = bin.count;
                                         tickBarTooltip = "Count: " + vp.formatters.formatNumber(itemCount, "0,##0");
 
-                                        if (chartType == "barSumClass")
+                                        if (chartType === "barSumClass")
                                         {
                                             var itemSum = bin.sum;      //  this.computeBinSum(dc, "y", bin.rowIndexes);
 
@@ -398,7 +388,7 @@ module beachParty
 
                                     vp.select(element)
                                         .attach("click", (e) => this.doSearch(e, "Y"))
-                                        .title(tickBarTooltip)
+                                        .title(tickBarTooltip);
 
                                     yLast = utils.prepElementForSearch(element, yCol, scales.y, yBinResults, index, yLast, yIsCat, record,
                                         "tickBox");
@@ -409,29 +399,26 @@ module beachParty
                         });
                 }
 
-                var isBottom = true;
-
                 //---- set options on BOTTOM AXIS ----
                 var bottomAxis = chartFrame.bottomAxis()
                     .labelOverflow(vp.chartFrame.LabelOverflow.ellipses)
                     .labelRotation(vp.chartFrame.LabelRotation.auto)
-                    .positiveAutoRotation(false)
+                    .positiveAutoRotation(false);
 
                 if (dc.nvData.x)
                 {
                     var xCol = (dc.xCalcName) ? dc.xCalcName : dc.nvData.x.colName;
 
-                    var xIsCat = (dc.nvData.x.colType == "string");     // || (<any>dc.scales.x)._useCategoryForBins);
+                    var xIsCat = (dc.nvData.x.colType === "string");     // || (<any>dc.scales.x)._useCategoryForBins);
 
                     var xLast = null;
-                    var xLastIndex = xAxisData.tickCount() - 1;
                     this._xTickBoxElements = [];
 
                     bottomAxis
                         .isTickBoxesVisible(showTickBoxes)
                         .onShade((element, record, index, isNew, lastIndex) =>
                         {
-                            if (index == 0)
+                            if (index === 0)
                             {
                                 xLast = null;
                             }
@@ -444,7 +431,7 @@ module beachParty
                                         .attach("click", (e) => this.doSearch(e, "X"))
                                         .css("cursor", "pointer")
                                         .attr("simpleHighlight", "true")
-                                        .addClass("clickableAxisLabel")
+                                        .addClass("clickableAxisLabel");
 
                                     xLast = utils.prepElementForSearch(element, xCol, scales.x, xBinResults, index, xLast, xIsCat, record,
                                         "label");
@@ -460,7 +447,7 @@ module beachParty
                                         var itemCount = bin.count;
                                         tickBarTooltip = "Count: " + vp.formatters.formatNumber(itemCount, "0,##0");
 
-                                        if (chartType == "columnSumClass")
+                                        if (chartType === "columnSumClass")
                                         {
                                             var itemSum = bin.sum;      //  this.computeBinSum(dc, "x", bin.rowIndexes);
 
@@ -471,7 +458,7 @@ module beachParty
 
                                     vp.select(element)
                                         .attach("click", (e) => this.doSearch(e, "X"))
-                                        .title(tickBarTooltip)
+                                        .title(tickBarTooltip);
 
                                     xLast = utils.prepElementForSearch(element, xCol, scales.x, xBinResults, index, xLast, xIsCat, record,
                                         "tickBox");
@@ -505,7 +492,7 @@ module beachParty
 
             this._dataMgr.searchColValue(sp);
 
-            appMgrClass.current.onClickSelection(sp.buttonType, axisName, sp );
+            AppMgrClass.current.onClickSelection(sp.buttonType, axisName, sp );
         }
     }
 }

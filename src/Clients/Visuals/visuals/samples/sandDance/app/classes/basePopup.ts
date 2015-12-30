@@ -9,7 +9,7 @@ module beachPartyApp
 {
     var nextId = 1;
 
-    export class basePopupClass extends beachParty.dataChangerClass implements IAppControl
+    export class BasePopupClass extends beachParty.dataChangerClass implements IAppControl
     {
         _root: HTMLElement;
         _ownerElem: HTMLElement;            // not the document parent, but another popup that this popup belongs to
@@ -58,12 +58,12 @@ module beachPartyApp
             var pickerElem = this.getRootElem();
             var rcPicker = vp.select(pickerElem).getBounds(true);
 
-            if (right != undefined)
+            if (right !== undefined)
             {
                 left = right - rcPicker.width;
             }
 
-            if (bottom != undefined)
+            if (bottom !== undefined)
             {
                 top = bottom - rcPicker.height;
             }
@@ -137,7 +137,7 @@ module beachPartyApp
 
             rootW
                 .css("left", x + "px")
-                .css("top", yTop + "px")
+                .css("top", yTop + "px");
 
             rootW[0].focus();
 
@@ -147,7 +147,7 @@ module beachPartyApp
 
         onAnyKeyDown(e)
         {
-            if (e.keyCode == vp.events.keyCodes.escape)
+            if (e.keyCode === vp.events.keyCodes.escape)
             {
                 this.close();
             }
@@ -169,7 +169,7 @@ module beachPartyApp
                 var parent = elem;
 
                 //---- get top-most element (but not null) ----
-                while (parent && parent != this._root && parent.parentElement)
+                while (parent && parent !== this._root && parent.parentElement)
                 {
                     if (vp.select(parent).hasClass("popupMenu"))
                     {
@@ -179,15 +179,15 @@ module beachPartyApp
                     parent = parent.parentElement;
                 }
 
-                var isMyElem = (parent == this._root);
+                var isMyElem = (parent === this._root);
 
                 if (! isMyElem)
                 {
                     //---- see if this was a child popup of me ----
                     if (parent && parent.jsObj)
                     {
-                        var popup = <basePopupClass>parent.jsObj;
-                        if (popup._ownerElem == this._root)
+                        var popup = <BasePopupClass>parent.jsObj;
+                        if (popup._ownerElem === this._root)
                         {
                             isMyElem = true;
                         }
@@ -245,7 +245,7 @@ module beachPartyApp
         isVisible()
         {
             var elem = this._root;
-            var isVisible = (vp.select(elem).css("visibility") == "visible");
+            var isVisible = (vp.select(elem).css("visibility") === "visible");
 
             return isVisible;
         }
@@ -299,7 +299,7 @@ module beachPartyApp
         {
             this.remove();
 
-            appClass.instance.logAction(Gesture.click, null, ElementType.button, Action.close, Target.unknownPanel, true);
+            AppClass.instance.logAction(Gesture.click, null, ElementType.button, Action.close, Target.unknownPanel, true);
 
             //---- set our button to NOT "selected" state ----
             this.setOpenerSelected(false);

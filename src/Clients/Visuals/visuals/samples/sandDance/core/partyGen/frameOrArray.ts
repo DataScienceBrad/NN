@@ -7,10 +7,10 @@
 
 module beachParty
 {
-    export class frameOrArrayClass
+    export class FrameOrArrayClass
     {
-        array: dataFrameClass[];
-        single: dataFrameClass;
+        array: DataFrameClass[];
+        single: DataFrameClass;
         length: number;
         name: string;
 
@@ -34,7 +34,7 @@ module beachParty
             this.name = name;
         }
 
-        slice(from: number, to: number): frameOrArrayClass
+        slice(from: number, to: number): FrameOrArrayClass
         {
             var value = null;
 
@@ -47,7 +47,7 @@ module beachParty
                 value = this.single.copyData(vp.data.range(from, to));
             }
 
-            var foa = new frameOrArrayClass(value, this.name);
+            var foa = new FrameOrArrayClass(value, this.name);
             return foa;
         }
 
@@ -83,7 +83,7 @@ module beachParty
                     //---- ensure colName exists on first dataFrame ----
                     var firstDf = this.array[0];
 
-                    if (firstDf._groupColName == colName)
+                    if (firstDf._groupColName === colName)
                     {
                         vector = this.array.map((df) =>
                         {
@@ -112,7 +112,7 @@ module beachParty
             var numVector: NumericVector = null;
             var colName = statInfo.colName;
 
-            if (colName || statInfo.statType == StatType.count)
+            if (colName || statInfo.statType === StatType.count)
             {
                 var aggColName = statInfo.getAggColName();
 
@@ -123,7 +123,7 @@ module beachParty
                         colName = aggColName;
                     }
 
-                    if (statInfo.statType == StatType.count)
+                    if (statInfo.statType === StatType.count)
                     {
                         var vector = vp.data.dataRepeat(1, this.single.getRecordCount());
                         numVector = new NumericVector(vector, "Count@", "number");

@@ -7,7 +7,7 @@
 
 module beachPartyApp
 {
-    export class pickerClass extends beachParty.dataChangerClass 
+    export class PickerClass extends beachParty.dataChangerClass 
     {
         _root: HTMLDivElement;
         _parentElem: HTMLElement;
@@ -30,13 +30,13 @@ module beachPartyApp
             //---- create prompt ----
             if (prompt)
             {
-                var spanW = vp.select(parentElem).append("span")
+                var spanW = vp.select(parentElem).append("span");
 
                 //---- prompt: TYPE ----
-                var promptW = spanW.append("span")
+                spanW.append("span")
                     .addClass("panelPrompt")
                     .text(prompt)
-                    .css("margin-right", "4px")
+                    .css("margin-right", "4px");
 
                 parentElem = spanW[0];
             }
@@ -46,19 +46,19 @@ module beachPartyApp
                 .addClass("panelButton")
                 .title(tooltip)
                 .css("cursor", "pointer")
-                .css("white-space", "nowrap")
+                .css("white-space", "nowrap");
 
             // ----create TEXT part of button ----
             var ddTextW = ddButtonW.append("span")
                 .addClass("panelButtonText")
                 .css("vertical-align", "middle")
-                .css("text-align", "left")
+                .css("text-align", "left");
 
             //---- to workaround issue of mouse "dead zones" around img, try embedding it inside a in-line block span ----
             var divW = ddButtonW.append("span")
                 .addClass("panelButtonChevron")
                 .css("display", "inline-block")
-                .css("cursor", "pointer")
+                .css("cursor", "pointer");
 
             //---- add dropdown CHEVRON icon ----
             var chevronW = divW.append("div")
@@ -71,20 +71,20 @@ module beachPartyApp
                 {
                     //---- prevent drag of icon ----
                     e.preventDefault();
-                })
+                });
 
             ddButtonW
                 .attach("click", (e) =>
                 {
                     this.onPickerClick(e);        // //onOpenCallback(row.dataName, ddText, chevronW, e);
-                })
+                });
 
             //---- set initial value ----
             var value = initialValue;
             if (capitalizeFirstValue)
             {
                 //---- change all enum values to start with a capital letter ----
-                value = appUtils.capitalizeFirstLetter(value);
+                value = AppUtils.capitalizeFirstLetter(value);
             }
 
             this._textElem = ddTextW[0];
@@ -109,12 +109,12 @@ module beachPartyApp
 
         value(value?: string)
         {
-            if (arguments.length == 0)
+            if (arguments.length === 0)
             {
                 return this._value;
             }
 
-            if (value != this._value)
+            if (value !== this._value)
             {
                 this._value = value;
                 this.onDataChanged("value");
@@ -125,7 +125,7 @@ module beachPartyApp
 
         values(value?: string[])
         {
-            if (arguments.length == 0)
+            if (arguments.length === 0)
             {
                 return this._values;
             }
@@ -141,7 +141,7 @@ module beachPartyApp
             //---- capitalize the first letter of each enum name ----
             if (capitalizeFirstLetter)
             {
-                pickerItems = pickerItems.map((name) => appUtils.capitalizeFirstLetter(name));
+                pickerItems = pickerItems.map((name) => AppUtils.capitalizeFirstLetter(name));
             }
 
             //---- todo: what does this filter out? ----
@@ -153,7 +153,7 @@ module beachPartyApp
             //---- some long list of enum values have separators in them; substitute a menu line marker ----
             var pickerItems = pickerItems.map((val) =>
             {
-                return (val == "separator") ? "-" : val;
+                return (val === "separator") ? "-" : val;
             });
 
             return pickerItems;
@@ -161,14 +161,14 @@ module beachPartyApp
 
         onPickerClick(e)
         {
-            var picker: popupMenuClass = null;
+            var picker: PopupMenuClass = null;
             var colItems = <any[]>this._values;
             var verticalMargin = null;
             var iconWidth = this._iconWidth;
 
             if (colItems)
             {
-                picker = new popupMenuClass(null, "generalColPicker", colItems, (e, menu, textIndex, menuIndex) =>
+                picker = new PopupMenuClass(null, "generalColPicker", colItems, (e, menu, textIndex, menuIndex) =>
                 {
                     var value = colItems[menuIndex];
                     if (value instanceof MenuItemData)

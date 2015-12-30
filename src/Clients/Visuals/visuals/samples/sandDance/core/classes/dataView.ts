@@ -5,8 +5,6 @@
 
 /// <reference path="../_references.ts" />
 
-var demoData: string;
-
 module beachParty
 {
     var nextViewId = 0;
@@ -19,7 +17,7 @@ module beachParty
     }
 
     /** Manages the chart properties and the current chart. */
-    export class dataViewClass extends dataChangerClass
+    export class DataViewClass extends DataChangerClass
     {
         //---- NOTE: these chart-related properties that can be set by the user/client live in the view so that ----
         //---- they persist as the chart type is changed. ----
@@ -43,7 +41,7 @@ module beachParty
         private _isOrthoCamera = false;
         private _isWireframe = false;
         private _isCullingEnabled = false;
-        private _dataMgr: dataMgrClass;
+        private _dataMgr: DataMgrClass;
         private _isContinuousDrawing = true;         // when true, forces animation timer to always run (seems like we can get along with it=false)
         _windowMgr = null;
         private _toPercentOverride: number;
@@ -71,16 +69,16 @@ module beachParty
         private _wasFirstFilteredStage;
 
         //---- data-related ----
-        private _dataFrame: dataFrameClass;
+        private _dataFrame: DataFrameClass;
         //private _bindings: any = {};
         private _randomX = [];
         private _randomY = [];
 
         private _isVaas = false;
-        private _chart: baseGlVisClass;
+        private _chart: BaseGlVisClass;
         private _gl: WebGLRenderingContext;
         private _ctx: CanvasRenderingContext2D;
-        private _transformMgr: transformMgrClass;
+        private _transformMgr: TransformMgrClass;
         private _drawPrimitive = bps.DrawPrimitive.cube;            //safest default
 
         private _canvas3dElem: HTMLCanvasElement;
@@ -93,13 +91,13 @@ module beachParty
         private _mouseStatsElem: HTMLElement;
         private _moveStatsElem: HTMLElement;
         private _drawStatsElem: HTMLElement;
-        private _appMgr: appMgrClass;
+        private _appMgr: AppMgrClass;
 
         private _viewId = "";
         private _lastHoverPos = null;
         private _lastStatsRebuild = 0;
 
-        constructor(dataMgr: dataMgrClass, appMgr: appMgrClass, canvas3dElem: HTMLCanvasElement, canvas2dElem: HTMLCanvasElement, svgId: string,
+        constructor(dataMgr: DataMgrClass, appMgr: AppMgrClass, canvas3dElem: HTMLCanvasElement, canvas2dElem: HTMLCanvasElement, svgId: string,
             memStatsElem?: HTMLElement, animStatsElem?: HTMLElement, mouseStatsElem?: HTMLElement, moveStatsElem?: HTMLElement,
             drawStatsElem?: HTMLElement, isVaas?: boolean)
         {
@@ -136,14 +134,14 @@ module beachParty
             this._zMapping = new bps.MappingData();
 
             //---- create an svg GROUP element for chart to use for all of its SVG shapes ----
-            var svgChartGroup = vp.select(this._svgDoc).append("g")
+            var svgChartGroup = vp.select(this._svgDoc).append("g");
                 //.translate(10, 10)          // account for margin bet. svgdoc & canvas 
 
             this._svgChartGroup = svgChartGroup[0];
 
             //---- create an svg GROUP element for the chart frame ----
             var svgChartFrameGroup = vp.select(this._svgDoc).append("g")
-                .addClass("chartFrameGroup")
+                .addClass("chartFrameGroup");
 
             this._svgChartFrameGroup = svgChartFrameGroup[0];
 
@@ -152,7 +150,7 @@ module beachParty
             this._ctx = canvas2dElem.getContext("2d");
 
             //---- this handles all of our 3D transforms and their variants ----
-            this._transformMgr = new transformMgrClass(this._gl);
+            this._transformMgr = new TransformMgrClass(this._gl);
 
             dataMgr.registerForChange("dataFrame", (e) =>
             {
@@ -170,7 +168,7 @@ module beachParty
 
         maxItemCount(value?: number)
         {
-            if (arguments.length == 0)
+            if (arguments.length === 0)
             {
                 return this._maxItemCount;
             }
@@ -181,7 +179,7 @@ module beachParty
 
         isMaxItemCountEnabled(value?: boolean)
         {
-            if (arguments.length == 0)
+            if (arguments.length === 0)
             {
                 return this._isMaxItemCountEnabled;
             }
@@ -220,7 +218,6 @@ module beachParty
             var rc = (this._chart) ? this._chart.getPlotBoundsInPixels() : null;
             return rc;
         }
-
 
         onCycleEnded(wasFirstFilteredStage: boolean)
         {
@@ -264,7 +261,7 @@ module beachParty
 
             if (chart)
             {
-                if (hp.hoverMatch == bps.HoverMatch.point)
+                if (hp.hoverMatch === bps.HoverMatch.point)
                 {
                     var ray = this._transformMgr.getRayFromScreenPos(mousePos.x, mousePos.y);
                     var items = chart.hitTestRay(ray, mousePos);
@@ -273,7 +270,7 @@ module beachParty
                         hpk = items[0].primaryKey;
                     }
                 }
-                else if (hp.hoverMatch == bps.HoverMatch.square)
+                else if (hp.hoverMatch === bps.HoverMatch.square)
                 {
                     var sz = hp.squareSize;
                     if (sz >= 1)
@@ -297,12 +294,12 @@ module beachParty
 
         hoverPrimaryKey(value?: string)
         {
-            if (arguments.length == 0)
+            if (arguments.length === 0)
             {
                 return this._hoverPrimaryKey;
             }
 
-            if (value != this._hoverPrimaryKey)
+            if (value !== this._hoverPrimaryKey)
             {
                 this._hoverPrimaryKey = value;
 
@@ -326,7 +323,7 @@ module beachParty
                 var hp = this._hoverParams;
                 var isChartRelative = true;
 
-                if (pointSelect && hp.hoverMatch == bps.HoverMatch.square)
+                if (pointSelect && hp.hoverMatch === bps.HoverMatch.square)
                 {
                     //---- use center of rcScreen, and size of hoverSquare ----
                     var sz = hp.squareSize;
@@ -473,57 +470,57 @@ module beachParty
             }
 
             this._chartType = value;
-            var chart: baseGlVisClass = null;
+            var chart: BaseGlVisClass = null;
 
             var usePartyGen = false;
 
-            if (value == "Flat")
+            if (value === "Flat")
             {
                 //usePartyGen = true;
 
-                if (layout == "Circle")
+                if (layout === "Circle")
                 {
                     if (usePartyGen)
                     {
-                        chart = new partyGenPlotClass(this, this._gl, chartState, "FlatCircle");
+                        chart = new PartyGenPlotClass(this, this._gl, chartState, "FlatCircle");
                     }
                     else
                     {
-                        chart = new flatCircle(this, this._gl, chartState);
+                        chart = new FlatCircle(this, this._gl, chartState);
                     }
                 }
-                else if (layout == "Grid")
+                else if (layout === "Grid")
                 {
                     if (usePartyGen)
                     {
-                        chart = new partyGenPlotClass(this, this._gl, chartState, "FlatGrid");
+                        chart = new PartyGenPlotClass(this, this._gl, chartState, "FlatGrid");
                     }
                     else
                     {
-                        chart = new flatGrid(this, this._gl, chartState);
+                        chart = new FlatGrid(this, this._gl, chartState);
                     }
                 }
-                else if (layout == "Poisson")
+                else if (layout === "Poisson")
                 {
-                    chart = new partyGenPlotClass(this, this._gl, chartState, "FlatPoisson");
+                    chart = new PartyGenPlotClass(this, this._gl, chartState, "FlatPoisson");
                 }
                 else 
                 {
                     if (usePartyGen)
                     {
-                        chart = new partyGenPlotClass(this, this._gl, chartState, "FlatRandom");
+                        chart = new PartyGenPlotClass(this, this._gl, chartState, "FlatRandom");
                     }
                     else
                     {
-                        chart = new flatRandom(this, this._gl, chartState);
+                        chart = new FlatRandom(this, this._gl, chartState);
                     }
                 }
             }
-            else if (value == "Scatter")
+            else if (value === "Scatter")
             {
                 if (usePartyGen)
                 {
-                    chart = new partyGenPlotClass(this, this._gl, chartState, "Scatter");
+                    chart = new PartyGenPlotClass(this, this._gl, chartState, "Scatter");
                 }
                 else
                 {
@@ -537,99 +534,99 @@ module beachParty
                     }
                     else
                     {
-                        chart = new scatterPlotClass(this, this._gl, chartState);
+                        chart = new ScatterPlotClass(this, this._gl, chartState);
                     }
                 }
 
             }
-            else if (value == "Line")
+            else if (value === "Line")
             {
-                chart = new linePlotClass(this, this._gl, chartState);
+                chart = new LinePlotClass(this, this._gl, chartState);
             }
-            else if (value == "Radial")
+            else if (value === "Radial")
             {
-                chart = new radialClass(this, this._gl, chartState);
+                chart = new RadialClass(this, this._gl, chartState);
             }
-            else if (value == "Density")
+            else if (value === "Density")
             {
-                if (layout == "Circle") 
+                if (layout === "Circle") 
                 {
-                    chart = new densityCircle(this, this._gl, chartState);
+                    chart = new DensityCircle(this, this._gl, chartState);
                 }
-                else if (layout == "Grid") 
+                else if (layout === "Grid") 
                 {
-                    chart = new densityGrid(this, this._gl, chartState);
+                    chart = new DensityGrid(this, this._gl, chartState);
                 }
                 else 
                 {
-                    chart = new densityRandom(this, this._gl, chartState);
+                    chart = new DensityRandom(this, this._gl, chartState);
                 }
             }
-            else if (value == "Violin")
+            else if (value === "Violin")
             {
-                chart = new violinClass(this, this._gl, chartState);
+                chart = new ViolinClass(this, this._gl, chartState);
             }
-            else if (value == "Bar")
+            else if (value === "Bar")
             {
-                if (layout == "Sum")
+                if (layout === "Sum")
                 {
-                    chart = new barSumClass(this, this._gl, chartState);
+                    chart = new BarSumClass(this, this._gl, chartState);
                 }
                 else        // Random or Grid
                 {
                     if (usePartyGen)
                     {
-                        if (layout == "Random")
+                        if (layout === "Random")
                         {
-                            chart = new partyGenPlotClass(this, this._gl, chartState, "BarRandom");
+                            chart = new PartyGenPlotClass(this, this._gl, chartState, "BarRandom");
                         }
                         else 
                         {
-                            chart = new partyGenPlotClass(this, this._gl, chartState, "BarGrid");
+                            chart = new PartyGenPlotClass(this, this._gl, chartState, "BarGrid");
                         }
                     }
                     else
                     {
-                        chart = new barCountClass(this, this._gl, chartState);
+                        chart = new BarCountClass(this, this._gl, chartState);
                     }
                 }
             }
-            else if (value == "Column")
+            else if (value === "Column")
             {
-                if (layout == "Sum")
+                if (layout === "Sum")
                 {
-                    chart = new columnSumClass(this, this._gl, chartState);
+                    chart = new ColumnSumClass(this, this._gl, chartState);
                 }
                 else        // Random or Grid
                 {
                     if (usePartyGen)
                     {
-                        if (layout == "Random")
+                        if (layout === "Random")
                         {
-                            chart = new partyGenPlotClass(this, this._gl, chartState, "ColumnRandom");
+                            chart = new PartyGenPlotClass(this, this._gl, chartState, "ColumnRandom");
                         }
                         else 
                         {
-                            chart = new partyGenPlotClass(this, this._gl, chartState, "ColumnGrid");
+                            chart = new PartyGenPlotClass(this, this._gl, chartState, "ColumnGrid");
                         }
                     }
                     else
                     {
-                        chart = new columnCountClass(this, this._gl, chartState);
+                        chart = new ColumnCountClass(this, this._gl, chartState);
                     }
                 }
             }
-            else if (value == "Scatter-3D")
+            else if (value === "Scatter-3D")
             {
-                chart = new scatterPlot3dClass(this, this._gl, chartState);
+                chart = new ScatterPlot3dClass(this, this._gl, chartState);
             }
-            else if (value == "Stacks") 
+            else if (value === "Stacks") 
             {
-                chart = new stacksBinClass(this, this._gl, chartState);
+                chart = new StacksBinClass(this, this._gl, chartState);
             }
-            else if (value == "Squarify") 
+            else if (value === "Squarify") 
             {
-                chart = new partyGenPlotClass(this, this._gl, chartState, "FlatSquarify");
+                chart = new PartyGenPlotClass(this, this._gl, chartState, "FlatSquarify");
             }
             else
             {
@@ -695,10 +692,10 @@ module beachParty
                 for (var b = 0; b < bins.length; b++)
                 {
                     var bin = bins[b];
-                    var isFirst = (b == 0);
+                    var isFirst = (b === 0);
 
                     var layout = new bps.FacetLayoutInfo();
-                    layout.facelLabel = bin.name
+                    layout.facelLabel = bin.name;
                     layout.facetIndex = b;
                     layout.plotBounds = this._chart.worldBoundsToSvg(facetHelper._layout.facetBounds[b]);
                     layout.labelBounds = this._chart.worldBoundsToSvg(facetHelper._layout.labelBounds[b]);
@@ -776,7 +773,7 @@ module beachParty
             return this._dataMgr;
         }
 
-        getChartRepro() : bps.ChartRepro
+        getChartRepro(): bps.ChartRepro
         {
             return (this._chart) ? this._chart.getChartRepro() : null;
         }
@@ -1406,4 +1403,3 @@ module beachParty
         }
     }
 }
-

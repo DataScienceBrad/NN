@@ -5,8 +5,6 @@
 
 /// <reference path="../_references.ts" />
 
-var demoData: string;
-
 module beachParty
 {
     ///-------------------------------------------------------------------------------------------------------------------------------------
@@ -50,13 +48,13 @@ module beachParty
     ///                 - fillBuffersForRecord()
     ///             - fillGridLinesBuffer()
     ///-------------------------------------------------------------------------------------------------------------------------------------
-    export class scatterPlotClass extends baseGlVisClass
+    export class ScatterPlotClass extends BaseGlVisClass
     {
         _maxShapeSize = 0;
         _halfSizeSize = 0;
         _z = 0;
 
-        constructor(view: dataViewClass, gl: any, chartState: any)
+        constructor(view: DataViewClass, gl: any, chartState: any)
         {
             super("scatterPlotClass", view, gl, chartState);
         }
@@ -113,7 +111,7 @@ module beachParty
 
             var width = this._maxShapeSize * this.scaleColData(nv.size, bufferIndex, scales.size, 1);
             var height = width;
-            var depth = dc.defaultDepth2d   
+            var depth = dc.defaultDepth2d   ;
 
             var colorIndex = this.scaleColData(nv.colorIndex, bufferIndex, scales.colorIndex);
             var imageIndex = this.scaleColData(nv.imageIndex, bufferIndex, dc.scales.imageIndex);

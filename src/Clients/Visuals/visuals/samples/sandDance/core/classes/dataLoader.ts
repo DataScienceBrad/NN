@@ -7,11 +7,11 @@
 
 module beachParty
 {
-    export class dataLoaderClass 
+    export class DataLoaderClass 
     {
-        private _preloadMgr: preloadMgrClass;
+        private _preloadMgr: PreloadMgrClass;
 
-        constructor(preloadMgr: preloadMgrClass)       //appMgr: appMgrClass, preloadMgr: preloadMgrClass, isClientEdition: boolean)
+        constructor(preloadMgr: PreloadMgrClass)       //appMgr: appMgrClass, preloadMgr: preloadMgrClass, isClientEdition: boolean)
         {
             this._preloadMgr = preloadMgr;
         }
@@ -21,7 +21,7 @@ module beachParty
             if (!vp.utils.isArray(data))
             {
                 //---- convert DataFrame to JSON, for easier expansion ----
-                var df = new dataFrameClass(data);
+                var df = new DataFrameClass(data);
                 data = df.toJson();
             }
 
@@ -61,7 +61,7 @@ module beachParty
                     for (var c = 0; c < colNames.length; c++)
                     {
                         var cn = colNames[c];
-                        if (cn != "")
+                        if (cn !== "")
                         {
                             newRecord[cn] = record[cn];
                         }
@@ -86,7 +86,7 @@ module beachParty
             for (var p = 0; p < parts.length; p++)
             {
                 var part = parts[p].trim();     //.toLowerCase();
-                if (part != "")
+                if (part !== "")
                 {
                     keyWords.push(part);
                 }
@@ -114,7 +114,7 @@ module beachParty
             return anyData;
         }
 
-        addSystemColumns(dataFrame: dataFrameClass, wdParams: bps.WorkingDataParams)
+        addSystemColumns(dataFrame: DataFrameClass, wdParams: bps.WorkingDataParams)
         {
             dataFrame.addColumn(selectedName, "number");
             dataFrame.addColumn(filteredName, "number");
@@ -189,7 +189,7 @@ module beachParty
                     callback(result.origDf, result.postDf, result.wdParams);
                 }
             }
-            else if (lowName == "knowndata")
+            else if (lowName === "knowndata")
             {
                 var jsonPreload = this._preloadMgr.getPreloads();
                 var result = this.processdData(jsonPreload, preload, multiValueCol);
@@ -224,11 +224,11 @@ module beachParty
 
             if (vp.utils.isArray(anyData))
             {
-                df = dataFrameClass.jsonToDataFrame(anyData);
+                df = DataFrameClass.jsonToDataFrame(anyData);
             }
             else
             {
-                df = new dataFrameClass(anyData);
+                df = new DataFrameClass(anyData);
             }
 
             //---- apply WORKING DATA PARAMS ----
@@ -257,9 +257,9 @@ module beachParty
             var fileName = (wdParams.dataName) ? wdParams.dataName : path;
             var colsOnDemand = false;
 
-            if (wdParams.fileType == bps.FileType.sql)
+            if (wdParams.fileType === bps.FileType.sql)
             {
-                fileAccess.readSqlTable(path, wdParams.tableName, wdParams.queryString, wdParams.maxRecords,
+                FileAccess.readSqlTable(path, wdParams.tableName, wdParams.queryString, wdParams.maxRecords,
                     (dataFrame) =>
                     {
                         var keys = vp.utils.keys(dataFrame);
@@ -296,10 +296,10 @@ module beachParty
                 }
                 else
                 {
-                    var format = (wdParams && wdParams.fileType == bps.FileType.json) ? fileFormat.json : fileFormat.csv;
+                    var format = (wdParams && wdParams.fileType === bps.FileType.json) ? fileFormat.json : fileFormat.csv;
                 }
 
-                var csvOptions = { hasHeader: wdParams.hasHeader, sepChar: separator, findTypes: true }
+                var csvOptions = { hasHeader: wdParams.hasHeader, sepChar: separator, findTypes: true };
                 var convertToDataFrameClass = false;            // just return as map of named vectors 
 
                 if (path.startsWith("http://") || path.startsWith("https://"))
@@ -313,16 +313,12 @@ module beachParty
 
                 fn += "?" + Date.now();         // prevent caching
 
-                traceMgrClass.instance.addTrace("serverRequest", path, TraceEventType.start);
+                TraceMgrClass.instance.addTrace("serverRequest", path, TraceEventType.start);
 
-                fileAccess.readFile(fn, format, csvOptions,
+                FileAccess.readFile(fn, format, csvOptions,
                     (dataFrame) =>
                     {
-                        var keys = vp.utils.keys(dataFrame);
-                        var firstKey = keys[0];
-                        var recordCount = dataFrame[firstKey].length;
-
-                        traceMgrClass.instance.addTrace("serverResponse", path, TraceEventType.end);
+                        TraceMgrClass.instance.addTrace("serverResponse", path, TraceEventType.end);
 
                         //vp.utils.debug("loadKnownAsync SUCCEEDED: columns=" + keys.length + ", records=" + recordCount);
                         var result = this.processdData(dataFrame, wdParams, multiValueCol);

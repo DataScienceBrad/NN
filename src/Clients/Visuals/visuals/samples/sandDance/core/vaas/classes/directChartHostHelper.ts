@@ -13,7 +13,7 @@
 
 module bps
 {
-    export class directChartHostHelperClass extends chartHostHelperClass
+    export class DirectChartHostHelperClass extends ChartHostHelperClass
     {
         constructor(bpsChartOrIFrameId: string, bpsDomain?: string, baseServerDir?: string, fromDomain?: string)
         {
@@ -29,8 +29,6 @@ module bps
 
         processChartTag(elem: HTMLElement, baseServerDir: string, hostElem?: HTMLIFrameElement)
         {
-            var visId = elem.getAttribute("id");
-
             if (!baseServerDir)
             {
                 //---- assume bpsHelper is on the same server ----
@@ -72,12 +70,12 @@ module bps
             var attrValuePairs = this.processIFrameChartAttributes(elem, hostElem);
 
             //---- by default, expand iframe to fill parent element size (bps-chart) ----
-            if (hostElem.style.width == "")
+            if (hostElem.style.width === "")
             {
                 hostElem.style.width = "100%"; 
             }
 
-            if (hostElem.style.height == "")
+            if (hostElem.style.height === "")
             {
                 hostElem.style.height = "100%";
             }
@@ -117,12 +115,12 @@ module bps
             var request = new XMLHttpRequest();
             request.onreadystatechange = function ()
             {
-                if (request.readyState == 4 && request.status == 200)
+                if (request.readyState === 4 && request.status === 200)
                 {
                     var content = request.responseText;
                     callback(content); 
                 }
-            }
+            };
 
             request.open("GET", url, true); 
             request.send(); 

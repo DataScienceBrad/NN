@@ -11,19 +11,19 @@ module beachParty
     export class Container
     {
         level: number;
-        inputData: dataFrameClass;
-        childData: frameOrArrayClass;   
+        inputData: DataFrameClass;
+        childData: FrameOrArrayClass;   
         children: Container[];
         statType: StatType = null;
         statColName = "";
         name: string;
         binMap: any;
-        shapeData: dataFrameClass;
+        shapeData: DataFrameClass;
 
-        constructor(data: dataFrameClass, level: number, binMap?: any)
+        constructor(data: DataFrameClass, level: number, binMap?: any)
         {
             this.inputData = data;
-            this.childData = new frameOrArrayClass(data, data._groupName);
+            this.childData = new FrameOrArrayClass(data, data._groupName);
             this.name = data._groupName;
 
             this.children = [];
@@ -52,9 +52,9 @@ module beachParty
                 if (dataGroups)
                 {
                     //---- data was BINNED ----
-                    this.childData = new frameOrArrayClass(dataGroups, this.inputData._groupName);
+                    this.childData = new FrameOrArrayClass(dataGroups, this.inputData._groupName);
 
-                    if (divideLevel != dividers.length - 1)
+                    if (divideLevel !== dividers.length - 1)
                     {
                         //---- not at leaf, so create subContainers ----
                         var childLevel = divideLevel + 1;
@@ -128,7 +128,7 @@ module beachParty
 
                         var sd = results.scaleData;
 
-                        if (i == 0)
+                        if (i === 0)
                         {
                             scaleData = sd;
                         }
@@ -195,7 +195,7 @@ module beachParty
                 }
 
                 //---- for last divider PAIR, assign shapes ----
-                if (this.level == dividers.length - 1)
+                if (this.level === dividers.length - 1)
                 {
                     //---- ASSIGN SHAPES ----
                     if (leafRcArray)
@@ -219,7 +219,7 @@ module beachParty
             }
         }
 
-        addAggColumn(df: dataFrameClass, record: any, stat: StatInfo, colName?: string, statType?: StatType)
+        addAggColumn(df: DataFrameClass, record: any, stat: StatInfo, colName?: string, statType?: StatType)
         {
             if (!stat)
             {
@@ -232,7 +232,7 @@ module beachParty
                 {
                     var aggColName = stat.getAggColName();
 
-                    if (record[aggColName] == undefined && record[stat.colName] == undefined)        // not yet added
+                    if (record[aggColName] === undefined && record[stat.colName] === undefined)        // not yet added
                     {
                         var value = df.aggData(stat);
                         record[aggColName] = value;
@@ -241,9 +241,9 @@ module beachParty
             }
         }
 
-        aggOrCopy(anyData: frameOrArrayClass, divider: ChartDivider)
+        aggOrCopy(anyData: FrameOrArrayClass, divider: ChartDivider)
         {
-            var newData: dataFrameClass = null;
+            var newData: DataFrameClass = null;
 
             if (anyData.single)
             {
@@ -300,7 +300,7 @@ module beachParty
                     records.push(record);
                 }
 
-                newData = dataFrameClass.jsonToDataFrame(records);
+                newData = DataFrameClass.jsonToDataFrame(records);
             }
 
             return newData;
@@ -317,7 +317,7 @@ module beachParty
         minCount: number;
         maxCount: number;
 
-        allLeafData: dataFrameClass;       // data collected from all leaf nodes (possibly aggregated records) 
+        allLeafData: DataFrameClass;       // data collected from all leaf nodes (possibly aggregated records) 
     }
 
     export class ChartDivider

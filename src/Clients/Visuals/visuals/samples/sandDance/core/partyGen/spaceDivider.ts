@@ -107,14 +107,14 @@ module beachParty
                 .attr("x", rc.left + rc.width / 2)
                 .attr("y", yText)
                 .attr("text-anchor", "middle")
-                .colors(this.labelFill, "none", 0)
+                .colors(this.labelFill, "none", 0);
 
             if (this.labelSize)
             {
                 textW.css("font-size", this.labelSize + "px");
             }
 
-            if (this.labelOpacity != undefined)
+            if (this.labelOpacity !== undefined)
             {
                 textW.css("opacity", this.labelOpacity + "");
             }
@@ -126,11 +126,10 @@ module beachParty
         }
 
         /** data can be either a dataFrameClass or an array of DataFrameClass objects. */
-        divide(cellData: CellData, name: string, data: frameOrArrayClass, shapeSize: number, scaleData: ScaleData, svg?: SVGElement)
+        divide(cellData: CellData, name: string, data: FrameOrArrayClass, shapeSize: number, scaleData: ScaleData, svg?: SVGElement)
         {
             var cellArray: CellData[] = [];
             var margin = this.margin;
-            var cellMargin = this.cellMargin;
 
             //---- get X and Y STAT data, if requested ----
             var xnv = data.getNumericVectorFromStat(this.xStat);
@@ -162,16 +161,16 @@ module beachParty
                     count = maxItems;
                 }
 
-                if (this.spaceType == SpaceType.overlay)
+                if (this.spaceType === SpaceType.overlay)
                 {
                     cellArray = data.map((pt) =>
                     {
                         return vp.geom.createRect(rcMarg.left, rcMarg.top, rcMarg.width, rcMarg.height);
                     });
                 }
-                else if (this.spaceType == SpaceType.poisson)
+                else if (this.spaceType === SpaceType.poisson)
                 {
-                    var best = new bestPoisson();
+                    var best = new BestPoisson();
                     var pts = best.layout(rcMarg, count);
 
                     cellArray = pts.map((pt) =>
@@ -183,7 +182,7 @@ module beachParty
                         return CellData.fromRect(vp.geom.createRect(x, y, 1, 1), this.cellShape);
                     });
                 }
-                else if (this.spaceType == SpaceType.random)
+                else if (this.spaceType === SpaceType.random)
                 {
                     var rIndex = 0;
 
@@ -211,59 +210,59 @@ module beachParty
                         return CellData.fromRect(vp.geom.createRect(x, y, 1, 1), this.cellShape);
                     });
                 }
-                else if (this.spaceType == SpaceType.fillXY)
+                else if (this.spaceType === SpaceType.fillXY)
                 {
                     cellArray = this.fillXY(rcMarg, data);
                 }
-                else if (this.spaceType == SpaceType.packXY)
+                else if (this.spaceType === SpaceType.packXY)
                 {
                     cellArray = this.packXY(rcMarg, data);
                 }
-                else if (this.spaceType == SpaceType.packYX)
+                else if (this.spaceType === SpaceType.packYX)
                 {
                     cellArray = this.packYX(rcMarg, data);
                 }
-                else if (this.spaceType == SpaceType.fillOut)
+                else if (this.spaceType === SpaceType.fillOut)
                 {
                     cellArray = this.fillOut(rcMarg, data, shapeSize);
                 }
-                else if (this.spaceType == SpaceType.packOut)
+                else if (this.spaceType === SpaceType.packOut)
                 {
                     cellArray = this.packOut(rcMarg, data, shapeSize);
                 }
-                else if (this.spaceType == SpaceType.plotXY)
+                else if (this.spaceType === SpaceType.plotXY)
                 {
                     cellArray = this.plotXY(rcMarg, data, shapeSize);
                 }
-                else if (this.spaceType == SpaceType.polarXY)
+                else if (this.spaceType === SpaceType.polarXY)
                 {
                     cellArray = this.polarXY(rcMarg, data, shapeSize);
                 }
-                else if (this.spaceType == SpaceType.fillX)
+                else if (this.spaceType === SpaceType.fillX)
                 {
                     cellArray = this.fillXWithProp(rcMarg, data, shapeSize);
                 }
-                else if (this.spaceType == SpaceType.fillY)
+                else if (this.spaceType === SpaceType.fillY)
                 {
                     cellArray = this.fillYWithProp(rcMarg, data, shapeSize);
                 }
-                else if (this.spaceType == SpaceType.record)
+                else if (this.spaceType === SpaceType.record)
                 {
                     cellArray = this.record(rcMarg, data, shapeSize);
                 }
-                else if (this.spaceType == SpaceType.squarify)
+                else if (this.spaceType === SpaceType.squarify)
                 {
                     cellArray = this.squarify(rcMarg, data, shapeSize);
                 }
-                else if (this.spaceType == SpaceType.choropleth)
+                else if (this.spaceType === SpaceType.choropleth)
                 {
                     cellArray = this.choroLayout(rcMarg, data);
                 }
 
                 //---- debug -----
-                if (this.spaceType != SpaceType.none && this.spaceType != SpaceType.choropleth)
+                if (this.spaceType !== SpaceType.none && this.spaceType !== SpaceType.choropleth)
                 {
-                    if (cellArray.length != data.length)
+                    if (cellArray.length !== data.length)
                     {
                         throw "Layout error - size(cellArray) is different from data.length";
                     }
@@ -279,7 +278,7 @@ module beachParty
             return cellArray;
         }
 
-        choroLayout(rcMarg: ClientRect, data: frameOrArrayClass)
+        choroLayout(rcMarg: ClientRect, data: FrameOrArrayClass)
         {
             var cellArray = [];
 
@@ -296,10 +295,10 @@ module beachParty
                     {
                         var shapeName = shapeNames[i];
 
-                        var coords = choroplethHelper.getShapeCoords(this.choroData, shapeName);
+                        var coords = ChoroplethHelper.getShapeCoords(this.choroData, shapeName);
                         if (coords)
                         {
-                            choroplethHelper.computeXYRange(ranges, coords);
+                            ChoroplethHelper.computeXYRange(ranges, coords);
                             coordsMap[shapeName] = coords;
                         }
                     }
@@ -311,7 +310,7 @@ module beachParty
                         var coords = coordsMap[shapeName];
                         if (coords)
                         {
-                            var path = choroplethHelper.buildPath(rcMarg, ranges, coords);
+                            var path = ChoroplethHelper.buildPath(rcMarg, ranges, coords);
 
                             var cellData = new CellData();
                             cellData.cellShape = CellShape.path;
@@ -348,31 +347,30 @@ module beachParty
                     }
                 }
 
-                if (colType == "date")
+                if (colType === "date")
                 {
-                    scale = vp.scales.createDate()
+                    scale = vp.scales.createDate();
                 }
-                else if (colType == "number")
+                else if (colType === "number")
                 {
-                    scale = vp.scales.createLinear()
+                    scale = vp.scales.createLinear();
                 }
                 else
                 {
                     //---- not sure - should this be createCategoryKey()? ----
-                    scale = vp.scales.createCategoryIndex()
+                    scale = vp.scales.createCategoryIndex();
                 }
 
                 scale
                     .domain(min, max)
-                    .range(minRange, maxRange)
+                    .range(minRange, maxRange);
             }
 
             return scale;
         }
 
-
         /** lays out containers, one per     */
-        record(rcMarg: ClientRect, data: frameOrArrayClass, shapeSize: number)
+        record(rcMarg: ClientRect, data: FrameOrArrayClass, shapeSize: number)
         {
             var cellArray = [];
 
@@ -381,18 +379,17 @@ module beachParty
 
             if (xVector && xVector.length)
             {
-                var squarifyLayout = new squarifyLayoutClass();
+                var squarifyLayout = new SquarifyLayoutClass();
                 cellArray = squarifyLayout.layout(xVector, rcMarg, this.cellMargin);
             }
 
             return cellArray;
         }
 
-
         /** lays out containers in a single-level squarified treemap.  Here, the "color" of a squarify cell
         will be determined by the shapes that populate it.  The size of each cell at the leaf nodes can be based
         on a column or just "1".  The size of intermediate container cells is based on the child data groups: count of    */
-        squarify(rcMarg: ClientRect, data: frameOrArrayClass, shapeSize: number)
+        squarify(rcMarg: ClientRect, data: FrameOrArrayClass, shapeSize: number)
         {
             var cellArray = [];
 
@@ -401,7 +398,7 @@ module beachParty
 
             if (xVector && xVector.length)
             {
-                var squarifyLayout = new squarifyLayoutClass();
+                var squarifyLayout = new SquarifyLayoutClass();
                 cellArray = squarifyLayout.layout(xVector, rcMarg, this.cellMargin);
             }
 
@@ -409,7 +406,7 @@ module beachParty
         }
 
         /** maps X, Y values to polar coordinates to plot shapes.  */
-        polarXY(rcMarg: ClientRect, data: frameOrArrayClass, shapeSize: number)
+        polarXY(rcMarg: ClientRect, data: FrameOrArrayClass, shapeSize: number)
         {
             var cellArray = [];
             var xCol = this.xStat.colName;
@@ -471,7 +468,7 @@ module beachParty
         }
 
         /** maps shapes along the X/Y axis using the xCol and yCol values.  */
-        plotXY(rcMarg: ClientRect, data: frameOrArrayClass, shapeSize: number)
+        plotXY(rcMarg: ClientRect, data: FrameOrArrayClass, shapeSize: number)
         {
             var cellArray = [];
             var xCol = this.xStat.colName;
@@ -516,7 +513,7 @@ module beachParty
         }
 
         /** does a FILL along the X axis, where the width and height of each cell is proportional to xCol/yCol. */
-        fillXWithProp(rcMarg: ClientRect, data: frameOrArrayClass, shapeSize: number)
+        fillXWithProp(rcMarg: ClientRect, data: FrameOrArrayClass, shapeSize: number)
         {
             var cellArray = [];
 
@@ -560,11 +557,11 @@ module beachParty
 
                 var top = rcMarg.bottom - height;
 
-                if (valign == VAlign.middle)
+                if (valign === VAlign.middle)
                 {
                     top = yCenter - height / 2;
                 }
-                else if (valign == VAlign.top)
+                else if (valign === VAlign.top)
                 {
                     top = rcMarg.top;
                 }
@@ -579,7 +576,7 @@ module beachParty
         }
 
         /** does a FILL along the Y axis, where the width and height of each cell is proportional to xCol/yCol. */
-        fillYWithProp(rcMarg: ClientRect, data: frameOrArrayClass, shapeSize: number)
+        fillYWithProp(rcMarg: ClientRect, data: FrameOrArrayClass, shapeSize: number)
         {
             var cellArray = [];
             var xCol = this.xStat.colName;
@@ -632,17 +629,17 @@ module beachParty
 
                 if (xVector)
                 {
-                    if (hAlign == HAlign.center)
+                    if (hAlign === HAlign.center)
                     {
                         left = xCenter - width / 2;
                     }
-                    else if (hAlign == HAlign.right)
+                    else if (hAlign === HAlign.right)
                     {
                         left = rcMarg.right - width;
                     }
                 }
 
-                if (yDir == -1)
+                if (yDir === -1)
                 {
                     var rcChild = vp.geom.createRect(left, yOffset - height, width, height);
                 }
@@ -660,7 +657,7 @@ module beachParty
 
         /** puts first shape at center, then packs other shapes around the first, starting at upper left corner of first shape. repeats
         until all shapes have been placed around the prior shapes.  */
-        packOut(rcMarg: ClientRect, data: frameOrArrayClass, shapeSize: number)
+        packOut(rcMarg: ClientRect, data: FrameOrArrayClass, shapeSize: number)
         {
             var cellArray = [];
             var halfSize = shapeSize / 2;
@@ -684,22 +681,22 @@ module beachParty
 
                 dirCount++;
 
-                if (dirCount == dirMax)
+                if (dirCount === dirMax)
                 {
                     //---- change direction ----
-                    if (fillDir == FillDir.down)
+                    if (fillDir === FillDir.down)
                     {
                         fillDir = FillDir.right;
                     }
-                    else if (fillDir == FillDir.right)
+                    else if (fillDir === FillDir.right)
                     {
                         fillDir = FillDir.up;
                     }
-                    else if (fillDir == FillDir.up)
+                    else if (fillDir === FillDir.up)
                     {
                         fillDir = FillDir.left;
                     }
-                    else if (fillDir == FillDir.left)
+                    else if (fillDir === FillDir.left)
                     {
                         fillDir = FillDir.down;
 
@@ -713,7 +710,7 @@ module beachParty
                 }
 
                 //---- move to next location ----
-                if (fillDir == FillDir.center)
+                if (fillDir === FillDir.center)
                 {
                     //---- special handling for first shape ----
                     fillDir = FillDir.down;
@@ -721,19 +718,19 @@ module beachParty
                     dirCount = 0;
                     x -= (shapeSize + cellMargin);
                 }
-                else if (fillDir == FillDir.down)
+                else if (fillDir === FillDir.down)
                 {
                     y += (shapeSize + cellMargin);
                 }
-                else if (fillDir == FillDir.right)
+                else if (fillDir === FillDir.right)
                 {
                     x += (shapeSize + cellMargin);
                 }
-                else if (fillDir == FillDir.up)
+                else if (fillDir === FillDir.up)
                 {
                     y -= (shapeSize + cellMargin);
                 }
-                else if (fillDir == FillDir.left)
+                else if (fillDir === FillDir.left)
                 {
                     x -= (shapeSize + cellMargin);
                 }
@@ -744,7 +741,7 @@ module beachParty
 
         /** uses sunFlower drawing algorithm (aka fermat's apiral and disc phyllotaxis) to layout shapes in a spiral pattern that
         fills the specified space. */
-        fillOut(rcMarg: ClientRect, data: frameOrArrayClass, shapeSize: number)
+        fillOut(rcMarg: ClientRect, data: FrameOrArrayClass, shapeSize: number)
         {
             var cellArray = [];
             var phyloSeed = 137.508;           // "golden angle"
@@ -755,8 +752,6 @@ module beachParty
 
             var radius = Math.min(xSize, ySize);
             var spacing = .5 * radius / Math.sqrt(count);
-
-            var nextIndex = 0;
 
             var cx = rcMarg.left + rcMarg.width / 2;
             var cy = rcMarg.top + rcMarg.height / 2;
@@ -779,7 +774,7 @@ module beachParty
             return cellArray;
         }
 
-        fillXY(rcMarg: ClientRect, data: frameOrArrayClass)
+        fillXY(rcMarg: ClientRect, data: FrameOrArrayClass)
         {
             var cellArray = [];
 
@@ -811,9 +806,6 @@ module beachParty
             var cellWidth = (width - xMargin * (cellsPerRow - 1)) / cellsPerRow;
             var cellHeight = (height - yMargin * (rowCount - 1)) / rowCount;
 
-            var facetBounds: beachParty.Bounds[] = [];
-            var margin2 = 2 * xMargin;
-
             for (var i = 0; i < count; i++)
             {
                 var colIndex = Math.floor(i % cellsPerRow);
@@ -834,7 +826,7 @@ module beachParty
             return cellArray;
         }
 
-        packXY(rcMarg: ClientRect, data: frameOrArrayClass)
+        packXY(rcMarg: ClientRect, data: FrameOrArrayClass)
         {
             var cellMargin = this.cellMargin;
             var halfMargin = cellMargin / 2;
@@ -870,7 +862,7 @@ module beachParty
             return cellArray;
         }
 
-        packYX(rcMarg: ClientRect, data: frameOrArrayClass)
+        packYX(rcMarg: ClientRect, data: FrameOrArrayClass)
         {
             var cellMargin = this.cellMargin;
             var halfMargin = cellMargin / 2;
@@ -906,7 +898,7 @@ module beachParty
             return cellArray;
         }
 
-        getMaxCountInGroups(frameOrArray: frameOrArrayClass)
+        getMaxCountInGroups(frameOrArray: FrameOrArrayClass)
         {
             var maxCount = 0;
 
@@ -946,7 +938,7 @@ module beachParty
             return maxCount;
         }
 
-        drawContainerOutlines(svg, cellArray: CellData[], data: frameOrArrayClass)
+        drawContainerOutlines(svg, cellArray: CellData[], data: FrameOrArrayClass)
         {
             //---- draw containers in red ----
             for (var i = 0; i < cellArray.length; i++)
@@ -957,7 +949,7 @@ module beachParty
                 var dataGroup = <any> data.getItem(i);
 
                 var name = null;
-                if (dataGroup.ctr == "dataFrameClass")
+                if (dataGroup.ctr === "dataFrameClass")
                 {
                     name = (dataGroup._groupName) ? dataGroup._groupName : data.name;
                 }
@@ -972,32 +964,31 @@ module beachParty
                     var width = Math.max(2, rcx.width);
                     var height = Math.max(2, rcx.height);
 
-                    if (this.cellShape == CellShape.rectangle)
+                    if (this.cellShape === CellShape.rectangle)
                     {
                         vp.select(svg).append("rect")
                             .bounds(rcx.left, rcx.top, width, height)
-                            .colors(this.containerFill, this.containerStroke, this.containerStrokeSize)
+                            .colors(this.containerFill, this.containerStroke, this.containerStrokeSize);
                     }
                     else
                     {
                         var radius = Math.min(width, height) / 2;
-                        var cx = rcx.left + rcx.width / 2
+                        var cx = rcx.left + rcx.width / 2;
                         var cy = rcx.top + rcx.height / 2;
 
                         vp.select(svg).append("circle")
                             .attr("cx", cx)
                             .attr("cy", cy)
                             .attr("r", radius)
-                            .colors(this.containerFill, this.containerStroke, this.containerStrokeSize)
+                            .colors(this.containerFill, this.containerStroke, this.containerStrokeSize);
                     }
                 }
 
                 if (this.showCounts)
                 {
-                    var groupCount = dataGroup.length;
                     var yText = rcx.top + 20;
 
-                    if (this.spaceType == SpaceType.fillX)
+                    if (this.spaceType === SpaceType.fillX)
                     {
                         //groupCount = Math.min(beachParty.maxContainers, groupCount);
                         yText = rcx.bottom;
@@ -1008,7 +999,7 @@ module beachParty
                         .attr("x", rcx.left + rcx.width / 2)
                         .attr("y", yText)
                         .attr("text-anchor", "middle")
-                        .colors("black", "none", 0)
+                        .colors("black", "none", 0);
                 }
 
                 //---- draw label ----
@@ -1105,7 +1096,7 @@ module beachParty
 
         constructor(colName = "", statType: StatType = StatType.none)
         {
-            this.statType = statType
+            this.statType = statType;
             this.colName = colName;
             this.peerScale = false;
             this.colValueTransform = null;
@@ -1115,13 +1106,13 @@ module beachParty
         {
             var name = this.colName;
 
-            if (this.statType == StatType.count)
+            if (this.statType === StatType.count)
             {
                 name = "Count@";
             }
             else 
             {
-                var statType = (this.statType == StatType.none) ? "sum" : StatType[this.statType];
+                var statType = (this.statType === StatType.none) ? "sum" : StatType[this.statType];
 
                 name = statType.capitalize() + "@" + name;
             }
@@ -1166,7 +1157,7 @@ module beachParty
             cd.cellShape = cellShape;
             cd.rect = rect;
 
-            if (cellShape == CellShape.circle)
+            if (cellShape === CellShape.circle)
             {
                 var radius = Math.min(rect.width, rect.height) / 2;
                 cd.circle = new CircleData(rect.left + rect.width/2, rect.top + rect.height/2, radius);

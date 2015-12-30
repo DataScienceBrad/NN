@@ -177,7 +177,7 @@ module beachParty
         for (var i = 1; i < cubeMesh.uv.length; i += 2)
         {
             var v = cubeMesh.uv[i];
-            cubeMesh.uv[i] = (v == 0) ? 1 : 0;
+            cubeMesh.uv[i] = (v === 0) ? 1 : 0;
         }
 
         //---- convert to float32Arrays for setting as shader uniform values ----

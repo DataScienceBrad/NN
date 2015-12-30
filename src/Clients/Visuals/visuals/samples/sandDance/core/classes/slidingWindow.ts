@@ -8,7 +8,7 @@
 module beachParty
 {
     /** A sliding window sampler for streaming data.  Keeps the samples received in the last windowLength milliseconds. */
-    export class slidingWindowClass
+    export class SlidingWindowClass
     {
         _samples: TimeSample[];
         _windowLength: number;

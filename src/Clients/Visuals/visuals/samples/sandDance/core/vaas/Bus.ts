@@ -24,5 +24,7 @@ class Bus {
     }
 }
 
+/* tslint:disable */
 var hostBus = new Bus();
 var iframeBus = new Bus();
+/* tslint:enable */

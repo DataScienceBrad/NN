@@ -7,14 +7,12 @@
 
 module beachPartyApp
 {
-    //import colorPalettesClass = beachParty.colorPalettesClass;
+    export var settings: AppSettingsMgr;
 
-    export var settings: appSettingsMgr;
-
-    export class appClass extends beachParty.dataChangerClass
+    export class AppClass extends beachParty.dataChangerClass
     {
         static buildId = "45";           // increment this at last moment before running "vibe10.bat"
-        static instance: appClass;
+        static instance: AppClass;
         static defaultOpacity = .8;
         static maxCategoryBins = 50;
         static defaultNumericBins = 9;
@@ -25,7 +23,7 @@ module beachPartyApp
         public width: number;
         public height: number;
 
-        private coreApplicationInstance: beachParty.appMgrClass;
+        private coreApplicationInstance: beachParty.AppMgrClass;
 
         private saveSettingsHandler: (settings: any, type: sandDance.SettingsType)  => void;
         private loadSettingsHandler: (type: sandDance.SettingsType) => any;
@@ -43,14 +41,14 @@ module beachPartyApp
         _preloads: bps.Preload[];
         _toPercentOverride = 0;
         _isAnimOverride = false;
-        _activeContextMenu: popupMenuClass;
+        _activeContextMenu: PopupMenuClass;
         _isTransformMode = false;
         _wheelDownTime = 0;
         _searchCol = "";
         _searchValue = "";
         _selectedRecords: any[] = [];
-        _insightMgr: insightMgrClass;
-        _dataTipMgr: dataTipMgrClass;
+        _insightMgr: InsightMgrClass;
+        _dataTipMgr: DataTipMgrClass;
         _initSessionId: string;
         _edition = "client";
         //_currentErrorMsg = null;
@@ -58,28 +56,28 @@ module beachPartyApp
         _vsCurrent: ViewSettings;
         _machineId: string;
         _sessionId: string;
-        _undoMgr: undoMgrClass;
+        _undoMgr: UndoMgrClass;
         _isFirstDataFrameLoad = true;
         _isLoggingEnabled = false;
         _binCountForColumn = {};
         _sumByColumn = "";
-        _rotateRing: rotateRingClass;
-        _notesPanel: notesPanelClass;
+        _rotateRing: RotateRingClass;
+        _notesPanel: NotesPanelClass;
         _showInsightPanelOnStop = false;
         //_popupClosedTime = {};
-        _testMgr: testMgrClass;
+        _testMgr: TestMgrClass;
         _chartCycleNum = 0;
         _infoMsgTimer = null;
-        _chartUx: chartUxClass;
+        _chartUx: ChartUxClass;
         _maxToolTipColumns = 15;                // at 20, we seem to run into a browser limit on total tooltip size
-        _facetMgr: facetMgrClass;
+        _facetMgr: FacetMgrClass;
         _selectionMode: bps.SelectMode;
         _rcPlot: ClientRect;
         _rcRotateRing: ClientRect;
         _isEngineDrawing = false;
         _animateDisabledFromUrlParams = false;
         _blankValueStr = "<blank>";
-        _fileOpenMgr: fileOpenMgr;
+        _fileOpenMgr: FileOpenMgr;
         _autoRebuild = true;
         _actualDrawingPrimitive: bps.DrawPrimitive;
         _prevChartName = null;
@@ -94,14 +92,14 @@ module beachPartyApp
         _feedbackText: string;
 
         //---- panel management ----
-        _detailsPanel = <jsonPanelClass>null;
-        _sortPanel = <jsonPanelClass>null;
-        _appPanel = <jsonPanelClass>null;
-        _colorPanel = <jsonPanelClass>null;
-        _facetPanel = <jsonPanelClass>null;
-        _chartPanel = <jsonPanelClass>null;
-        _slicerPanel = <jsonPanelClass>null;
-        _scrubberDialog = <scrubberDialogClass>null;
+        _detailsPanel = <JsonPanelClass>null;
+        _sortPanel = <JsonPanelClass>null;
+        _appPanel = <JsonPanelClass>null;
+        _colorPanel = <JsonPanelClass>null;
+        _facetPanel = <JsonPanelClass>null;
+        _chartPanel = <JsonPanelClass>null;
+        _slicerPanel = <JsonPanelClass>null;
+        _scrubberDialog = <ScrubberDialogClass>null;
 
         //---- support our APP being hosted in an iframe ----
         _clientAppId = null;
@@ -110,7 +108,7 @@ module beachPartyApp
         _slicerColName: string;
         _slicerData: beachParty.BinResult;
         _slicerInitialValue = null;
-        _slicerControl = <slicerControlClass>null;
+        _slicerControl = <SlicerControlClass>null;
 
         //---- color mappings (each data type has its own mapping) ----
         _currentColorMapping: bps.ColorMappingData;
@@ -136,24 +134,24 @@ module beachPartyApp
         _yMapping: bps.MappingData;
         _zMapping: bps.MappingData;
 
-        _colorLegend: colorLegendClass;
-        _sizeLegend: sizeLegendClass;
-        _imageLegend: imageLegendClass;
-        _textLegend: textLegendClass;
-        _facetLegend: facetLegendClass;
+        _colorLegend: ColorLegendClass;
+        _sizeLegend: SizeLegendClass;
+        _imageLegend: ImageLegendClass;
+        _textLegend: TextLegendClass;
+        _facetLegend: FacetLegendClass;
 
-        _generalPicker: popupMenuClass;
+        _generalPicker: PopupMenuClass;
         _layoutsByChart: any = {};
 
         _origColInfos: bps.ColInfo[] = [];              // full set of original columns from table
         _colInfos: bps.ColInfo[] = [];                  // set of SCRUBBED columns (as per preLoad)
 
-        _facetBinAdjuster: numAdjusterClass;
-        _xBinAdjuster: numAdjusterClass;
-        _yBinAdjuster: numAdjusterClass;
-        _zBinAdjuster: numAdjusterClass;
+        _facetBinAdjuster: NumAdjusterClass;
+        _xBinAdjuster: NumAdjusterClass;
+        _yBinAdjuster: NumAdjusterClass;
+        _zBinAdjuster: NumAdjusterClass;
         //_sizeFactorAdjuster: numAdjusterClass;
-        _opacityAdjuster: numAdjusterClass;
+        _opacityAdjuster: NumAdjusterClass;
         //_textOpacityAdjuster: numAdjusterClass;
 
         _filterDesc: SelectionDesc;
@@ -175,7 +173,7 @@ module beachPartyApp
             this.saveSettingsHandler = saveSettingsHandler;
             this.loadSettingsHandler = loadSettingsHandler;
 
-            appClass.instance = this;
+            AppClass.instance = this;
 
             if (!this.isBrowserModern())
             {
@@ -186,7 +184,7 @@ module beachPartyApp
             }
         }
 
-        public set coreApplication(app: beachParty.appMgrClass) {
+        public set coreApplication(app: beachParty.AppMgrClass) {
             this.coreApplicationInstance = app;
         }
 
@@ -235,7 +233,7 @@ module beachPartyApp
             document.oncontextmenu = function ()
             {
                 return false;
-            }
+            };
 
             //document.body.addEventListener("MSHoldVisual", function (e) { e.preventDefault(); }, false);
 
@@ -285,11 +283,6 @@ module beachPartyApp
                 if (!msgBlock.isFirstFilterStage)
                 {
                     this._dataTipMgr.updateDataTipsAfterLayout();
-                }
-                else
-                {
-                    //---- let them stay hidden until end of 2nd stage ----
-                    var dummyStage = 0;
                 }
 
                 //---- if hosted in browser, trigger client's "onPageLoaded" event ----
@@ -373,7 +366,6 @@ module beachPartyApp
                 this.closeAllPopups();
 
                 var primaryKey = msgBlock.primaryKey;
-                var mousePos = msgBlock.mousePosition;
 
                 this.pulse3DCircleIfAppropriate();
 
@@ -399,7 +391,7 @@ module beachPartyApp
                 this._facetMgr.buildLabels(facetLayouts);
             });
 
-            this._dataTipMgr = new dataTipMgrClass();
+            this._dataTipMgr = new DataTipMgrClass();
 
             this._bpsHelper.subscribe("dataFrameLoaded", true, (msgBlock) =>
             {
@@ -431,7 +423,7 @@ module beachPartyApp
                     this._isLoggingEnabled = true;
 
                     //---- we set undo=true in this call to make the current app state the base/home state of undoMgr ----
-                    this.logAction(Gesture.none, null, ElementType.none, Action.start, Target.app, true, "machineId", this._machineId, "buildNum", appClass.buildId);
+                    this.logAction(Gesture.none, null, ElementType.none, Action.start, Target.app, true, "machineId", this._machineId, "buildNum", AppClass.buildId);
 
                     ////---- mark the completion of app init and save the app state as the undo base entry ----
                     //this.createInsight(true, true, (insight) =>
@@ -449,7 +441,7 @@ module beachPartyApp
                     var msg = "Register=" + beachParty.dcRegisterCount + ", Attach=" + vp.events.eventAttachCount;
 
                     vp.select("#eventStats")
-                        .text(msg)
+                        .text(msg);
                 }, 1000);
             });
 
@@ -466,7 +458,7 @@ module beachPartyApp
                     localStorage["dummy"] = this._sessionId;
                 }
 
-                if (this._selectedCount == 0)
+                if (this._selectedCount === 0)
                 {
                     this._selectionDesc = null;
                 }
@@ -492,11 +484,10 @@ module beachPartyApp
                 this.onFilterChangedFromEngine();
             });
 
-
             var searchTextElem = <HTMLInputElement>document.getElementById("searchText");
             searchTextElem.onkeyup = (e) =>
             {
-                if (e.keyCode == vp.events.keyCodes.enter)
+                if (e.keyCode === vp.events.keyCodes.enter)
                 {
                     //---- select all text on ENTER ----
                     searchTextElem.select();
@@ -519,7 +510,7 @@ module beachPartyApp
                 //vp.utils.debug("got searchValue event change=" + this._searchValue);
 
                 //---- don't set unless it has actually changes (preserve selection in textbox when possible) ----
-                if (this._searchValue != searchTextElem.value)
+                if (this._searchValue !== searchTextElem.value)
                 {
                     searchTextElem.value = this._searchValue;
                 }
@@ -567,7 +558,6 @@ module beachPartyApp
             }
         }
 
-
         updateSelectionButton(buttonBaseName: string, selectDesc: SelectionDesc)
         {
             var reason = null;
@@ -599,43 +589,43 @@ module beachPartyApp
                     var maxValue = vp.formatters.format(sp.maxValue);
 
                     //---- add operator, value, value ----
-                    if (st == bps.TextSearchType.betweenInclusive)
+                    if (st === bps.TextSearchType.betweenInclusive)
                     {
                         toolTip += minValue + " <= " + sp.colName + " <= " + maxValue;
                     }
-                    else if (st == bps.TextSearchType.contains)
+                    else if (st === bps.TextSearchType.contains)
                     {
                         toolTip += sp.colName + " contains '" + minValue + "'";
                     }
-                    else if (st == bps.TextSearchType.exactMatch)
+                    else if (st === bps.TextSearchType.exactMatch)
                     {
                         toolTip += sp.colName + " = " + minValue;
                     }
-                    else if (st == bps.TextSearchType.greaterThan)
+                    else if (st === bps.TextSearchType.greaterThan)
                     {
                         toolTip += sp.colName + " > " + minValue;
                     }
-                    else if (st == bps.TextSearchType.greaterThan)
+                    else if (st === bps.TextSearchType.greaterThan)
                     {
                         toolTip += sp.colName + " > " + minValue;
                     }
-                    else if (st == bps.TextSearchType.gtrValueAndLeqValue2)
+                    else if (st === bps.TextSearchType.gtrValueAndLeqValue2)
                     {
                         toolTip += minValue + " < " + sp.colName + " <= " + maxValue;
                     }
-                    else if (st == bps.TextSearchType.lessThan)
+                    else if (st === bps.TextSearchType.lessThan)
                     {
                         toolTip += sp.colName + " < " + minValue;
                     }
-                    else if (st == bps.TextSearchType.lessThanEqual)
+                    else if (st === bps.TextSearchType.lessThanEqual)
                     {
                         toolTip += sp.colName + " <= " + minValue;
                     }
-                    else if (st == bps.TextSearchType.notEqual)
+                    else if (st === bps.TextSearchType.notEqual)
                     {
                         toolTip += sp.colName + " != " + minValue;
                     }
-                    else if (st == bps.TextSearchType.startsWith)
+                    else if (st === bps.TextSearchType.startsWith)
                     {
                         toolTip += sp.colName + " startsWith '" + minValue + "'";
                     }
@@ -649,20 +639,20 @@ module beachPartyApp
         {
             this._vsCurrent = new ViewSettings();
 
-            if (window.location.hostname == "localhost")
+            if (window.location.hostname === "localhost")
             {
                 //---- assume it's a developer machine ----
-                appClass.buildId = "pre" + (1 + (+appClass.buildId));
+                AppClass.buildId = "pre" + (1 + (+AppClass.buildId));
             }
 
             //---- this assumes that our app & BeachParty engine share the same server ----
             this._bpsHelper = bps.createBpsHelper("myChart");
 
-            settings = new appSettingsMgr(this._bpsHelper, this.saveSettingsHandler, this.loadSettingsHandler);
+            settings = new AppSettingsMgr(this._bpsHelper, this.saveSettingsHandler, this.loadSettingsHandler);
 
-            this._fileOpenMgr = new fileOpenMgr(this._bpsHelper);
+            this._fileOpenMgr = new FileOpenMgr(this._bpsHelper);
 
-            this._undoMgr = new undoMgrClass();
+            this._undoMgr = new UndoMgrClass();
             this._undoMgr.registerForChange("undoStack", (e) => this.onUndoStackChange());
 
             this.onUndoStackChange();
@@ -696,7 +686,7 @@ module beachPartyApp
             this._sessionId = sessionId + "";
 
             //var myChart = document.getElementById("myChart");
-            this._rotateRing = new rotateRingClass();
+            this._rotateRing = new RotateRingClass();
 
             //----- regenerate sessionId/machineId ----
             //delete localStorage["machineId"];       // = undefined;
@@ -715,7 +705,7 @@ module beachPartyApp
                 {
                     this.showError(msg);
                 }
-            }
+            };
 
             vp.utils.setDebugId("client");
 
@@ -731,7 +721,7 @@ module beachPartyApp
             this._yMapping = new bps.MappingData("", defaultBinCount);
             this._zMapping = new bps.MappingData("", 3);            // this._defaultBins);
 
-            this._insightMgr = new insightMgrClass();
+            this._insightMgr = new InsightMgrClass();
             this._insightMgr.registerForChange("layout", (e) => this.layoutScreen());
             this._insightMgr.registerForChange("insightLoaded", (e) => this.loadInsight());
             this._insightMgr.registerForChange("currentInsight", (e) => this.onCurrentInsightChanged());
@@ -746,14 +736,14 @@ module beachPartyApp
 
             settings.resetAppSettings();
 
-            settings.shapeOpacity(appClass.defaultOpacity);;
+            settings.shapeOpacity(AppClass.defaultOpacity);;
 
             //---- enable DRAG and DROP on whole client document ---
             setTimeout((e) =>
             {
                 vp.select(".sandDance")
                     .attach("dragover", (e) => e.preventDefault())
-                    .attach("drop", (e) => this._fileOpenMgr.processDroppedTextOrFile(e))
+                    .attach("drop", (e) => this._fileOpenMgr.processDroppedTextOrFile(e));
             }, 1);
 
             //---- set image sources ----
@@ -763,9 +753,9 @@ module beachPartyApp
             vp.select("#dataTipIcon").addClass("fnIconBarDataTip");
             vp.select("#imgDataSlicer").addClass("fnIconBarSlicer");
 
-            this._chartUx = new chartUxClass(this._bpsHelper, this._maxToolTipColumns);
+            this._chartUx = new ChartUxClass(this._bpsHelper, this._maxToolTipColumns);
 
-            this._facetMgr = new facetMgrClass();
+            this._facetMgr = new FacetMgrClass();
 
             //---- hook WINDOW keyboard/mouse down ----
             var windowW = vp.select(".sandDance");
@@ -812,13 +802,13 @@ module beachPartyApp
 
                 vp.events.attach(window, "storage", (e) =>
                 {
-                    if (e.key != "appSettings")
+                    if (e.key !== "appSettings")
                     {
                         var process = true;
-                        if (e.key == "dummy")
+                        if (e.key === "dummy")
                         {
                             var value = localStorage[e.key];
-                            if (value == this._sessionId)
+                            if (value === this._sessionId)
                             {
                                 process = false;
                             }
@@ -843,7 +833,7 @@ module beachPartyApp
         onFilenameChanged()
         {
             vp.select("#filenameText")
-                .text(this._filename)
+                .text(this._filename);
 
             this.setBigValue("Data", this._filename);
         }
@@ -859,7 +849,7 @@ module beachPartyApp
 
         setAutualDrawingPrimitive()
         {
-            if (settings._drawingPrimitive == bps.DrawPrimitive.auto)
+            if (settings._drawingPrimitive === bps.DrawPrimitive.auto)
             {
                 //---- for now, ignore user-specified drawPrimitive ----
                 if (this.is3DChart(this._prevChartName) || this.is3DChart(this._chartName))
@@ -876,7 +866,7 @@ module beachPartyApp
                 var value = settings._drawingPrimitive;
             }
 
-            if (value != this._actualDrawingPrimitive)
+            if (value !== this._actualDrawingPrimitive)
             {
                 this._actualDrawingPrimitive = value;
 
@@ -889,18 +879,18 @@ module beachPartyApp
             /// Note: it is much easier to get consistent, predictable results by building this toolbar in code, rather than HTML. 
             var tpW = vp.select("#iconBar")
                 .clear()
-                .css("min-height", "16px")
+                .css("min-height", "16px");
 
             var tableW = tpW.append("table")
             //.addClass("noSpaceTable")
-                .css("width", "100%")
+                .css("width", "100%");
 
             var rowW = tableW.append("tr")
                 .css("white-space", "nowrap")
-                .id("iconBarRow")
+                .id("iconBarRow");
 
             var leftW = rowW.append("td")
-                .css("width", "100px")
+                .css("width", "100px");
 
             //var centerW = rowW.append("td")
             //    .css("width", "100px")
@@ -912,9 +902,9 @@ module beachPartyApp
 
             //---- create a table/TR for the LEFT group ----
             var tableW = leftW.append("table")
-                .addClass("noSpaceTable")
+                .addClass("noSpaceTable");
 
-            var trW = tableW.append("tr")
+            var trW = tableW.append("tr");
 
             this.createIconTextPair(trW, "onUndoClick", "undo", "Undo the last action", "fnIconBarUndo", "Undo", false);
             this.createIconTextPair(trW, "onRedoClick", "redo", "Redo the last undone action", "fnIconBarRedo", "Redo", false);
@@ -1017,15 +1007,15 @@ module beachPartyApp
 
                 var mode = bps.SelectMode.normal;
 
-                if (selectName == "Add")
+                if (selectName === "Add")
                 {
                     mode = bps.SelectMode.additive;
                 }
-                else if (selectName == "Subtract")
+                else if (selectName === "Subtract")
                 {
                     mode = bps.SelectMode.subtractive;
                 }
-                else if (selectName == "Intersect")
+                else if (selectName === "Intersect")
                 {
                     mode = bps.SelectMode.intersection;
                 }
@@ -1056,7 +1046,7 @@ module beachPartyApp
         onSelectionModeChanged(imgSrc: string, imgSources: string[] = [])
         {
             //---- update the selection button to reflect the new mode ----
-            var isSelected = (imgSrc != "fnSelectionNormal");
+            var isSelected = (imgSrc !== "fnSelectionNormal");
 
             if (isSelected)
             {
@@ -1072,7 +1062,7 @@ module beachPartyApp
             element.addClass(imgSrc);
 
             //---- don't enable this until we have the negative selectionMode icons ----
-            element.attr("data-selected", (isSelected) ? "true" : "false")
+            element.attr("data-selected", (isSelected) ? "true" : "false");
 
         }
 
@@ -1100,18 +1090,18 @@ module beachPartyApp
                 if (vp.geom.rectContainsPoint(this._rcPlot, pt))
                 {
 
-                    if (e.which == 3)
+                    if (e.which === 3)
                     {
                         //---- right click: toggle DATA TIP ----
                     }
                 }
-                else if (e.which == 1)
+                else if (e.which === 1)
                 {
                     //---- LEFT CLICK ----
                     var elem = vp.events.elementFromPoint(pt.x, pt.y);
-                    if (elem && elem.control && elem.control instanceof dataTipClass)
+                    if (elem && elem.control && elem.control instanceof DataTipClass)
                     {
-                        var dataTip = <dataTipClass>elem.control;
+                        var dataTip = <DataTipClass>elem.control;
                     
                         //---- pass click to dataTip (since it has its pointer-events turned off) ----
                         dataTip.onMouseDown(e);
@@ -1151,7 +1141,6 @@ module beachPartyApp
                 p.jsObj.close();
             });
         }
-
 
         onInsightPlayingChanged()
         {
@@ -1210,7 +1199,7 @@ module beachPartyApp
             //    .css("display", "")
 
             vp.select("#playExButton")
-                .text("Pause")
+                .text("Pause");
 
             this.showPlayUI(true);
 
@@ -1225,7 +1214,7 @@ module beachPartyApp
             //vp.select("#stopButton").css("display", "");
 
             vp.select("#playExButton")
-                .text("Resume")
+                .text("Resume");
 
             this.showPlayUI(false, true);
 
@@ -1252,11 +1241,11 @@ module beachPartyApp
         {
             var text = vp.select("#playExButton").text();
 
-            if (text == "Pause")
+            if (text === "Pause")
             {
                 this.pausePlayback();
             }
-            else if (text == "Resume")
+            else if (text === "Resume")
             {
                 this.resumePlayback();
             }
@@ -1284,7 +1273,7 @@ module beachPartyApp
                 .attach("click", (e) =>
                 {
                     this[callbackName](e);
-                })
+                });
 
             if (width)
             {
@@ -1294,7 +1283,7 @@ module beachPartyApp
             if (spacer)
             {
                 parentW.append("td")
-                    .css("width", spacer + "px")
+                    .css("width", spacer + "px");
             }
 
             return textW[0];
@@ -1308,7 +1297,7 @@ module beachPartyApp
                 .addClass("bigBarEntry")
                 .id(id)
                 .css("float", "left")
-                .title(tooltip)
+                .title(tooltip);
 
             tdW[0]._title = tooltip;        // save for later restoration use
 
@@ -1316,29 +1305,29 @@ module beachPartyApp
             {
                 tdW.attach("click", (e) =>
                 {
-                    appUtils.callPanelOpen(e, callback);
-                })
+                    AppUtils.callPanelOpen(e, callback);
+                });
             }
 
             //---- PROMPT (line 1) ----
-            var titleW = tdW.append("div")
+            tdW.append("div")
                 .text(prompt)
-                .addClass("bigBarPrompt")
+                .addClass("bigBarPrompt");
 
             //---- VALUE container (line 2)
-            var divW = tdW.append("div")
+            var divW = tdW.append("div");
             //.css("text-align", "center")
 
             if (!omitValueText)
             {
                 //---- VALUE TEXT ----
-                var valueW = divW.append("span")
+                divW.append("span")
                     .text("None")
                     .id(id + "Value")
-                    .addClass("bigBarValue noneValue")
+                    .addClass("bigBarValue noneValue");
 
                 //---- VALUE CHEVRON ----
-                var imgW = divW.append("div")//img
+                divW.append("div")//img
                     .addClass("chevronOfCombo")
                     .id(id + "Chevron");
                     //.attr("src", "Images/smallChevron3.png")
@@ -1349,13 +1338,13 @@ module beachPartyApp
 
         isSumByEnabled()
         {
-            var isEnabled = (this._chartName == "Column" || this._chartName == "Bar");
+            var isEnabled = (this._chartName === "Column" || this._chartName === "Bar");
             return isEnabled;
         }
 
         isLineByEnabled()
         {
-            var isEnabled = (this._chartName == "Scatter" || this._chartName == "Radial");
+            var isEnabled = (this._chartName === "Scatter" || this._chartName === "Radial");
             return isEnabled;
         }
 
@@ -1364,13 +1353,13 @@ module beachPartyApp
             trW.append("td")
                 .addClass("bigBarEntry")
                 .css("float", "left")
-                .css("width", "8px")
+                .css("width", "8px");
         }
 
         buildBigBar()
         {
             var trW = vp.select("#bigBar")
-                .append("tr")
+                .append("tr");
 
             //---- DATASET ----
             this.addBigBarEntry(trW, "bbData", "Dataset", "Open a data source", (e) => this._fileOpenMgr.onFileNameClick(e));
@@ -1416,7 +1405,7 @@ module beachPartyApp
             //---- SHAPE BY ----
             this.addBigBarEntry(trW, "bbShape", "Shape by", "Select a column for data shape mapping", (e) => this.onImageClick());
 
-            if (this._edition != "client")
+            if (this._edition !== "client")
             {
                 //---- TEXT BY ----
                 this.addBigBarEntry(trW, "bbText", "Text by", "Select a column for datat text mapping",
@@ -1475,7 +1464,7 @@ module beachPartyApp
         {
             //---- for now, click means HIDE notes ----
             vp.select("#chartNotes")
-                .css("display", "none")
+                .css("display", "none");
         }
 
         onCurrentInsightChanged()
@@ -1485,17 +1474,17 @@ module beachPartyApp
             var notes = null;
             var title = null;
 
-            if (insight && source && source != bps.NotesSource.none)
+            if (insight && source && source !== bps.NotesSource.none)
             {
-                if (source == bps.NotesSource.name && insight.name)
+                if (source === bps.NotesSource.name && insight.name)
                 {
                     notes = insight.name;
                 }
-                else if (source == bps.NotesSource.notes && insight.notes)
+                else if (source === bps.NotesSource.notes && insight.notes)
                 {
                     notes = insight.notes;
                 }
-                else if (source == bps.NotesSource.both)
+                else if (source === bps.NotesSource.both)
                 {
                     title = insight.name;
                     notes = insight.notes;
@@ -1507,7 +1496,7 @@ module beachPartyApp
 
             //---- only show notes panel for insight if it was result of a LOAD (vs. new insight) ----
             var reason = this._insightMgr.getCurrentInsightReason();
-            if (reason == "load" || reason == "play load")
+            if (reason === "load" || reason === "play load")
             {
                 if (title || notes)
                 {
@@ -1525,7 +1514,7 @@ module beachPartyApp
                         var rcChart = vp.select("#myChart").getBounds(false);
                         rcPlot = vp.geom.createRect(rcChart.left + rcPlot.left, rcChart.top + rcPlot.top, rcPlot.width, rcPlot.height);
 
-                        this._notesPanel = new notesPanelClass(title, notes, insight.notesBounds, rcPlot);
+                        this._notesPanel = new NotesPanelClass(title, notes, insight.notesBounds, rcPlot);
 
                         //---- track panel movements ----
                         this._notesPanel.registerForChange("location", (e) => this.onInsightBoundsChange(insight));
@@ -1549,7 +1538,6 @@ module beachPartyApp
                 this._notesPanel = null;
             }
         }
-
 
         applyDefaultBins()
         {
@@ -1594,7 +1582,7 @@ module beachPartyApp
                 var test = winAny.beachPartyTest;
                 if (test)
                 {
-                    this._testMgr = new testMgrClass(this, test);
+                    this._testMgr = new TestMgrClass(this, test);
                 }
                 else
                 {
@@ -1645,7 +1633,7 @@ module beachPartyApp
             memObjs.app = this;
             memObjs.appSettingsMgr = settings;
             memObjs.chartUx = this._chartUx;
-            memObjs.fileOpenMgr = fileOpenMgr;
+            memObjs.fileOpenMgr = FileOpenMgr;
             memObjs.insightMgr = this._insightMgr;
             memObjs.undoMgr = this._undoMgr;
 
@@ -1687,7 +1675,6 @@ module beachPartyApp
                 });
             });
         }
-
 
         startAutomatedTest()
         {
@@ -1764,7 +1751,7 @@ module beachPartyApp
                 .css("left", left + "px")
                 .css("top", top + "px")
                 .css("width", rcPlot.width + "px")
-                .css("height", rcPlot.height + "px")
+                .css("height", rcPlot.height + "px");
 
             //vp.utils.debug("---> onPlotMoved");
         }
@@ -1792,7 +1779,7 @@ module beachPartyApp
 
             var rc = vp.select("#btFeedback").getBounds(false);
 
-            var fbPanel = buildJsonPanel("btFeedback", this, "feedback", true, undefined, rc.bottom+5,
+            buildJsonPanel("btFeedback", this, "feedback", true, undefined, rc.bottom+5,
                 rc.right+0, undefined, undefined, undefined, undefined, undefined, true);
         }
 
@@ -1804,12 +1791,12 @@ module beachPartyApp
 
             vp.select("#feedbackBar")
                 .css("display", "")
-                .css("right", "30px")
+                .css("right", "30px");
 
             this.layoutScreen();
 
             vp.select(vp.select("#myChart")[0].firstChild)
-                .css("opacity", "1")        // make visible on first resize
+                .css("opacity", "1");        // make visible on first resize;
         }
 
         /** post a message to the HOST of the beachParty client app. */
@@ -1826,7 +1813,7 @@ module beachPartyApp
                 vp.utils.debug("postMessageToHost: domain=" + domain + ", msg=" + msgObj.msg);
 
                 
-                hostBus.postMessage(msgStr)
+                hostBus.postMessage(msgStr);
                 //window.parent.window.postMessage(msgStr, domain);
             }
         }
@@ -1937,7 +1924,7 @@ module beachPartyApp
 
         setAppAutoRebuild(value: boolean, rebuildNow: boolean, ignoreFilterStage?: boolean)
         {
-            if (this._autoRebuild != value)
+            if (this._autoRebuild !== value)
             {
                 //this._autoRebuild = value;//TODO: check it line.
 
@@ -2028,7 +2015,7 @@ module beachPartyApp
             //---- load SYSTEM VIEW properties ----
             var svd = new bps.SystemViewData();
 
-            if (insight.loadAction == bps.LoadAction.selection)
+            if (insight.loadAction === bps.LoadAction.selection)
             {
                 svd.selectedKeys = preload.selectedKeys;
 
@@ -2037,7 +2024,7 @@ module beachPartyApp
                     //this.onInsightLoadCompleted();
                 });
             }
-            else if (insight.loadAction == bps.LoadAction.filter)
+            else if (insight.loadAction === bps.LoadAction.filter)
             {
                 svd.filteredOutKeys = preload.filteredOutKeys;
 
@@ -2045,7 +2032,7 @@ module beachPartyApp
                 //this._insightCompletePending = true;
                 this._bpsHelper.setSystemViewData(svd);
             }
-            else if (insight.loadAction == bps.LoadAction.data)
+            else if (insight.loadAction === bps.LoadAction.data)
             {
                 //this.onInsightLoadCompleted();
             }
@@ -2084,37 +2071,37 @@ module beachPartyApp
                 }
 
                 //---- load CLIENT VIEW properties ----
-                if (preload.chartName != this._chartName || preload.subLayout != this._layoutName)
+                if (preload.chartName !== this._chartName || preload.subLayout !== this._layoutName)
                 {
                     this.changeToChart(preload.chartName, preload.subLayout, Gesture.system);
                 }
 
                 //---- SIZE FACTOR ----
-                if (preload.sizeFactor != this._sizeFactor)
+                if (preload.sizeFactor !== this._sizeFactor)
                 {
                     this.sizeFactor(preload.sizeFactor);
                 }
 
                 //---- SEPARATION FACTOR ----
-                if (preload.separationFactor != this._separationFactor)
+                if (preload.separationFactor !== this._separationFactor)
                 {
                     this.separationFactor(preload.separationFactor);
                 }
 
                 //---- OPACITY ----
-                if (preload.shapeOpacity != settings._shapeOpacity)
+                if (preload.shapeOpacity !== settings._shapeOpacity)
                 {
                     settings.shapeOpacity(preload.shapeOpacity);
                 }
 
                 //---- IMAGE ----
-                if (preload.shapeImage != settings._shapeImage)
+                if (preload.shapeImage !== settings._shapeImage)
                 {
                     settings.shapeImage(preload.shapeImage);
                 }
 
                 //---- color ----
-                if (preload.shapeColor != settings._shapeColor)
+                if (preload.shapeColor !== settings._shapeColor)
                 {
                     settings.shapeColor(preload.shapeColor);
                 }
@@ -2173,7 +2160,7 @@ module beachPartyApp
             //---- only open if not already open ----
             if (! this._scrubberDialog)
             {
-                this._scrubberDialog = new scrubberDialogClass(this._origColInfos, this._colInfos);
+                this._scrubberDialog = new ScrubberDialogClass(this._origColInfos, this._colInfos);
 
                 this._scrubberDialog.registerForChange("ok", (e) =>
                 {
@@ -2218,12 +2205,12 @@ module beachPartyApp
         {
             var isOpen = (this._detailsPanel != null);
 
-            if (arguments.length == 0)
+            if (arguments.length === 0)
             {
                 return isOpen;
             }
 
-            if (value != isOpen)
+            if (value !== isOpen)
             {
                 this.toggleDetailsPanel(null);
             }
@@ -2235,12 +2222,12 @@ module beachPartyApp
         {
             var isOpen = (this._appPanel != null);
 
-            if (arguments.length == 0)
+            if (arguments.length === 0)
             {
                 return isOpen;
             }
 
-            if (value != isOpen)
+            if (value !== isOpen)
             {
                 this.toggleAppPanel(null);
             }
@@ -2252,12 +2239,12 @@ module beachPartyApp
         {
             var isOpen = (this._sortPanel != null);
 
-            if (arguments.length == 0)
+            if (arguments.length === 0)
             {
                 return isOpen;
             }
 
-            if (value != isOpen)
+            if (value !== isOpen)
             {
                 this.toggleSortPanel(null);
             }
@@ -2269,12 +2256,12 @@ module beachPartyApp
         {
             var isOpen = (this._colorPanel != null);
 
-            if (arguments.length == 0)
+            if (arguments.length === 0)
             {
                 return isOpen;
             }
 
-            if (value != isOpen)
+            if (value !== isOpen)
             {
                 this.toggleColorPanel(null);
             }
@@ -2286,12 +2273,12 @@ module beachPartyApp
         {
             var isOpen = (this._facetPanel != null);
 
-            if (arguments.length == 0)
+            if (arguments.length === 0)
             {
                 return isOpen;
             }
 
-            if (value != isOpen)
+            if (value !== isOpen)
             {
                 this.onFacetClick(null);
             }
@@ -2303,12 +2290,12 @@ module beachPartyApp
         {
             var isOpen = (this._slicerPanel != null);
 
-            if (arguments.length == 0)
+            if (arguments.length === 0)
             {
                 return isOpen;
             }
 
-            if (value != isOpen)
+            if (value !== isOpen)
             {
                 this.toggleSlicerPanel(null);
             }
@@ -2318,7 +2305,7 @@ module beachPartyApp
 
         isShowing3DWheel(value?: boolean)
         {
-            if (arguments.length == 0)
+            if (arguments.length === 0)
             {
                 return this._isTransformMode;
             }
@@ -2328,7 +2315,7 @@ module beachPartyApp
 
             //---- reflect in UI ----
             vp.select("#wheelButton")
-                .attr("data-selected", value + "")
+                .attr("data-selected", value + "");
 
             this.onDataChanged("isShowing3DWheel");
         }
@@ -2384,7 +2371,7 @@ module beachPartyApp
         //    pm.show(mousePosition.x + rc.left, mousePosition.y + rc.top);
         //}
 
-        setContextMenu(pm: popupMenuClass)
+        setContextMenu(pm: PopupMenuClass)
         {
             if (this._activeContextMenu)
             {
@@ -2415,49 +2402,49 @@ module beachPartyApp
                     var key = keys[k];
                     var value = cmdParams[key];
 
-                    if (key == "reset" && value == "true")
+                    if (key === "reset" && value === "true")
                     {
                         this.deleteLocalStorageInfo();
                     }
-                    else if (key == "edition")
+                    else if (key === "edition")
                     {
                         this.setEdition(value);
                     }
-                    else if (key == "session")
+                    else if (key === "session")
                     {
                         this._initSessionId = value;
                     }
-                    else if (key == "hostdomain")
+                    else if (key === "hostdomain")
                     {
                         this._hostDomain = value;
                     }
-                    else if (key == "clientappid")
+                    else if (key === "clientappid")
                     {
                         this._clientAppId = value;
                     }
-                    else if (key == "appstarttime")
+                    else if (key === "appstarttime")
                     {
                     }
-                    else if (key == "zoom")
+                    else if (key === "zoom")
                     {
                         //---- programatically set the zoom (for taking snapshots) ----
                         document.body.style.zoom = value;
                     }
-                    else if (key == "animate")
+                    else if (key === "animate")
                     {
-                        if (value == "false")
+                        if (value === "false")
                         {
                             this._animateDisabledFromUrlParams = true;
                         }
                     }
-                    else if (key == "persistchanges")
+                    else if (key === "persistchanges")
                     {
-                        if (value == "false")
+                        if (value === "false")
                         {
                             settings._persistChangesDisabledFromUrlParams = true;
                         }
                     }
-                    else if (key == "isbrowsercontrol")
+                    else if (key === "isbrowsercontrol")
                     {
                     }
                     else 
@@ -2579,7 +2566,7 @@ module beachPartyApp
                 return this._isItemSortAscending;
             }
 
-            if (value != this._isItemSortAscending)
+            if (value !== this._isItemSortAscending)
             {
                 this._isItemSortAscending = value;
 
@@ -2599,7 +2586,7 @@ module beachPartyApp
                 return this._sortItemCol;
             }
 
-            if (value != this._sortItemCol)
+            if (value !== this._sortItemCol)
             {
                 this._sortItemCol = value;
                 this.onSortParmsChanged(tellEngine);
@@ -2656,12 +2643,12 @@ module beachPartyApp
             md.tagDelimiter = (this._slicerControl) ? this._slicerControl.tagDelimiter() : bps.TagDelimiter.none;
 
             var colInfo = this.getColInfo(colName);
-            var isCategory = (md.forceCategory || colInfo.colType == "string");
+            var isCategory = (md.forceCategory || colInfo.colType === "string");
 
             if (isCategory)
             {
                 md.binSorting = bps.BinSorting.ascending;
-                md.binCount = appClass.maxCategoryBins;      // max category bins
+                md.binCount = AppClass.maxCategoryBins;      // max category bins
             }
 
             this._bpsHelper.getBinData(md, (msgBlock) =>
@@ -2682,7 +2669,6 @@ module beachPartyApp
             });
 
         }
-
 
         slicerData(value?: beachParty.BinResult)
         {
@@ -2764,7 +2750,6 @@ module beachPartyApp
                 this._yMapping.colName = defaultCols.y;
                 this._zMapping.colName = defaultCols.z;
 
-
                 this.setMappingDataFormatting(this._xMapping);
                 this.setMappingDataFormatting(this._yMapping);
                 this.setMappingDataFormatting(this._zMapping);
@@ -2814,7 +2799,7 @@ module beachPartyApp
 
         onFilterChangedFromEngine()
         {
-            var wasFilterReset = (this._recordCount == this._filteredInCount);
+            var wasFilterReset = (this._recordCount === this._filteredInCount);
 
             if (this.colorColumn())
             {
@@ -2866,7 +2851,7 @@ module beachPartyApp
             //---- hide the chartUxDiv when transforMode = true ----
             vp.select("#chartUxDiv").css("display", (this._isTransformMode) ? "none" : "");
 
-            appUtils.setButtonSelectedState("wheel", this._isTransformMode, "fnIconBarToggle3dNorm", "fnIconBarToggle3dSelect");
+            AppUtils.setButtonSelectedState("wheel", this._isTransformMode, "fnIconBarToggle3dNorm", "fnIconBarToggle3dSelect");
 
             if (!settings._showWheelDuringTransformMode)
             {
@@ -3014,7 +2999,7 @@ module beachPartyApp
 
                 for (var i = 0; i < fieldList.length; i++)
                 {
-                    if (fieldList[i].name == colName)
+                    if (fieldList[i].name === colName)
                     {
                         pf = fieldList[i];
                         break;
@@ -3117,7 +3102,7 @@ module beachPartyApp
             im.imagePalette = ["filled circle", "filled square", "filled triangle", "circle", "square", "triangle"];
 
             var colInfo = this.getColInfo(im.colName);
-            paletteHelper.buildImageBreaksFromSettings(im, colInfo, settings._useNiceNumbers);
+            PaletteHelper.buildImageBreaksFromSettings(im, colInfo, settings._useNiceNumbers);
 
             this._bpsHelper.setImageMapping(im);
 
@@ -3141,7 +3126,7 @@ module beachPartyApp
             sm.sizePalette = [.25, .5, .75, 1];
 
             var colInfo = this.getColInfo(this._sizeMapping.colName);
-            paletteHelper.buildSizeBreaksFromSettings(this._sizeMapping, colInfo, settings._useNiceNumbers);
+            PaletteHelper.buildSizeBreaksFromSettings(this._sizeMapping, colInfo, settings._useNiceNumbers);
 
             this._bpsHelper.setSizeMapping(sm);
 
@@ -3175,7 +3160,7 @@ module beachPartyApp
             for (var i = 0; i < this._colInfos.length; i++)
             {
                 var ci = this._colInfos[i];
-                if (ci.name == colName)
+                if (ci.name === colName)
                 {
                     colInfo = ci;
                     break;
@@ -3211,7 +3196,7 @@ module beachPartyApp
 
             //---- use the currently bound FILTERED-IN data set, if available ----
             var colInfo = cm.boundColInfo;
-            if (rebindColInfo || !colInfo || colInfo.name != cm.colName)
+            if (rebindColInfo || !colInfo || colInfo.name !== cm.colName)
             {
                 //---- REBIND colInfo to current filter setting ----
                 colInfo = this.getColInfo(cm.colName);
@@ -3220,7 +3205,7 @@ module beachPartyApp
 
             if (rebuildPalette || rebindColInfo)
             {
-                paletteHelper.buildColorBreaks(cm, colInfo, settings._useNiceNumbers);
+                PaletteHelper.buildColorBreaks(cm, colInfo, settings._useNiceNumbers);
             }
 
             this._bpsHelper.setColorMapping(cm);
@@ -3289,7 +3274,7 @@ module beachPartyApp
             vp.select("#yChevron")
                 .css("position", "relative")
                 .css("left", "50px")
-                .css("top", chevTop + "px")
+                .css("top", chevTop + "px");
 
             //---- adjust yButton to correct size, so that background (hover) will cover the text and chevron correctly ----
             var buttonTop = -(10 + textHeight / 2);
@@ -3299,13 +3284,13 @@ module beachPartyApp
                 .css("height", textHeight + "px")
                 .css("position", "relative")
                 .css("top", buttonTop + "px")
-                .css("left", "0px")
+                .css("left", "0px");
 
             //---- adjust position of y bin numAdjuster to be under the name ----
             var binTop = 4 - (textHeight / 2);
             vp.select("#yBins")
                 .css("top", binTop + "px")
-                .css("left", "2px")
+                .css("left", "2px");
         }
 
         facetBins(value?: number)
@@ -3424,7 +3409,7 @@ module beachPartyApp
         showInfoMsg(title: string, msg: string)
         {
             vp.select("#infoMsgTitle")
-                .text(title)
+                .text(title);
 
             var str = msg.replace(/\r\n/g, "<br />");
 
@@ -3459,7 +3444,7 @@ module beachPartyApp
             var left = 300;
             var top = 100;
 
-            var errorPanel = buildJsonPanel(null, this, "errorPanel", true, left, top, undefined, undefined);
+            buildJsonPanel(null, this, "errorPanel", true, left, top, undefined, undefined);
         }
 
         searchCol(value?: string)
@@ -3469,7 +3454,7 @@ module beachPartyApp
                 return this._searchCol;
             }
 
-            if (value != this._searchCol)
+            if (value !== this._searchCol)
             {
                 this._searchCol = value;
 
@@ -3490,7 +3475,7 @@ module beachPartyApp
                 return this._searchValue;
             }
 
-            if (forceSet || value != this._searchValue)
+            if (forceSet || value !== this._searchValue)
             {
                 value = value || "";
 
@@ -3533,7 +3518,7 @@ module beachPartyApp
             //---- create canvas we can draw on ----
             var canvasW = vp.select(document.body).append("canvas")
                 .attr("width", width)
-                .attr("height", height)
+                .attr("height", height);
 
             //---- get drawing context ----
             var canvas = <HTMLCanvasElement>canvasW[0];
@@ -3563,7 +3548,7 @@ module beachPartyApp
 
         drawShapeType(ctx: CanvasRenderingContext2D, shapeType: string, x: number, y: number, width: number, height: number)
         {
-            if (shapeType == "filled square")
+            if (shapeType === "filled square")
             {
             }
 
@@ -3587,7 +3572,6 @@ module beachPartyApp
             //}
         }
 
-
         onAppShapeColorChanged()
         {
             if (this._currentColorMapping)
@@ -3606,11 +3590,6 @@ module beachPartyApp
             }
 
             this._sizeFactor = value;
-
-            //---- record changed size for this chart ----
-            var key = this._chartName + "," + this._layoutName;
-            //this._sizeFactorByChart[key] = value;
-            this._vsCurrent.sizeFactor = value;
 
             this._bpsHelper.setSizeFactor(value, animate);
             this.onDataChanged("sizeFactor");
@@ -3644,10 +3623,10 @@ module beachPartyApp
                 .addClass("listColorPaletteName")
                 .text(anyPalette.name);
 
-            if (anyPalette.name == this._currentColorMapping.paletteName)
+            if (anyPalette.name === this._currentColorMapping.paletteName)
             {
                 textW
-                    .addClass("listColorPaletteNameSelected")
+                    .addClass("listColorPaletteNameSelected");
             }
 
             var paletteCount = this._currentColorMapping.stepsRequested;
@@ -3665,7 +3644,7 @@ module beachPartyApp
                         // .css("height", entryHeight + "px")
                         .css("margin", "0px")
                         .css("padding", "0px")
-                        .css("background", bgColor)
+                        .css("background", bgColor);
 
                     str += ", " + palette[i];
                 }
@@ -3686,7 +3665,7 @@ module beachPartyApp
                     .addClass("listColorPaletteGradient")
                     // .css("height", entryHeight + "px")
                     .css("width", width + "px")
-                    .css("background", "linear-gradient(to right" + str + ")")
+                    .css("background", "linear-gradient(to right" + str + ")");
             }
 
             return itemW[0];
@@ -3722,8 +3701,6 @@ module beachPartyApp
 
             var cm = this._currentColorMapping;
             var steps = cm.stepsRequested;
-            var showSteps = (!cm.isContinuous);
-            var schemeType = this._colorPaletteType;
             if (!schemeType)
             {
                 schemeType = "sequential";          // default
@@ -3747,7 +3724,7 @@ module beachPartyApp
 
         colorPaletteIndex(index: number)
         {
-            if (arguments.length == 0)
+            if (arguments.length === 0)
             {
                 return 0;       // not known
             }
@@ -3765,7 +3742,7 @@ module beachPartyApp
 
         colorPalette(value?: any)
         {
-            if (arguments.length == 0)
+            if (arguments.length === 0)
             {
                 return this._currentColorMapping.colorPalette;
             }
@@ -3787,7 +3764,7 @@ module beachPartyApp
         buildLegends()
         {
             //---- COLOR legend ----
-            var colorLegend = new colorLegendClass(this, "colorLegend", this._bpsHelper);
+            var colorLegend = new ColorLegendClass(this, "colorLegend", this._bpsHelper);
             this._colorLegend = colorLegend;
             colorLegend.registerForChange("colorPanelRequest", (e) =>
             {
@@ -3797,7 +3774,7 @@ module beachPartyApp
             beachParty.connectModelView(this, "colorMapping", colorLegend, "colorMapping");
 
             //---- SIZE legend ----
-            var sizeLegend = new sizeLegendClass(this, "sizeLegend", this._bpsHelper);
+            var sizeLegend = new SizeLegendClass(this, "sizeLegend", this._bpsHelper);
             this._sizeLegend = sizeLegend;
             sizeLegend.registerForChange("sizePanelRequest", (e) =>
             {
@@ -3807,7 +3784,7 @@ module beachPartyApp
             beachParty.connectModelView(this, "sizeMapping", sizeLegend, "sizeMapping");
 
             //---- IMAGE legend ----
-            var imageLegend = new imageLegendClass(this, "imageLegend", this._bpsHelper);
+            var imageLegend = new ImageLegendClass(this, "imageLegend", this._bpsHelper);
             this._imageLegend = imageLegend;
             imageLegend.registerForChange("imagePanelRequest", (e) =>
             {
@@ -3817,7 +3794,7 @@ module beachPartyApp
             beachParty.connectModelView(this, "imageMapping", imageLegend, "imageMapping");
 
             //---- TEXT legend ----
-            var textLegend = new textLegendClass("textLegend", this._textMapping);
+            var textLegend = new TextLegendClass("textLegend", this._textMapping);
             this._textLegend = textLegend;
 
             beachParty.connectModelView(this, "textMapping", textLegend, "textMapping");
@@ -3855,7 +3832,7 @@ module beachPartyApp
         buildBinAdjusters()
         {
             //---- FACET bins ----
-            this._facetBinAdjuster = new numAdjusterClass("facetBins", "Bins", this.facetBins(), 1, 99, "The number of facet bins to create.  Drag in circle to change.",
+            this._facetBinAdjuster = new NumAdjusterClass("facetBins", "Bins", this.facetBins(), 1, 99, "The number of facet bins to create.  Drag in circle to change.",
                 AdjusterStyle.right, true, false, true);
 
             beachParty.connectModelView(this, "facetBins", this._facetBinAdjuster, "value");
@@ -3876,7 +3853,7 @@ module beachPartyApp
             //});
 
             //---- OPACITY adjuster ----
-            this._opacityAdjuster = new numAdjusterClass("opacityAdj", "Opacity", settings._shapeOpacity, 0, 1, "Adjust the opacity of the shapes.  Drag in circle to change.",
+            this._opacityAdjuster = new NumAdjusterClass("opacityAdj", "Opacity", settings._shapeOpacity, 0, 1, "Adjust the opacity of the shapes.  Drag in circle to change.",
                 AdjusterStyle.right, false, true);
 
             beachParty.connectModelView(settings, "shapeOpacity", this._opacityAdjuster, "value");
@@ -3895,19 +3872,19 @@ module beachPartyApp
             //beachParty.connectModelView(this, "textOpacity", this._textOpacityAdjuster, "value");
 
             //---- X bins ----
-            this._xBinAdjuster = new numAdjusterClass("xBins", "Bins", this.xBins(), 1, 999, "The number of X-axis bins to create.  Drag in circle to change.",
+            this._xBinAdjuster = new NumAdjusterClass("xBins", "Bins", this.xBins(), 1, 999, "The number of X-axis bins to create.  Drag in circle to change.",
                 AdjusterStyle.bottom, true, false, true);
 
             beachParty.connectModelView(this, "xBins", this._xBinAdjuster, "value");
 
             //---- Y bins ----
-            this._yBinAdjuster = new numAdjusterClass("yBins", "Bins", this.yBins(), 1, 999, "The number of Y-axis bins to create.  Drag in circle to change.",
+            this._yBinAdjuster = new NumAdjusterClass("yBins", "Bins", this.yBins(), 1, 999, "The number of Y-axis bins to create.  Drag in circle to change.",
                 AdjusterStyle.left, true, false, true);
 
             beachParty.connectModelView(this, "yBins", this._yBinAdjuster, "value");
 
             //---- Z bins ----
-            this._zBinAdjuster = new numAdjusterClass("zBins", "Bins", this.zBins(), 1, 10,
+            this._zBinAdjuster = new NumAdjusterClass("zBins", "Bins", this.zBins(), 1, 10,
                 "The number of z bins to create.  Drag in circle to change.", AdjusterStyle.left, true, false, false);
 
             beachParty.connectModelView(this, "zBins", this._zBinAdjuster, "value");
@@ -3920,7 +3897,7 @@ module beachPartyApp
             //---- only log when past first data load and outside of a "load insight" operation ----
             if (this._isLoggingEnabled)
             {
-                var sessionId = this._machineId + "-" + appClass.buildId + "-" + this._sessionId;
+                var sessionId = this._machineId + "-" + AppClass.buildId + "-" + this._sessionId;
                 var strGesture = Gesture[gesture];
                 var strElementType = ElementType[elementType];
                 var strAction = Action[action];
@@ -3949,7 +3926,7 @@ module beachPartyApp
                 }
                 vp.utils.debug("logAction: tip=" + tip);
 
-                if (isUndoable && gesture != Gesture.system)
+                if (isUndoable && gesture !== Gesture.system)
                 {
                     this.createInsight(false, false, (insight) =>
                     {
@@ -4058,14 +4035,14 @@ module beachPartyApp
             undefined, undefined, undefined, true);
             
             //---- adjust height of column picker so it doesn't exceed height of panel ----
-            var panelMaxHeight = appClass.maxPanelHeight;
+            var panelMaxHeight = AppClass.maxPanelHeight;
             var maxListHeight = panelMaxHeight - 165;
 
             var panelRoot = this._sortPanel.getRootElem();
             var contentW = vp.select(panelRoot, "#tab0Content");
 
             vp.select(contentW[0], ".listBox")
-                .css("max-height", maxListHeight + "px")
+                .css("max-height", maxListHeight + "px");
             
             this._sortPanel.registerForChange("close", (e) =>
             {
@@ -4134,7 +4111,7 @@ module beachPartyApp
             if (panel)
             {
                 //---- must set initial colName, since it is not a known data binding to the jsonPanel ----
-                var slicerControl = <slicerControlClass> panel.getControlById("slicer");
+                var slicerControl = <SlicerControlClass> panel.getControlById("slicer");
                 this._slicerControl = slicerControl;
 
                 slicerControl.colName(colName);
@@ -4254,12 +4231,11 @@ module beachPartyApp
 
                 this.imgUrlToBlob(insight.imageAsUrl, (blob) =>
                 {
-                    localFileHelper.saveBlobToLocalFile("snapshot-" + appClass.nextSnapShotNum + ".png", blob, "image/png");
+                    LocalFileHelper.saveBlobToLocalFile("snapshot-" + AppClass.nextSnapShotNum + ".png", blob, "image/png");
                 });
 
-                appClass.nextSnapShotNum++;
+                AppClass.nextSnapShotNum++;
             });
-
 
         }
 
@@ -4302,7 +4278,7 @@ module beachPartyApp
             detailsPanel.applyAppPanelOpacity();
             this._detailsPanel = detailsPanel;
 
-            var recordView = <recordViewClass>detailsPanel.getControlById("recordView");
+            var recordView = <RecordViewClass>detailsPanel.getControlById("recordView");
 
             //recordView.registerForChange("selectedValue", (e) =>
             //{
@@ -4348,15 +4324,15 @@ module beachPartyApp
 
         createSpacer(trW: vp.dom.singleWrapperClass, spaceCount = 1)
         {
-            var tdW = trW.append("td")
-                .addClass((spaceCount == 1) ? "iconBarSpacer" : "iconBarSpacer2")
+            trW.append("td")
+                .addClass((spaceCount === 1) ? "iconBarSpacer" : "iconBarSpacer2");
         }
 
         /** add icon, with text under it at specified div.  if "addChevron" is true, add a dropdown icon to the right. */
         createIconTextPair(trW: vp.dom.singleWrapperClass, callbackName: string, rootName: string, tooltip: string, imgSrc: string, text: string, addChevron?: boolean, isDisabled?: boolean,
             isLeftAligned?: boolean, isRotated?: boolean)
         {
-            var tdW = trW.append("td")
+            var tdW = trW.append("td");
 
             if (!settings._isMenuTextVisible && !settings._isMenuChevronVisible)
             {
@@ -4369,9 +4345,9 @@ module beachPartyApp
                     .attach("click", (e) =>
                     {
                         this[callbackName](e);
-                    })
+                    });
 
-                var imGW = tdW.append("div") //img
+                tdW.append("div") //img
                     .id(rootName + "Img")
                     .addClass(imgSrc) //src
                     .addClass("clickIcon")
@@ -4387,12 +4363,12 @@ module beachPartyApp
             else
             {
                 //---- ICON/TEXT COMBO ----
-                var divW = tdW.append("span")
+                tdW.append("span")
                     .id(rootName + "Button")
                     .attach("click", (e) =>
                     {
                         this[callbackName](e);
-                    })
+                    });
 
                 this.addIconTextPair(rootName, tooltip, imgSrc, text, addChevron, isDisabled, isLeftAligned, isRotated);
             }
@@ -4405,18 +4381,18 @@ module beachPartyApp
             var root = vp.select("#" + rootName + "Button")
                 .addClass("iconTextCombo")
                 .css("display", "inline-block")
-                .title(tooltip)
+                .title(tooltip);
 
             //---- TABLE/ROW for easier alignment ----
-            var tableW = root.append("table")
+            var tableW = root.append("table");
 
             if (imgSrc)
             {
                 //---- first row: IMG ----
                 var tdW = tableW.append("tr").append("td")
-                    .css("text-align", (isLeftAligned) ? "left" : "center")
+                    .css("text-align", (isLeftAligned) ? "left" : "center");
 
-                var imGW = tdW.append("div")
+                tdW.append("div")
                     .addClass("iconOfCombo")
                     .addClass(imgSrc)
                     .id(rootName + "Img")
@@ -4429,15 +4405,15 @@ module beachPartyApp
             }
 
             //---- second row: TEXT ----
-            var rowW = tableW.append("tr")
+            var rowW = tableW.append("tr");
 
-            var textW = rowW.append("td").append("div")
+            rowW.append("td").append("div")
                 .addClass("textOfCombo")
                 .css("margin-top", "-0px")
                 .css("text-align", (isLeftAligned) ? "left" : "center")
                 .css("white-space", "nowrap")
                 .id(rootName + "Text")
-                .text(text)
+                .text(text);
 
             if (isDisabled)
             {
@@ -4478,7 +4454,7 @@ module beachPartyApp
             document.body.onselectstart = (e) =>
             {
                 var tt = vp.select(e.target);
-                var isTextBox = ((tt.is("input")) && (tt.attr("type") == "text"));
+                var isTextBox = ((tt.is("input")) && (tt.attr("type") === "text"));
 
                 var isSelectable = (isTextBox || tt.is("html") || tt.is("textarea"));
 
@@ -4515,7 +4491,7 @@ module beachPartyApp
                 var kd = knownData[i];
                 if (kd.showInFileOpen)
                 {
-                    if (this._edition == "client" && (kd.name == "AthensCa" || kd.name == "RainFall" || kd.name == "Pitches"))
+                    if (this._edition === "client" && (kd.name === "AthensCa" || kd.name === "RainFall" || kd.name === "Pitches"))
                     {
                         continue;
                     }
@@ -4537,7 +4513,7 @@ module beachPartyApp
             {
                 for (var i = 0; i < this._preloads.length; i++)
                 {
-                    if (this._preloads[i].name == name)
+                    if (this._preloads[i].name === name)
                     {
                         isKnown = true;
                         break;
@@ -4564,11 +4540,11 @@ module beachPartyApp
 
                 var imgClass = "fnColPickerString";
 
-                if (colType == "number")
+                if (colType === "number")
                 {
                     imgClass = "fnColPickerNumber";
                 }
-                else if (colType == "date")
+                else if (colType === "date")
                 {
                     imgClass = "fnColPickerDate";
                 }
@@ -4578,7 +4554,7 @@ module beachPartyApp
 
             if (settings._isColPickerSorted)
             {
-                colItems.sort(function (a, b) { return (a.text < b.text) ? -1 : ((a.text == b.text) ? 0 : 1); });
+                colItems.sort(function (a, b) { return (a.text < b.text) ? -1 : ((a.text === b.text) ? 0 : 1); });
             }
 
             if (includeNone)
@@ -4606,12 +4582,11 @@ module beachPartyApp
             if (binCount === undefined)
             {
                 var colType = this.getColInfo(colName).colType;
-                binCount = (colType == "string") ? appClass.maxCategoryBins : appClass.defaultNumericBins;
+                binCount = (colType === "string") ? AppClass.maxCategoryBins : AppClass.defaultNumericBins;
             }
 
             return binCount;
         }
-
 
         getMaxKeysForColumn(colName: string)
         {
@@ -4620,7 +4595,7 @@ module beachPartyApp
             if (colName)
             {
                 var ci = this.getColInfo(colName);
-                if (ci && ci.colType == "string")
+                if (ci && ci.colType === "string")
                 {
                     maxKeys = ci.max + 1;
                 }
@@ -4661,12 +4636,12 @@ module beachPartyApp
 
             if (colName)
             {
-                if (this._chartName == "Column")
+                if (this._chartName === "Column")
                 {
                     this.changeYMapping(colName);
                     this.yBins(binCount);
                 }
-                else if (this._chartName == "Bar")
+                else if (this._chartName === "Bar")
                 {
                     this.changeXMapping(colName);
                     this.xBins(binCount);
@@ -4709,7 +4684,6 @@ module beachPartyApp
 
             return chartPanel;
         }
-
 
         onFacetClick(e)
         {
@@ -4767,17 +4741,17 @@ module beachPartyApp
             {
                 var rc = vp.select("#" + legendButtonName).getBounds(true);
 
-                if (legendButtonName == "yButton")
+                if (legendButtonName === "yButton")
                 {
                     x = rc.right;
                     y = rc.top / 2;
                 }
-                else if (legendButtonName == "zButton")
+                else if (legendButtonName === "zButton")
                 {
                     x = rc.right;
                     y2 = rc.bottom;     // should be top - why need to adjust?
                 }
-                else if (legendButtonName == "xButton")
+                else if (legendButtonName === "xButton")
                 {
                     x = rc.left;
                     y2 = rc.top;
@@ -4798,14 +4772,14 @@ module beachPartyApp
             //this._facetPanel = xPanel;
 
             //---- adjust height of column picker so it doesn't exceed height of panel ----
-            var panelMaxHeight = appClass.maxPanelHeight;
+            var panelMaxHeight = AppClass.maxPanelHeight;
             var maxListHeight = panelMaxHeight - 75;
 
             var panelRoot = axisPanel.getRootElem();
             var contentW = vp.select(panelRoot, "#tab0Content");
 
             vp.select(contentW[0], ".listBox")
-                .css("max-height", maxListHeight + "px")
+                .css("max-height", maxListHeight + "px");
 
             axisPanel.registerForChange("close", (e) =>
             {
@@ -4826,14 +4800,14 @@ module beachPartyApp
             this._facetPanel = facetPanel;
 
             //---- adjust height of column picker so it doesn't exceed height of panel ----
-            var panelMaxHeight = appClass.maxPanelHeight;
+            var panelMaxHeight = AppClass.maxPanelHeight;
             var maxListHeight = panelMaxHeight - 75;
 
             var panelRoot = facetPanel.getRootElem();
             var contentW = vp.select(panelRoot, "#tab0Content");
 
             vp.select(contentW[0], ".listBox")
-                .css("max-height", maxListHeight + "px")
+                .css("max-height", maxListHeight + "px");
 
             facetPanel.registerForChange("close", (e) =>
             {
@@ -4855,7 +4829,7 @@ module beachPartyApp
             {
                 var rc = vp.select("#colorLegendTitle").getBounds(true);
                 x2 = rc.left;
-                y = rc.top
+                y = rc.top;
             }
             else
             {
@@ -4874,7 +4848,7 @@ module beachPartyApp
             vp.select(colorPanel.getRootElem())
                 .css("max-height", maxHeight + "px")
                 .css("overflow-x", "hidden")  
-                .css("overflow-y", "hidden")     // list already does needed scrolling
+                .css("overflow-y", "hidden");     // list already does needed scrolling;
 
             //---- adjust height of column picker so it doesn't exceed height of panel ----
             var maxListHeight = maxHeight - 100;       // for tab headers
@@ -4883,7 +4857,7 @@ module beachPartyApp
             var contentW = vp.select(panelRoot, "#tab0Content");
 
             vp.select(contentW[0], ".listBox")
-                .css("max-height", maxListHeight + "px")
+                .css("max-height", maxListHeight + "px");
             
             colorPanel.registerForChange("close", (e) =>
             {
@@ -4924,7 +4898,6 @@ module beachPartyApp
             }
         }
 
-
         onSearchClick(e)
         {
             var text = vp.select("#searchText").value();
@@ -4933,13 +4906,12 @@ module beachPartyApp
             //---- parse text for comparison or range operators ----
             var scanner = new vp.utils.scanner(text);
             var tokType = scanner.scan();
-            var opTok = null;
 
-            if (tokType == vp.utils.TokenType.operator)
+            if (tokType === vp.utils.TokenType.operator)
             {
                 this.doOperatorSearch(e, "Search", gesture, scanner);
             }
-            else if (tokType == vp.utils.TokenType.number)
+            else if (tokType === vp.utils.TokenType.number)
             {
                 //---- look for range ----
                 var minValue = scanner.token();
@@ -4996,27 +4968,27 @@ module beachPartyApp
             var value = scanner.token();
             var op = null;
 
-            if (tok == "<")
+            if (tok === "<")
             {
                 op = bps.TextSearchType.lessThan;
             }
-            else if (tok == "<=")
+            else if (tok === "<=")
             {
                 op = bps.TextSearchType.lessThanEqual;
             }
-            else if (tok == ">")
+            else if (tok === ">")
             {
                 op = bps.TextSearchType.greaterThan;
             }
-            else if (tok == ">=")
+            else if (tok === ">=")
             {
                 op = bps.TextSearchType.greaterThanEqual;
             }
-            else if ((tok == "=") || (tok == "=="))
+            else if ((tok === "=") || (tok === "=="))
             {
                 op = bps.TextSearchType.exactMatch;
             }
-            else if ((tok == "!=") || (tok = "<>"))
+            else if ((tok === "!=") || (tok = "<>"))
             {
                 op = bps.TextSearchType.notEqual;
             }
@@ -5071,7 +5043,7 @@ module beachPartyApp
             var pickerItems = vp.utils.keys(enumType);
 
             //---- capitalize the first letter of each enum name ----
-            pickerItems = pickerItems.map((name) => appUtils.capitalizeFirstLetter(name));
+            pickerItems = pickerItems.map((name) => AppUtils.capitalizeFirstLetter(name));
 
             //---- todo: what does this filter out? ----
             var pickerItems = pickerItems.filter((k) =>
@@ -5082,7 +5054,7 @@ module beachPartyApp
             //---- some long list of enum values have separators in them; substitute a menu line marker ----
             var pickerItems = pickerItems.map((val) =>
             {
-                return (val == "separator") ? "-" : val;
+                return (val === "separator") ? "-" : val;
             });
 
             var picker = this.createGeneralPicker(null, "enumPicker", pickerItems, callback, undefined, undefined, ownerElem, internalOwnerElement);
@@ -5127,7 +5099,7 @@ module beachPartyApp
             var colItems = this.getMappingCols(includeBlank);
             var iconWidth = 20;
 
-            var listBox = new listBoxClass(parent, colItems, (mid: MenuItemData) =>
+            var listBox = new ListBoxClass(parent, colItems, (mid: MenuItemData) =>
             {
                 if (mid.isNone)
                 {
@@ -5145,7 +5117,7 @@ module beachPartyApp
         createKnownDataPickerList(parent: HTMLElement, includeBlank: boolean, callback)
         {
             var colItems = this.getKnownFiles();
-            var listBox = new listBoxClass(parent, colItems, callback);
+            var listBox = new ListBoxClass(parent, colItems, callback);
 
             vp.select(listBox._root)
                 .id("knownDataPickerList");
@@ -5189,11 +5161,11 @@ module beachPartyApp
         public createGeneralPicker(openerIds: string, name: string, colItems: any[], callback, verticalMargin = 0,
             iconWidth?: number, ownerElem?: HTMLElement, internalOwnerElement?: HTMLElement)
         {
-            var pm: popupMenuClass = null;
+            var pm: PopupMenuClass = null;
 
             if (colItems)
             {
-                pm = new popupMenuClass(openerIds, "generalColPicker", colItems, (e, menu, textIndex, menuIndex) =>
+                pm = new PopupMenuClass(openerIds, "generalColPicker", colItems, (e, menu, textIndex, menuIndex) =>
                 {
                     var mid = <MenuItemData>colItems[menuIndex];
                     callback(mid, colItems);
@@ -5221,7 +5193,6 @@ module beachPartyApp
             if (picker)
             {
                 picker.changeRootClass("popupPanel");
-
 
                 var x = undefined;
                 var y = undefined;
@@ -5342,7 +5313,7 @@ module beachPartyApp
 
         colorPaletteType(value?: string)
         {
-            if (arguments.length == 0)
+            if (arguments.length === 0)
             {
                 return this._colorPaletteType;
             }
@@ -5354,7 +5325,7 @@ module beachPartyApp
 
         reverseColorPalette(value?: boolean)
         {
-            if (arguments.length == 0)
+            if (arguments.length === 0)
             {
                 return this._currentColorMapping.isReversed;
             }
@@ -5367,7 +5338,7 @@ module beachPartyApp
 
         colorIsContinuous(value?: boolean)
         {
-            if (arguments.length == 0)
+            if (arguments.length === 0)
             {
                 return this._currentColorMapping.isContinuous;
             }
@@ -5380,7 +5351,7 @@ module beachPartyApp
 
         colorSteps(value?: number)
         {
-            if (arguments.length == 0)
+            if (arguments.length === 0)
             {
                 return this._currentColorMapping.stepsRequested;
             }
@@ -5414,7 +5385,7 @@ module beachPartyApp
             for (var i = 0; i < palettes.length; i++)
             {
                 var anyPalette = <any> palettes[i];
-                if (anyPalette.name == name)
+                if (anyPalette.name === name)
                 {
                     palette = palettes[i];
                     break;
@@ -5430,7 +5401,7 @@ module beachPartyApp
 
         colorColumn(value?: string)
         {
-            if (arguments.length == 0)
+            if (arguments.length === 0)
             {
                 return (this._currentColorMapping) ? this._currentColorMapping.colName : "";
             }
@@ -5443,7 +5414,7 @@ module beachPartyApp
 
         colorDataType(value?: string)
         {
-            if (arguments.length == 0)
+            if (arguments.length === 0)
             {
                 return this._colorDataType;
             }
@@ -5459,15 +5430,15 @@ module beachPartyApp
                 var colInfo = this.getColInfo(value);
                 this.colorDataType(colInfo.colType);
 
-                if (this._colorDataType == "string")
+                if (this._colorDataType === "string")
                 {
                     this._currentColorMapping = this._catColorMapping;
                 }
-                else if (this._colorDataType == "number")
+                else if (this._colorDataType === "number")
                 {
                     this._currentColorMapping = this._numColorMapping;
                 }
-                else if (this._colorDataType == "date")
+                else if (this._colorDataType === "date")
                 {
                     this._currentColorMapping = this._dateColorMapping;
                 }
@@ -5496,7 +5467,7 @@ module beachPartyApp
 
         colorSpread(value?: string)
         {
-            if (arguments.length == 0)
+            if (arguments.length === 0)
             {
                 return bps.MappingSpread[this._currentColorMapping.spread];
             }
@@ -5509,7 +5480,7 @@ module beachPartyApp
 
         colorForceCategory(value?: boolean)
         {
-            if (arguments.length == 0)
+            if (arguments.length === 0)
             {
                 return this._currentColorMapping.forceCategory;
             }
@@ -5522,7 +5493,7 @@ module beachPartyApp
 
         colorShowLegend(value?: boolean)
         {
-            if (arguments.length == 0)
+            if (arguments.length === 0)
             {
                 return this._showColorLegend;
             }
@@ -5591,7 +5562,7 @@ module beachPartyApp
             for (var i = 0; i < this._preloads.length; i++)
             {
                 var pl = this._preloads[i];
-                if (pl.name == name)
+                if (pl.name === name)
                 {
                     preload = pl;
                 }
@@ -5618,7 +5589,6 @@ module beachPartyApp
                     valueW.text(value);
                 }
 
-
                 if (!toolTip)
                 {
                     toolTip = buttonW[0]._title;         // the original tooltip 
@@ -5636,12 +5606,12 @@ module beachPartyApp
             {
                 vp.select("#itemCountText")
                     .text(countMsg)
-                    .css("display", "")
+                    .css("display", "");
             }
             else
             {
                 vp.select("#itemCountText")
-                    .css("display", "none")
+                    .css("display", "none");
             }
         }
 
@@ -5697,12 +5667,12 @@ module beachPartyApp
                 vp.select("#selectedCountText")
                     .text(countMsg)
                     .css("display", "")
-                    .attr("data-disabled", (this._selectedCount) ? "false" : "true")
+                    .attr("data-disabled", (this._selectedCount) ? "false" : "true");
             }
             else
             {
                 vp.select("#selectedCountText")
-                    .css("display", "none")
+                    .css("display", "none");
             }
 
             var selDisabled = (!this._selectedCount);
@@ -5726,7 +5696,7 @@ module beachPartyApp
         onFilteredInCountChanged()
         {
             //var countMsg = (this._filteredInCount < this._recordCount) ? (vp.formatters.comma(this._filteredInCount) + " in filter") : "";
-            var dim = (this._filteredInCount == this._recordCount);
+            var dim = (this._filteredInCount === this._recordCount);
             if (dim)
             {
                 var countMsg = (vp.formatters.comma(this._recordCount)) + " items";
@@ -5737,10 +5707,10 @@ module beachPartyApp
             }
 
             vp.select("#filteredInCountText")
-                .text(countMsg)
+                .text(countMsg);
 
             vp.select("#filteredInCountTextHolder")
-                .attr("data-disabled", (dim) ? "true" : "false")
+                .attr("data-disabled", (dim) ? "true" : "false");
 
             this.updateResetButton();
         }
@@ -5872,7 +5842,7 @@ module beachPartyApp
             {
                 var rc = vp.select("#bbView").getBounds(true);
 
-                var chartPicker = new chartPickerClass(this._chartName, (newName: string) =>
+                var chartPicker = new ChartPickerClass(this._chartName, (newName: string) =>
                 {
                     this.changeToChart(newName, null, Gesture.click);
                     this.logAction(Gesture.select, null, ElementType.picklist, Action.adjust, Target.chartType, true, "name", newName);
@@ -5895,16 +5865,16 @@ module beachPartyApp
             ///     flat, column, density, line, scatter, pie
             ///     violin, graph, cluster, parallel, xxxx, xxxx
 
-            if (chartName == "Flat") {
+            if (chartName === "Flat") {
                 layouts = ["Grid", "Circle", "Poisson", "Random"];
             }
-            else if (chartName == "Column" || chartName == "Bar") {
+            else if (chartName === "Column" || chartName === "Bar") {
                 layouts = ["Grid", "Sum", "Random"];
             }
-            else if (chartName == "Density") {
+            else if (chartName === "Density") {
                 layouts = ["Grid", "Random", "Circle"];
             }
-            else if (chartName == "Stacks") {
+            else if (chartName === "Stacks") {
                 layouts = ["ScaleToFit", "Cubes"];
             }
 
@@ -5918,7 +5888,7 @@ module beachPartyApp
 
             if (layouts)
             {
-                var pm = new popupMenuClass(null, "pmLayout", layouts, (e, menu, textIndex, menuIndex) =>
+                var pm = new PopupMenuClass(null, "pmLayout", layouts, (e, menu, textIndex, menuIndex) =>
                 {
                     var layout = layouts[menuIndex];
                     this.changeToLayout(layout, true);
@@ -6010,14 +5980,14 @@ module beachPartyApp
             //---- hide/show X axis ----
             var chartName = this._chartName;
 
-            var showX = (chartName != "Flat" && chartName != "Bar");
-            var showXBin = (chartName == "Column" || chartName == "Density" || chartName == "Stacks" || chartName == "Violin");
+            var showX = (chartName !== "Flat" && chartName !== "Bar");
+            var showXBin = (chartName === "Column" || chartName === "Density" || chartName === "Stacks" || chartName === "Violin");
 
-            var showY = (chartName != "Flat" && chartName != "Column" && chartName != "Squarify");
-            var showYBin = (chartName == "Density" || chartName == "Stacks" || chartName == "Violin" || chartName == "Bar");
+            var showY = (chartName !== "Flat" && chartName !== "Column" && chartName !== "Squarify");
+            var showYBin = (chartName === "Density" || chartName === "Stacks" || chartName === "Violin" || chartName === "Bar");
 
-            var showZ = (chartName == "Scatter-3D");
-            var showZBin = (chartName == "Stacks");
+            var showZ = (chartName === "Scatter-3D");
+            var showZBin = (chartName === "Stacks");
 
             vp.select("#bbX").css("display", (showX) ? "" : "none");
             vp.select("#bbY").css("display", (showY) ? "" : "none");
@@ -6028,7 +5998,7 @@ module beachPartyApp
             this._zBinAdjuster.show(showZBin && !hideBins);
 
             vp.select("#xButton")
-                .css("display", (showX) ? "" : "none")
+                .css("display", (showX) ? "" : "none");
 
             vp.select("#yButton")
                 .css("display", (showY) ? "" : "none");
@@ -6038,7 +6008,7 @@ module beachPartyApp
 
              //---- adjust xStuff to keep in place when showZ is true ----
             vp.select("#xStuff")
-                .css("top", (showZ) ? "15px" : ((showXBin) ? "5px" : "21px"))
+                .css("top", (showZ) ? "15px" : ((showXBin) ? "5px" : "21px"));
 
             //---- ensure this is called the first time we show the Y button / bins ----
             this.manualLayoutForYStuff();  
@@ -6050,7 +6020,7 @@ module beachPartyApp
         {
             if (arguments.length === 0)
             {
-                return (this._currentColorMapping.colName && this._currentColorMapping.colName == this._sortItemCol);
+                return (this._currentColorMapping.colName && this._currentColorMapping.colName === this._sortItemCol);
             }
 
             if (value)
@@ -6069,7 +6039,7 @@ module beachPartyApp
 
         is3DChart(chartName: string)
         {
-            return (chartName == "Scatter-3D" || chartName == "Stacks");
+            return (chartName === "Scatter-3D" || chartName === "Stacks");
         }
 
         changeToChart(name: string, layout: string, gesture: Gesture)
@@ -6083,33 +6053,33 @@ module beachPartyApp
             this.setAutualDrawingPrimitive();
 
             //---- set SORT ORDER such that transitions between SCATTER and BAR/COLUMN look their best ----
-            if (oldChartName == "Scatter")
+            if (oldChartName === "Scatter")
             {
                 this._lastScatterYCol = this._yMapping.colName;
                 this._lastScatterXCol = this._xMapping.colName;
 
-                if (newChartName == "Column")
+                if (newChartName === "Column")
                 {
                     this.sortIfPossible(this._lastScatterYCol);
                 }
-                else if (newChartName == "Bar")
+                else if (newChartName === "Bar")
                 {
                     this.sortIfPossible(this._lastScatterXCol);
                 }
             }
-            else if (newChartName == "Scatter")
+            else if (newChartName === "Scatter")
             {
-                if (oldChartName == "Column")
+                if (oldChartName === "Column")
                 {
                     this.sortIfPossible(this._lastScatterYCol);
                 }
-                else if (oldChartName == "Bar")
+                else if (oldChartName === "Bar")
                 {
                     this.sortIfPossible(this._lastScatterXCol);
                 }
             }
 
-            var displayName = (name == "Scatter-3D") ? "Scatter 3D" : name;
+            var displayName = (name === "Scatter-3D") ? "Scatter 3D" : name;
             this.setBigValue("View", displayName);
 
             var isSumEnabled = this.isSumByEnabled();
@@ -6125,7 +6095,7 @@ module beachPartyApp
 
         sortIfPossible(colName: string)
         {
-            if (colName && this._sortItemCol != colName)
+            if (colName && this._sortItemCol !== colName)
             {
                 this.sortItemColumn(colName);
 
@@ -6226,7 +6196,6 @@ module beachPartyApp
             });
         }
 
-
         onSortParmsChanged(tellEngine: boolean)
         {
             if (tellEngine)
@@ -6240,15 +6209,15 @@ module beachPartyApp
 
         isSet(md: bps.MappingData)
         {
-            return (md.colName != null && md.colName != "");
+            return (md.colName !== null && md.colName !== "");
         }
                 
         onLegendsChanged()
         {
             var isLegendNeeded = (this.isSet(this._currentColorMapping) || this.isSet(this._sizeMapping) || this.isSet(this._imageMapping));
-            var isRightPanelShowing = (vp.select("#rightPanel").css("display") == "block");
+            var isRightPanelShowing = (vp.select("#rightPanel").css("display") === "block");
 
-            if (isLegendNeeded != isRightPanelShowing)
+            if (isLegendNeeded !== isRightPanelShowing)
             {
                 //---- hide or show right panel ----
                 vp.select("#rightPanel").css("display", (isLegendNeeded) ? "block" : "none");
@@ -6259,7 +6228,7 @@ module beachPartyApp
 
         layoutScreen(width?: number, height?: number)
         {
-            appClass.maxPanelHeight = .65 * window.innerHeight;
+            AppClass.maxPanelHeight = .65 * window.innerHeight;
 
             var w = width || this.width;//window.innerWidth;//TODO: replace 
             var h = height || this.height;//window.innerHeight;//TODO: replace 
@@ -6279,9 +6248,6 @@ module beachPartyApp
             var bh = vp.select("#bottomPanel").height();
             var sw = vp.select("#searchPanel").width();
 
-            var left = lw;
-            var top = th;
-
             //---- chrome/firefox layouts are different ----
             if (vp.utils.isChrome)
             {
@@ -6296,10 +6262,9 @@ module beachPartyApp
             var ch = Math.max(1, h - (th + bh));
 
             //---- ICON BAR ----
-            var logoWidth = vp.select("#btSettings").width();
             vp.select("#iconBar")
                 //.width(w - logoWidth)
-                .width(w - (sw + 40))
+                .width(w - (sw + 40));
 
             //---- BIG BAR ----
             //vp.select("#bigBar")
@@ -6309,17 +6274,17 @@ module beachPartyApp
             vp.select("#insightPanel")
                 .css("left", "10px")
                 .css("top", (th + 10) + "px")
-                .height(h - (th + 20))
+                .height(h - (th + 20));
 
             //---- INSIGHT PANEL LIST ----
             vp.select("#insightListHolder")
-               .height(h - (th + 20 + 90))
+               .height(h - (th + 20 + 90));
 
             //---- LEFT PANEL ----
             vp.select("#leftPanel")
                 .css("left", (ibWidth + 20) + "px")
                 .css("top", (th + 10) + "px")
-                .css("height", (h - th - 20) + "px")
+                .css("height", (h - th - 20) + "px");
 
             //---- MY CHART ----
             vp.select("#myChart")
@@ -6327,35 +6292,35 @@ module beachPartyApp
                 .css("top", (th + 10) + "px")
                 .width(cw)
                 .height(ch)
-                .css("opacity", "1")        // make visible on first resize
+                .css("opacity", "1");        // make visible on first resize;
 
             //---- FACET LABEL HOLDER ----
             vp.select("#facetLabelHolder")
                 .css("left", lw + "px")
-                .css("top", (th + 10) + "px")
+                .css("top", (th + 10) + "px");
                 //.width(cw)
                 //.height(ch)
 
             //---- RIGHT PANEL ----
             vp.select("#rightPanel")
                 .css("top", (th + 10) + "px")
-                .css("height", (h - th) + "px")
+                .css("height", (h - th) + "px");
 
             //---- BOTTOM PANEL ----
             vp.select("#bottomPanel")
                 .css("left", lw + "px")
-                .width(cw - 30)
+                .width(cw - 30);
 
             //---- CHART NOTES ----
             vp.select("#chartNotesHolder")
                 .css("left", lw + "px")
                 .css("top", th + "px")
-                .width(cw)
+                .width(cw);
 
             //---- INFO MSG ----
             vp.select("#infoMsgBox")
                 .css("left", (10) + "px")
-                .css("top", Math.max(75, (th+4)) + "px")
+                .css("top", Math.max(75, (th+4)) + "px");
 
             //---- SEARCH PANEL (Chrome bug workaround) ----
             if (vp.utils.isChrome)
@@ -6364,7 +6329,7 @@ module beachPartyApp
                 //var right = vp.select("#searchPanel").css("right");
 
                 vp.select("#searchPanel")
-                    .css("right", "124px")
+                    .css("right", "124px");
             }
 
             if (this.coreApplicationInstance && this.coreApplicationInstance.layoutWindow) {
@@ -6404,14 +6369,14 @@ module beachPartyApp
                     var colInfo = colInfos[i];
                     var name = colInfo.name.toLowerCase();
 
-                    if (name == "lat" || name == "latitude")
+                    if (name === "lat" || name === "latitude")
                     {
                         y = colInfo.name;
 
                         // note: we can't effectively change colType on the client; needs to be sent to vaas.
                         //colInfo.colType = "number";     // for now, force this to be interpreted as a number
                     }
-                    else if (name == "lon" || name == "long" || name == "longitude" || name == "date" || name == "year" || name == "time")
+                    else if (name === "lon" || name === "long" || name === "longitude" || name === "date" || name === "year" || name === "time")
                     {
                         x = colInfo.name;
 
@@ -6428,7 +6393,7 @@ module beachPartyApp
                     var colInfo = colInfos[i];
                     var colType = colInfo.colType;
 
-                    if (colType == "number")
+                    if (colType === "number")
                     {
                         if (!x)
                         {
@@ -6483,7 +6448,7 @@ module beachPartyApp
         constructor()
         {
             this.sizeFactor = 1;
-            this.shapeOpacity = appClass.defaultOpacity;
+            this.shapeOpacity = AppClass.defaultOpacity;
 
             //this.xBinCount = 9;
             //this.yBinCount = 9;

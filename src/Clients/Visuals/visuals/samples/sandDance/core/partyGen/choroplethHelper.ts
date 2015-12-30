@@ -8,12 +8,12 @@
 
 module beachParty
 {
-    export class choroplethHelper
+    export class ChoroplethHelper
     {
         static atBottom(coords: any[])
         {
             var firstEntry = coords[0];
-            var bottom = ((firstEntry.length == 2) && (!isNaN(firstEntry[0])));
+            var bottom = ((firstEntry.length === 2) && (!isNaN(firstEntry[0])));
 
             return bottom;
         }
@@ -59,7 +59,7 @@ module beachParty
                 var xScaled = vp.data.mapValue(x, ranges.xMin, ranges.xMax, rc.left, rc.right);
                 var yScaled = vp.data.mapValue(y, ranges.yMin, ranges.yMax, rc.bottom, rc.top);
 
-                if (c == 1)
+                if (c === 1)
                 {
                     linePath += "L ";
                 }
@@ -120,7 +120,7 @@ module beachParty
             for (var i = 0; i < features.length; i++)
             {
                 var feature = features[i];
-                if (feature.properties.NAME == shapeName)
+                if (feature.properties.NAME === shapeName)
                 {
                     var coords = feature.geometry.coordinates;
                     break;

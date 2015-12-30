@@ -7,9 +7,7 @@
 
 module beachPartyApp
 {
-    var nextId = 1;
-
-    export class basePanelClass extends basePopupClass
+    export class BasePanelClass extends BasePopupClass
     {
         _root: HTMLElement;
         _imgPin: HTMLImageElement;
@@ -39,8 +37,8 @@ module beachPartyApp
             super(name);
 
             //---- create ROOT ----
-            var maxHeight = appClass.maxPanelHeight;
-            var maxWidth = appClass.maxPanelWidth;
+            var maxHeight = AppClass.maxPanelHeight;
+            var maxWidth = AppClass.maxPanelWidth;
 
             var rootW = vp.select(".sandDance").append("div")
                 .id(name + "Panel")
@@ -48,7 +46,7 @@ module beachPartyApp
                 .attach("focus", (e) => 
                 {
                     this.onFocus(e);
-                })
+                });
 
             if (title)
             {
@@ -57,12 +55,12 @@ module beachPartyApp
             }
             else
             {
-                rootW.addClass("panel")
+                rootW.addClass("panel");
 
                 if (addAutoClose)
                 {
                     var btHolderW = rootW.append("div")
-                        .css("float", "right")
+                        .css("float", "right");
 
                     var imgPinW = btHolderW.append("div")//images/pinLeft.png
                         .addClass("clickIcon")
@@ -98,16 +96,16 @@ module beachPartyApp
 
             rootW
                 .css("max-height", maxHeight + "px")
-                .css("max-width", maxWidth + "px")
+                .css("max-width", maxWidth + "px");
 
             if (width !== undefined)
             {
-                rootW.css("width", width + "px")
+                rootW.css("width", width + "px");
             }
 
             if (height !== undefined)
             {
-                rootW.css("height", height + "px")
+                rootW.css("height", height + "px");
             }
 
             if (bgColor)
@@ -144,7 +142,6 @@ module beachPartyApp
             }
         }
 
-
         onUserAction()
         {
             if (!this._isPinnedDown)
@@ -168,7 +165,7 @@ module beachPartyApp
         applyAppPanelOpacity()
         {
             var opacity = settings.panelOpacity();
-            vp.select(this._root).css("opacity", opacity + "")
+            vp.select(this._root).css("opacity", opacity + "");
         }
 
         centerPanel()
@@ -181,7 +178,7 @@ module beachPartyApp
 
             vp.select(this._root)
                 .css("left", left + "px")
-                .css("top", top + "px")
+                .css("top", top + "px");
         }
 
         onFocus(e)
@@ -204,7 +201,7 @@ module beachPartyApp
                 .css("position", "absolute")
                 .css("right", "0px")
                 .css("bottom", "0px")
-                .css("z-index", "999")              // keep on top of all other elements
+                .css("z-index", "999");              // keep on top of all other elements;
 
             this._resizeElem = imgW[0];
 
@@ -217,7 +214,7 @@ module beachPartyApp
                     this._isResizing = true;
 
                     vp.events.setCapture(imgW[0], e, this._onResizeMouseMoveFunc, this._onResizeMouseUpFunc);
-                })
+                });
         }
 
         createTitle(rootW, title: string, tip: string, hideClose: boolean)
@@ -233,13 +230,13 @@ module beachPartyApp
                     {
                         this.onMouseDown(e);
                         this.onFocus(e);
-                    })
+                    });
 
                 //---- create TITLE text ----
                 titleDiv.append("span")
                     .addClass("panelPrompt")
                     .text(title)
-                    .css("margin-right", "30px")        // space for "x" button
+                    .css("margin-right", "30px");        // space for "x" button;
 
                 if (!hideClose)
                 {
@@ -256,7 +253,7 @@ module beachPartyApp
                         .attach("click", (e) =>
                         {
                             this.close();
-                        })
+                        });
                 }
             }
         }
@@ -264,21 +261,21 @@ module beachPartyApp
         open(left?: number, top?: number, right?: number, bottom?: number)
         {
             var rootW = vp.select(this._root)
-                .css("display", "block")
+                .css("display", "block");
 
-            if (arguments.length == 0)
+            if (arguments.length === 0)
             {
                 this.centerPanel();
             }
             else
             {
-                if (right != undefined)
+                if (right !== undefined)
                 {
                     //---- convert to left ----
                     left = right - rootW.width();
                 }
 
-                if (bottom != undefined)
+                if (bottom !== undefined)
                 {
                     //---- convert to top ----
                     top = bottom - rootW.height();
@@ -292,7 +289,7 @@ module beachPartyApp
         {
             vp.select(this._root)
                 .css("max-width", "")
-                .css("max-height", "")
+                .css("max-height", "");
         }
 
         onResizeMouseMove(e)
@@ -320,7 +317,7 @@ module beachPartyApp
 
                 targetW
                     .css("width", width + "px")
-                    .css("height", height + "px")
+                    .css("height", height + "px");
 
                 if (this._primaryControl)
                 {
@@ -364,7 +361,7 @@ module beachPartyApp
                     .css("left", x + "px")
                     .css("top", y + "px")
                     .css("right", "")
-                    .css("bottom", "")
+                    .css("bottom", "");
 
                 this.onDataChanged("location");
             }
@@ -379,11 +376,11 @@ module beachPartyApp
         //---- override basePopup onKey handling ----
         onAnyKeyDown(e)
         {
-            if (e.keyCode == vp.events.keyCodes.enter)
+            if (e.keyCode === vp.events.keyCodes.enter)
             {
                 this.onEnterKey();
             }
-            else if (e.keyCode == vp.events.keyCodes.escape)
+            else if (e.keyCode === vp.events.keyCodes.escape)
             {
                 this.onEscapeKey();
             }

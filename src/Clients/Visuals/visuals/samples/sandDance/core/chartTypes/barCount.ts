@@ -5,11 +5,9 @@
 
 /// <reference path="../_references.ts" />
 
-var demoData: string;
-
 module beachParty
 {
-    export class barCountClass extends baseGlVisClass
+    export class BarCountClass extends BaseGlVisClass
     {
         //---- all facets info ----
         _facetBinResults: any[];
@@ -37,7 +35,7 @@ module beachParty
         _xMin = 0;                      // start of x space for our drawing (as per x scale)
         _xMax = 0;                      // end of x space for drawing (as per x scale)
 
-        constructor(view: dataViewClass, gl: any, chartState: any)
+        constructor(view: DataViewClass, gl: any, chartState: any)
         {
             super("barCountClass", view, gl, chartState);
         }
@@ -60,7 +58,7 @@ module beachParty
                 for (var i = 0; i < facetCount; i++)
                 {
                     var data = nvFacetBuckets[i];
-                    var results = chartUtils.computeMaxBinCountForData(dc, data, ym, "y");
+                    var results = ChartUtils.computeMaxBinCountForData(dc, data, ym, "y");
                     this._facetBinResults.push(results.binResults);
 
                     maxCount = Math.max(maxCount, results.maxCount);
@@ -68,7 +66,7 @@ module beachParty
             }
             else
             {
-                var results = chartUtils.computeMaxBinCountForData(dc, dc.nvData, ym, "y");
+                var results = ChartUtils.computeMaxBinCountForData(dc, dc.nvData, ym, "y");
 
                 this._facetBinResults.push(results.binResults);
                 maxCount = results.maxCount;
@@ -96,7 +94,7 @@ module beachParty
 
             //---- adjust Y scale ----
             var results = this._facetBinResults[0];
-            dc.scales.y = chartUtils.adjustScaleForBin(dc.scales.y, results);
+            dc.scales.y = ChartUtils.adjustScaleForBin(dc.scales.y, results);
         }
 
         /** create a new linear scale for X, based on the maximum count for a full bar. */
@@ -128,14 +126,14 @@ module beachParty
 
             //var maxCountForRow = rowCount * Math.ceil(maxCount / rowCount);
 
-            var result = chartUtils.computeBestCountFactor(maxCount, shapesPerCol);
+            var result = ChartUtils.computeBestCountFactor(maxCount, shapesPerCol);
             var maxCountForCol = result.maxCount;
 
             dc.scales.x = vp.scales.createLinear()
                 .rangeMin(oldScale.rangeMin())
                 .rangeMax(oldScale.rangeMax())
                 .domainMin(0)
-                .domainMax(maxCountForCol)
+                .domainMax(maxCountForCol);
 
             //---- mark scale as being for chunk-based count ----
             var anyScale = <any>dc.scales.x;
@@ -150,15 +148,12 @@ module beachParty
             //---- for this part, we need to process the items in their sorted order ----
 
             var filter = dc.layoutFilterVector;
-            var isFiltered = (filter != null);
 
             var allAssignY = resultY.assignments;
 
             var rowToBinNum = [];
             var rowToBinIndex = [];
             var binCounts = [];
-
-            var facetAssignments = (dc.facetHelper) ? dc.facetHelper.binResult().assignments : null;
 
             //---- process each (sorted) record ----
             for (var i = 0; i < filter.length; i++)
@@ -193,7 +188,6 @@ module beachParty
             var maxCount = maxBinCountForAllFacets;
 
             var width = dc.width;
-            var height = dc.height;
 
             var binsY = resultY.bins;
 
@@ -227,8 +221,6 @@ module beachParty
             this._rowToBinNum = rowToBinNum;
             this._rowToBinIndex = rowToBinIndex;
 
-            //---- set up GRID params ----
-            var aspect = this._itemWidth / this._itemHeight;
             //var colCount = this._shapesPerCol;          //  Math.ceil(Math.sqrt(aspect * maxCount));
 
             //this._colCount = colCount;
@@ -277,7 +269,7 @@ module beachParty
 
         preLayoutLoopCore(yResult: BinResult, availWidth: number, availHeight: number, binCount: number)
         {
-            var result = chartUtils.computeBarBinSize(yResult, availWidth, availHeight);
+            var result = ChartUtils.computeBarBinSize(yResult, availWidth, availHeight);
 
             this._itemWidth = result.binWidth;
             this._itemHeight = result.binHeight;
@@ -302,10 +294,9 @@ module beachParty
             var binIndexX = this._rowToBinNum[recordIndex];
 
             var top = this._binTops[binIndexX];
-            var bottom = dc.y;     // dc.y - dc.height;
             var binWidth = this._binWidths[binIndexX];
 
-            if (this._chartOptions.layout == "Random")
+            if (this._chartOptions.layout === "Random")
             {
                 var xr = nv.randomX.values[recordIndex];
                 var yr = nv.randomY.values[recordIndex];
@@ -333,7 +324,7 @@ module beachParty
             var height = width;
 
             var z = 0;
-            var depth = dc.defaultDepth2d     
+            var depth = dc.defaultDepth2d     ;
 
             var colorIndex = this.scaleColData(nv.colorIndex, recordIndex, dc.scales.colorIndex);
             var imageIndex = this.scaleColData(nv.imageIndex, recordIndex, dc.scales.imageIndex);

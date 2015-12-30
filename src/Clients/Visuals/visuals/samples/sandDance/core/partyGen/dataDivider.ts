@@ -25,28 +25,27 @@ module beachParty
             this.groupSorting = groupSorting;
         }
 
-        divide(dataFrame: dataFrameClass): dataFrameClass[]
+        divide(dataFrame: DataFrameClass): DataFrameClass[]
         {
             var newData = null;       // default output
 
             //vp.utils.debug("dataDivider.divide: orig data.length=" + data.length);
 
-            if (this.colName && this.groupingType != GroupingType.none && dataFrame.getRecordCount())
+            if (this.colName && this.groupingType !== GroupingType.none && dataFrame.getRecordCount())
             {
-                if (this.groupingType == GroupingType.bin)
+                if (this.groupingType === GroupingType.bin)
                 {
                     var requestedBins = this.groupCount;
 
-                    var sortOptions = new beachParty.binSortOptionsClass();
+                    var sortOptions = new beachParty.BinSortOptionsClass();
                     sortOptions.sortDirection = this.groupSorting;
                     sortOptions.sortByAggregateType = "count";
-                    var maxCount = 0;
 
                     //---- create a NamedVector object for binHelper ----
                     var nv = new NamedVectors(dataFrame.getRecordCount());
                     nv.x = dataFrame.getNumericVector(this.colName);
 
-                    var binResults = beachParty.binHelper.createBins(nv, "x", requestedBins, requestedBins,
+                    var binResults = beachParty.BinHelper.createBins(nv, "x", requestedBins, requestedBins,
                         false, true, true, sortOptions, null, false);
                     var bins = binResults.bins;
 

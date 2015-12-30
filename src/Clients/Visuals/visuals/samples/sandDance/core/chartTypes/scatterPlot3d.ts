@@ -5,15 +5,13 @@
 
 /// <reference path="../_references.ts" />
 
-var demoData: string;
-
 module beachParty
 {
-    export class scatterPlot3dClass extends baseGlVisClass
+    export class ScatterPlot3dClass extends BaseGlVisClass
     {
         _maxShapeSize = 0;
 
-        constructor(view: dataViewClass, gl: any, chartState: any)
+        constructor(view: DataViewClass, gl: any, chartState: any)
         {
             super("scatterPlot3dClass", view, gl, chartState);
         }

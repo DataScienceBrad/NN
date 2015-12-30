@@ -26,12 +26,10 @@
 /// <reference path="glClasses/transformer.ts" /> 
 /// <reference path="glClasses/textureMaker.ts" />
 
-
 /// <reference path="classes/dataLoader.ts" />
 /// <reference path="classes/easeFuncs.ts" />
 /// <reference path="classes/traceMgr.ts" />
 /// <reference path="classes/wdCompare.ts" />
-
 
 /// <reference path="classes/appMgr.ts" />
 

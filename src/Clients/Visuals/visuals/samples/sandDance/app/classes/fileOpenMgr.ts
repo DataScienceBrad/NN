@@ -7,12 +7,12 @@
 
 module beachPartyApp
 {
-    export class fileOpenMgr extends beachParty.dataChangerClass 
+    export class FileOpenMgr extends beachParty.dataChangerClass 
     {
-        static instance: fileOpenMgr;
+        static instance: FileOpenMgr;
 
         _bpsHelper: bps.chartHostHelperClass;
-        _fileOpenPanel = <jsonPanelClass>null;
+        _fileOpenPanel = <JsonPanelClass>null;
 
         _fileOpenUrl = "";
         _fileOpenSource = null;
@@ -33,12 +33,12 @@ module beachPartyApp
 
             this._bpsHelper = bpsHelper;
             
-            fileOpenMgr.instance = this;
+            FileOpenMgr.instance = this;
         }
 
         preload(value?: bps.Preload)
         {
-            if (arguments.length == 0)
+            if (arguments.length === 0)
             {
                 return this._preload;
             }
@@ -62,7 +62,7 @@ module beachPartyApp
             var elem = this._fileOpenPanel.getRootElem();
 
             //---- hide SQL for the client edition ----
-            if (appClass.instance._edition == "client")
+            if (AppClass.instance._edition === "client")
             {
                 vp.select(elem, "#tab3").css("display", "none");
             }
@@ -106,9 +106,6 @@ module beachPartyApp
                 //---- avoid processing image files (especially if its an accidental drag of our of 1 of our icons) ----
                 if (!utils.isImageFile(name))
                 {
-                    var fileType = file.type;
-                    var size = file.size;
-
                     var reader = new FileReader();
                     reader.onload = (e) =>
                     {
@@ -121,7 +118,7 @@ module beachPartyApp
                         wdParams.fileType = bps.FileType.delimited;
 
                         this.uploadData(text, file.name, wdParams);
-                    }
+                    };
 
                     //---- start the ASYNC read of the dropped file ----
                     reader.readAsText(file);
@@ -144,7 +141,7 @@ module beachPartyApp
                 }
                 else
                 {
-                    appClass.instance._insightMgr.processDroppedText(text);
+                    AppClass.instance._insightMgr.processDroppedText(text);
                 }
             }
         }
@@ -261,7 +258,7 @@ module beachPartyApp
             //this._fileOpenUrl = "";
             this._fileOpenSource = null;
 
-            appClass.instance.logAction(Gesture.click, e.target.id, ElementType.button, Action.open, Target.filePanel, false);
+            AppClass.instance.logAction(Gesture.click, e.target.id, ElementType.button, Action.open, Target.filePanel, false);
 
             this.openFileOpenPanel();
         }
@@ -309,20 +306,20 @@ module beachPartyApp
         {
             var ft = this._openFileTypeLocal;
 
-            return (ft == "json");
+            return (ft === "json");
         }
 
         isFirstLineDisabledWeb()
         {
             var ft = this._openFileTypeWeb;
 
-            return (ft == "json");
+            return (ft === "json");
         }
 
         onOpenFileClicked()
         {
             //---- user clicked on "Load File" button for local file open ----
-            localFileHelper.loadFile(".csv,.txt,.json", (text, fn) => 
+            LocalFileHelper.loadFile(".csv,.txt,.json", (text, fn) => 
             {
                 try
                 {
@@ -354,7 +351,7 @@ module beachPartyApp
                 var fileType = this._openFileTypeWeb;
 
                 // var text = this._loadedFileOpenText;
-                var fn = appUtils.getLastNodeOfUrl(url);
+                var fn = AppUtils.getLastNodeOfUrl(url);
                 var fileSource = (sqlTableName) ? "sql" : "url";
 
                 var scrubberTemplate = this._dataScrubberName;
@@ -367,8 +364,8 @@ module beachPartyApp
                 {
                     wdParams = new bps.WorkingDataParams(fn, url);
                     wdParams.hasHeader = this._fileHasHeader;
-                    wdParams.separator = (fileType == "tab") ? "\t" : ",";
-                    wdParams.fileType = (fileType == "json") ? bps.FileType.json : bps.FileType.delimited;
+                    wdParams.separator = (fileType === "tab") ? "\t" : ",";
+                    wdParams.fileType = (fileType === "json") ? bps.FileType.json : bps.FileType.delimited;
                     wdParams.fileSource = fileSource;
                 }
 
@@ -424,7 +421,7 @@ module beachPartyApp
             }
             else
             {
-                if (!appClass.instance.isKnownFile(filename))
+                if (!AppClass.instance.isKnownFile(filename))
                 {
                     //filename = "Titanic";       // default known file name
                     throw "Cannot open file: " + filename;
@@ -440,9 +437,8 @@ module beachPartyApp
             var url = this._selectedFileName;
             if (url)
             {
-                var isLocal = true;
                 var fileType = this._openFileTypeLocal;
-                var fn = appUtils.getLastNodeOfUrl(url);
+                var fn = AppUtils.getLastNodeOfUrl(url);
 
                 var scrubberTemplate = this._dataScrubberName;
                 if (scrubberTemplate)
@@ -454,8 +450,8 @@ module beachPartyApp
                 {
                     wdParams = new bps.WorkingDataParams(fn, url);
                     wdParams.hasHeader = this._fileHasHeader;
-                    wdParams.separator = (fileType == "tab") ? "\t" : ",";
-                    wdParams.fileType = (fileType == "json") ? bps.FileType.json : bps.FileType.delimited;
+                    wdParams.separator = (fileType === "tab") ? "\t" : ",";
+                    wdParams.fileType = (fileType === "json") ? bps.FileType.json : bps.FileType.delimited;
                     wdParams.fileSource = "local";
                 }
 
@@ -531,7 +527,7 @@ module beachPartyApp
                 var key = "preloads-$" + fn;
             }
 
-            if (fileSource == "sql")
+            if (fileSource === "sql")
             {
                 //---- fn is connection string, tableName is table name or query string ----
                 key += "\\" + tableName;
@@ -551,7 +547,7 @@ module beachPartyApp
                 var key = "fileCache-$" + fn;
             }
 
-            if (fileSource == "sql")
+            if (fileSource === "sql")
             {
                 //---- fn is connection string, tableName is table name or query string ----
                 key += "\\" + tableName;
@@ -566,7 +562,7 @@ module beachPartyApp
             {
                 var str = JSON.stringify(preload);
                 var fileSource = preload.fileSource;
-                var fn = (fileSource == "url") ? preload.filePath : preload.dataName;
+                var fn = (fileSource === "url") ? preload.filePath : preload.dataName;
 
                 var key = this.makePreloadKey(fn, fileSource, preload.tableName);
                 vp.utils.debug("savePreloadToLocalStorage: key=" + key);
@@ -575,7 +571,7 @@ module beachPartyApp
             }
         }
 
-        reloadDataPerScrubbing(editInfos: editColInfo[])
+        reloadDataPerScrubbing(editInfos: EditColInfo[])
         {
             //---- build fieldlist for preload ----
             var fieldList = <bps.PreloadField[]>[];
@@ -585,7 +581,7 @@ module beachPartyApp
                 var ei = editInfos[i];
                 if (ei.isVisible)
                 {
-                    var cfExpress = (ei.name == ei.displayName) ? null : ei.name;
+                    var cfExpress = (ei.name === ei.displayName) ? null : ei.name;
                     var pf = new bps.PreloadField(ei.displayName, ei.desc, cfExpress, ei.colType, ei.sortedKeys);
                     pf.valueMap = ei.valueMap;
 
@@ -613,8 +609,6 @@ module beachPartyApp
             this.loadFileFromPanel(this._fileOpenUrl, this._sqlTableName, this._workingDataMaxRecords);
         }
 
-
-
         openKnownFile(name: string, fromUI: boolean, callback?: any)
         {
             vp.select("#filenameText")
@@ -630,7 +624,7 @@ module beachPartyApp
                 {
                     if (fromUI)
                     {
-                        appClass.instance.logAction(Gesture.select, null, ElementType.picklist, Action.load, Target.data,
+                        AppClass.instance.logAction(Gesture.select, null, ElementType.picklist, Action.load, Target.data,
                             true, "fileName", name, "isKnown", "true");
                     }
 
@@ -647,7 +641,7 @@ module beachPartyApp
                 {
                     if (fromUI)
                     {
-                        appClass.instance.logAction(Gesture.select, null, ElementType.picklist, Action.load, Target.data,
+                        AppClass.instance.logAction(Gesture.select, null, ElementType.picklist, Action.load, Target.data,
                             true, "fileName", name, "isKnown", "true");
                     }
 
@@ -695,7 +689,7 @@ module beachPartyApp
 
         dataScrubberName(value?: string)
         {
-            if (arguments.length == 0)
+            if (arguments.length === 0)
             {
                 return this._dataScrubberName;
             }
@@ -706,7 +700,7 @@ module beachPartyApp
 
         loadedFileOpenText(value?: string)
         {
-            if (arguments.length == 0)
+            if (arguments.length === 0)
             {
                 return this._loadedFileOpenText;
             }
@@ -714,7 +708,6 @@ module beachPartyApp
             this._loadedFileOpenText = value;
             this.onDataChanged("loadedFileOpenText");
         }
-
 
     }
 

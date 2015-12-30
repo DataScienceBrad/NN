@@ -15,7 +15,7 @@ module beachParty
         return loader.loadFromText(csv);
     }
 
-    export class csvLoaderClass
+    export class CsvLoaderClass
     {
         //---- private state ----
         _colNames = [];
@@ -41,23 +41,19 @@ module beachParty
         /// public: load(csv)
         public loadFromText(csv: string)
         {
-            var startTimeInMs = vp.utils.now();
             var rows = [];
 
-            var scanner = new csvScannerClass(csv, this._sepChar, "\"");
+            var scanner = new CsvScannerClass(csv, this._sepChar, "\"");
 
             if (!this._processedHdr)
             {
                 if (this._hasHeader)
                 {
-                    //---- read first line containing column headers ----
-                    var colNum = 0;
-
                     //---- process first line ----
                     while (true)
                     {
                         var colName = scanner.scan();
-                        if (colName === csvScannerClass.endOfLine || colName === csvScannerClass.endOfFile)
+                        if (colName === CsvScannerClass.endOfLine || colName === CsvScannerClass.endOfFile)
                         {
                             break;
                         }
@@ -80,21 +76,19 @@ module beachParty
             }
 
             var lastRowOffset = 0;
-            var malformedRowErrorCount = 0;
-            var reportMalformedRowErrors = true;
 
             while (true)
             {
                 var row = this.collectRowValues(scanner, this._colNames);
 
                 var colsFound = vp.utils.keys(row).length;
-                if (colsFound == 0 && scanner.endOfFile())
+                if (colsFound === 0 && scanner.endOfFile())
                 {
                     break;
                 }
 
                 //---- if no header present, take first line of values as the "soft" column count ----
-                if (this._colCount == 0)
+                if (this._colCount === 0)
                 {
                     this._colCount = colsFound;
                 }
@@ -132,22 +126,19 @@ module beachParty
                 }
             }
 
-            var elapsedMs = new Date().getTime() - startTimeInMs;
-            // alert("load() elapsed ms = " + elapsedMs.toString());
-
             return rows;
         }
 
-        collectRowValues(scanner: csvScannerClass, colNames: string[])
+        collectRowValues(scanner: CsvScannerClass, colNames: string[])
         {
             //---- process next line (row) of data ----
             var colNum = 0;
-            var row = {}
+            var row = {};
 
             while (true)
             {
                 var colValue = scanner.scan();
-                if (colValue === csvScannerClass.endOfLine || colValue === csvScannerClass.endOfFile)
+                if (colValue === CsvScannerClass.endOfLine || colValue === CsvScannerClass.endOfFile)
                 {
                     break;
                 }
@@ -194,7 +185,7 @@ module beachParty
                     str = "";
                 }
 
-                if (!this._fixupValues && str.trim() == "")
+                if (!this._fixupValues && str.trim() === "")
                 {
                     //---- convert missing number to null ----
                     values.push(null);
@@ -205,7 +196,7 @@ module beachParty
                     if (isNaN(value))
                     {
                         str = str.toLowerCase();
-                        if (str == "null" || str == "na" || str == "")
+                        if (str === "null" || str === "na" || str === "")
                         {
                             value = 0;
                         }
@@ -242,11 +233,11 @@ module beachParty
                 var row = rows[i];
                 var str = row[colName].toLowerCase();
 
-                if (str == "true")
+                if (str === "true")
                 {
                     values.push(true);
                 }
-                else if (str == "false")
+                else if (str === "false")
                 {
                     values.push(false);
                 }
@@ -306,6 +297,6 @@ module beachParty
 
     export function createCsvLoader(hasHeader: boolean, sepChar: string, findTypes: boolean, fixupValues = true)
     {
-        return new csvLoaderClass(hasHeader, sepChar, findTypes, fixupValues);
+        return new CsvLoaderClass(hasHeader, sepChar, findTypes, fixupValues);
     }
 } 

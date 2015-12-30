@@ -52,7 +52,7 @@ module beachParty
             this.strokeColorMapping = new bps.ColorMappingData("", false, 12);
         }
 
-        generate(cellArray: CellData[], data: dataFrameClass, allData: dataFrameClass)
+        generate(cellArray: CellData[], data: DataFrameClass, allData: DataFrameClass)
         {
             this.fillScale = null;
             this.strokeScale = null;
@@ -96,11 +96,11 @@ module beachParty
                     }
                 }
 
-                if (this.shapeType == ShapeType.line)
+                if (this.shapeType === ShapeType.line)
                 {
                     this.genLine(cellArray, data);
                 }
-                else if (this.shapeType != ShapeType.none)
+                else if (this.shapeType !== ShapeType.none)
                 {
                     for (var i = 0; i < cellArray.length; i++)
                     {
@@ -108,7 +108,7 @@ module beachParty
                         //var rcAny = <any>cellData.rect;
                         var dataItem = data.getRecordByVectorIndex(i);
 
-                        if (cellData.cellShape == CellShape.path)
+                        if (cellData.cellShape === CellShape.path)
                         {
                             this.genSinglePath(cellData, dataItem, i, data);
                         }
@@ -121,7 +121,7 @@ module beachParty
             }
         }
 
-        genLine(cellData: CellData[], data: dataFrameClass)
+        genLine(cellData: CellData[], data: DataFrameClass)
         {
             var svgW = vp.select(this.svg);
             var points = "M ";
@@ -135,7 +135,7 @@ module beachParty
                 var x = rc.left + rc.width / 2;
                 var y = rc.top + rc.height / 2;
 
-                if (i == 1)
+                if (i === 1)
                 {
                     points += "L ";
                 }
@@ -146,10 +146,10 @@ module beachParty
             svgW.append("path")
                 .colors(fill, stroke, this.strokeSize)
                 .attr("opacity", this.opacity)
-                .attr("d", points)
+                .attr("d", points);
         }
 
-        makeTooltip(record, dataFrame: dataFrameClass)
+        makeTooltip(record, dataFrame: DataFrameClass)
         {
             var ttMsg = "";
 
@@ -169,11 +169,11 @@ module beachParty
                 var value = record[key];
                 var colType = dataFrame.getColType(key);
 
-                if (colType == "number")
+                if (colType === "number")
                 {
                     value = vp.formatters.comma(value, 2, false, true);
                 }
-                else if (colType == "date")
+                else if (colType === "date")
                 {
                     value = vp.formatters.formatDateTime(value, " m/dd/yyyy");
                 }
@@ -201,7 +201,7 @@ module beachParty
             {
                 var value = this.fillVector[index];
                 var paletteIndex = this.fillScale.scale(value);
-                if (paletteIndex != undefined)
+                if (paletteIndex !== undefined)
                 {
                     fill = vp.color.colorFromPalette(this.fillColorMapping.colorPalette, paletteIndex);
                 }
@@ -219,7 +219,7 @@ module beachParty
                 var value = this.strokeVector[index];
                 var paletteIndex = this.strokeScale.scale(value);
 
-                if (paletteIndex != undefined)
+                if (paletteIndex !== undefined)
                 {
                     stroke = vp.color.colorFromPalette(this.strokeColorMapping.colorPalette, paletteIndex);
                 }
@@ -252,7 +252,7 @@ module beachParty
         //    }
         //}
 
-        genSinglePath(cellData: CellData, dataRecord: any[], index: number, dataFrame: dataFrameClass)
+        genSinglePath(cellData: CellData, dataRecord: any[], index: number, dataFrame: DataFrameClass)
         {
             var tipText = (this.showTooltips) ? this.makeTooltip(dataRecord, dataFrame) : null;
 
@@ -261,20 +261,20 @@ module beachParty
             var svgW = vp.select(this.svg);
             var path = cellData.path;
 
-            if (this.shapeType == ShapeType.path)
+            if (this.shapeType === ShapeType.path)
             {
                 svgW.append("path")
                     .colors(fill, stroke, this.strokeSize)
                     .attr("d", path)
                     .attr("tooltip", tipText);
             }
-            else if (this.shapeType == ShapeType.circle)
+            else if (this.shapeType === ShapeType.circle)
             {
 
             }
         }
 
-        genSingle(cellData: CellData, dataRecord: any[], index: number, dataFrame: dataFrameClass)
+        genSingle(cellData: CellData, dataRecord: any[], index: number, dataFrame: DataFrameClass)
         {
             var rc = cellData.rect;
 
@@ -292,16 +292,16 @@ module beachParty
             var fill = this.getFillColor(index);
             var stroke = this.getStrokeColor(index);
 
-            if (this.shapeType == ShapeType.circle)
+            if (this.shapeType === ShapeType.circle)
             {
                 var elemW = svgW.append("circle")
                     .attr("r", halfSize)
                     .colors(fill, stroke, this.strokeSize)
                     .attr("cx", cx)
                     .attr("cy", cy)
-                    .attr("opacity", this.opacity)
+                    .attr("opacity", this.opacity);
             }
-            else if (this.shapeType == ShapeType.circleFill)
+            else if (this.shapeType === ShapeType.circleFill)
             {
                 var radius = Math.min(rc.width, rc.height) / 2;
 
@@ -310,9 +310,9 @@ module beachParty
                     .colors(fill, stroke, this.strokeSize)
                     .attr("cx", cx)
                     .attr("cy", cy)
-                    .attr("opacity", this.opacity)
+                    .attr("opacity", this.opacity);
             }
-            else if (this.shapeType == ShapeType.square)
+            else if (this.shapeType === ShapeType.square)
             {
                 var x = cx - halfSize;
                 var y = cy - halfSize;
@@ -320,16 +320,16 @@ module beachParty
                 var elemW = svgW.append("rect")
                     .colors(fill, stroke, this.strokeSize)
                     .bounds(x, y, this.shapeSize, this.shapeSize)
-                    .attr("opacity", this.opacity)
+                    .attr("opacity", this.opacity);
             }
-            else if (this.shapeType == ShapeType.rectangle)
+            else if (this.shapeType === ShapeType.rectangle)
             {
                 var left = rc.left;
                 var top = rc.top;
                 var width = rc.width;
                 var height = rc.height;
 
-                if (cellData.cellShape == CellShape.circle)
+                if (cellData.cellShape === CellShape.circle)
                 {
                     var r = Math.min(width, height) / 2;
 
@@ -344,9 +344,9 @@ module beachParty
                 var elemW = svgW.append("rect")
                     .colors(fill, stroke, this.strokeSize)
                     .bounds(left, top, width, height)
-                    .attr("opacity", this.opacity)
+                    .attr("opacity", this.opacity);
             }
-            else if (this.shapeType == ShapeType.text)
+            else if (this.shapeType === ShapeType.text)
             {
                 var text = dataRecord[this.textCol];
 
@@ -356,7 +356,7 @@ module beachParty
                     .attr("y", cy)
                     .attr("text-anchor", "middle")
                     .attr("opacity", this.opacity)
-                    .text(text)
+                    .text(text);
 
                 if (this.textSize)
                 {
@@ -378,10 +378,9 @@ module beachParty
             }
         }
 
-        buildShapeColorScale(cm: bps.ColorMappingData, statType: StatType, allData: dataFrameClass)
+        buildShapeColorScale(cm: bps.ColorMappingData, statType: StatType, allData: DataFrameClass)
         {
             var colName = cm.colName;
-            var scale = null;
             var keys = null;
 
             //---- do we want the aggregated column, or the regular?  which is present? ----
@@ -434,7 +433,9 @@ module beachParty
                     {
                         //----  convert from string to func ----
                         var foo = null;
+                        /* tslint:disable */
                         eval("foo = " + cm.customScalingCallback);
+                        /* tslint:enable */
 
                         var customScale: any = {};
                         customScale.scale = foo;
@@ -448,20 +449,20 @@ module beachParty
                 {
                     var result = utils.getMinMax(nvColorIndex, null);       //  nv.layoutFilter);
 
-                    if (cm.spread == bps.MappingSpread.low)
+                    if (cm.spread === bps.MappingSpread.low)
                     {
                         var colorIndexScale = vp.scales.createLowBias()
                             .domainMin(result.min)
                             .domainMax(result.max)
-                            .range(1, maxIndex)
+                            .range(1, maxIndex);
 
                     }
-                    else if (cm.spread == bps.MappingSpread.high)
+                    else if (cm.spread === bps.MappingSpread.high)
                     {
                         var colorIndexScale = vp.scales.createHighBias()
                             .domainMin(result.min)
                             .domainMax(result.max)
-                            .range(1, maxIndex)
+                            .range(1, maxIndex);
 
                     }
                     else
@@ -469,7 +470,7 @@ module beachParty
                         var colorIndexScale = vp.scales.createLinear()
                             .domainMin(result.min)
                             .domainMax(result.max)
-                            .range(1, maxIndex)
+                            .range(1, maxIndex);
                     }
                 }
             }
@@ -477,7 +478,7 @@ module beachParty
             return { scale: colorIndexScale, keys: keys, colName: colName };
         }
 
-        buildColorPaletteFromSettings(cm: bps.ColorMappingData, dataFrame: dataFrameClass)
+        buildColorPaletteFromSettings(cm: bps.ColorMappingData, dataFrame: DataFrameClass)
         {
             if (cm)
             {
@@ -487,7 +488,7 @@ module beachParty
                 {
                     var numVector = dataFrame.getNumericVector(colName);
                     var colType = numVector.colType;
-                    var isCategory = (cm.forceCategory || colType == "string");
+                    var isCategory = (cm.forceCategory || colType === "string");
 
                     var paletteName = cm.paletteName;
                     if (!paletteName)
@@ -495,7 +496,7 @@ module beachParty
                         paletteName = (isCategory) ? "Paired" : "Blues";
                     }
 
-                    var palette = colorPalettesClass.getPaletteFromSettings(paletteName, cm.stepsRequested, cm.isReversed);
+                    var palette = ColorPalettesClass.getPaletteFromSettings(paletteName, cm.stepsRequested, cm.isReversed);
                     var breaks = null;
 
                     if (isCategory)
@@ -513,7 +514,7 @@ module beachParty
 
                         for (var i = 0; i < palette.length; i++)
                         {
-                            if (i == palette.length - 1 && keyCount > palette.length)
+                            if (i === palette.length - 1 && keyCount > palette.length)
                             {
                                 breaks.push("Other");
                             }

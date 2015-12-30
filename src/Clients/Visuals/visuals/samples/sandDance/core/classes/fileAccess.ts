@@ -25,7 +25,7 @@ module beachParty
         findTypes: boolean;
     }
 
-    export class fileAccess
+    export class FileAccess
     {
         /** reads a local text file that is selected by the user. */
         public static readLocalTextFile(userPrompt: string, callback)
@@ -74,7 +74,7 @@ module beachParty
             {
                 for (var key in map)
                 {
-                    if (str == "")
+                    if (str === "")
                     {
                         str = "?";
                     }
@@ -129,7 +129,6 @@ module beachParty
         //    return started;
         //}
 
-
         public static writeFile64(fn: string, content64: string)
         {
             var vp = bpServerPath();
@@ -142,7 +141,7 @@ module beachParty
 
             var body = "fn=" + fn + "&content=" + content64;
 
-            fileAccess.httpPost(finalUrl, body, function (xmlhttp)
+            FileAccess.httpPost(finalUrl, body, function (xmlhttp)
             {
                 //alert("writeFile64 succeeded");
             },
@@ -165,7 +164,7 @@ module beachParty
             var body = "fn=" + fn + "&text=" + encodeURIComponent(text);
             var isAsync = (successCallback !== undefined);
 
-            fileAccess.httpPost(finalUrl, body,
+            FileAccess.httpPost(finalUrl, body,
                 function (xmlhttp)
                 {
                     if (successCallback)
@@ -194,7 +193,7 @@ module beachParty
 
             var body = "dir=" + dir;
 
-            fileAccess.httpPost(finalUrl, body, function (xmlhttp)
+            FileAccess.httpPost(finalUrl, body, function (xmlhttp)
             {
                 //alert("writeFile64 succeeded");
             },
@@ -232,7 +231,9 @@ module beachParty
                             if (str.startsWith("/Date("))
                             {
                                 str = "new " + str.substr(1, str.length - 2);
+                                /* tslint:disable */
                                 var date = eval(str);
+                                /* tslint:enable */
                                 record[colName] = date;
                             }
                         }
@@ -243,7 +244,7 @@ module beachParty
             else if (data._vectorsByName)
             {
                 //---- DATA FRAME class ----
-                var df = <dataFrameClass>data;
+                var df = <DataFrameClass>data;
 
                 //---- process by vector ----
                 var names = df.getNames();
@@ -263,7 +264,9 @@ module beachParty
                             if (str.startsWith("/Date("))
                             {
                                 str = "new " + str.substr(1, str.length - 2);
+                                /* tslint:disable */
                                 var date = eval(str);
+                                /* tslint:enable */
                                 vector[r] = date;
                             }
                         }
@@ -290,7 +293,9 @@ module beachParty
                             if (str.startsWith("/Date("))
                             {
                                 str = "new " + str.substr(1, str.length - 2);
+                                /* tslint:disable */
                                 var date = eval(str);
+                                /* tslint:enable */
                                 vector[r] = date;
                             }
                         }
@@ -316,7 +321,7 @@ module beachParty
 
             var result = undefined;
 
-            if (format == fileFormat.csv)
+            if (format === fileFormat.csv)
             {
                 
                 var sourceData = `Name	Class	Joined	Job	TicketCost	Age	Gender	Survived	Department
@@ -2528,7 +2533,7 @@ module beachParty
 "ZANETTI, Sig. Minio"	Crew	Southampton	Assistant Waiter	0	20	Male	False	Restaurant
 "ZARRACCHI, Sig. L."	Crew	Southampton	Wine Butler	0	26	Male	False	Restaurant`;
                 
-                var data = fileAccess.fixUpDatesFromDotNet(sourceData);
+                var data = FileAccess.fixUpDatesFromDotNet(sourceData);
                         asyncSuccessCallback(data);
                 
                 
@@ -2559,7 +2564,7 @@ module beachParty
                 //     },
                 //     (asyncSuccessCallback != null), asDataFrame);
             }
-            else if (format == fileFormat.excelSheet || format == fileFormat.excelAllSheets)
+            else if (format === fileFormat.excelSheet || format === fileFormat.excelAllSheets)
             {
                 // fileAccess.httpReadExcelViaService(fnOrUlr, format, <string>formatOptions,
                 //     function (data)
@@ -2592,7 +2597,7 @@ module beachParty
             }
             else
             {
-                fileAccess.httpReadViaService(fnOrUlr, isJson, function (data)
+                FileAccess.httpReadViaService(fnOrUlr, isJson, function (data)
                 {
                     //---- success ----
                     if (format === fileFormat.odata)
@@ -2601,7 +2606,7 @@ module beachParty
                     }
 
                     //---- sending from server encodes special characters, so we must decode them ----
-                    data = fileAccess.removeHtmlEncoding(data);
+                    data = FileAccess.removeHtmlEncoding(data);
 
                     //else if (format === fileFormat.csv)
                     //{
@@ -2620,7 +2625,7 @@ module beachParty
 
                     if (asDataFrame)
                     {
-                        data = dataFrameClass.jsonToDataFrame(data);
+                        data = DataFrameClass.jsonToDataFrame(data);
                     }
 
                     if (asyncSuccessCallback)
@@ -2684,7 +2689,7 @@ module beachParty
                     ////---- convert into a real dataFrame object ----
                     //var df = new dataFrameClass(data.names, data.vectors);
 
-                    data = fileAccess.fixUpDatesFromDotNet(data);
+                    data = FileAccess.fixUpDatesFromDotNet(data);
 
                     asyncSuccessCallback(data);
                 }
@@ -2741,9 +2746,9 @@ module beachParty
 
             xmlhttp.onreadystatechange = function ()
             {
-                if ((xmlhttp.readyState == 4) && (xmlhttp.status != 0))
+                if ((xmlhttp.readyState === 4) && (xmlhttp.status !== 0))
                 {
-                    if (xmlhttp.status == 200)
+                    if (xmlhttp.status === 200)
                     {
                         if (successFunc != null)
                         {
@@ -2758,7 +2763,7 @@ module beachParty
                         }
                     }
                 }
-            }
+            };
 
             xmlhttp.send(stringToSend);
         }
@@ -2774,18 +2779,12 @@ module beachParty
             isJson = isJson || false;
             noCache = noCache || false;
 
-            var vp = bpServerPath();
-            var serviceUrl = vp + "/getData.asmx/DownloadText";
-
             var win: any = window;
             if (win.alertShown === undefined)
             {
                 //alert("read via url: " + serviceUrl);
                 win.alertShown = 1;
             }
-
-            var httpReadJson = false;       // download to us as text
-            var finalUrl = serviceUrl + "?url=" + url + "&isJson=" + httpReadJson + "&noCache=" + noCache;
 
             successFunc({
                 "State": ["NY"],
@@ -2837,11 +2836,11 @@ module beachParty
                     if (asDataFrame)
                     {
                         //---- convert into a real dataFrame object ----
-                        var df = new dataFrameClass(data.names, data.vectors);
+                        var df = new DataFrameClass(data.names, data.vectors);
                         data = df;
                     }
 
-                    data = fileAccess.fixUpDatesFromDotNet(data);
+                    data = FileAccess.fixUpDatesFromDotNet(data);
 
                     successFunc(data);
                 }
@@ -2859,7 +2858,7 @@ module beachParty
         {
             var vp = bpServerPath();
 
-            if (format == fileFormat.excelSheet)
+            if (format === fileFormat.excelSheet)
             {
                 var serviceUrl = vp + "/getData.asmx/DownloadExcelSheetAsJson";
                 var fullUrl = serviceUrl + "?url=" + url + "&sheetName=" + sheetName;
@@ -2895,7 +2894,7 @@ module beachParty
         /// reads OData data from the specified url.
         static oDataRead(url, isJson, successFunc, failFunc)
         {
-            fileAccess.httpReadViaService(url, isJson, function (data)
+            FileAccess.httpReadViaService(url, isJson, function (data)
             {
                 if (successFunc)
                 {
@@ -2921,17 +2920,15 @@ module beachParty
                 byCount = 1000;
             }
 
-            var bag = fileAccess.oDataBag;
+            var bag = FileAccess.oDataBag;
             bag.error = false;
             bag.data = [];
             bag.total = 0;
             bag.byCount = byCount;
 
-            var self = this;
-
             var readMore = function ()
             {
-                fileAccess.oDataRead(url + "?$skip=" + bag.total + "&$top=" + bag.byCount, true,
+                FileAccess.oDataRead(url + "?$skip=" + bag.total + "&$top=" + bag.byCount, true,
 
                     function (dataChunk)     // success func
                     {
@@ -2966,15 +2963,14 @@ module beachParty
                         bag.error = true;
                     }
                     );
-            }
+            };
 
             readMore();
         }
 
-
     }
 
-    export class incrementalCsvLoader
+    export class IncrementalCsvLoader
     {
         _csvLoader = null;
         _offset = 0;
@@ -2991,7 +2987,7 @@ module beachParty
 
         public readNextCheck(size)
         {
-            fileAccess.httpReadIncremental(this._url, false, this._offset, size, function (jsonResult)
+            FileAccess.httpReadIncremental(this._url, false, this._offset, size, function (jsonResult)
             {
                 //---- success: got next chunk ----
                 var chunk = jsonResult.data;
@@ -3059,9 +3055,9 @@ module beachParty
 
         xmlhttp.onreadystatechange = function ()
         {
-            if ((xmlhttp.readyState == 4) && (xmlhttp.status != 0))
+            if ((xmlhttp.readyState === 4) && (xmlhttp.status !== 0))
             {
-                if (xmlhttp.status == 200)
+                if (xmlhttp.status === 200)
                 {
                     if (successFunc != null)
                     {
@@ -3080,16 +3076,16 @@ module beachParty
                     }
                 }
             }
-        }
+        };
 
         xmlhttp.send();
     }
 
     export function getMyPath()
     {
-        if (appMgrClass.current && appMgrClass.current._beachPartyDir)
+        if (AppMgrClass.current && AppMgrClass.current._beachPartyDir)
         {
-            var path = <string>appMgrClass.current._beachPartyDir + "/Apps";
+            var path = <string>AppMgrClass.current._beachPartyDir + "/Apps";
         }
         else
         {
@@ -3115,7 +3111,6 @@ module beachParty
 
     function pathHelper(nodeName)
     {
-        var getServicePrefix = true;
         var serverPath = window.location.href;
 
         //---- try easy one first ----
@@ -3147,7 +3142,6 @@ module beachParty
 
         return serverPath;
     }
-
 
     export function bpServerPath()
     {
@@ -3182,9 +3176,9 @@ module beachParty
         //---- for dev machine (http://localhost/bpServer) but gets somewhat tricky when we are deployed ----
         //---- and the bpServer we want is something like:  http://vibe10/SandCastle/build3/bpServer.  ----
 
-        if (appMgrClass.current && appMgrClass.current._beachPartyDir)
+        if (AppMgrClass.current && AppMgrClass.current._beachPartyDir)
         {
-            var path = <string>appMgrClass.current._beachPartyDir
+            var path = <string>AppMgrClass.current._beachPartyDir;
         }
         else
         {
@@ -3293,7 +3287,7 @@ module beachParty
         var url = bpServerPath() + "/putData.asmx/sortKeys";
         var safeUrl = encodeURI(url);
 
-        fileAccess.httpPost(safeUrl, body, function (xmlhttp)
+        FileAccess.httpPost(safeUrl, body, function (xmlhttp)
         {
             //---- SUCCESS ----
             var data = getDataFromResult(xmlhttp, true);
@@ -3351,21 +3345,15 @@ module beachParty
         
         beachParty.httpRead(url, false,
             function (xmlhttp)
-            {
-                //---- SUCCESS ----
-                var dummy = 1;
-            },
+            {},
             function (e)
             {
-                //---- FAILURE ----
-                var dummy = 0;
                 this.fileFail("logFeedbackToServer", "", e);
             }, true);
     }
 
     function fileFail(callerName, url, e)
     {
-        var dummy = 0;
         throw "Error in " + callerName + ", status=" + e.statusText + "\r\nurl=" + url + "\r\n" + e.responseText;
     }
 
@@ -3401,7 +3389,7 @@ module beachParty
         var url = bpServerPath() + "/putData.asmx/writeSessionFile";
         var safeUrl = encodeURI(url);
 
-        fileAccess.httpPost(safeUrl, safeBody,
+        FileAccess.httpPost(safeUrl, safeBody,
             function (xmlhttp)
             {
                 //---- SUCCESS ----
@@ -3420,7 +3408,6 @@ module beachParty
         var url = bpServerPath() + "/putData.asmx/readSessionFile?sessionUrl=" + sessionUrl;
         //var safeUrl = encodeURI(url);
 
-        var httpReadJson = false;       // download to us as text
         var async = true;
 
         httpRead(url, false, 

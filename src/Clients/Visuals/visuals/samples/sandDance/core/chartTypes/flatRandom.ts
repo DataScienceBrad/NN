@@ -5,11 +5,9 @@
 
 /// <reference path="../_references.ts" />
 
-var demoData: string;
-
 module beachParty
 {
-    export class flatRandom extends baseGlVisClass
+    export class FlatRandom extends BaseGlVisClass
     {
         _randomX = [];
         _randomY = [];
@@ -17,7 +15,7 @@ module beachParty
         _nextRandIndex = 0;
         _itemSize = 0;
 
-        constructor(view: dataViewClass, gl: any, chartState: any)
+        constructor(view: DataViewClass, gl: any, chartState: any)
         {
             super("flatRandom", view, gl, chartState);
 
@@ -69,7 +67,7 @@ module beachParty
 
             var width = this._maxShapeSize * this.scaleColData(nv.size, i, scales.size, 1);
             var height = width;
-            var depth = dc.defaultDepth2d      // test out 3d cube in a 2d shape
+            var depth = dc.defaultDepth2d;      // test out 3d cube in a 2d shape;
 
             var colorIndex = this.scaleColData(nv.colorIndex, i, scales.colorIndex);
             var imageIndex = this.scaleColData(nv.imageIndex, i, dc.scales.imageIndex);

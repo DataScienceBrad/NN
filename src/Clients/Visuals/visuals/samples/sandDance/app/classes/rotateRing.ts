@@ -7,7 +7,7 @@
 
 module beachPartyApp
 {
-    export class rotateRingClass 
+    export class RotateRingClass 
     {
         _root: HTMLDivElement;
         _fullOpacity = "0";//"1"
@@ -22,7 +22,7 @@ module beachPartyApp
             var rootW = vp.select(".sandDance").append("div")
                 .addClass("rotateRing")
                 .css("position", "absolute")
-                .css("opacity", "0")
+                .css("opacity", "0");
 
             this._root = rootW[0];
         }
@@ -34,7 +34,7 @@ module beachPartyApp
 
         getRcPlot()
         {
-            var rcPlot = appClass.instance.getPlotBounds();
+            var rcPlot = AppClass.instance.getPlotBounds();
 
             return rcPlot;
         }
@@ -42,7 +42,7 @@ module beachPartyApp
         private getFinalRotationBounds()
         {
             var rcPlot = this.getRcPlot();
-            var rcRot = appClass.instance._rcRotateRing;
+            var rcRot = AppClass.instance._rcRotateRing;
 
             var rc = vp.geom.createRect(rcPlot.left + rcRot.left, rcPlot.top + rcRot.top, rcRot.width, rcRot.height);
             return rc;
@@ -61,7 +61,7 @@ module beachPartyApp
                 //.css("transition", "all 0s")     // turn off animations
                 .bounds(rcPlot.left, rcPlot.top, rcPlot.width, rcPlot.height)
                 .css("border-radius", "0px")
-                .css("opacity", "0")
+                .css("opacity", "0");
 
             //---- ENDING bounds/radius ----
             setTimeout((e) =>
@@ -70,7 +70,7 @@ module beachPartyApp
                     .css("transition", "all .5s ease")
                     .bounds(rcRing.left, rcRing.top, rcRing.width, rcRing.height)
                     .css("border-radius", rcRing.width / 2 + "px")
-                    .css("opacity", this._fullOpacity)
+                    .css("opacity", this._fullOpacity);
             }, 250);
 
             //---- FADE OUT ----
@@ -78,7 +78,7 @@ module beachPartyApp
             {
                 vp.select(ring)
                     .css("transition", "all .5s ease")
-                    .css("opacity", "0")
+                    .css("opacity", "0");
             }, 1500);
         }
 
@@ -116,7 +116,7 @@ module beachPartyApp
                 .css("transition", "all .5 ease")
                 .bounds(rcRing.left, rcRing.top, rcRing.width, rcRing.height)
                 .css("border-radius", rcRing.width / 2 + "px")
-                .css("opacity", this._fullOpacity)
+                .css("opacity", this._fullOpacity);
 
             //---- TO size ----
             setTimeout(function (e)
@@ -125,7 +125,7 @@ module beachPartyApp
                     .css("transition", "all 3.5 ease")  
                     .bounds(rcPlot.left, rcPlot.top, rcPlot.width, rcPlot.height)
                     .css("border-radius", "0px")
-                    .css("opacity", "0")
+                    .css("opacity", "0");
             }, 500);
         }
 
@@ -142,14 +142,14 @@ module beachPartyApp
                 .bounds(rcRing.left, rcRing.top, rcRing.width, rcRing.height)
                 .css("border-radius", rcRing.width / 2 + "px")
                 .css("transition", "all .5s ease")
-                .css("opacity", this._fullOpacity)
+                .css("opacity", this._fullOpacity);
 
             //---- FADE OUT ----
             setTimeout(function (e)
             {
                 vp.select(ring)
                     //.css("transition", "all .5s ease")
-                    .css("opacity", "0")
+                    .css("opacity", "0");
             }, 500 + this._pulseDuration);
         }
     }

@@ -6,11 +6,9 @@
 
 /// <reference path="../_references.ts" />
 
-var demoData: string;
-
 module beachParty
 {
-    export class partyGenPlotClass extends baseGlVisClass
+    export class PartyGenPlotClass extends BaseGlVisClass
     {
         //---- all facets info ----
         _maxCountAllFacets = 0;
@@ -34,7 +32,7 @@ module beachParty
 
         _leafRcArray: CellData[];
 
-        constructor(view: dataViewClass, gl: any, chartState: any, chartType: string)
+        constructor(view: DataViewClass, gl: any, chartState: any, chartType: string)
         {
             super("partyGenPlotClass", view, gl, chartState);
 
@@ -55,7 +53,7 @@ module beachParty
 
         computeFacetStats(dc: DrawContext, nvFacetBuckets: any[])
         {
-            this._maxCountAllFacets = chartUtils.computeMaxCountOverFacets(dc, nvFacetBuckets);
+            this._maxCountAllFacets = ChartUtils.computeMaxCountOverFacets(dc, nvFacetBuckets);
 
             //---- call this now so that "this._hideAxes" gets set in time to take effect ----
             this.applyPresets(dc);
@@ -74,27 +72,27 @@ module beachParty
 
             this._fillCell = false;
 
-            if (chartType == "Scatter")
+            if (chartType === "Scatter")
             {
                 this._spaceDivider4.spaceType = SpaceType.plotXY;
             }
-            else if (chartType == "FlatCircle")
+            else if (chartType === "FlatCircle")
             {
                 this._spaceDivider4.spaceType = SpaceType.fillOut;
                 this._hideAxes = true;
             }
-            else if (chartType == "FlatGrid")
+            else if (chartType === "FlatGrid")
             {
                 this._spaceDivider4.spaceType = SpaceType.packXY;
                 this._spaceDivider4.reverse = true;     // flipped Y
                 this._hideAxes = true;
             }
-            else if (chartType == "FlatRandom")
+            else if (chartType === "FlatRandom")
             {
                 this._spaceDivider4.spaceType = SpaceType.random;
                 this._hideAxes = true;
             }
-            else if (chartType == "FlatSquarify")
+            else if (chartType === "FlatSquarify")
             {
                 var cellMargin = view.separationFactor() * dc.width / 1000;       // (dc.filteredRecordCount) ? (dc.width / Math.sqrt(dc.filteredRecordCount)) : 0;
 
@@ -103,12 +101,12 @@ module beachParty
                 this._hideAxes = true;
                 this._fillCell = true;
             }
-            else if (chartType == "FlatPoisson")
+            else if (chartType === "FlatPoisson")
             {
                 this._spaceDivider4.spaceType = SpaceType.poisson;
                 this._hideAxes = true;
             }
-            else if (chartType == "ColumnGrid")
+            else if (chartType === "ColumnGrid")
             {
                 this._dataDivider3.colName = xm.colName;
                 this._dataDivider3.groupCount = xm.binCount;
@@ -122,7 +120,7 @@ module beachParty
 
                 this._hideAxes = true;
             }
-            else if (chartType == "BarGrid")
+            else if (chartType === "BarGrid")
             {
                 this._dataDivider3.colName = ym.colName;
                 this._dataDivider3.groupCount = ym.binCount;
@@ -236,22 +234,22 @@ module beachParty
             //---- build "dividers" ----
             var dividers: ChartDivider[] = [];
 
-            if (this._dataDivider1.colName && this._spaceDivider1.spaceType != SpaceType.none)
+            if (this._dataDivider1.colName && this._spaceDivider1.spaceType !== SpaceType.none)
             {
                 this.addDivider(dividers, this._dataDivider1, this._spaceDivider1);
             }
 
-            if (this._dataDivider2.colName && this._spaceDivider2.spaceType != SpaceType.none)
+            if (this._dataDivider2.colName && this._spaceDivider2.spaceType !== SpaceType.none)
             {
                 this.addDivider(dividers, this._dataDivider2, this._spaceDivider2);
             }
 
-            if (this._dataDivider3.colName && this._spaceDivider3.spaceType != SpaceType.none)
+            if (this._dataDivider3.colName && this._spaceDivider3.spaceType !== SpaceType.none)
             {
                 this.addDivider(dividers, this._dataDivider3, this._spaceDivider3);
             }
 
-            if (this._spaceDivider4.spaceType != SpaceType.none)
+            if (this._spaceDivider4.spaceType !== SpaceType.none)
             {
                 this.addDivider(dividers, this._dataDivider4, this._spaceDivider4);
             }
@@ -264,7 +262,7 @@ module beachParty
             }
             var dataFrame = this._dataFrame.copyData(facetIndexes);
 
-            if (dc.filteredRecordCount != dc.recordCount)
+            if (dc.filteredRecordCount !== dc.recordCount)
             {
                 var indexes = [];
                 var filter = dc.layoutFilterVector;
@@ -288,7 +286,7 @@ module beachParty
             this._nextInFilterIndex = 0;
         }
 
-        genLayout(svg, rc: ClientRect, dataFrame: dataFrameClass, dividers: ChartDivider[], divideLevel: number)
+        genLayout(svg, rc: ClientRect, dataFrame: DataFrameClass, dividers: ChartDivider[], divideLevel: number)
         {
             //var shapeMakers = [shapeMaker];
 

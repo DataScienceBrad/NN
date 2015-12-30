@@ -7,23 +7,23 @@
 
 module beachParty
 {
-    export class appMgrClass extends dataChangerClass
+    export class AppMgrClass extends DataChangerClass
     {
-        static current = <appMgrClass> null;
+        static current = <AppMgrClass> null;
 
-        _appSettings: appSettingsClass; 
+        _appSettings: AppSettingsClass; 
         _canvas3dElem: HTMLCanvasElement;
         _canvas2dElem: HTMLCanvasElement;
         _svgDoc: HTMLElement;
 
-        _windowMgr: windowMgrClass;
-        _dataView: dataViewClass;
-        _views: dataViewClass[] = [];
-        _dataMgr: dataMgrClass;
+        _windowMgr: WindowMgrClass;
+        _dataView: DataViewClass;
+        _views: DataViewClass[] = [];
+        _dataMgr: DataMgrClass;
         _isVaas = false;
         _visId = "";
-        _cmdMgr: cmdMgrClass;
-        _preloadMgr: preloadMgrClass;
+        _cmdMgr: CmdMgrClass;
+        _preloadMgr: PreloadMgrClass;
         _edition = "client";
         _hostDomain = null;             // the client domain (taken from the URL params)
         _eventSubscriptions = {};
@@ -34,13 +34,13 @@ module beachParty
         _cmdStartTime = vp.utils.now();
         _awaitingFirstCmd = true;       // if next cmd will be the first of an cmd/animation cycle
         _cmdExecTime = 0;
-        _traceMgr: traceMgrClass;
+        _traceMgr: TraceMgrClass;
 
         constructor()
         {
             super(); 
 
-            appMgrClass.current = this;
+            AppMgrClass.current = this;
         }
 
         init(canvas3dId: string, canvas2dId: string, svgId: string, fileInfoId: string, width: number, height: number,
@@ -52,16 +52,16 @@ module beachParty
                 //---- always send back errors (some may be too early to see, before subscribe() call can take effect ----
                 var msgBlock = { msg: "engineError", errorMsg: errorMsg, errorUrl: errorUrl, errorLineNum: errorLineNum };
                 this.postMessageToParent(msgBlock);
-            }
+            };
 
-            this._traceMgr = new traceMgrClass();
+            this._traceMgr = new TraceMgrClass();
 
             this._isHostedDirect = (urlParams != null);
 
             vp.utils.setDebugId("vaas");
-            this._appSettings = new appSettingsClass();
+            this._appSettings = new AppSettingsClass();
 
-            this._cmdMgr = new cmdMgrClass(this);
+            this._cmdMgr = new CmdMgrClass(this);
 
             this.processCmdLineParams(urlParams);
 
@@ -89,18 +89,18 @@ module beachParty
             var moveStatsElem = document.getElementById(moveStatsId);
             var drawStatsElem = document.getElementById(drawStatsId);
 
-            var preloadMgr = new preloadMgrClass();
+            var preloadMgr = new PreloadMgrClass();
             this._preloadMgr = preloadMgr;
 
             //---- use correct dataMgr ----
-            var isClientEdition = (this._edition == "client");
-            var dataMgr = new dataMgrClass(this, this._preloadMgr, isClientEdition);
+            var isClientEdition = (this._edition === "client");
+            var dataMgr = new DataMgrClass(this, this._preloadMgr, isClientEdition);
             this._dataMgr = dataMgr;
 
             this._canvas3dElem = <HTMLCanvasElement> document.getElementById(canvas3dId);
             this._canvas2dElem = <HTMLCanvasElement> document.getElementById(canvas2dId);
 
-            var dataView = new dataViewClass(dataMgr, this, this._canvas3dElem, this._canvas2dElem, svgId, visStatsElem,
+            var dataView = new DataViewClass(dataMgr, this, this._canvas3dElem, this._canvas2dElem, svgId, visStatsElem,
                 gpuStatsElem, hitStatsElem, moveStatsElem, drawStatsElem, this._isVaas);
             this._dataView = dataView;
 
@@ -113,7 +113,7 @@ module beachParty
 
             var fileInfoElem = document.getElementById(fileInfoId);
 
-            var windowMgr = new windowMgrClass(this, dataView, svgDoc, this._canvas3dElem, dataMgr, fileInfoElem,
+            var windowMgr = new WindowMgrClass(this, dataView, svgDoc, this._canvas3dElem, dataMgr, fileInfoElem,
                 visStatsElem, gpuStatsElem, this._isVaas);
             this._windowMgr = windowMgr;
 
@@ -197,14 +197,14 @@ module beachParty
 
         onClientCmdStarted(cmd: string)
         {
-            if (cmd != "applyHover")
+            if (cmd !== "applyHover")
             {
                 //vp.utils.debug("starting next cmd, cmd=" + cmd);
             }
 
             if (this._awaitingFirstCmd)
             {
-                if (cmd != "applyHover" && cmd != "onLocalStorageChange" && cmd != "getSystemViewData")
+                if (cmd !== "applyHover" && cmd !== "onLocalStorageChange" && cmd !== "getSystemViewData")
                 {
                     this._cmdStartTime = vp.utils.now();
                     this._awaitingFirstCmd = false;
@@ -266,7 +266,6 @@ module beachParty
                     var buildChartElapsed = this._dataView.getBuildChartTime();
                     var cycleNum = this._dataView.getChart()._animCycleCount;
                     var isFirstFilterStage = this._dataView.getIsFirstFilteredStage();
-
 
                     this.postMessageToParent({
                         msg: key, cmdTime: cmdTime, buildChartElapsed: buildChartElapsed,
@@ -407,7 +406,7 @@ module beachParty
 
         setMaxItemCount(maxItems: number)
         {
-            if (maxItems != this._maxItemCount)
+            if (maxItems !== this._maxItemCount)
             {
                 this._maxItemCount = maxItems;
 
@@ -496,7 +495,7 @@ module beachParty
                     var key = keys[k];
                     var value = cmdParams[key];
 
-                    if (key == "reset" && value == "true")
+                    if (key === "reset" && value === "true")
                     {
                         //---- delete localStorage for our settings ----
                         if (localStorage)
@@ -505,29 +504,29 @@ module beachParty
                             localStorage["controls"] = "";
                         }
                     }
-                    else if (key == "vaas" && value == "true")
+                    else if (key === "vaas" && value === "true")
                     {
                         this._isVaas = true;
                     }
-                    else if (key == "edition")
+                    else if (key === "edition")
                     {
                         this._edition = value;
                     }
-                    else if (key == "visid")
+                    else if (key === "visid")
                     {
                         this._visId = value;
                         vp.utils.setDebugId(value);
                     }
-                    else if (key == "hostdomain")
+                    else if (key === "hostdomain")
                     {
                         this._hostDomain = value;
                     }
-                    else if (key == "bpdir")
+                    else if (key === "bpdir")
                     {
                         this._beachPartyDir = value;
                         vp.utils.debug("this._beachPartyDir set to: " + this._beachPartyDir);
                     }
-                    else if (key == "appstarttime")
+                    else if (key === "appstarttime")
                     {
                         vp.utils.appStartTime = +value;
                         //vp.utils.debug("HEY, just set appStartTime=" + value);
@@ -552,10 +551,9 @@ module beachParty
             msgObj.visId = this._visId;
             msgObj.cmdId = this._cmdMgr._clientCmdId;
 
-            traceMgrClass.instance.addTrace("msgToClient", msgObj.msg, TraceEventType.point);
+            TraceMgrClass.instance.addTrace("msgToClient", msgObj.msg, TraceEventType.point);
 
             var msgStr = JSON.stringify(msgObj);
-            var domain = bps.baseHostHelperClass.getDomain(this._hostDomain);
 
             //vp.utils.debug("-> postMessageToParent: domain=" + domain + ", msg=" + msgObj.msg);
 
@@ -579,12 +577,12 @@ module beachParty
 
         getViewByIndex(viewId: string)
         {
-            var viewX: dataViewClass = null;
+            var viewX: DataViewClass = null;
 
             for (var v = 0; v < this._views.length; v++)
             {
                 var view = this._views[v];
-                if (view.viewId() == viewId)
+                if (view.viewId() === viewId)
                 {
                     viewX = view;
                     break;
@@ -634,7 +632,7 @@ module beachParty
             //---- the SVG DOC ----
             vp.select(this._svgDoc)
                 .css("width", width + "px")
-                .css("height", height + "px")
+                .css("height", height + "px");
                 //.css("border", "1px solid red")
 
             var ww = width + 10;   
@@ -655,7 +653,7 @@ module beachParty
             if (localStorage)
             {
                 var str = localStorage["appSettings"];
-                if (str && str != "")
+                if (str && str !== "")
                 {
                     this._appSettings = JSON.parse(str);
                 }
@@ -711,7 +709,7 @@ module beachParty
         }
     }
 
-    export class appSettingsClass
+    export class AppSettingsClass
     {
         persistSession = false;
         persistControls = true;
@@ -723,7 +721,7 @@ module beachParty
         }
     }
 
-    export class controlInfoClass
+    export class ControlInfoClass
     {
         controlType: string;
         menuId: string;
@@ -731,13 +729,13 @@ module beachParty
         x: number;
         y: number;
 
-        constructor(controlType: string, menu: menuInfoClass, x: number, y: number)
+        constructor(controlType: string, menu: MenuInfoClass, x: number, y: number)
         {
             this.controlType = controlType;
             this.menuId = menu.menuId;
             this.x = x;
             this.y = y;
-            this.isOpen = (menu.actionType == ActionType.openSubMenu && (<any>menu)._isOpen);
+            this.isOpen = (menu.actionType === ActionType.openSubMenu && (<any>menu)._isOpen);
         }
     }
 }

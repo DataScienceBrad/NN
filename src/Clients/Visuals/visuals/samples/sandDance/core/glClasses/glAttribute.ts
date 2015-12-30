@@ -5,11 +5,9 @@
 
 /// <reference path="../_references.ts" />
 
-var demoData: string;
-
 module glUtils
 {
-    export class glAttributeClass
+    export class GlAttributeClass
     {
         _gl: any;
         _program: any;
@@ -30,10 +28,10 @@ module glUtils
             var attrLoc = gl.getAttribLocation(program, nameInShader);
             this._attrLoc = attrLoc;
 
-            if (attrLoc == -1)
+            if (attrLoc === -1)
             {
                 //----for debugging/development purposes, ignore this error ----
-                if (nameInShader != "size2" && nameInShader != "theta" && nameInShader != "theta2")        // experiment
+                if (nameInShader !== "size2" && nameInShader !== "theta" && nameInShader !== "theta2")        // experiment
                 {
                     //glUtils.error("Cannot locate shader attribute: " + nameInShader);
                 }
@@ -63,7 +61,7 @@ module glUtils
             var gl = this._gl;
             this._array = array;
 
-            if (this._attrLoc !== undefined && this._attrLoc != -1 && array != undefined)
+            if (this._attrLoc !== undefined && this._attrLoc !== -1 && array !== undefined)
             {
                 gl.bindBuffer(gl.ARRAY_BUFFER, this._glBuffer);
                 gl.bufferData(gl.ARRAY_BUFFER, array, gl.STATIC_DRAW);
