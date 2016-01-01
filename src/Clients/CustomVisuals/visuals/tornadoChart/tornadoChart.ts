@@ -937,9 +937,21 @@ module powerbi.visuals.samples {
                 : this.scrolling.scrollViewport.width - this.currentSections.left;
         }
 
+        private eraseChart(): void {
+            let selectors: any[] = [
+                TornadoChart.Column.selector,
+                TornadoChart.Axis.selector,
+                TornadoChart.Label.selector,
+                TornadoChart.Category.selector,
+            ];
+            this.main.selectAll(selectors.join(', ')).remove();
+            this.legend.drawLegend({ title: '', dataPoints: [] }, this.viewport);
+        }
+
         private render(tornadoChartDataView: TornadoChartDataView): void {
             if (!tornadoChartDataView ||
                 !tornadoChartDataView.settings) {
+                this.eraseChart();
                 return;
             }
 
