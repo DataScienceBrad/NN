@@ -196,7 +196,9 @@ module beachParty
         static adjustScaleForBin(scale: vp.scales.baseScale, binResults: BinResult)
         {
             var scaleType = scale.scaleType();
-            var bins = binResults.bins;
+            var bins = binResults && binResults.bins
+                ? binResults.bins
+                : [];
 
             //---- build an array of the bin names for the xScale labels ----
             var binNames = [];
@@ -233,7 +235,11 @@ module beachParty
                 {
                     var breakValues = [];
                     var labels = [];
-                    var numBins = (<BinResultNum>binResults).bins;
+
+                    var numBins = binResults && (<BinResultNum>binResults).bins
+                        ? binResults.bins
+                        : [];
+
                     var anyScale = <any>scale;
 
                     for (var b = 0; b < numBins.length; b++)
@@ -256,7 +262,9 @@ module beachParty
                     if (scaleType === vp.scales.ScaleType.dateTime && !anyScale._formatter)
                     {
                         //---- use the formatString returned by the binning function ----
-                        var formatString = (<BinResultNum>binResults).dateFormatString;
+                        var formatString = binResults && (<BinResultNum>binResults).dateFormatString
+                            ? (<BinResultNum>binResults).dateFormatString
+                            : "";
 
                         var formatter = vp.formatters.createExcelFormatter(formatString, "date");
                         anyScale._formatter = formatter;
@@ -364,7 +372,10 @@ module beachParty
          */
         static computeBarBinSize(facetResult: BinResult, availWidth: number, availHeight: number)
         {
-            var binCount = facetResult.bins.length;
+            var binCount = facetResult && facetResult.bins && facetResult.bins.length
+                ? facetResult.bins.length
+                : 0;
+
             var approxItemHeight = availHeight / binCount;
 
             var yMargin = .05 * approxItemHeight;

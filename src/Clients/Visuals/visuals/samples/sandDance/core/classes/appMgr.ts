@@ -78,7 +78,7 @@ module beachParty
                 this.dispatchMsgToCmdMgr(e.data);
             });
 
-            iframeBus.addEventListener("message", (e) =>
+            sandDance.iframeBus.addEventListener("message", (e) =>
             {
                 this.dispatchMsgToCmdMgr(e.data);
             });
@@ -570,7 +570,7 @@ module beachParty
             }
             else// if (window.parent && window !== window.parent.window)
             {
-                hostBus.postMessage(msgStr);
+                sandDance.hostBus.postMessage(msgStr);
                 //window.postMessage(msgStr, domain);
             }
         }

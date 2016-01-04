@@ -330,10 +330,11 @@ module beachPartyApp
                             //---- BING td ----
                             var tdW = rowW.append("td");
 
-                            var bingW = tdW.append("img")
+                            var bingW = tdW.append("div") //img
                                 .addClass("bingImg")
+                                .addClass("bing4")
                                 .attach("click", (e) => this.selectRowAndBingSearch(e))
-                                .attr("src", "images/bing4.png")
+                                // .attr("src", "images/bing4.png")
                                 .css("display", "none")
                                 .css("margin-top", "1px")
                                 .title("Search for this value in Bing");

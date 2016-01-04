@@ -50,7 +50,7 @@ module bps
             //---- hook messages from vis ----
             window.addEventListener("message", (e) => { this.onMsgFromVis(e.data); });
             
-            hostBus.addEventListener("message", (e) => { this.onMsgFromVis(e.data); });
+            sandDance.hostBus.addEventListener("message", (e) => { this.onMsgFromVis(e.data); });
 // 
 //              var elem = <HTMLElement> document.getElementById(bpsChartOrIFrameId);
 //             if (!elem)
@@ -184,7 +184,7 @@ module bps
         postVisMsgNow(msgStr: string)
         {
             
-            iframeBus.postMessage(msgStr);
+            sandDance.iframeBus.postMessage(msgStr);
             //this._iframe.contentWindow.postMessage(msgStr, this._domain);
         }
 

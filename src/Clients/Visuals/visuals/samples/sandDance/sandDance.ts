@@ -366,15 +366,15 @@ module powerbi.visuals.samples {
                 .attr("id", SandDance.YBinsSelector.id);
 
             zStuffElement = leftPanelElement
-                .append("span")
+                .append("div") //span
                 .attr("id", SandDance.ZStuffSelector.id);
 
             zStuffElement
-                .append("span")
+                .append("div") //span
                 .attr("id", SandDance.ZButtonSelector.id);
 
             zStuffElement
-                .append("span")
+                .append("div") //span
                 .attr("id", SandDance.ZBinsSelecotr.id);
         }
 
@@ -519,7 +519,7 @@ module powerbi.visuals.samples {
                 ? sandDance.SettingsType[0]
                 : sandDance.SettingsType[1];
 
-            console.log(JSON.stringify(settings));
+            // console.log(JSON.stringify(settings));
 
             this.host.persistProperties(<VisualObjectInstancesToPersist> {
                 replace: [{
@@ -577,7 +577,7 @@ module powerbi.visuals.samples {
         public converter(dataView: DataView): SandDanceDataView {
             let data: SandDanceData = {};
 
-            console.log("dataView: " + JSON.stringify(dataView));
+            // console.log("dataView: " + JSON.stringify(dataView));
 
             if (dataView &&
                 dataView.table &&
@@ -671,6 +671,7 @@ module powerbi.visuals.samples {
         }
 
         public destroy(): void {
+            this.rootElement.remove();
             this.rootElement = null;
 
             this.coreApplication = null;

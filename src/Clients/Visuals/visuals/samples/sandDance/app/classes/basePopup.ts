@@ -181,7 +181,7 @@ module beachPartyApp
 
                 var isMyElem = (parent === this._root);
 
-                if (! isMyElem)
+                if (!isMyElem)
                 {
                     //---- see if this was a child popup of me ----
                     if (parent && parent.jsObj)
@@ -194,7 +194,7 @@ module beachPartyApp
                     }
                 }
 
-                if (! isMyElem)
+                if (!isMyElem)
                 {
                     //---- mouse clicked on an element that is NOT part of this popup/panel ----
                     this.close();
@@ -207,7 +207,7 @@ module beachPartyApp
 
                     //---- cancel event if this was one of my openers (to prevent this panel from iddediately reopening ----
                     //---- when the user was clicking on our opener UI to TOGGLE our panel closed. ----
-                    if (this.isMyOpener(elem.id))
+                    if (elem && this.isMyOpener(elem.id))
                     {
                         //vp.events.cancelEventBubble(e);
                         //vp.events.cancelEventDefault(e);

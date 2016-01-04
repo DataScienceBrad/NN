@@ -906,13 +906,13 @@ module beachPartyApp
 
             var trW = tableW.append("tr");
 
-            this.createIconTextPair(trW, "onUndoClick", "undo", "Undo the last action", "fnIconBarUndo", "Undo", false);
-            this.createIconTextPair(trW, "onRedoClick", "redo", "Redo the last undone action", "fnIconBarRedo", "Redo", false);
-            this.createSpacer(trW);
+            this.createIconTextPair(trW, "onUndoClick", "undo", "Undo the last action", "fnIconBarUndo", "Undo", false, true);
+            this.createIconTextPair(trW, "onRedoClick", "redo", "Redo the last undone action", "fnIconBarRedo", "Redo", false, true);
+            // this.createSpacer(trW);
 
-            this.createIconTextPair(trW, "toggleInsightPanel", "insight", "Toggle the insight panel open/closed", "fnIconBarToggleInsightNorm", "Insight", true);
-            this.createIconTextPair(trW, "startPlayback", "playIcon", "Playback the current insights", "fnIconBarPlay", "Play", true);
-            this.createSpacer(trW);
+            this.createIconTextPair(trW, "toggleInsightPanel", "insight", "Toggle the insight panel open/closed", "fnIconBarToggleInsightNorm", "Insight", true, true);
+            this.createIconTextPair(trW, "startPlayback", "playIcon", "Playback the current insights", "fnIconBarPlay", "Play", true, true);
+            // this.createSpacer(trW);
 
             this.createIconTextPair(trW, "toggleTransformMode", "wheel", "Toggle the 3D tranform mode on/off", "fnIconBarToggle3dNorm", "Transform");
             this.createIconTextPair(trW, "onSelectClick", "select", "Change the selection mode", "fnSelectionNormal", "Selection");
@@ -940,14 +940,14 @@ module beachPartyApp
                 //---- stacked on top of each other ----
                 var tdTextW = trW.append("td");
 
-                this.addToolText(tdTextW, "onFilteredInCountClick", "filteredInCountText", "Reset the filter", 15, -5, 120);
-                this.addToolText(tdTextW, "onSelectedCountClick", "selectedCountText", "Reset the selection", 0, -5, 120);
+                this.addToolText(tdTextW, "onFilteredInCountClick", "filteredInCountText", "Reset the filter", 15, -5, 80);
+                this.addToolText(tdTextW, "onSelectedCountClick", "selectedCountText", "Reset the selection", 0, -5, 80);
             }
             else
             {
                 //---- side-by-side ----
-                this.addToolText(trW, "onFilteredInCountClick", "filteredInCountText", "Reset the filter", 15, 7, 120);
-                this.addToolText(trW, "onSelectedCountClick", "selectedCountText", "Reset the selection", 0, 7, 120);
+                this.addToolText(trW, "onFilteredInCountClick", "filteredInCountText", "Reset the filter", 15, 7, 80);
+                this.addToolText(trW, "onSelectedCountClick", "selectedCountText", "Reset the selection", 0, 7, 80);
             }
 
             //----- convert X, Y, Z placeholders to ICON TEXT PAIR ----
@@ -955,10 +955,26 @@ module beachPartyApp
             this.addIconTextPair("y", "Select a column for Y-axis mapping or grouping", null, "Y", true, undefined, undefined, true);
             this.addIconTextPair("z", "Select a column for Z-axis mapping or grouping", null, "Z", true);
 
+            let xButtonElement = vp.select("#xButton"),
+                yButtonElement = vp.select("#yButton"),
+                zButtonElement = vp.select("#zButton");
+
             //---- initially hide X, Y, and Z buttons ----
-            vp.select("#xButton").css("display", "none");
-            vp.select("#yButton").css("display", "none");
-            vp.select("#zButton").css("display", "none");
+            xButtonElement.css("display", "none");
+            yButtonElement.css("display", "none");
+            zButtonElement.css("display", "none");
+
+            xButtonElement.attach("click", (e) => {
+                this.onXClick(e, false);
+            });
+
+            yButtonElement.attach("click", (e) => {
+                this.onYClick(e, false);
+            });
+
+            zButtonElement.attach("click", (e) => {
+                this.onZClick(e, false);
+            });
 
             this.fixUpButtonsAfterRuleChange();
         }
@@ -1802,7 +1818,7 @@ module beachPartyApp
         /** post a message to the HOST of the beachParty client app. */
         postMessageToHost(msgObj)
         {
-            if (window)//.parent)
+            if (true)//window.parent)
             {
                 //---- identify which VAAS inst this msgs is coming from ----
                 msgObj.clientAppId = this._clientAppId;
@@ -1812,8 +1828,7 @@ module beachPartyApp
 
                 vp.utils.debug("postMessageToHost: domain=" + domain + ", msg=" + msgObj.msg);
 
-                
-                hostBus.postMessage(msgStr);
+                sandDance.hostBus.postMessage(msgStr);
                 //window.parent.window.postMessage(msgStr, domain);
             }
         }
@@ -3769,7 +3784,7 @@ module beachPartyApp
             this._colorLegend = colorLegend;
             colorLegend.registerForChange("colorPanelRequest", (e) =>
             {
-                this.onColorPanelClick(null, true);
+                this.onColorPanelClick(null, false); //null, true
             });
 
             beachParty.connectModelView(this, "colorMapping", colorLegend, "colorMapping");
@@ -3779,7 +3794,7 @@ module beachPartyApp
             this._sizeLegend = sizeLegend;
             sizeLegend.registerForChange("sizePanelRequest", (e) =>
             {
-                this.onSizeClick(e, true);
+                this.onSizeClick(e, false); //e, true
             });
 
             beachParty.connectModelView(this, "sizeMapping", sizeLegend, "sizeMapping");
@@ -3789,7 +3804,7 @@ module beachPartyApp
             this._imageLegend = imageLegend;
             imageLegend.registerForChange("imagePanelRequest", (e) =>
             {
-                this.onImageClick(null, true);
+                this.onImageClick(null, false); //null, true
             });
 
             beachParty.connectModelView(this, "imageMapping", imageLegend, "imageMapping");

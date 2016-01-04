@@ -108,8 +108,12 @@ module beachParty
             var binResults = this._facetBinResults;
             var yResult = binResults[0];
 
+            let binCount: number = yResult && yResult.bins && yResult.bins.length
+                ? yResult.bins.length
+                : 0;
+
             //---- ESTIMATE itemWidth and itemHeight using full space of canvas ----
-            this.preLayoutLoopCore(yResult, this._canvasWidth, this._canvasHeight, yResult.bins.length);   
+            this.preLayoutLoopCore(yResult, this._canvasWidth, this._canvasHeight, binCount);
 
             //---- NOTE: itemHeight is the height of a single bin container ----
             var aspect = this._itemWidth / this._itemHeight;
@@ -149,7 +153,9 @@ module beachParty
 
             var filter = dc.layoutFilterVector;
 
-            var allAssignY = resultY.assignments;
+            var allAssignY = resultY
+                ? resultY.assignments
+                : [];
 
             var rowToBinNum = [];
             var rowToBinIndex = [];
@@ -189,7 +195,9 @@ module beachParty
 
             var width = dc.width;
 
-            var binsY = resultY.bins;
+            var binsY = resultY && resultY.bins
+                ? resultY.bins
+                : [];
 
             //---- build an array of the bin names for the xScale labels ----
             var binNamesY = [];
@@ -261,7 +269,11 @@ module beachParty
             {
                 var yResult = binResults[dc.facetIndex];
 
-                this.preLayoutLoopCore(yResult, availWidth, availHeight, yResult.bins.length);
+                let binCount: number = yResult && yResult.bins && yResult.bins.length
+                    ? yResult.bins.length
+                    : 0;
+
+                this.preLayoutLoopCore(yResult, availWidth, availHeight, binCount);
 
                 this.assignRecordsToBins(dc.nvData, yResult, dc, this._maxCountAllFacets);
             }
