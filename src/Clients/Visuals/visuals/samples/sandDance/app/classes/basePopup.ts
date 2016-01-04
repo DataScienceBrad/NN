@@ -9,8 +9,15 @@ module beachPartyApp
 {
     var nextId = 1;
 
+    export interface PositionOfPanel {
+        top: number;
+        left: number;
+    }
+
     export class BasePopupClass extends beachParty.DataChangerClass implements IAppControl
     {
+        protected startPosition: PositionOfPanel;
+        protected currentPosition: PositionOfPanel;
         _root: HTMLElement;
         _ownerElem: HTMLElement;            // not the document parent, but another popup that this popup belongs to
 
@@ -134,6 +141,16 @@ module beachPartyApp
                 x += sandDanceBounds.left;//TODO: remove this hard fix.
                 yTop += sandDanceBounds.top + bigBarBounds.bottom;
             }
+
+            this.startPosition = {
+                top: yTop,
+                left: x
+            };
+
+            this.currentPosition = {
+                top: yTop,
+                left: x
+            };
 
             rootW
                 .css("left", x + "px")

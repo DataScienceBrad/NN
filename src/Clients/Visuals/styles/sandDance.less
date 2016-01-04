@@ -745,7 +745,7 @@
         color: white;
         border-bottom: 1px solid white;
         padding: 6px;
-        cursor: pointer;
+        cursor: move;
         opacity: 0.86;
     }
 
@@ -1768,9 +1768,9 @@
     .panelButton {
         .textButtonEx;
         min-width: 20px;
-        min-height: 21px;
+        min-height: 20px;
         text-align: center;
-        height: 26px;
+        height: 20px;
         display: inline-block;
         padding-top: 4px;
     }
@@ -2023,11 +2023,15 @@
         border-collapse: separate;
     }
 
+    .display-none {
+        display: none !important;
+    }
+
     #undoButton,
     #redoButton,
     #insightButton,
     #playIconButton,
     #facetBins {
-        display: none !important;
+        .display-none();
     }
 }

@@ -674,9 +674,10 @@ module beachPartyApp
         createImage(src: string, tdW: vp.dom.IWrapperOuter, row: any)
         {
             //---- create IMG ----
-            var imgW = tdW.append("img")
+            var imgW = tdW.append("div")
                 .addClass("panelImage")
-                .attr("src", src)
+                .text(src)
+                // .attr("src", src)
                 .title(row.tip);
 
             this.applyCommonProperties(imgW, tdW, row);

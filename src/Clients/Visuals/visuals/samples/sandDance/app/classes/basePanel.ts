@@ -10,7 +10,8 @@ module beachPartyApp
     export class BasePanelClass extends BasePopupClass
     {
         _root: HTMLElement;
-        _imgPin: HTMLImageElement;
+        protected _imgPin: HTMLImageElement;
+        protected _title: HTMLElement;
 
         _isDialog: boolean;
         _primaryControl: any;
@@ -168,17 +169,28 @@ module beachPartyApp
             vp.select(this._root).css("opacity", opacity + "");
         }
 
-        centerPanel()
-        {
+        private getCenter(): { left: number, top: number } {
             var rc = vp.select(this._root).getBounds(false),
                 chart = vp.select(".sandDance").getBounds(true);
 
-            var left = chart.width / 2 - rc.width / 2; 
-            var top = chart.height / 2 - rc.height / 2; 
+            return {
+                left: chart.width / 2 - rc.width / 2,
+                top: chart.height / 2 - rc.height / 2
+            };
+        }
+
+        centerPanel()
+        {
+            let center = this.getCenter();
+
+            this.startPosition = {
+                top: center.top,
+                left: center.left
+            };
 
             vp.select(this._root)
-                .css("left", left + "px")
-                .css("top", top + "px");
+                .css("left", center.left + "px")
+                .css("top", center.top + "px");
         }
 
         onFocus(e)
@@ -197,6 +209,7 @@ module beachPartyApp
             var imgW = rootW.append("div")// img
                 .addClass("panelResizer")
                 .addClass("resize2")
+                // .addClass("display-none")
                 // .attr("src", "images/resize2.png")
                 .css("position", "absolute")
                 .css("right", "0px")
@@ -213,7 +226,9 @@ module beachPartyApp
                     this._sizeAtMouseDown = vp.dom.getBounds(this._resizeTarget);
                     this._isResizing = true;
 
-                    vp.events.setCapture(imgW[0], e, this._onResizeMouseMoveFunc, this._onResizeMouseUpFunc);
+                    this.setEventHandlers(this._onResizeMouseMoveFunc, this._onResizeMouseUpFunc);
+                    // vp.events.releaseCapture(imgW[0], e, this._onResizeMouseMoveFunc, this._onResizeMouseUpFunc);
+                    // vp.events.setCapture(imgW[0], e, this._onResizeMouseMoveFunc, this._onResizeMouseUpFunc);
                 });
         }
 
@@ -225,12 +240,17 @@ module beachPartyApp
                 var titleDiv = rootW.append("div")
                     .addClass("panelTitle")
                     .css("position", "relative")
-                    .title(tip)
                     .attach("mousedown", (e) =>
                     {
                         this.onMouseDown(e);
                         this.onFocus(e);
                     });
+
+                this._title = titleDiv[0];
+
+                if (tip) {
+                    titleDiv.title(tip);
+                }
 
                 //---- create TITLE text ----
                 titleDiv.append("span")
@@ -247,7 +267,7 @@ module beachPartyApp
                         .css("position", "absolute")
                         .css("right", "4px")
                         .css("top", "2px")
-                        .css("font-size", "22px")
+                        .css("font-size", "17px")
                         .css("border", "0px")
                         .css("padding", "0px")
                         .attach("click", (e) =>
@@ -296,7 +316,7 @@ module beachPartyApp
         {
             if (this._isResizing)
             {
-                var pt = vp.events.mousePosition(e, this._root);
+                var pt = vp.events.mousePosition(e/*, this._root*/);
 
                 var xDiff = pt.x - this._ptDown.x;
                 var yDiff = pt.y - this._ptDown.y;
@@ -337,15 +357,22 @@ module beachPartyApp
         onResizeMouseUp(e)
         {
             this._isResizing = false;
-            vp.events.releaseCapture(this._resizeElem, e, this._onResizeMouseMoveFunc, this._onResizeMouseUpFunc);
+
+            this.setEventHandlers(this._onResizeMouseMoveFunc, this._onResizeMouseUpFunc, true);
+            // vp.events.releaseCapture(this._resizeElem, e, this._onResizeMouseMoveFunc, this._onResizeMouseUpFunc);
         }
 
-        onMouseDown(e)
+        onMouseDown(e: MouseEvent)
         {
-            this._ptDown = vp.events.mousePosition(e/*, this._root*/);
-            this._isDragging = true;
+            if (e.target === this._title) {
+                this._ptDown = vp.events.mousePosition(e/*, this._root*/);
+                this._isDragging = true;
+            }
 
-            vp.events.setCapture(/*document.body*/this._root, e, this._onMouseMoveFunc, this._onMouseUpFunc);
+            this.setEventHandlers(this._onMouseMoveFunc, this._onMouseUpFunc);
+
+            // vp.events.releaseCapture(/*document.body*/this._root, e, this._onMouseMoveFunc, this._onMouseUpFunc);
+            // vp.events.setCapture(/*document.body*/this._root, e, this._onMouseMoveFunc, this._onMouseUpFunc);
         }
 
         onMouseMove(e)
@@ -357,11 +384,21 @@ module beachPartyApp
                 var x = pt.x - this._ptDown.x;
                 var y = pt.y - this._ptDown.y;
 
+                let startPosition = this.startPosition || this.getCenter();
+
+                let left: number = startPosition.left + x,
+                    top: number = startPosition.top + y;
+
                 vp.select(this._root)
-                    .css("left", x + "px")
-                    .css("top", y + "px")
+                    .css("left", left + "px")
+                    .css("top", top + "px")
                     .css("right", "")
                     .css("bottom", "");
+
+                this.currentPosition = {
+                    left: left,
+                    top: top
+                };
 
                 this.onDataChanged("location");
             }
@@ -370,7 +407,35 @@ module beachPartyApp
         onMouseUp(e)
         {
             this._isDragging = false;
-            vp.events.setCapture(/*document.body*/this._root, e, this._onMouseMoveFunc, this._onMouseUpFunc);
+
+            if (this.currentPosition) {
+                this.startPosition = {
+                    left: this.currentPosition.left,
+                    top: this.currentPosition.top
+                };
+            } else if (this.startPosition) {
+                this.currentPosition = {
+                    left: this.startPosition.left,
+                    top: this.startPosition.top
+                };
+            }
+
+            // vp.events.releaseCapture(/*document.body*/this._root, e, this._onMouseMoveFunc, this._onMouseUpFunc);
+            // vp.events.setCapture(/*document.body*/this._root, e, this._onMouseMoveFunc, this._onMouseUpFunc);
+
+            this.setEventHandlers(this._onMouseMoveFunc, this._onMouseUpFunc);
+        }
+
+        private setEventHandlers(mousemove, mouseup, clear: boolean = false): void {
+            let sandDanceElement = vp.select(".sandDance");
+
+            sandDanceElement.detach("mousemove", mousemove);
+            sandDanceElement.detach("mouseup", mouseup);
+
+            if (!clear) {
+                sandDanceElement.attach("mousemove", mousemove);
+                sandDanceElement.attach("mouseup", mouseup);
+            }
         }
 
         //---- override basePopup onKey handling ----

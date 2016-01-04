@@ -181,7 +181,7 @@ module sandDance {
                 {
                     tabName: "About", tip: "Information about the SandDance Application", rows:
                     [
-                        { image: "Images/sanddance.png" },
+                        // { image: "Images/sanddance.png" },
                         { col: 1, prompt: "SandDance visualization prototype, Copyright (c) 2015, Microsoft Corporation.  All rights reserved." },
                         { col: 1, prompt: "" },
                         { col: 1, prompt: "For more infomation, email the <a class='panelLink' href='mailto:bpDiscuss@microsoft.com'>SandDance Discussion DL</a>.", isHtml: true },

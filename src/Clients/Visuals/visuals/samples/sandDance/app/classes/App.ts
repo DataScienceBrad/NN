@@ -1984,7 +1984,7 @@ module beachPartyApp
             this.onInsightLoadStarted();
 
             //---- supply a dataName so we can refer to this open data source when needed ----
-            if (!insight.preload.dataName)
+            if (insight && insight.preload && !insight.preload.dataName)
             {
                 insight.preload.dataName = insight.preload.name;
             }
@@ -2023,7 +2023,7 @@ module beachPartyApp
             // call "onInsightLoadCompleted" UNTIL we (the client) have processed the "onFilter" changed event ----
             vp.utils.debug("loadInsightPost starting");
 
-            var preload = insight.preload;
+            var preload = insight.preload || <bps.Preload> {};
             //this._insightCompletePending = false;
             this._insightWaitingForFilterChanged = false;
 
@@ -2131,7 +2131,7 @@ module beachPartyApp
                 this.isSlicerPanelOpen(insight.isSlicerPanelOpen);
                 this.isShowing3DWheel(insight.isShowing3DWheel);
 
-                var icm = preload.colMappings;
+                var icm = preload.colMappings || <bps.ColMappings> {};
 
                 this._currentColorMapping = <bps.ColorMappingData> this.copyMapping(icm.color);
                 this.onColorMappingChanged(true);
@@ -3697,7 +3697,7 @@ module beachPartyApp
                 var showSteps = (!cm.isContinuous);
 
                 //---- return HTML for custom list item ----
-                var palettes = this.getColorPalettes();
+                var palettes = this.getColorPalettes() || [];
 
                 var palette = (index >= palettes.length) ? null : palettes[index];
 

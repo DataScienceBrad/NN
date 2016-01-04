@@ -27,7 +27,7 @@ module beachPartyApp
 
         public static capitalizeFirstLetter(value: string)
         {
-            if (value.length)
+            if (value && value.length)
             {
                 value = value[0].toUpperCase() + value.substr(1);
             }

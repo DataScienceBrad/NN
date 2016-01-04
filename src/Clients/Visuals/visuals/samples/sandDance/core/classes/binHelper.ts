@@ -13,7 +13,12 @@ module beachParty
             maxCategoryBins: number, forceCategory?: boolean, addIndexes?: boolean, buildAssignments?: boolean,
             binSortOptions?: BinSortOptionsClass, formatter?: any, useNiceNumbers?: boolean, md?: bps.MappingData): BinResult
         {
-            var result = <BinResult> null;
+            var result: BinResult = {
+                bins: [],
+                colName: "",
+                assignments: [],
+                isTagBinning: false
+            };
 
             var colData = nv[colName];
 

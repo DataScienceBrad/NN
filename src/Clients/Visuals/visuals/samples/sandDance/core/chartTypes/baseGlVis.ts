@@ -2150,7 +2150,10 @@ module beachParty
 
             if (this._facetHelper)
             {
-                var bins = this._facetHelper._binResult.bins;
+                var bins = this._facetHelper._binResult && this._facetHelper._binResult.bins
+                    ? this._facetHelper._binResult.bins
+                    : [];
+
                 var nextDrawIndex = 0;
                 drawIndexes = [];
 
