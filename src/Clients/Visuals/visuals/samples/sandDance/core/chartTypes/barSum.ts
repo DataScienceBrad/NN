@@ -131,7 +131,7 @@ module beachParty
                     //--- assignments must be indexed by the shapeIndex ----
                     var binAssign = binAssignments[vectorIndex];
 
-                    if (binPosOffsets[binAssign] === undefined)
+                    if (binPosOffsets[binAssign] === undefined || binPosOffsets[binAssign] === null)
                     {
                         binPosOffsets[binAssign] = 0;
                         binNegOffsets[binAssign] = 0;

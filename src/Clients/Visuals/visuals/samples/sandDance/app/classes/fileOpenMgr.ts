@@ -7,11 +7,11 @@
 
 module beachPartyApp
 {
-    export class FileOpenMgr extends beachParty.dataChangerClass 
+    export class FileOpenMgr extends beachParty.DataChangerClass 
     {
         static instance: FileOpenMgr;
 
-        _bpsHelper: bps.chartHostHelperClass;
+        _bpsHelper: bps.ChartHostHelperClass;
         _fileOpenPanel = <JsonPanelClass>null;
 
         _fileOpenUrl = "";
@@ -27,7 +27,7 @@ module beachPartyApp
         _dataScrubberName = "None";
         _preload: bps.Preload;
 
-        constructor(bpsHelper: bps.chartHostHelperClass)
+        constructor(bpsHelper: bps.ChartHostHelperClass)
         {
             super();
 

@@ -7,7 +7,7 @@
 
 module beachPartyApp
 {
-    export class NumAdjusterClass extends beachParty.dataChangerClass
+    export class NumAdjusterClass extends beachParty.DataChangerClass
     {
         _root: HTMLElement;
         _nameText: HTMLElement;

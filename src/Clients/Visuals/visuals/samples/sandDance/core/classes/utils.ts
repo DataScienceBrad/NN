@@ -175,7 +175,7 @@ module utils
                 keysByIndex[keyValue] = key;
 
                 var rows = rowsByKey[key];
-                if (rows === undefined)
+                if (rows === undefined || rows === null)
                 {
                     rows = [];
                     rowsByKey[key] = rows;
@@ -482,7 +482,7 @@ module utils
                 {
                     var key = <string>keys[k];
 
-                    if (inKeys[key] === undefined)
+                    if (inKeys[key] === undefined || inKeys[key] === null)
                     {
                         keys.removeAt(k);
                     }
@@ -573,7 +573,7 @@ module utils
             sp.minValue = numBin.min;
             sp.maxValue = numBin.max;
 
-            if (sp.minValue === null)
+            if (sp.minValue === null || sp.minValue === undefined)
             {
                 //---- first label or first half of first bucket ----
                 sp.searchType = bps.TextSearchType.exactMatch;
@@ -798,7 +798,7 @@ module utils
 
             if (sp.minValue !== sp.maxValue)
             {
-                if (lastValue === null)
+                if (lastValue === null || lastValue === undefined)
                 {
                     //---- first label or first half of first bucket ----
                     sp.searchType = bps.TextSearchType.exactMatch;

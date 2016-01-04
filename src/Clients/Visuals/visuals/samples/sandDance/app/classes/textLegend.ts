@@ -7,7 +7,7 @@
 
 module beachPartyApp
 {
-    export class TextLegendClass extends beachParty.dataChangerClass
+    export class TextLegendClass extends beachParty.DataChangerClass
     {
         //_colorPalette: any[];
         //_isContinuous: boolean;

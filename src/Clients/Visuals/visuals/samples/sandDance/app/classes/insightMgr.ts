@@ -11,7 +11,7 @@ module beachPartyApp
     var nextInsightId = 1;
     declare var tinymce: any;
 
-    export class InsightMgrClass extends beachParty.dataChangerClass
+    export class InsightMgrClass extends beachParty.DataChangerClass
     {
         static insightWidth = 200;
         static insightHeight = 130;
@@ -838,7 +838,7 @@ module beachPartyApp
         getInsightTooltip(insight: bps.InsightData)
         {
             var insightType = bps.LoadAction[insight.loadAction];
-            if (insightType === "all" || insightType === undefined)
+            if (insightType === "all" || insightType === undefined || insightType === null)
             {
                 insightType = "full insight";
             }
@@ -982,7 +982,7 @@ module beachPartyApp
         {
             var url;
 
-            if (loadAction === bps.LoadAction.all || loadAction === undefined)
+            if (loadAction === bps.LoadAction.all || loadAction === undefined || loadAction === null)
             {
                 url = "fnInsightFull";
             }

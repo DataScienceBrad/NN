@@ -586,13 +586,13 @@ module beachPartyApp
 
                     //---- find matching item in our list ----
                     var index = editMap[si.name];
-                    if (index === undefined)
+                    if (index === undefined || index === null)
                     {
                         //---- if this a renamed field? ----
                         index = editMap[si.calcFieldExp];
                     }
 
-                    if (index !== undefined)
+                    if (index !== undefined && index !== null)
                     {
                         var newCi = newInfos[index];
                         newCi.isVisible = true;
@@ -984,7 +984,7 @@ module beachPartyApp
         {
             var elem = e.target;
 
-            while (elem && elem.valueIndex === undefined)
+            while (elem && (elem.valueIndex === undefined || elem.valueIndex === null))
             {
                 elem = elem.parentNode;
             }
@@ -1081,7 +1081,7 @@ module beachPartyApp
                 for (var i = 0; i < ei.valueMap.length; i++)
                 {
                     var entry = ei.valueMap[i];
-                    var matchValue = (matchOrig || entry.newValue === undefined) ? entry.originalValue : entry.newValue;
+                    var matchValue = (matchOrig || entry.newValue === undefined || entry.newValue === null) ? entry.originalValue : entry.newValue;
 
                     if (matchValue === value)
                     {

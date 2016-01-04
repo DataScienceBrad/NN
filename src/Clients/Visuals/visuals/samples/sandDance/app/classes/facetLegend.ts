@@ -7,7 +7,7 @@
 
 module beachPartyApp
 {
-    export class FacetLegendClass extends beachParty.dataChangerClass
+    export class FacetLegendClass extends beachParty.DataChangerClass
     {
         _fm: bps.MappingData;
 

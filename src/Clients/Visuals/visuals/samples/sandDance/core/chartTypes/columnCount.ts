@@ -174,7 +174,7 @@ module beachParty
 
                     rowToBinNum[shapeIndex] = binIndexX;
 
-                    if (binCounts[binIndexX] === undefined)
+                    if (binCounts[binIndexX] === undefined || binCounts[binIndexX] === null)
                     {
                         binCounts[binIndexX] = 0;
                     }

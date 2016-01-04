@@ -25,7 +25,7 @@ module beachPartyApp
         _currentTabContentElem: HTMLElement;
         _currentTabButtonElem: HTMLElement;
 
-        constructor(openerIds: string, dataOwner: beachParty.dataChangerClass, name: string, json: any, bgColor?: string,
+        constructor(openerIds: string, dataOwner: beachParty.DataChangerClass, name: string, json: any, bgColor?: string,
             isCol1Indent = true, hideClose = false, addAutoClose = false, addNormalClose?: boolean)
         {
             super(name, json.isDialog, bgColor, json.title, json.width, json.height, json.resizable, json.tip, hideClose, addAutoClose,
@@ -617,7 +617,7 @@ module beachPartyApp
                     .attach("click", (e) => 
                     {
                         var elem = e.target;
-                        while (elem.parentElement && elem._index === undefined)
+                        while (elem.parentElement && (elem._index === undefined || elem._index === null))
                         {
                             elem = elem.parentElement;
                         }
@@ -1319,7 +1319,7 @@ module beachPartyApp
                 row.dataName = this._groupDataName;
             }
 
-            var isUserAction = (row.userAction === undefined || row.userAction === true);
+            var isUserAction = (row.userAction === null || row.userAction === undefined || row.userAction === true);
 
             //---- create RADIOBUTTON ----
             var cb = tdW.append("input")
@@ -1394,7 +1394,7 @@ module beachPartyApp
 
     }
 
-    export function buildJsonPanel(openerIds: string, dataOwner: beachParty.dataChangerClass, panelName: string, openPanel: boolean, left?: number,
+    export function buildJsonPanel(openerIds: string, dataOwner: beachParty.DataChangerClass, panelName: string, openPanel: boolean, left?: number,
         top?: number, right?: number, bottom?: number, toggleOpen = true, isCol1Indent = true, hideClose = false,
         addAutoClose = false, addNormalClose?: boolean): JsonPanelClass
     {
@@ -1410,13 +1410,13 @@ module beachPartyApp
 
         var rc = vp.dom.getBounds(panel.getRootElem(), true);
 
-        if (left === undefined && right === undefined)
+        if ((left === undefined || left === null) && (right === undefined || right === null))
         {
             //---- center horizontally ----
             left = vp.select(".sandDance").element().innerWidth / 2 - rc.width / 2;
         }
 
-        if (top === undefined && bottom === undefined)
+        if ((top === undefined || top === null) && (bottom === undefined || bottom === null))
         {
             //---- center vertically ----
             top = vp.select(".sandDance").element().innerHeight / 2 - rc.height / 2;

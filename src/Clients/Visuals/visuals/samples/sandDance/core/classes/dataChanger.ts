@@ -130,7 +130,7 @@ module beachParty
 
             changedBy = changedBy || this;
 
-            if (name === null)
+            if (name === null || name === undefined)
             {
                 //---- trigger all names ----
                 var keys = vp.utils.keys(this._callbacks);

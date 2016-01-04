@@ -73,7 +73,7 @@ module beachParty
                 throw "Error; rcScreen is null";
             }
 
-            if (this.ndcRects === null)
+            if (this.ndcRects === null || this.ndcRects === undefined)
             {
                 this.buildNdcRects(transformer, boxMgr);
             }

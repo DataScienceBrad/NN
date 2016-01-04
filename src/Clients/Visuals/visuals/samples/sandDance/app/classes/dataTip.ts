@@ -7,13 +7,13 @@
 
 module beachPartyApp
 {
-    export class DataTipClass extends beachParty.dataChangerClass implements IAppControl
+    export class DataTipClass extends beachParty.DataChangerClass implements IAppControl
     {
         _root: HTMLDivElement;
         _img: HTMLImageElement;
         _text: HTMLDivElement;
 
-        _bpsHelper: bps.chartHostHelperClass;
+        _bpsHelper: bps.ChartHostHelperClass;
         _dataTipOffset = null;          // where mouse/pointer clicked on the datatip
         _columnName: string;            // if bound to a column
         _primaryKey: string;            // if bound to a specific record
@@ -22,7 +22,7 @@ module beachPartyApp
         _isRealDrag = false;            // true if datatip has been dragged more than just accidental movement during a click
         _dataTipPanel: DataTipPanelClass;
 
-        constructor(parentElem: HTMLElement, bpsHelper: bps.chartHostHelperClass)
+        constructor(parentElem: HTMLElement, bpsHelper: bps.ChartHostHelperClass)
         {
             super();
 

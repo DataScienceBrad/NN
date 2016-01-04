@@ -988,7 +988,7 @@ module beachParty
                     var key = data[i] + "";
                     var keyValue = indexesByKey[key];
 
-                    if (keyValue === undefined)
+                    if (keyValue === undefined || keyValue === null)
                     {
                         keyValue = nextKeyId++;
                         indexesByKey[key] = keyValue;
@@ -997,7 +997,7 @@ module beachParty
                     }
 
                     var rows = rowsByKey[key];
-                    if (rows === undefined)
+                    if (rows === undefined || rows === null)
                     {
                         rows = [];
                         rowsByKey[key] = rows;

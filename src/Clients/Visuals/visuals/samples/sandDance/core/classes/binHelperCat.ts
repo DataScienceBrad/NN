@@ -58,7 +58,7 @@ module beachParty
             }
 
             //---- now sort keys as needed ----
-            var sortByKeyNames = (binSortOptions === undefined || binSortOptions.sortDirection === bps.BinSorting.none);
+            var sortByKeyNames = (binSortOptions === undefined || binSortOptions === null || binSortOptions.sortDirection === bps.BinSorting.none);
             if (sortByKeyNames)
             {
                 if (!keysSorted)
@@ -191,7 +191,7 @@ module beachParty
 
                         var binIndex = <number>keyIndexes[key];
 
-                        if (binIndex === undefined)
+                        if (binIndex === undefined || binIndex === null)
                         {
                             if (otherMap && otherMap[key])
                             {
@@ -287,7 +287,7 @@ module beachParty
 
                         //---- add record i to group tag ----
                         var tagArray = groups[tag];
-                        if (tagArray === undefined)
+                        if (tagArray === undefined || tagArray === null)
                         {
                             //---- new tag/key ----
                             keys.push(tag);
@@ -346,7 +346,7 @@ module beachParty
                     }
 
                     var list = groups[groupValue];
-                    if (list === undefined)
+                    if (list === undefined || list === null)
                     {
                         list = [];
                         groups[groupValue] = list;

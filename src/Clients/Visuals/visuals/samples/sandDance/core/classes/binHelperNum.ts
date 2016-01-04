@@ -217,7 +217,7 @@ module beachParty
 
                         var bin = new BinInfoNum("", minValue, maxValue);
 
-                        if (binSize === undefined)
+                        if (binSize === undefined || binSize === null)
                         {
                             binSize = bin.max - bin.min;
                         }

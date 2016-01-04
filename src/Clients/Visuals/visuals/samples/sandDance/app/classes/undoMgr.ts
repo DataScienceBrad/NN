@@ -10,7 +10,7 @@ module beachPartyApp
     /** this class is designed around an initial app state being pushed after the app init process is complete.  This becomes the
      * permanent _stack[0] entry (which is used to "undo" the first user action).
      */
-    export class UndoMgrClass extends beachParty.dataChangerClass
+    export class UndoMgrClass extends beachParty.DataChangerClass
     {
         static instance: UndoMgrClass;
 

@@ -7,7 +7,7 @@
 
 module beachPartyApp
 {
-    export class RecordViewClass extends beachParty.dataChangerClass implements IAppControl
+    export class RecordViewClass extends beachParty.DataChangerClass implements IAppControl
     {
         _root: HTMLDivElement;
         _recordText: HTMLElement;
@@ -362,7 +362,7 @@ module beachPartyApp
             var value = rowParent.valueElem.textContent;
 
             var initialPercent = this._lastPercent[this._selectedColName];
-            if (initialPercent === undefined)
+            if (initialPercent === undefined || initialPercent === null)
             {
                 initialPercent = 5;
             }

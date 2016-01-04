@@ -9,7 +9,7 @@ module beachPartyApp
 {
     export var settings: AppSettingsMgr;
 
-    export class AppClass extends beachParty.dataChangerClass
+    export class AppClass extends beachParty.DataChangerClass
     {
         static buildId = "45";           // increment this at last moment before running "vibe10.bat"
         static instance: AppClass;
@@ -33,7 +33,7 @@ module beachPartyApp
         _useFacets = false;
         _chartName = "Flat";
         _layoutName = "Random";
-        _bpsHelper: bps.chartHostHelperClass;
+        _bpsHelper: bps.ChartHostHelperClass;
         _sizeFactor = 1;
         _separationFactor = 1;
         _textOpacity = .5;
@@ -661,7 +661,7 @@ module beachPartyApp
             var sessionId = 0;
             var machineId = 0;
 
-            if (window.localStorage)
+            if (false) //window.localStorage
             {
                 machineId = window.localStorage["machineId"];
                 sessionId = +window.localStorage["sessionId"];
@@ -1808,7 +1808,7 @@ module beachPartyApp
                 msgObj.clientAppId = this._clientAppId;
 
                 var msgStr = JSON.stringify(msgObj);
-                var domain = bps.chartHostHelperClass.getDomain(this._hostDomain);
+                var domain = bps.ChartHostHelperClass.getDomain(this._hostDomain);
 
                 vp.utils.debug("postMessageToHost: domain=" + domain + ", msg=" + msgObj.msg);
 
@@ -3190,7 +3190,7 @@ module beachPartyApp
 
             if (rebuildPalette)
             {
-                var palette = beachParty.colorPalettesClass.getPaletteFromSettings(cm.paletteName, cm.stepsRequested, cm.isReversed);
+                var palette = beachParty.ColorPalettesClass.getPaletteFromSettings(cm.paletteName, cm.stepsRequested, cm.isReversed);
                 cm.colorPalette = palette;
             }
 
@@ -3701,6 +3701,7 @@ module beachPartyApp
 
             var cm = this._currentColorMapping;
             var steps = cm.stepsRequested;
+            var schemeType = this._colorPaletteType;
             if (!schemeType)
             {
                 schemeType = "sequential";          // default
@@ -3710,7 +3711,7 @@ module beachPartyApp
 
             while (steps >= 1)
             {
-                palettes = beachParty.colorPalettesClass.getPalettesFromColorSchemeType(schemeType, steps, reverse);
+                palettes = beachParty.ColorPalettesClass.getPalettesFromColorSchemeType(schemeType, steps, reverse);
                 if (palettes && palettes.length)
                 {
                     break;
@@ -4579,7 +4580,7 @@ module beachPartyApp
         getBinCountForColumn(colName: string)
         {
             var binCount = this._binCountForColumn[colName];
-            if (binCount === undefined)
+            if (binCount === undefined || binCount === null)
             {
                 var colType = this.getColInfo(colName).colType;
                 binCount = (colType === "string") ? AppClass.maxCategoryBins : AppClass.defaultNumericBins;
@@ -5450,7 +5451,7 @@ module beachPartyApp
                 this._currentColorMapping.colName = value;
                 this.setMappingDataFormatting(this._currentColorMapping);
 
-                var colorPaletteType = beachParty.colorPalettesClass.getColorPaletteTypeFromName(this._currentColorMapping.paletteName);
+                var colorPaletteType = beachParty.ColorPalettesClass.getColorPaletteTypeFromName(this._currentColorMapping.paletteName);
                 this.colorPaletteType(colorPaletteType);
             }
             else

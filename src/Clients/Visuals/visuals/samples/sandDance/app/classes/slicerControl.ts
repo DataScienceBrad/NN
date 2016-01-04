@@ -7,7 +7,7 @@
 
 module beachPartyApp
 {
-    export class SlicerControlClass extends beachParty.dataChangerClass implements IAppControl
+    export class SlicerControlClass extends beachParty.DataChangerClass implements IAppControl
     {
         _root: HTMLDivElement;
         //_colPickerName: HTMLElement;
@@ -249,7 +249,7 @@ module beachPartyApp
             }
 
             this._binResult = value;
-            this._isCategory = (value && value.bins.length && (<any>value.bins[0]).min === undefined);
+            this._isCategory = (value && value.bins.length && ((<any>value.bins[0]).min === undefined || (<any>value.bins[0]).min === null));
 
             this.markBuildNeeded();
             this.refreshColPickList();

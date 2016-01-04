@@ -7,7 +7,7 @@
 
 module beachPartyApp
 {
-    export class FacetMgrClass extends beachParty.dataChangerClass 
+    export class FacetMgrClass extends beachParty.DataChangerClass 
     {
         _facetLayouts: bps.FacetLayoutInfo[];
 

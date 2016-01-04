@@ -17,7 +17,7 @@ module beachPartyApp
     
     Also, this control implements its own context menu (when the mouse is not moved for a certain time).  The goal
     is to eventually use the standard browser context menu event in its place. */
-    export class RubberBandSelectorClass extends beachParty.dataChangerClass      
+    export class RubberBandSelectorClass extends beachParty.DataChangerClass
     {
         //---- state ----
         _id = nextSelectorId++;

@@ -425,7 +425,7 @@ module beachParty
             return value.toFixed(2);
         }
 
-        viewId()
+        viewId(): string
         {
             return this._viewId;
         }
@@ -893,7 +893,7 @@ module beachParty
 
         shapeOpacity(value?: number)
         {
-            if (value === undefined)
+            if (value === undefined || value === null)
             {
                 return this._shapeOpacity;
             }
@@ -904,7 +904,7 @@ module beachParty
 
         textOpacity(value?: number)
         {
-            if (value === undefined)
+            if (value === undefined || value === null)
             {
                 return this._textOpacity;
             }
@@ -915,7 +915,7 @@ module beachParty
 
         randomX(value?: number[])
         {
-            if (value === undefined)
+            if (value === undefined || value === null)
             {
                 return this._randomX;
             }
@@ -926,7 +926,7 @@ module beachParty
 
         randomY(value?: number[])
         {
-            if (value === undefined)
+            if (value === undefined || value === null)
             {
                 return this._randomY;
             }
@@ -940,7 +940,7 @@ module beachParty
         //bindings(value: any): any;
         //bindings(value?: any): any
         //{
-        //    if (value === undefined)
+        //    if (value === undefined || value === null)
         //    {
         //        return this._bindings;
         //    }
@@ -960,7 +960,7 @@ module beachParty
         showChartDebugInfo(value: boolean): any;
         showChartDebugInfo(value?: boolean): any
         {
-            if (value === undefined)
+            if (value === undefined || value === null)
             {
                 return this._showChartDebugInfo;
             }
@@ -981,7 +981,7 @@ module beachParty
 
         userSizeFactor(value?: number, animate?: boolean)
         {
-            if (value === undefined)
+            if (value === undefined || value === null)
             {
                 return this._userSizeFactor;
             }
@@ -997,7 +997,7 @@ module beachParty
 
         separationFactor(value?: number)
         {
-            if (value === undefined)
+            if (value === undefined || value === null)
             {
                 return this._separationFactor;
             }
@@ -1013,7 +1013,7 @@ module beachParty
 
         defaultShapeSize(value?: number)
         {
-            if (value === undefined)
+            if (value === undefined || value === null)
             {
                 return this._defaultShapeSize;
             }
@@ -1024,7 +1024,7 @@ module beachParty
 
         lightingParams(value?: bps.Lighting): any
         {
-            if (value === undefined)
+            if (value === undefined || value === null)
             {
                 return this._lightingParams;
             }
@@ -1037,7 +1037,7 @@ module beachParty
 
         isOrthoCamera(value?: boolean): any
         {
-            if (value === undefined)
+            if (value === undefined || value === null)
             {
                 return this._isOrthoCamera;
             }
@@ -1050,7 +1050,7 @@ module beachParty
 
         isWireframe(value?: boolean): any
         {
-            if (value === undefined)
+            if (value === undefined || value === null)
             {
                 return this._isWireframe;
             }
@@ -1063,7 +1063,7 @@ module beachParty
 
         isCullingEnabled(value?: boolean): any
         {
-            if (value === undefined)
+            if (value === undefined || value === null)
             {
                 return this._isCullingEnabled;
             }
@@ -1076,7 +1076,7 @@ module beachParty
 
         isContinuousDrawing(value?: boolean): any
         {
-            if (value === undefined)
+            if (value === undefined || value === null)
             {
                 return this._isContinuousDrawing;
             }
@@ -1100,7 +1100,7 @@ module beachParty
 
         ambientFactor(value?: number)
         {
-            if (value === undefined)
+            if (value === undefined || value === null)
             {
                 return this._ambientFactor;
             }
@@ -1111,7 +1111,7 @@ module beachParty
 
         isAnaglyph(value?: boolean): any
         {
-            if (value === undefined)
+            if (value === undefined || value === null)
             {
                 return this._isAnaglyph;
             }
@@ -1122,7 +1122,7 @@ module beachParty
 
         drawingPrimitive(value?: bps.DrawPrimitive)
         {
-            if (value === undefined)
+            if (value === undefined || value === null)
             {
                 var enumName = bps.DrawPrimitive[this._drawPrimitive];
                 return enumName;
@@ -1142,7 +1142,7 @@ module beachParty
 
         canvasColor(value?: string)
         {
-            if (value === undefined)
+            if (value === undefined || value === null)
             {
                 return this._canvasColor;
             }
@@ -1158,7 +1158,7 @@ module beachParty
 
         colorMapping(value?: bps.ColorMappingData)
         {
-            if (value === undefined)
+            if (value === undefined || value === null)
             {
                 return this._colorMapping;
             }
@@ -1170,7 +1170,7 @@ module beachParty
 
         sizeMapping(value?: bps.SizeMappingData)
         {
-            if (value === undefined)
+            if (value === undefined || value === null)
             {
                 return this._sizeMapping;
             }
@@ -1182,7 +1182,7 @@ module beachParty
 
         textMapping(value?: bps.TextMappingData)
         {
-            if (value === undefined)
+            if (value === undefined || value === null)
             {
                 return this._textMapping;
             }
@@ -1194,7 +1194,7 @@ module beachParty
 
         lineMapping(value?: bps.LineMappingData)
         {
-            if (value === undefined)
+            if (value === undefined || value === null)
             {
                 return this._lineMapping;
             }
@@ -1206,7 +1206,7 @@ module beachParty
 
         imageMapping(value?: bps.ImageMappingData)
         {
-            if (value === undefined)
+            if (value === undefined || value === null)
             {
                 return this._imageMapping;
             }
@@ -1218,7 +1218,7 @@ module beachParty
 
         facetMapping(value?: bps.FacetMappingData)
         {
-            if (value === undefined)
+            if (value === undefined || value === null)
             {
                 return this._facetMapping;
             }
@@ -1230,7 +1230,7 @@ module beachParty
 
         xMapping(value?: bps.MappingData)
         {
-            if (value === undefined)
+            if (value === undefined || value === null)
             {
                 return this._xMapping;
             }
@@ -1242,7 +1242,7 @@ module beachParty
 
         yMapping(value?: bps.MappingData)
         {
-            if (value === undefined)
+            if (value === undefined || value === null)
             {
                 return this._yMapping;
             }
@@ -1254,7 +1254,7 @@ module beachParty
 
         zMapping(value?: bps.MappingData)
         {
-            if (value === undefined)
+            if (value === undefined || value === null)
             {
                 return this._zMapping;
             }
@@ -1266,7 +1266,7 @@ module beachParty
 
         chartFrameData(value?: bps.ChartFrameData)
         {
-            if (value === undefined)
+            if (value === undefined || value === null)
             {
                 return this._chartFrameData;
             }
@@ -1278,7 +1278,7 @@ module beachParty
 
         animationData(value?: bps.AnimationData)
         {
-            if (value === undefined)
+            if (value === undefined || value === null)
             {
                 return this._animationData;
             }
@@ -1290,7 +1290,7 @@ module beachParty
 
         shapeColor(value?: string)
         {
-            if (value === undefined)
+            if (value === undefined || value === null)
             {
                 return this._shapeColor;
             }
@@ -1310,7 +1310,7 @@ module beachParty
 
         shapeImageName(value?: string)
         {
-            if (value === undefined)
+            if (value === undefined || value === null)
             {
                 return this._shapeImageName;
             }
@@ -1322,7 +1322,7 @@ module beachParty
 
         toPercentOverride(value?: number)
         {
-            if (value === undefined)
+            if (value === undefined || value === null)
             {
                 return this._toPercentOverride;
             }
@@ -1334,7 +1334,7 @@ module beachParty
 
         isAnimOverride(value?: boolean)
         {
-            if (value === undefined)
+            if (value === undefined || value === null)
             {
                 return this._isAnimOverride;
             }
@@ -1346,7 +1346,7 @@ module beachParty
 
         is3dGridVisible(value?: boolean)
         {
-            if (value === undefined)
+            if (value === undefined || value === null)
             {
                 return this._is3dGridVisible;
             }
@@ -1358,7 +1358,7 @@ module beachParty
 
         isAutoRebuild(value?: boolean)
         {
-            if (value === undefined)
+            if (value === undefined || value === null)
             {
                 return this._autoRebuild;
             }
@@ -1375,7 +1375,7 @@ module beachParty
 
         hoverParams(value?: bps.HoverParams)
         {
-            if (value === undefined)
+            if (value === undefined || value === null)
             {
                 return this._hoverParams;
             }
@@ -1387,7 +1387,7 @@ module beachParty
 
         selectionParams(value?: bps.SelectionParams)
         {
-            if (value === undefined)
+            if (value === undefined || value === null)
             {
                 return this._selectionParams;
             }

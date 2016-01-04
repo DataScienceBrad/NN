@@ -167,7 +167,7 @@ module beachParty
 
                     rowToBinNum[recordIndex] = binIndexY;
 
-                    if (binCounts[binIndexY] === undefined)
+                    if (binCounts[binIndexY] === undefined || binCounts[binIndexY] === null)
                     {
                         binCounts[binIndexY] = 0;
                     }
@@ -206,7 +206,7 @@ module beachParty
             for (var i = 0; i < binsY.length; i++)
             {
                 binTops[i] = bottom;
-                if (binCounts[i] === undefined)
+                if (binCounts[i] === undefined || binCounts[i] === null)
                 {
                     binCounts[i] = 0;
                 }

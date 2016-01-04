@@ -7,7 +7,7 @@
 
 module beachPartyApp
 {
-    export class DataTipMgrClass extends beachParty.dataChangerClass 
+    export class DataTipMgrClass extends beachParty.DataChangerClass 
     {
         static instance: DataTipMgrClass;
 
@@ -24,7 +24,7 @@ module beachPartyApp
         {
             var rootW = vp.select("#dataTipsRoot");
 
-            var dataTip = new DataTipClass(rootW[0], bps.chartHostHelperClass.instance);
+            var dataTip = new DataTipClass(rootW[0], bps.ChartHostHelperClass.instance);
             this._dataTips.push(dataTip);
 
             dataTip.setColumnName(colName);

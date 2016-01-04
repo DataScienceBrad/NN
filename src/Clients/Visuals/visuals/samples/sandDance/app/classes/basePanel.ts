@@ -14,7 +14,7 @@ module beachPartyApp
 
         _isDialog: boolean;
         _primaryControl: any;
-        _dataOwner: beachParty.dataChangerClass;
+        _dataOwner: beachParty.DataChangerClass;
 
         //---- DRAG of title bar ----
         _onMouseMoveFunc = null;        // setCapture

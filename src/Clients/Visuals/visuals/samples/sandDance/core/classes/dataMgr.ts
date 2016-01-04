@@ -453,7 +453,7 @@ module beachParty
             var value = sp.minValue;
             var maxValue = sp.maxValue;
             var searchType = sp.searchType;
-            var searchAction = (sp.searchAction === undefined) ? bps.SearchAction.selectMatches : sp.searchAction;
+            var searchAction = (sp.searchAction === undefined || sp.searchAction === null) ? bps.SearchAction.selectMatches : sp.searchAction;
 
             vp.utils.debug("search: colName=" + colName + ", value=" + value + ", maxValue=" + maxValue);
 
@@ -682,7 +682,7 @@ module beachParty
 
         updateSelectionFromVectorIndexes(indexes: number[], selectMode?: bps.SelectMode)
         {
-            if (selectMode === undefined)
+            if (selectMode === undefined || selectMode === null)
             {
                 selectMode = this._selectMode;
             }

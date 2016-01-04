@@ -34,12 +34,12 @@ module beachParty
         var newTask = { callback: callback, completed: false, preTasks: [] };
         tasks.push(newTask);
 
-        if (preTask !== undefined)
+        if (preTask !== undefined && preTask !== null)
         {
             tasks[preTask].preTasks.push(taskId);
         }
 
-        if (preTask === undefined || tasks[preTask].completed)
+        if (preTask === null || preTask === undefined || tasks[preTask].completed)
         {
             runTask(taskId);
         }

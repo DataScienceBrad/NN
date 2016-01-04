@@ -117,7 +117,7 @@ module beachParty
                     //---- we are called once for each facet, so we don't need that in our countKey anymore ----
                     var countKey = binIndexX + "," + binIndexY;
 
-                    if (this._binCounts[countKey] === undefined)
+                    if (this._binCounts[countKey] === undefined || this._binCounts[countKey] === null)
                     {
                         this._binCounts[countKey] = 0;
                     }
@@ -268,7 +268,7 @@ module beachParty
             var countKey = binIndexX + "," + binIndexY;
 
             var binCount = 0;
-            if (this._binCounts[countKey] === undefined) {
+            if (this._binCounts[countKey] === undefined || this._binCounts[countKey] === null) {
                 binCount = 0;
             } else {
                 binCount = this._binCounts[countKey];

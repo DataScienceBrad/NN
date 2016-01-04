@@ -2711,7 +2711,7 @@ module beachParty
 
             var win: any = window;
 
-            if (win.alertShown === undefined)
+            if (win.alertShown === undefined || win.alertShown === null)
             {
                 //alert("read via url: " + serviceUrl);
                 win.alertShown = 1;
@@ -2780,7 +2780,7 @@ module beachParty
             noCache = noCache || false;
 
             var win: any = window;
-            if (win.alertShown === undefined)
+            if (win.alertShown === undefined || win.alertShown === null)
             {
                 //alert("read via url: " + serviceUrl);
                 win.alertShown = 1;
@@ -2815,7 +2815,7 @@ module beachParty
             var serviceUrl = vp + "/getData.asmx/DownloadCsvAsJsonVectors";
 
             var win: any = window;
-            if (win.alertShown === undefined)
+            if (win.alertShown === undefined || win.alertShown === null)
             {
                 //alert("read via url: " + serviceUrl);
                 win.alertShown = 1;
@@ -2870,7 +2870,7 @@ module beachParty
             }
 
             var win: any = window;
-            if (win.alertShown === undefined)
+            if (win.alertShown === undefined || win.alertShown === null)
             {
                 //alert("read via url: " + serviceUrl);
                 win.alertShown = 1;
@@ -3011,7 +3011,7 @@ module beachParty
 
         //---- on IE10, running under "localhost", sometimes all the props of "window.location" are ----
         //---- undefined, so we ahndle that here ----
-        if (pp === undefined)
+        if (pp === undefined || pp === null)
         {
             pp = window.location.toString();
         }
@@ -3038,7 +3038,7 @@ module beachParty
     /// the XML document object is available in xmlhttp.responseXML.
     export function httpRead(url: string, isJson: boolean, successFunc, failFunc, callAsync?: boolean, noCache?: boolean)
     {
-        callAsync = (callAsync === undefined) ? true : callAsync;
+        callAsync = (callAsync === undefined || callAsync === null) ? true : callAsync;
 
         var xmlhttp = vp.utils.createXMLHttpRequest();
         xmlhttp.open("GET", url, callAsync);

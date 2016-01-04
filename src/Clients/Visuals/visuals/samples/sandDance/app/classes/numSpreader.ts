@@ -19,13 +19,13 @@ module beachPartyApp
         _value: number;
         _minValue: number;
         _maxValue: number;
-        _bpsHelper: bps.chartHostHelperClass;
+        _bpsHelper: bps.ChartHostHelperClass;
         _minSpread: number;
         _maxSpread: number;
         _isOpen: boolean;
         _searchCallback: any;
 
-        constructor(bpsHelper: bps.chartHostHelperClass, colName: string, value: number, minValue: number, maxValue: number,
+        constructor(bpsHelper: bps.ChartHostHelperClass, colName: string, value: number, minValue: number, maxValue: number,
             parentElem: HTMLElement, initialPercent, searchCallback)
         {
             //super(true, null, null, null, null, false, "Spread the value to search", false, parentElem);

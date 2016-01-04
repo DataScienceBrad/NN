@@ -7,7 +7,7 @@
 
 module beachPartyApp
 {
-    export class PickerClass extends beachParty.dataChangerClass 
+    export class PickerClass extends beachParty.DataChangerClass 
     {
         _root: HTMLDivElement;
         _parentElem: HTMLElement;

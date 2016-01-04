@@ -7,7 +7,7 @@
 
 module beachPartyApp
 {
-    export class SizeLegendClass extends beachParty.dataChangerClass
+    export class SizeLegendClass extends beachParty.DataChangerClass
     {
         //---- constants ----
         _maxPaletteHeight = 200;
@@ -22,10 +22,10 @@ module beachPartyApp
         _textElems: HTMLElement[];
 
         _sm: bps.SizeMappingData;
-        _bpsHelper: bps.chartHostHelperClass;
+        _bpsHelper: bps.ChartHostHelperClass;
         _app: AppClass;                 // need to get latest ColInfo on legend build
 
-        constructor(app: AppClass, rootName: string, bpsHelper: bps.chartHostHelperClass)
+        constructor(app: AppClass, rootName: string, bpsHelper: bps.ChartHostHelperClass)
         {
             super();
 

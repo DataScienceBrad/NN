@@ -582,7 +582,7 @@ module beachParty
             for (var v = 0; v < this._views.length; v++)
             {
                 var view = this._views[v];
-                if (view.viewId() === viewId)
+                if (view.viewId().toString() === viewId.toString())
                 {
                     viewX = view;
                     break;
@@ -688,7 +688,7 @@ module beachParty
 
         persistSession(value?: boolean)
         {
-            if (value === undefined)
+            if (value === undefined || value === null)
             {
                 return this._appSettings.persistSession;
             }
@@ -699,7 +699,7 @@ module beachParty
 
         persistControls(value?: boolean)
         {
-            if (value === undefined)
+            if (value === undefined || value === null)
             {
                 return this._appSettings.persistControls;
             }

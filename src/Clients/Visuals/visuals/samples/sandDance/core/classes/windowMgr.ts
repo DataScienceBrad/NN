@@ -186,7 +186,7 @@ module beachParty
 
         areTransformsEnabled(value?: boolean)
         {
-            if (value === undefined)
+            if (value === undefined || value === null)
             {
                 return this._areTransformsEnabled;
             }
@@ -213,7 +213,7 @@ module beachParty
 
         showWheelDuringTransformMode(value?: boolean)
         {
-            if (value === undefined)
+            if (value === undefined || value === null)
             {
                 return this._showWheelDuringTransformMode;
             }
@@ -227,7 +227,7 @@ module beachParty
 
         showDebugStats(value?: boolean)
         {
-            if (value === undefined)
+            if (value === undefined || value === null)
             {
                 return this._showDebugStats;
             }
@@ -259,7 +259,7 @@ module beachParty
 
         showFileInfo(value?: boolean)
         {
-            if (value === undefined)
+            if (value === undefined || value === null)
             {
                 return this._showFileInfo;
             }
@@ -368,7 +368,7 @@ module beachParty
             {
                 //alert("got touchend");
 
-                if (e.touches === null || e.touches.length === 0)
+                if (e.touches === null || e.touches === undefined || (e.touches && e.touches.length === 0))
                 {
                     this._isPinching = false;
                     this.onDragChanged();
@@ -473,6 +473,8 @@ module beachParty
         /** called from "pointerDown" event (for IE touch and mouse) and from "mouseDown" event (for non IE). */
         onMouseDown(e)
         {
+            // this._transformWheel.show(true);
+
             this._transformMgr.onUiOpStart();
             this._isMouseDown = true;
 
@@ -734,8 +736,8 @@ module beachParty
                 {
                     var pe = e.pointers[i];
 
-                    var x = (pe.x === undefined) ? pe.clientX : pe.x;
-                    var y = (pe.y === undefined) ? pe.clientY : pe.y;
+                    var x = (pe.x === undefined || pe.x === null) ? pe.clientX : pe.x;
+                    var y = (pe.y === undefined || pe.y === null) ? pe.clientY : pe.y;
 
                     vp.utils.debug("avgTouchPosition: pe[" + i + "]: x=" + x + ", y=" + y);
 

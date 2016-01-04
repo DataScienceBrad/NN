@@ -32,9 +32,9 @@ module beachParty
 
         constructor(hasHeader: boolean, sepChar: string, findTypes: boolean, fixupValues: boolean)
         {
-            this._hasHeader = (hasHeader === null) ? false : hasHeader;
+            this._hasHeader = (!hasHeader) ? false : hasHeader;
             this._findTypes = findTypes;
-            this._sepChar = (sepChar === null) ? "\t" : sepChar;
+            this._sepChar = (sepChar === null || sepChar === undefined) ? "\t" : sepChar;
             this._fixupValues = fixupValues;
         }
 

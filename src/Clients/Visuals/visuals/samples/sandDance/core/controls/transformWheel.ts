@@ -178,7 +178,7 @@ module beachParty
         {
             if (this._isActive)
             {
-                if (value === undefined)
+                if (value === undefined || value === null)
                 {
                     return this._partTouched;
                 }

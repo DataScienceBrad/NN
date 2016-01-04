@@ -138,7 +138,7 @@ module beachParty
 
         isInertiaEnabled(value?: boolean)
         {
-            if (value === undefined)
+            if (value === undefined || value === null)
             {
                 return this._isInertialEnabled;
             }
@@ -209,7 +209,7 @@ module beachParty
 
         transformMode(value?: number)
         {
-            if (value === undefined)
+            if (value === undefined || value === null)
             {
                 var enumName = TransformMode[this._transformMode];
                 return enumName;
@@ -254,7 +254,7 @@ module beachParty
 
         xRotation(value: number)
         {
-            if (value === undefined)
+            if (value === undefined || value === null)
             {
                 return this._transformer.xRotation();
             }
@@ -265,7 +265,7 @@ module beachParty
 
         yRotation(value: number)
         {
-            if (value === undefined)
+            if (value === undefined || value === null)
             {
                 return this._transformer.yRotation();
             }
@@ -276,7 +276,7 @@ module beachParty
 
         zRotation(value: number)
         {
-            if (value === undefined)
+            if (value === undefined || value === null)
             {
                 return this._transformer.zRotation();
             }

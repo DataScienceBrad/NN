@@ -146,7 +146,7 @@ module beachParty
                 //---- hard code layout for 0-16 cells ----
                 var cellsPerRowByCount = { 0: 0, 1: 1, 2: 2, 3: 3, 4: 2, 5: 3, 6: 3, 7: 4, 8: 4, 9: 3, 10: 5, 11: 4, 12: 4, 13: 4, 14: 4, 15: 4, 16: 4 };
                 var cellsPerRow = cellsPerRowByCount[count];
-                if (cellsPerRow === undefined)
+                if (cellsPerRow === undefined || cellsPerRow === null)
                 {
                     cellsPerRow = Math.ceil(Math.sqrt(aspect * count));
                 }

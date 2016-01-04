@@ -604,7 +604,7 @@ module beachParty
         /** map a point from SCREEN space to MODEL space. */
         public unprojectFromScreen(xScreen: number, yScreen: number, zNorm?: number, omitWorld?: boolean)
         {
-            if (zNorm === undefined)
+            if (zNorm === undefined || zNorm === null)
             {
                 zNorm = this.getNdcZ();
             }
@@ -757,7 +757,7 @@ module beachParty
 
         public xRotation(value?: number)
         {
-            if (value === undefined)
+            if (value === undefined || value === null)
             {
                 return vp.utils.toDegrees(this._xRotation);
             }
@@ -769,7 +769,7 @@ module beachParty
 
         public yRotation(value?: number)
         {
-            if (value === undefined)
+            if (value === undefined || value === null)
             {
                 return vp.utils.toDegrees(this._yRotation);
             }
@@ -781,7 +781,7 @@ module beachParty
 
         public zRotation(value?: number)
         {
-            if (value === undefined)
+            if (value === undefined || value === null)
             {
                 return vp.utils.toDegrees(this._zRotation);
             }

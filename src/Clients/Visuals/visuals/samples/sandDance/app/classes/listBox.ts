@@ -7,7 +7,7 @@
 
 module beachPartyApp
 {
-    export class ListBoxClass extends beachParty.dataChangerClass
+    export class ListBoxClass extends beachParty.DataChangerClass
     {
         _root: HTMLElement;
 

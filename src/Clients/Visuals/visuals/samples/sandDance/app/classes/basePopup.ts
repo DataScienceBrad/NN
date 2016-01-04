@@ -9,7 +9,7 @@ module beachPartyApp
 {
     var nextId = 1;
 
-    export class BasePopupClass extends beachParty.dataChangerClass implements IAppControl
+    export class BasePopupClass extends beachParty.DataChangerClass implements IAppControl
     {
         _root: HTMLElement;
         _ownerElem: HTMLElement;            // not the document parent, but another popup that this popup belongs to

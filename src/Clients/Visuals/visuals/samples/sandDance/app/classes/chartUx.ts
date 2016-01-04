@@ -7,17 +7,17 @@
 
 module beachPartyApp
 {
-    export class ChartUxClass extends beachParty.dataChangerClass
+    export class ChartUxClass extends beachParty.DataChangerClass
     {
         private _chartUxElem: HTMLElement;
 
         private _rubberBandSelector: RubberBandSelectorClass;
-        private _bpsHelper: bps.chartHostHelperClass;
+        private _bpsHelper: bps.ChartHostHelperClass;
         private _areToolTipsEnabled = false;
         private _hoverPrimaryKey;
         private _maxToolTipColumns;
 
-        constructor(bpsHelper: bps.chartHostHelperClass, maxToolTipColumns: number)
+        constructor(bpsHelper: bps.ChartHostHelperClass, maxToolTipColumns: number)
         {
             super();
 
@@ -259,7 +259,7 @@ module beachPartyApp
 
         areToolTipsEnabled(value?: boolean)
         {
-            if (value === undefined)
+            if (value === undefined || value === null)
             {
                 return this._areToolTipsEnabled;
             }

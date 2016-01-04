@@ -7,7 +7,7 @@
 
 module beachPartyApp
 {
-    export class TestMgrClass extends beachParty.dataChangerClass
+    export class TestMgrClass extends beachParty.DataChangerClass
     {
         testResultsKey = "testResults";
 
@@ -85,7 +85,7 @@ module beachPartyApp
             {
                 if (this._cmdIndex < this._cmds.length)
                 {
-                    if (delay === undefined)
+                    if (delay === undefined || delay === null)
                     {
                         delay = (this._cmdDelay !== undefined) ? this._cmdDelay : 1;
                     }
@@ -173,7 +173,7 @@ module beachPartyApp
         getParam(cmd: any, paramName: string)
         {
             var value = (vp.utils.isObject(cmd)) ? cmd[paramName] : cmd;
-            if (value === undefined)
+            if (value === undefined || value === null)
             {
                 this.error("cmd=" + cmd + " is missing parameter=" + paramName);
             }
@@ -285,7 +285,7 @@ module beachPartyApp
 
                 if (paletteName)
                 {
-                    var palette = beachParty.colorPalettesClass.colorBrewerSchemes[paletteName]; 
+                    var palette = beachParty.ColorPalettesClass.colorBrewerSchemes[paletteName]; 
                     palette.name = paletteName;
 
                     this._app.colorPalette(palette);

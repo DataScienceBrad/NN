@@ -199,7 +199,7 @@ module powerbi.visuals.samples {
 
         //TODO: add other elements.
 
-        private coreApplication: beachParty.appMgrClass;
+        private coreApplication: beachParty.AppMgrClass;
         private application: beachPartyApp.AppClass;
 
         private dataView: SandDanceDataView;
@@ -223,7 +223,7 @@ module powerbi.visuals.samples {
             this.application.setViewport(this.viewport.width, this.viewport.height);
             this.application.run();
 
-            this.coreApplication = new beachParty.appMgrClass();
+            this.coreApplication = new beachParty.AppMgrClass();
 
             this.coreApplication.init(
                 SandDance.Canvas3DSelector.id,

@@ -7,9 +7,9 @@
 
 module beachPartyApp
 {
-    export class AppSettingsMgr extends beachParty.dataChangerClass 
+    export class AppSettingsMgr extends beachParty.DataChangerClass 
     {
-        _bpsHelper: bps.chartHostHelperClass;
+        _bpsHelper: bps.ChartHostHelperClass;
         _isSavingSettingsDisabled = true;
         _persistChangesDisabledFromUrlParams = false;
         _appStyleSheet: vp.dom.styleSheetClass;
@@ -56,7 +56,7 @@ module beachPartyApp
         private saveSettingsHandler: (settings: any, type: sandDance.SettingsType) => void;
         private loadSettingsHandler: (type: sandDance.SettingsType) => any;
 
-        constructor(bpsHelper: bps.chartHostHelperClass, saveSettingsHandler: (settings: any, type: sandDance.SettingsType) => void, loadSettingsHandler: (type: sandDance.SettingsType) => any) {
+        constructor(bpsHelper: bps.ChartHostHelperClass, saveSettingsHandler: (settings: any, type: sandDance.SettingsType) => void, loadSettingsHandler: (type: sandDance.SettingsType) => any) {
             super();
 
             this.saveSettingsHandler = saveSettingsHandler;
