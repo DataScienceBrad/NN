@@ -69,7 +69,7 @@ module beachParty
         private _wasFirstFilteredStage;
 
         //---- data-related ----
-        private _dataFrame: DataFrameClass;
+        public _dataFrame: DataFrameClass;
         //private _bindings: any = {};
         private _randomX = [];
         private _randomY = [];

@@ -11,6 +11,8 @@ module bps
     {
         static instance: ChartHostHelperClass;
 
+        private data: any;
+
         _clientAppId: string;
 
         constructor(bpsChartOrIFrameId: string, bpsDomain?: string, baseServerDir?: string, fromDomain?: string,
@@ -416,7 +418,11 @@ module bps
         public updateDataView(data: any, dataLoad?: WorkingDataParams, callback?: any): void {
             var strParams = JSON.stringify(dataLoad);
 
-            this.postVisMsg("setData", data, strParams, undefined, undefined, undefined, undefined, callback);
+            if (data) {
+                this.data = data;
+            }
+
+            this.postVisMsg("setData", data || this.data, strParams, undefined, undefined, undefined, undefined, callback);
         }
 
         /** get the system part of the view data (as SystemViewData). When the data has been received, 

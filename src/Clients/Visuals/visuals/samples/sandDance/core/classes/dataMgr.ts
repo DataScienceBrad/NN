@@ -120,11 +120,11 @@ module beachParty
             });
         }
 
-        openPreloadAsync(wdParams?: bps.WorkingDataParams, callback?: any)
+        openPreloadAsync(dataFrame, wdParams?: bps.WorkingDataParams, callback?: any)
         {
             var loader = new DataLoaderClass(this._preloadMgr);
 
-            loader.openPreloadAsyncCore(wdParams, null, (origDf, postDf, wdParams) =>
+            loader.openPreload(wdParams, dataFrame, null, (origDf, postDf, wdParams) =>
             {
                 this.setDataAndInfo(origDf, postDf, wdParams);
 

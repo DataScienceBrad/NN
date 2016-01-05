@@ -498,11 +498,11 @@ module beachParty
                     if (key === "reset" && value === "true")
                     {
                         //---- delete localStorage for our settings ----
-                        if (localStorage)
-                        {
-                            localStorage["appSettings"] = "";
-                            localStorage["controls"] = "";
-                        }
+                        // if (localStorage)
+                        // {
+                        //     localStorage["appSettings"] = "";
+                        //     localStorage["controls"] = "";
+                        // }
                     }
                     else if (key === "vaas" && value === "true")
                     {

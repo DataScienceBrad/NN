@@ -264,6 +264,8 @@ module beachParty
                 {
                     var wdParams = <bps.WorkingDataParams>vp.utils.parseJsonIntoObj(msgBlock.param, new bps.WorkingDataParams());
 
+                    console.log("wdParams: " + wdParams);
+// 
                     this.loadDataFromServer(wdParams, msgBlock.requestId, view);
                 }
                 else if (cmd === "updatedataview")
@@ -666,15 +668,15 @@ module beachParty
         {
             var dataMgr = this._appMgr._dataMgr;
 
-            if (!wdParams || dataMgr.isFileLoaded(wdParams))
+            if (!wdParams)
             {
-                //---- file is already loaded; process the properties sync ----
+                // ---- file is already loaded; process the properties sync ----
                 this.loadDataPost(wdParams, requestId, view);
             }
             else
             {
-                //---- load file and then process the properties ----
-                dataMgr.openPreloadAsync(wdParams, (df: DataFrameClass) =>
+            //     //---- load file and then process the properties ----
+                dataMgr.openPreloadAsync(view._dataFrame._vectorsByName, wdParams, (df: DataFrameClass) =>
                 {
                     this.loadDataPost(wdParams, requestId, view);
                 });

@@ -27,9 +27,18 @@ module beachPartyApp
         _dataScrubberName = "None";
         _preload: bps.Preload;
 
-        constructor(bpsHelper: bps.ChartHostHelperClass)
+        private saveSettingsHandler: (settings: any, type: sandDance.SettingsType)  => void;
+        private loadSettingsHandler: (type: sandDance.SettingsType) => any;
+
+        constructor(
+            bpsHelper: bps.ChartHostHelperClass,
+            saveSettingsHandler: (settings: any, type: sandDance.SettingsType)  => void,
+            loadSettingsHandler: (type: sandDance.SettingsType) => any)
         {
             super();
+
+            this.saveSettingsHandler = saveSettingsHandler;
+            this.loadSettingsHandler = loadSettingsHandler;
 
             this._bpsHelper = bpsHelper;
             
@@ -469,19 +478,19 @@ module beachPartyApp
 
         getPreloadFromLocalStorage(fn: string, fileSource?: string, tableName?: string)
         {
-            var preload = <bps.Preload>null;
+            var preload = <bps.Preload>this.loadSettingsHandler(sandDance.SettingsType.preloads);
 
-            if (localStorage)
-            {
-                var key = this.makePreloadKey(fn, fileSource, tableName);
-                vp.utils.debug("getPreloadFromLocalStorage: key=" + key);
-
-                var str = localStorage[key];
-                if (str && str.length)
-                {
-                    preload = JSON.parse(str);
-                }
-            }
+//             if (localStorage)
+//             {
+//                 var key = this.makePreloadKey(fn, fileSource, tableName);
+//                 vp.utils.debug("getPreloadFromLocalStorage: key=" + key);
+// 
+//                 var str = localStorage[key];
+//                 if (str && str.length)
+//                 {
+//                     preload = JSON.parse(str);
+//                 }
+//             }
 
             return preload;
         }
@@ -490,48 +499,50 @@ module beachPartyApp
          * "sql", "web", "local". */
         getPreloadNamesFromLocalStorage(locType?: string)
         {
-            var list = [];
+            var list = [this.loadSettingsHandler(sandDance.SettingsType.preloads)];
 
-            if (localStorage)
-            {
-                var keyStart = "preloads-$";
-
-                if (locType)
-                {
-                    keyStart += locType + "\\";
-                }
-
-                //---- enumerate all keys to find those that match our needs ----
-                for (var i = 0; i < localStorage.length; i++)
-                {
-                    var key = localStorage.key(i);
-                    if (key.startsWith(keyStart))
-                    {
-                        var fn = key.substr(keyStart.length);
-                        list.push(fn);
-                    }
-                }
-            }
+//             if (localStorage)
+//             {
+//                 var keyStart = "preloads-$";
+// 
+//                 if (locType)
+//                 {
+//                     keyStart += locType + "\\";
+//                 }
+// 
+//                 //---- enumerate all keys to find those that match our needs ----
+//                 for (var i = 0; i < localStorage.length; i++)
+//                 {
+//                     var key = localStorage.key(i);
+//                     if (key.startsWith(keyStart))
+//                     {
+//                         var fn = key.substr(keyStart.length);
+//                         list.push(fn);
+//                     }
+//                 }
+//             }
 
             return list;
         }
 
         makePreloadKey(fn: string, fileSource?: string, tableName?: string)
         {
-            if (fileSource)
-            {
-                var key = "preloads-$" + fileSource + "\\" + fn;
-            }
-            else
-            {
-                var key = "preloads-$" + fn;
-            }
+            // if (fileSource)
+            // {
+            //     var key = "preloads-$" + fileSource + "\\" + fn;
+            // }
+            // else
+            // {
+            //     var key = "preloads-$" + fn;
+            // }
 
-            if (fileSource === "sql")
-            {
-                //---- fn is connection string, tableName is table name or query string ----
-                key += "\\" + tableName;
-            }
+            var key = "preloads";
+
+            // if (fileSource === "sql")
+            // {
+            //     //---- fn is connection string, tableName is table name or query string ----
+            //     key += "\\" + tableName;
+            // }
 
             return key;
         }
@@ -558,17 +569,19 @@ module beachPartyApp
 
         savePreloadToLocalStorage(preload: bps.Preload)
         {
-            if (localStorage)
-            {
-                var str = JSON.stringify(preload);
-                var fileSource = preload.fileSource;
-                var fn = (fileSource === "url") ? preload.filePath : preload.dataName;
+            // if (localStorage)
+            // {
+                //var str = JSON.stringify(preload);
+                
+                this.saveSettingsHandler(preload, sandDance.SettingsType.preloads);
+//                 var fileSource = preload.fileSource;
+//                 var fn = (fileSource === "url") ? preload.filePath : preload.dataName;
+// 
+//                 var key = this.makePreloadKey(fn, fileSource, preload.tableName);
+                // vp.utils.debug("savePreloadToLocalStorage: key=" + key);
 
-                var key = this.makePreloadKey(fn, fileSource, preload.tableName);
-                vp.utils.debug("savePreloadToLocalStorage: key=" + key);
-
-                localStorage[key] = str;
-            }
+                // localStorage[key] = str;
+            // }
         }
 
         reloadDataPerScrubbing(editInfos: EditColInfo[])
@@ -594,14 +607,15 @@ module beachPartyApp
             this.savePreloadToLocalStorage(preload);
 
             //---- reload data with new fieldList ----
-            if (this._loadedFileOpenText)
-            {
-                this._bpsHelper.setData(this._loadedFileOpenText, preload);
-            }
-            else
-            {
-                this._bpsHelper.loadData(preload, null);
-            }
+            // if (this._loadedFileOpenText)
+            // {
+                this._bpsHelper.updateDataView(null, preload);
+                // this._bpsHelper.setData(this._loadedFileOpenText, preload);
+            // }
+            // else
+            // {
+            //     this._bpsHelper.loadData(preload, null);
+            // }
         }
 
         loadFileOpenSql()
@@ -656,33 +670,36 @@ module beachPartyApp
 
         storeDataFileToCache(filename: string, fileSource: string, data: string, wdParams: bps.WorkingDataParams)
         {
-            if (localStorage)
-            {
-                var key = this.makeCacheKey(filename, fileSource);
-
-                var entry = new CacheEntry();
-                entry.data = data;
-                entry.wdParams = wdParams;
-                
-                var strEntry = JSON.stringify(entry);
-                localStorage[key] = strEntry;
-            }
+            console.log("storeDataFileToCache: " + filename);
+//             if (localStorage)
+//             {
+//                 var key = this.makeCacheKey(filename, fileSource);
+// 
+//                 var entry = new CacheEntry();
+//                 entry.data = data;
+//                 entry.wdParams = wdParams;
+//                 
+//                 var strEntry = JSON.stringify(entry);
+//                 localStorage[key] = strEntry;
+//             }
         }
 
         getDataFileFromCache(filename: string, fileSource: string)
         {
             var entry = <CacheEntry> null;
 
-            if (localStorage)
-            {
-                var key = this.makeCacheKey(filename, fileSource);
-                var strEntry = localStorage[key];
+            console.log("getDataFileFromCache: " + filename);
 
-                if (strEntry)
-                {
-                    entry = <CacheEntry>JSON.parse(strEntry);
-                }
-            }
+//             if (localStorage)
+//             {
+//                 var key = this.makeCacheKey(filename, fileSource);
+//                 var strEntry = localStorage[key];
+// 
+//                 if (strEntry)
+//                 {
+//                     entry = <CacheEntry>JSON.parse(strEntry);
+//                 }
+//             }
 
             return entry;
         }

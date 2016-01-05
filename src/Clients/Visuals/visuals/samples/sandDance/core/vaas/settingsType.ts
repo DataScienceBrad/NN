@@ -3,6 +3,7 @@
 module sandDance {
     export enum SettingsType {
         application,
-        session
+        session,
+        preloads
     };
 }

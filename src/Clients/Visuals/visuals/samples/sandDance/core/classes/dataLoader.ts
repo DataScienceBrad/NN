@@ -335,5 +335,14 @@ module beachParty
                     }, false, convertToDataFrameClass);
             }
         }
+
+        public openPreload(wdParams: bps.WorkingDataParams, dataFrame, multiValueCol?: string, callback?: any): void {
+            var result = this.processdData(dataFrame, wdParams, multiValueCol);
+
+            if (callback)
+            {
+                callback(result.origDf, result.postDf, result.wdParams);
+            }
+        }
     }
 } 

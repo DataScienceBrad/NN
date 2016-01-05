@@ -17,7 +17,7 @@ module beachParty
 
         private _names: string[];               // used to store order of names from original data source
         private _colTypes: string[];            // "string", "date", or "number"
-        private _vectorsByName: { [name: string]: any[]};
+        public _vectorsByName: { [name: string]: any[]};
         private _wdParams: bps.WorkingDataParams;
         private _sortKey: string = "none";        // colName + "up" or "down"
         private _pkToVectorIndex = {};
@@ -122,28 +122,33 @@ module beachParty
             {
                 //---- must build one from values in column ----
                 var vector = this.getVector(colName, false);
-                var groups = vector.groupBy();
-                vm = [];
+                
+                if (vector && vector.groupBy) {
+                    var groups = vector.groupBy();
+                    vm = [];
 
-                for (var i = 0; i < groups.length; i++)
-                {
-                    var group = groups[i];
-                    var vme = new bps.ValueMapEntry();
+                    for (var i = 0; i < groups.length; i++)
+                    {
+                        var group = groups[i];
+                        var vme = new bps.ValueMapEntry();
 
-                    vme.originalValue = group.key;
-                    vme.valueCount = group.values.length;
+                        vme.originalValue = group.key;
+                        vme.valueCount = group.values.length;
 
-                    vm.push(vme);
+                        vm.push(vme);
+                    }
                 }
             }
 
-            //---- valueMap: sort in descending order ----
-            vm = vm.orderByNum((e) => {return e.valueCount; });
-            vm.reverse();
+            if (vm) {
+                //---- valueMap: sort in descending order ----
+                vm = vm.orderByNum((e) => {return e.valueCount; });
+                vm.reverse();
 
-            if (maxRows !== undefined)
-            {
-                vm = vm.slice(0, maxRows);
+                if (maxRows !== undefined)
+                {
+                    vm = vm.slice(0, maxRows);
+                }
             }
 
             return vm;

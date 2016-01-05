@@ -65,6 +65,7 @@ module powerbi.visuals.samples {
     export interface SandDanceSettings {
         application: any;
         session: any;
+        preloads: any;
     }
 
     interface PanelTable {
@@ -168,6 +169,15 @@ module powerbi.visuals.samples {
                 },
                 session: {
                     displayName: "Session",
+                    properties: {
+                        settings: {
+                            displayName: "Settings",
+                            type: { text: true }
+                        }
+                    }
+                },
+                preloads: {
+                    displayName: "Preloads",
                     properties: {
                         settings: {
                             displayName: "Settings",
@@ -515,11 +525,9 @@ module powerbi.visuals.samples {
             let settingInJson: string = JSON.stringify(settings),
                 objectName: string;
 
-            objectName = type === sandDance.SettingsType.application
-                ? sandDance.SettingsType[0]
-                : sandDance.SettingsType[1];
+            objectName = sandDance.SettingsType[type];
 
-            // console.log(JSON.stringify(settings));
+            console.log("saveSettings: " + objectName + " data: " + settingInJson);
 
             this.host.persistProperties(<VisualObjectInstancesToPersist> {
                 replace: [{
@@ -539,11 +547,9 @@ module powerbi.visuals.samples {
                 return {};
             }
 
-            if (type === sandDance.SettingsType.application) {
-                return this.dataView.settings.application;
-            } else {
-                return this.dataView.settings.session;
-            }
+            console.log("loadSettings: " + sandDance.SettingsType[type]);
+
+            return this.dataView.settings[sandDance.SettingsType[type]];
         }
 
         public update(visualUpdateOptions: VisualUpdateOptions): void {
@@ -603,7 +609,8 @@ module powerbi.visuals.samples {
                 !dataView.metadata.objects) {
                 return {
                     application: {},
-                    session: {}
+                    session: {},
+                    preloads: {}
                 };
             }
 
@@ -611,7 +618,8 @@ module powerbi.visuals.samples {
                 objects: DataViewObjects = dataView.metadata.objects,
                 settingsNames: string[] = [
                     "application",
-                    "session"
+                    "session",
+                    "preloads"
                 ];
 
             settingsNames.forEach((settingsName: string) => {

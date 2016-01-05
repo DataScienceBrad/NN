@@ -20,6 +20,8 @@ module beachPartyApp
         static maxPanelWidth = .75 * window.innerWidth;
         static nextSnapShotNum = 1;
 
+        public data: any;
+
         public width: number;
         public height: number;
 
@@ -452,11 +454,11 @@ module beachPartyApp
 
                 this.selectedRecords(msgBlock.selectedRecords);
 
-                if (vp.utils.isIE)
-                {
-                    //---- bug workaround - force storage event trigger for IE from OUTER HTML (not IFRAME) ----
-                    localStorage["dummy"] = this._sessionId;
-                }
+                // if (vp.utils.isIE)
+                // {
+                //     //---- bug workaround - force storage event trigger for IE from OUTER HTML (not IFRAME) ----
+                //     localStorage["dummy"] = this._sessionId;
+                // }
 
                 if (this._selectedCount === 0)
                 {
@@ -532,6 +534,8 @@ module beachPartyApp
         }
 
         public updateDataView(data: any) {
+            this.data = data;
+
             this._bpsHelper.updateDataView(data, null, () => {
                 console.log("updateDataView: " + new Date());
             });
@@ -650,7 +654,7 @@ module beachPartyApp
 
             settings = new AppSettingsMgr(this._bpsHelper, this.saveSettingsHandler, this.loadSettingsHandler);
 
-            this._fileOpenMgr = new FileOpenMgr(this._bpsHelper);
+            this._fileOpenMgr = new FileOpenMgr(this._bpsHelper, this.saveSettingsHandler, this.loadSettingsHandler);
 
             this._undoMgr = new UndoMgrClass();
             this._undoMgr.registerForChange("undoStack", (e) => this.onUndoStackChange());
@@ -663,19 +667,19 @@ module beachPartyApp
 
             if (false) //window.localStorage
             {
-                machineId = window.localStorage["machineId"];
-                sessionId = +window.localStorage["sessionId"];
-
-                if (machineId === undefined)
-                {
-                    //----- get it a pseudo GUID ----
-                    machineId = +Date.now() + vp.utils.now() + Math.random();
-                    window.localStorage["machineId"] = machineId;
-                    sessionId = 0;
-                }
-
-                sessionId = sessionId + 1;
-                window.localStorage["sessionId"] = sessionId;
+//                 machineId = window.localStorage["machineId"];
+//                 sessionId = +window.localStorage["sessionId"];
+// 
+//                 if (machineId === undefined)
+//                 {
+//                     //----- get it a pseudo GUID ----
+//                     machineId = +Date.now() + vp.utils.now() + Math.random();
+//                     window.localStorage["machineId"] = machineId;
+//                     sessionId = 0;
+//                 }
+// 
+//                 sessionId = sessionId + 1;
+//                 window.localStorage["sessionId"] = sessionId;
             }
             else
             {
@@ -796,34 +800,34 @@ module beachPartyApp
         hookLocalStorageChanges()
         {
             //---- IE bug workaround - listen for storage events from OUTER HTML (not IFRAME) ----
-            if (vp.utils.isIE)
-            {
-                vp.utils.debug("hookLocalStorageChanges");
-
-                vp.events.attach(window, "storage", (e) =>
-                {
-                    if (e.key !== "appSettings")
-                    {
-                        var process = true;
-                        if (e.key === "dummy")
-                        {
-                            var value = localStorage[e.key];
-                            if (value === this._sessionId)
-                            {
-                                process = false;
-                            }
-                        }
-
-                        if (process)
-                        {
-                            //vp.utils.debug("******* shareMgr.changeFunc: e.key=" + e.key);
-                            //alert("storage event");
-
-                            this._bpsHelper.onLocalStorageChange();
-                        }
-                    }
-                });
-            }
+//             if (vp.utils.isIE)
+//             {
+//                 vp.utils.debug("hookLocalStorageChanges");
+// 
+//                 vp.events.attach(window, "storage", (e) =>
+//                 {
+//                     if (e.key !== "appSettings")
+//                     {
+//                         var process = true;
+//                         if (e.key === "dummy")
+//                         {
+//                             var value = localStorage[e.key];
+//                             if (value === this._sessionId)
+//                             {
+//                                 process = false;
+//                             }
+//                         }
+// 
+//                         if (process)
+//                         {
+//                             //vp.utils.debug("******* shareMgr.changeFunc: e.key=" + e.key);
+//                             //alert("storage event");
+// 
+//                             this._bpsHelper.onLocalStorageChange();
+//                         }
+//                     }
+//                 });
+//             }
         }
 
         onShowInsightBarChanged()
@@ -1983,31 +1987,15 @@ module beachPartyApp
 
             this.onInsightLoadStarted();
 
-            //---- supply a dataName so we can refer to this open data source when needed ----
-            if (insight && insight.preload && !insight.preload.dataName)
-            {
-                insight.preload.dataName = insight.preload.name;
-            }
+            if (insight && insight.preload) {
+                //---- supply a dataName so we can refer to this open data source when needed ----
+                if (!insight.preload.dataName)
+                {
+                    insight.preload.dataName = insight.preload.name;
+                }
 
-//             if (insight.loadAction == bps.LoadAction.all || insight.loadAction == bps.LoadAction.data
-//                 || insight.loadAction === undefined)
-//             {
-//                 //---- load insight DATA ----
-// 
-//                 //---- clear local file data from last load ----
-//                 this._fileOpenMgr.loadedFileOpenText(null);
-// 
-//                 //this._bpsHelper.loadData(insight.preload, (e) =>
-//                 fileOpenMgr.instance.autoloadFile(insight.preload.dataName, insight.preload, (e) =>
-//                 {
-//                     this.loadInsightPost(insight);
-//                 });
-//             }
-//             else
-//             {
-                //---- no data needed - can call loadInsightPost SYNC ----
                 this.loadInsightPost(insight);
-            // }
+            }
         }
 
         copyMapping(md: bps.MappingData)
@@ -2480,11 +2468,11 @@ module beachPartyApp
             ///   [testResults]:   JSON perf records from most recent test run
 
             //---- delete localStorage for our settings ----
-            if (localStorage)
-            {
-                //---- if we do this, let it trigger event to engine ----
-                localStorage.clear();
-            }
+            // if (localStorage)
+            // {
+            //     //---- if we do this, let it trigger event to engine ----
+            //     localStorage.clear();
+            // }
         }
 
         setEdition(value: string)

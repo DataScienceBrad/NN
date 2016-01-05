@@ -853,6 +853,8 @@ module beachPartyApp
         /** "keys" should be in "originalValue" value set. */
         private sortValueMap(valueMap: bps.ValueMapEntry[], keys: string[])
         {
+            valueMap = valueMap || [];
+
             var newMap = <bps.ValueMapEntry[]>[];
 
             for (var i = 0; i < keys.length; i++)
