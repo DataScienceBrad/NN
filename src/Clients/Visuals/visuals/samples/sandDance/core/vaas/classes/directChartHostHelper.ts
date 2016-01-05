@@ -131,10 +131,10 @@ module bps
             //this._iframe.contentWindow.postMessage(msgStr, this._domain);
 
             //---- simulate async of iframe communication ----
-            setTimeout((e) =>
-            {
-                (<any>window).appMgr.sendMsgToVis(msgStr);
-            }, 1);
+            // setTimeout((e) =>
+            // {
+            //     (<any>window).appMgr.sendMsgToVis(msgStr);
+            // }, 1);
         }
     }
 }

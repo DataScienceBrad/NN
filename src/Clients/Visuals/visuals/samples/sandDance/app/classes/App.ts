@@ -643,11 +643,11 @@ module beachPartyApp
         {
             this._vsCurrent = new ViewSettings();
 
-            if (window.location.hostname === "localhost")
-            {
-                //---- assume it's a developer machine ----
-                AppClass.buildId = "pre" + (1 + (+AppClass.buildId));
-            }
+            // if (window.location.hostname === "localhost")
+            // {
+            //     //---- assume it's a developer machine ----
+            //     AppClass.buildId = "pre" + (1 + (+AppClass.buildId));
+            // }
 
             //---- this assumes that our app & BeachParty engine share the same server ----
             this._bpsHelper = bps.createBpsHelper("myChart");
@@ -697,19 +697,19 @@ module beachPartyApp
             //delete localStorage["sessionId"];
 
             //---- turn this on for normal use, but OFF FOR DEBUGGING ----
-            window.onerror = (errorMsg, errorUrl, errorLineNum) =>
-            {
-                var msg = "Error: \r\n" + errorMsg;
-
-                if (settings._isErrorReportingDisabled)
-                {
-                    vp.utils.debug(msg);
-                }
-                else
-                {
-                    this.showError(msg);
-                }
-            };
+//             window.onerror = (errorMsg, errorUrl, errorLineNum) =>
+//             {
+//                 var msg = "Error: \r\n" + errorMsg;
+// 
+//                 if (settings._isErrorReportingDisabled)
+//                 {
+//                     vp.utils.debug(msg);
+//                 }
+//                 else
+//                 {
+//                     this.showError(msg);
+//                 }
+//             };
 
             vp.utils.setDebugId("client");
 
@@ -917,6 +917,8 @@ module beachPartyApp
             this.createIconTextPair(trW, "toggleInsightPanel", "insight", "Toggle the insight panel open/closed", "fnIconBarToggleInsightNorm", "Insight", true, true);
             this.createIconTextPair(trW, "startPlayback", "playIcon", "Playback the current insights", "fnIconBarPlay", "Play", true, true);
             // this.createSpacer(trW);
+
+            this.createIconTextPair(trW, "onBeachPartyClick", "colorPanel_properties", "Open the Application Settings Panel", "colorPanel_properties_white", "Settings", false);
 
             this.createIconTextPair(trW, "toggleTransformMode", "wheel", "Toggle the 3D tranform mode on/off", "fnIconBarToggle3dNorm", "Transform");
             this.createIconTextPair(trW, "onSelectClick", "select", "Change the selection mode", "fnSelectionNormal", "Selection");
@@ -3983,7 +3985,7 @@ module beachPartyApp
 
         openAppPanel(e)
         {
-            this._appPanel = buildJsonPanel("btSettings", settings, "appSettings", true);
+            this._appPanel = buildJsonPanel("btSettings", settings, "appSettings", true, 0, 0, undefined, undefined);
 
             this._appPanel.registerForChange("close", (e) =>
             {

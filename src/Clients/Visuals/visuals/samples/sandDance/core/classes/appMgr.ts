@@ -73,10 +73,10 @@ module beachParty
             //this.saveSettings();
 
             //---- hook "message" event (msgs from hosting window) ----
-            window.addEventListener("message", (e) =>
-            {
-                this.dispatchMsgToCmdMgr(e.data);
-            });
+            // window.addEventListener("message", (e) =>
+            // {
+            //     this.dispatchMsgToCmdMgr(e.data);
+            // });
 
             sandDance.iframeBus.addEventListener("message", (e) =>
             {
@@ -562,11 +562,11 @@ module beachParty
             if (this._isHostedDirect)
             {
                 //---- simulate async of iframe communication ----
-                setTimeout((e) =>
-                {
-                    var anyWin = <any>window;
-                    anyWin.sendToDirectHostHelper(msgStr);
-                }, 1);
+                // setTimeout((e) =>
+                // {
+                //     var anyWin = <any>window;
+                //     anyWin.sendToDirectHostHelper(msgStr);
+                // }, 1);
             }
             else// if (window.parent && window !== window.parent.window)
             {
@@ -650,18 +650,22 @@ module beachParty
 
         loadSettings()
         {
-            if (localStorage)
-            {
-                var str = localStorage["appSettings"];
-                if (str && str !== "")
-                {
-                    this._appSettings = JSON.parse(str);
-                }
-            }
+            console.error("loadSettings");
+            
+            // if (localStorage)
+            // {
+            //     var str = localStorage["appSettings"];
+            //     if (str && str !== "")
+            //     {
+            //         this._appSettings = JSON.parse(str);
+            //     }
+            // }
         }
 
         saveSettings()
         {
+            console.error("saveSettings");
+            
             //if (localStorage)
             //{
             //    var str = JSON.stringify(this._appSettings);

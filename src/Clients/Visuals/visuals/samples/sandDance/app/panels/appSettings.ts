@@ -92,10 +92,10 @@ module sandDance {
                 {
                     tabName: "UI", tip: "Settings for the Application Menus", rows:
                     [
-                        { prompt: "Menus:", tip: "Change options for top-level menu items" },
-                        { col: 1, checkbox: "Show text", tip: "Show the text associated with each menu item", dataName: "isMenuTextVisible" },
-                        { col: 1, checkbox: "Show icons", tip: "Show the icons associated with each menu item", dataName: "isMenuIconVisible" },
-                        { col: 1, checkbox: "Show chevrons", tip: "Show the chevrons associated with each menu item", dataName: "isMenuChevronVisible" },
+                        // { prompt: "Menus:", tip: "Change options for top-level menu items" },
+                        // { col: 1, checkbox: "Show text", tip: "Show the text associated with each menu item", dataName: "isMenuTextVisible" },
+                        // { col: 1, checkbox: "Show icons", tip: "Show the icons associated with each menu item", dataName: "isMenuIconVisible" },
+                        // { col: 1, checkbox: "Show chevrons", tip: "Show the chevrons associated with each menu item", dataName: "isMenuChevronVisible" },
 
                         { prompt: "Column picker:", tip: "Change options for the column picker control" },
                         { col: 1, checkbox: "Sort columns", tip: "Sort the columns in the column picker", dataName: "isColPickerSorted" },
@@ -108,9 +108,9 @@ module sandDance {
                 {
                     tabName: "Data", tip: "Options for data", rows:
                     [
-                        { prompt: "File loading:", tip: "Parameters for loading data files" },
-                        { col: 1, checkbox: "Cache local files", tip: "When user loads a local file, cache it in localstroage", dataName: "cacheLocalFiles" },
-                        { col: 1, checkbox: "Cache web files", tip: "When user loads a web file, cache it in localstroage", dataName: "cacheWebFiles" },
+                        // { prompt: "File loading:", tip: "Parameters for loading data files" },
+                        // { col: 1, checkbox: "Cache local files", tip: "When user loads a local file, cache it in localstroage", dataName: "cacheLocalFiles" },
+                        // { col: 1, checkbox: "Cache web files", tip: "When user loads a web file, cache it in localstroage", dataName: "cacheWebFiles" },
 
                         { prompt: "Mapping:", tip: "Options for attribute mapping (Color, Size, Facets, X-Bins, Y-Bins)" },
                         { col: 1, checkbox: "Nice numbers", tip: "Adjust min/max/increment to use nice numbers", dataName: "useNiceNumbers" },
@@ -120,74 +120,74 @@ module sandDance {
                     ]
                 },
 
-                {
-                    tabName: "Insights", tip: "Inight playback and other insight-related options", rows:
-                    [
-                        { prompt: "Insight playback:", tip: "Insight playback options" },
-                        { col: 1, numAdjuster: "Duration:", tip: "Sets the duration of each insight during playback, in seconds", min: 0, max: 99, roundValues: false, dataName: "playbackDuration" },
-                        { col: 1, checkbox: "Loop", tip: "When set to true, playback restarts after playing the last insight", dataName: "isPlaybackLooping" },
-                    ]
-                },
+                // {
+                //     tabName: "Insights", tip: "Inight playback and other insight-related options", rows:
+                //     [
+                //         { prompt: "Insight playback:", tip: "Insight playback options" },
+                //         { col: 1, numAdjuster: "Duration:", tip: "Sets the duration of each insight during playback, in seconds", min: 0, max: 99, roundValues: false, dataName: "playbackDuration" },
+                //         { col: 1, checkbox: "Loop", tip: "When set to true, playback restarts after playing the last insight", dataName: "isPlaybackLooping" },
+                //     ]
+                // },
 
-                {
-                    tabName: "Startup", tip: "Controls initial settings for SandDance", rows:
-                    [
-                        { col: 1, checkbox: "Remember last file", tip: "Start with the last-used data file from the most recent SandDance session", dataName: "rememberLastFile" },
-                        { col: 1, checkbox: "Remember last session", tip: "Start new SandDance sessions using the state from the previous session", dataName: "rememberLastSession" },
-                        { col: 1, enumPicker: "Initial chart:", tip: "Sets the initial chart type to be used", dataName: "initialChartType", enumType: bps.ChartType },
-                        { col: 1, enumPicker: "Initial layout:", tip: "Sets the initial laytout to be used", dataName: "initialLayout", enumType: bps.Layout },
-                    ]
-                },
+//                 {
+//                     tabName: "Startup", tip: "Controls initial settings for SandDance", rows:
+//                     [
+//                         { col: 1, checkbox: "Remember last file", tip: "Start with the last-used data file from the most recent SandDance session", dataName: "rememberLastFile" },
+//                         { col: 1, checkbox: "Remember last session", tip: "Start new SandDance sessions using the state from the previous session", dataName: "rememberLastSession" },
+//                         { col: 1, enumPicker: "Initial chart:", tip: "Sets the initial chart type to be used", dataName: "initialChartType", enumType: bps.ChartType },
+//                         { col: 1, enumPicker: "Initial layout:", tip: "Sets the initial laytout to be used", dataName: "initialLayout", enumType: bps.Layout },
+//                     ]
+//                 },
+// 
+//                 {
+//                     tabName: "Test", tip: "Internal testing tools for use by the SandDance development team", rows:
+//                     [
+// 
+//                         { prompt: "Testing:", tip: "Automated testing support" },
+//                         { col: 1, prompt: "Automated test:" },
+//                         { col: 2, text: "", tip: "Name of automated test to be run", dataName: "automatedTestName", readOnly: true, leftMargin: 20 },
+//                         { col: 3, button: "Load file", tip: "Load a test from a local file", dataName: "loadAutomatedTest", leftMargin: 20 },
+// 
+//                         { col: 1, button: "Start test", tip: "Start the SandDance automated test", dataName: "startAutomatedTest" },
+//                         { col: 2, button: "Stop test", tip: "Stop the SandDance automated test", dataName: "stopAutomatedTest", leftMargin: 20 },
+//                         { col: 1, button: "Plot results", tip: "Plot the data generated by the automated test", dataName: "plotTestResults" },
+//                     ]
+//                 },
 
-                {
-                    tabName: "Test", tip: "Internal testing tools for use by the SandDance development team", rows:
-                    [
-
-                        { prompt: "Testing:", tip: "Automated testing support" },
-                        { col: 1, prompt: "Automated test:" },
-                        { col: 2, text: "", tip: "Name of automated test to be run", dataName: "automatedTestName", readOnly: true, leftMargin: 20 },
-                        { col: 3, button: "Load file", tip: "Load a test from a local file", dataName: "loadAutomatedTest", leftMargin: 20 },
-
-                        { col: 1, button: "Start test", tip: "Start the SandDance automated test", dataName: "startAutomatedTest" },
-                        { col: 2, button: "Stop test", tip: "Stop the SandDance automated test", dataName: "stopAutomatedTest", leftMargin: 20 },
-                        { col: 1, button: "Plot results", tip: "Plot the data generated by the automated test", dataName: "plotTestResults" },
-                    ]
-                },
-
-                {
-                    tabName: "Debug", tip: "Internal settings for use by the SandDance development team", rows:
-                    [
-                        { prompt: "Info:", tip: "General debug support" },
-                        { col: 1, checkbox: "Engine stats", tip: "Show chart engine stats info at top of chart", dataName: "isShowingChartStatus" },
-                        { col: 1, checkbox: "Last cycle stats", tip: "Show summary of stats from last animation cycle", dataName: "isShowingLastCycle" },
-                        { col: 1, checkbox: "Event stats", tip: "Show event attach/fire stats", dataName: "isShowingEventStats" },
-                        { col: 1, checkbox: "Disable error reporting", tip: "Turn off display of errors in client UI", dataName: "isErrorReportingDisabled" },
-
-                        { prompt: "Memory:", tip: "Memory usage information" },
-                        { col: 1, button: "Plot memory use", tip: "Plot memory used by major engine objects", dataName: "plotEngineMemoryUse" },
-
-                        { prompt: "Other:", tip: "Other debug-related controls" },
-                        { col: 1, button: "Plot engine events", tip: "Plot the most recent engine trace events", dataName: "plotEngineEvents" },
-                    ]
-                },
-
-                {
-                    tabName: "Reset", tip: "Reset all application settings", rows:
-                    [
-                        { col: 1, button: "Reset app settings", tip: "Reset all application settings for current user", dataName: "resetSettingsAndReloadData" },
-                    ]
-                },
-
-                {
-                    tabName: "About", tip: "Information about the SandDance Application", rows:
-                    [
-                        // { image: "Images/sanddance.png" },
-                        { col: 1, prompt: "SandDance visualization prototype, Copyright (c) 2015, Microsoft Corporation.  All rights reserved." },
-                        { col: 1, prompt: "" },
-                        { col: 1, prompt: "For more infomation, email the <a class='panelLink' href='mailto:bpDiscuss@microsoft.com'>SandDance Discussion DL</a>.", isHtml: true },
-                        { col: 1, prompt: "Brought to you by Steven M. Drucker, Roland Fernandez, and the extended SandDance team at Microsoft Research." },
-                    ]
-                },
+//                 {
+//                     tabName: "Debug", tip: "Internal settings for use by the SandDance development team", rows:
+//                     [
+//                         { prompt: "Info:", tip: "General debug support" },
+//                         { col: 1, checkbox: "Engine stats", tip: "Show chart engine stats info at top of chart", dataName: "isShowingChartStatus" },
+//                         { col: 1, checkbox: "Last cycle stats", tip: "Show summary of stats from last animation cycle", dataName: "isShowingLastCycle" },
+//                         { col: 1, checkbox: "Event stats", tip: "Show event attach/fire stats", dataName: "isShowingEventStats" },
+//                         { col: 1, checkbox: "Disable error reporting", tip: "Turn off display of errors in client UI", dataName: "isErrorReportingDisabled" },
+// 
+//                         { prompt: "Memory:", tip: "Memory usage information" },
+//                         { col: 1, button: "Plot memory use", tip: "Plot memory used by major engine objects", dataName: "plotEngineMemoryUse" },
+// 
+//                         { prompt: "Other:", tip: "Other debug-related controls" },
+//                         { col: 1, button: "Plot engine events", tip: "Plot the most recent engine trace events", dataName: "plotEngineEvents" },
+//                     ]
+//                 },
+// 
+//                 {
+//                     tabName: "Reset", tip: "Reset all application settings", rows:
+//                     [
+//                         { col: 1, button: "Reset app settings", tip: "Reset all application settings for current user", dataName: "resetSettingsAndReloadData" },
+//                     ]
+//                 },
+// 
+//                 {
+//                     tabName: "About", tip: "Information about the SandDance Application", rows:
+//                     [
+//                         // { image: "Images/sanddance.png" },
+//                         { col: 1, prompt: "SandDance visualization prototype, Copyright (c) 2015, Microsoft Corporation.  All rights reserved." },
+//                         { col: 1, prompt: "" },
+//                         { col: 1, prompt: "For more infomation, email the <a class='panelLink' href='mailto:bpDiscuss@microsoft.com'>SandDance Discussion DL</a>.", isHtml: true },
+//                         { col: 1, prompt: "Brought to you by Steven M. Drucker, Roland Fernandez, and the extended SandDance team at Microsoft Research." },
+//                     ]
+//                 },
             ]
         };
     }

@@ -48,7 +48,7 @@ module bps
             this._domain = domain;
 
             //---- hook messages from vis ----
-            window.addEventListener("message", (e) => { this.onMsgFromVis(e.data); });
+            // window.addEventListener("message", (e) => { this.onMsgFromVis(e.data); });
             
             sandDance.hostBus.addEventListener("message", (e) => { this.onMsgFromVis(e.data); });
 // 

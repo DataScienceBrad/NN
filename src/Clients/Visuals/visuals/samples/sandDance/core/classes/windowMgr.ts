@@ -341,18 +341,18 @@ module beachParty
         hookEvents()
         {
             // Prevent the Windows-rendered "box" that appears before the context menu appears [note: this works for IE only]
-            document.body.addEventListener("MSHoldVisual", function (e) { e.preventDefault(); }, false);
+            // document.body.addEventListener("MSHoldVisual", function (e) { e.preventDefault(); }, false);
 
             //---- route the contextMenu event to the client ----
-            document.body.addEventListener("contextmenu", (e) =>
-            {
-                var mousePosition = vp.events.mousePosition(e);
-                var isDragSelecting = false;        /// this._rubberBandSelector.isDraggingRect();
-
-                this._appMgr.onContextMenu(isDragSelecting, mousePosition);
-
-                e.preventDefault();
-            }, false);
+//             document.body.addEventListener("contextmenu", (e) =>
+//             {
+//                 var mousePosition = vp.events.mousePosition(e);
+//                 var isDragSelecting = false;        /// this._rubberBandSelector.isDraggingRect();
+// 
+//                 this._appMgr.onContextMenu(isDragSelecting, mousePosition);
+// 
+//                 e.preventDefault();
+//             }, false);
 
             this._view.registerForChange("dataStream", (e) =>
             {
@@ -453,12 +453,12 @@ module beachParty
             this.hookHammerEvents();
 
             //---- always do this, so we can update 3D transform mode cursor ----
-            vp.select(window).attach("movemove", (e) => this.onPlotMouseMove(e));
+            vp.select(".sandDance").attach("movemove", (e) => this.onPlotMouseMove(e));
 
             if (window.location.href.contains("isBrowserControl"))
             {
                 //---- in case of hammer pan not working, hook mousemove also (hammer doesn't work in browser control?) ----
-                vp.select(window).attach("mousemove", (e) =>
+                vp.select(".sandDance").attach("mousemove", (e) =>
                 {
                     if (this._isTouchEnabled && !this._isPinching)
                     {
@@ -517,7 +517,7 @@ module beachParty
         hookHammerEvents()
         {
             var hammerOpts = { preventDefault: false };
-            var hammertime = new (<any>Hammer)(this._svgDoc, hammerOpts);
+            var hammertime = new (<any>Hammer)(/*this._svgDoc*/vp.select(".sandDance").element(), hammerOpts);
             this._hammertime = hammertime;
 
             //---- enable PINCH ----

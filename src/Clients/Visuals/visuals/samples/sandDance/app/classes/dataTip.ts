@@ -286,7 +286,7 @@ module beachPartyApp
             this._dataTipOffset = offset;
 
             //---- capture mouse ----
-            vp.events.setCaptureWindow((e) => this.onMouseMove(e), (e) => this.onMouseUp(e), ["myChart"]);
+            // vp.events.setCaptureWindow((e) => this.onMouseMove(e), (e) => this.onMouseUp(e), ["myChart"]);
 
             //---- draw first image ----
             this.onMouseMove(e);
