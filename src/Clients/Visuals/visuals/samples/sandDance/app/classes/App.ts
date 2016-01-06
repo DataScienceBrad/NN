@@ -1325,7 +1325,7 @@ module beachPartyApp
 
             if (callback)
             {
-                tdW.attach("click", (e) =>
+                tdW.element().addEventListener("click", (e) =>
                 {
                     AppUtils.callPanelOpen(e, callback);
                 });
@@ -3909,8 +3909,8 @@ module beachPartyApp
                 var strAction = Action[action];
                 var strTarget = Target[target];
 
-                beachParty.logActionToServer(sessionId, strGesture, elementId, strElementType, strAction, strTarget, name1, value1, name2, value2,
-                    name3, value3, name4, value4);
+                // beachParty.logActionToServer(sessionId, strGesture, elementId, strElementType, strAction, strTarget, name1, value1, name2, value2,
+                //     name3, value3, name4, value4);
 
                 //---- build "tip" for insight and debugging ----
                 var tip = strAction + "-" + strTarget;

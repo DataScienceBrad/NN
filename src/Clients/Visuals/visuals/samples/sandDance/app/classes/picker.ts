@@ -66,15 +66,17 @@ module beachPartyApp
                 .addClass("chevron-background")
                 .css("margin-left", "4px")
                 .css("margin-bottom", "2px")
-                .css("vertical-align", "bottom")
-                .attach("dragstart", function (e)
+                .css("vertical-align", "bottom");
+
+            chevronW.element()
+                .addEventListener("dragstart", function (e)
                 {
                     //---- prevent drag of icon ----
                     e.preventDefault();
                 });
 
-            ddButtonW
-                .attach("click", (e) =>
+            ddButtonW.element()
+                .addEventListener("click", (e) =>
                 {
                     this.onPickerClick(e);        // //onOpenCallback(row.dataName, ddText, chevronW, e);
                 });

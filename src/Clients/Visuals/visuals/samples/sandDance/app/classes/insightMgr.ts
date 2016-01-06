@@ -889,9 +889,11 @@ module beachPartyApp
                 .css("top", "-1px");
 
             //---- hook events on this insight entry ----
-            insightW
-                .attach("click", (e) => this.onInsightEntryClick(e))
-                .attach("contextmenu", (e) => this.onInsightEntryRightClick(e));
+            var insightWElement = insightW.element();
+
+            insightWElement.addEventListener("click", (e) => this.onInsightEntryClick(e));
+
+            // insightWElement.addEventListener("contextmenu", (e) => this.onInsightEntryRightClick(e));
                 //.attach("mousedown", (e) => this.onSelectEntry(e))
 
             if (insight === this._currentInsight)

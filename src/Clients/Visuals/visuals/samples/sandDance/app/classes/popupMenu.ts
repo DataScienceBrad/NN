@@ -113,8 +113,10 @@ module beachPartyApp
                     var imgW = menuItemHolder.append("div")//img
                         //.attr("src", iconSrc)
                         .addClass(iconSrc)
-                        .addClass("popupMenuIcon")
-                        .attach("dragstart", function (e)
+                        .addClass("popupMenuIcon");
+
+                    imgW.element()
+                        .addEventListener("dragstart", function (e)
                         {
                             //---- prevent drag of icon ----
                             e.preventDefault();
@@ -149,7 +151,7 @@ module beachPartyApp
                     //tip = "[disabled] " + tip;
                 }
 
-                menuItemHolder.attach("click", (e) => 
+                menuItemHolder.element().addEventListener("click", (e) => 
                 {
                     var mi = e.target;
                     if (!vp.dom.hasClass(mi, "popupMenuItemHolder"))
@@ -176,16 +178,17 @@ module beachPartyApp
                         var menuIndex = cbMenuItem.getAttribute("_menuIndex");
                         var textIndex = cbMenuItem.getAttribute("_textIndex");
 
-                        clickCallback(e, parentW, textIndex, menuIndex);
-
-                        if (hideAfterCallback)
-                        {
-                            if (hideCallback)
+                        setTimeout(function() {
+                            clickCallback(e, parentW, textIndex, menuIndex);
+                            
+                            if (hideAfterCallback)
                             {
-                                hideCallback();
+                                if (hideCallback)
+                                {
+                                    hideCallback();
+                                }
                             }
-                        }
-
+                        }, 0);
                         //---- close is called by "hideCallback" ----
                     }
                     //else

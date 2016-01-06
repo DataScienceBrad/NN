@@ -38,19 +38,17 @@ module beachPartyApp
             this._rowSpacing = json.rowSpacing;
             this._isDialog = json.isDialog;
 
+            var rootW = vp.select(this._root);
+
             if (json.minHeight)
             {
-                vp.select(this._root)
-                    .css("min-height", json.minHeight + "px");
+                rootW.css("min-height", json.minHeight + "px");
             }
 
             if (json.minWidth)
             {
-                vp.select(this._root)
-                    .css("min-width", json.minWidth + "px");
+                rootW.css("min-width", json.minWidth + "px");
             }
-
-            var rootW = vp.select(this._root);
 
             //---- create CONTENT ----
             if (json.tabs)
@@ -105,7 +103,9 @@ module beachPartyApp
                     .addClass("tabButton")
                     .id(id)
                     .text(tab.tabName)
-                    .title(tab.tip)
+                    .title(tab.tip);
+
+                tabButtonW
                     .attach("click", (e) =>
                     {
                         this.onTabSelected(e.target);
@@ -236,8 +236,10 @@ module beachPartyApp
             var result = this.startNewTable(parentW);
 
             var tableW = result.normalTableW
-                .addClass("panelContent")
-                .attach("mousedown", (e) => this.onFocus(e));
+                .addClass("panelContent");
+
+            tableW.element()
+                .addEventListener("mousedown", (e) => this.onFocus(e));
 
             if (id)
             {
@@ -1110,14 +1112,15 @@ module beachPartyApp
                 .css("margin-left", "4px")
                 .css("margin-bottom", "2px")
                 .css("vertical-align", "bottom")
-                .attach("dragstart", function (e)
+                .element()
+                .addEventListener("dragstart", function (e)
                 {
                     //---- prevent drag of icon ----
                     e.preventDefault();
                 });
 
-            ddButton
-                .attach("click", (e) =>
+            ddButton.element()
+                .addEventListener("click", (e) =>
                 {
                     onOpenCallback(row.dataName, ddText, /*chevronW*/buttonContainer, e);//rowW
                 });

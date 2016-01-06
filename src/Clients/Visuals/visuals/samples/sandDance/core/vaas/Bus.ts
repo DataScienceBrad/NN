@@ -33,11 +33,16 @@ module sandDance {
     }
 
     export class Bus {
+        private name: string;
         private listeners: any[] = [];
+
+        constructor(name: string) {
+            this.name = name;
+        }
 
         public postMessage(data: any): void {
             this.listeners.forEach((callback) => {
-                window.setTimeout(() => {
+                setTimeout(() => {
                     callback(<BusEvent> {
                         date: new Date(),
                         data: data
@@ -51,6 +56,6 @@ module sandDance {
         }
     }
 
-    export var hostBus = new Bus();
-    export var iframeBus = new Bus();
+    export var hostBus = new Bus("hostBus");
+    export var iframeBus = new Bus("iframeBus");
 }

@@ -42,9 +42,11 @@ module beachPartyApp
             var maxWidth = AppClass.maxPanelWidth;
 
             var rootW = vp.select(".sandDance").append("div")
-                .id(name + "Panel")
+                .id(name + "Panel");
                 //.css("overflow-y", "auto")          // make each panel do more intelligent sizing of contained lists
-                .attach("focus", (e) => 
+
+            rootW.element()
+                .addEventListener("focus", (e) => 
                 {
                     this.onFocus(e);
                 });
@@ -66,20 +68,24 @@ module beachPartyApp
                     var imgPinW = btHolderW.append("div")//images/pinLeft.png
                         .addClass("clickIcon")
                         .addClass("fnPinLeft")
-                        .id("imgPin")
+                        .id("imgPin");
                         //.attr("src", fnPinLeft)
                         // .css("width", "15px")
                         // .css("height", "15px")
                         // .css("position", "relative")
                         // .css("top", "-2px")
-                        .attach("click", (e) => this.togglePin(e));
+
+                    imgPinW.element()
+                        .addEventListener("click", (e) => this.togglePin(e));
 
                     var imgCloseW = btHolderW.append("div")
                         .addClass("clickIcon")
-                        .addClass("closeButton")
+                        .addClass("closeButton");
                         //.attr("src", fnClose)
                         // .css("width", "20px")
-                        .attach("click", (e) => this.close());
+
+                    imgCloseW.element()
+                        .addEventListener("click", (e) => this.close());
 
                     this._imgPin = imgPinW[0];
                 }
@@ -89,9 +95,10 @@ module beachPartyApp
                         .addClass("clickIcon")
                         .addClass("fnClose")
                         .css("width", "20px")
-                        .css("float", "right")
-                        .attach("click", (e) => this.close());
+                        .css("float", "right");
 
+                    imgCloseW.element()
+                        .addEventListener("click", (e) => this.close());
                 }
             }
 
@@ -218,8 +225,8 @@ module beachPartyApp
 
             this._resizeElem = imgW[0];
 
-            imgW
-                .attach("mousedown", (e) =>
+            imgW.element()
+                .addEventListener("mousedown", (e) =>
                 {
                     this._ptDown = vp.events.mousePosition(e/*, this._root*/);
                     this._resizeTarget = (this._primaryControl) ? this._primaryControl.getRootElem() : this._root;
@@ -239,8 +246,10 @@ module beachPartyApp
                 //---- create TITLE container ----
                 var titleDiv = rootW.append("div")
                     .addClass("panelTitle")
-                    .css("position", "relative")
-                    .attach("mousedown", (e) =>
+                    .css("position", "relative");
+
+                titleDiv.element()
+                    .addEventListener("mousedown", (e) =>
                     {
                         this.onMouseDown(e);
                         this.onFocus(e);
@@ -270,7 +279,8 @@ module beachPartyApp
                         .css("font-size", "17px")
                         .css("border", "0px")
                         .css("padding", "0px")
-                        .attach("click", (e) =>
+                        .element()
+                        .addEventListener("click", (e) =>
                         {
                             this.close();
                         });
@@ -427,14 +437,14 @@ module beachPartyApp
         }
 
         private setEventHandlers(mousemove, mouseup, clear: boolean = false): void {
-            let sandDanceElement = vp.select(".sandDance");
+            let sandDanceElement = $(".sandDance").get(0);
 
-            sandDanceElement.detach("mousemove", mousemove);
-            sandDanceElement.detach("mouseup", mouseup);
+            sandDanceElement.removeEventListener("mousemove", mousemove);
+            sandDanceElement.removeEventListener("mouseup", mouseup);
 
             if (!clear) {
-                sandDanceElement.attach("mousemove", mousemove);
-                sandDanceElement.attach("mouseup", mouseup);
+                sandDanceElement.addEventListener("mousemove", mousemove);
+                sandDanceElement.addEventListener("mouseup", mouseup);
             }
         }
 

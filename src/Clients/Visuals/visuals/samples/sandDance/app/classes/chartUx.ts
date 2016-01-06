@@ -29,18 +29,19 @@ module beachPartyApp
             var chartUxElem = document.getElementById("chartUxDiv");
             this._chartUxElem = chartUxElem;
 
+            var sandDanceElement = $(".sandDance").get(0);
             //vp.select(chartUxElem).attach("mousedown", (e) => this.onWindowMouseDown(e));
-            vp.select(".sandDance").attach("mouseup", (e) => this.enableEngineUI(true));
+            sandDanceElement.addEventListener("mouseup", (e) => this.enableEngineUI(true));
 
             //---- MOUSE MOVE for tooltips ----
             chartUxElem.addEventListener("mousemove", (e) => this.onUxMouseMove(e));
             // vp.select(chartUxElem).attach("mousemove", (e) => this.onUxMouseMove(e));
 
             //---- KEY DOWN for keyboard commands ----
-            vp.select(".sandDance").attach("keydown", (e) => this.onKeyDown(e));
+            sandDanceElement.addEventListener("keydown", (e) => this.onKeyDown(e));
 
             //---- DBL CLICK for reset transform ----
-            vp.select(chartUxElem).attach("dblclick", (e) => this.onDblClick(e));
+            chartUxElem.addEventListener("dblclick", (e) => this.onDblClick(e));
 
             //---- MOUSE OVER for 3D circle ----
             //vp.select("#myChart").attach("mouseover", (e) => this.onMouseOver(e));

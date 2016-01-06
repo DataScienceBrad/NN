@@ -57,17 +57,22 @@ module beachPartyApp
             var tdW = rowW.append("td")
                 .addClass("chartPickerEntry")
                 .id(`chartPicker${title}`)
-                .title(tooltip)
-                .attach("click", (e) =>
-                {
+                .title(tooltip);
+                
+            tdW.element()
+                .addEventListener("click", (e) => {
                     this.onClick(e);
                 });
+                // .attach("click", (e) =>
+                // {
+                //     this.onClick(e);
+                // });
 
             tdW.append("div")
                 .addClass("chartPickerImage")
                 .attr("data-src", imgSrc)
-                //.css("width", "80px")
-                .attach("dragstart", function (e)
+                .element()
+                .addEventListener("dragstart", function (e)
                 {
                     //---- prevent drag of icon ----
                     e.preventDefault();

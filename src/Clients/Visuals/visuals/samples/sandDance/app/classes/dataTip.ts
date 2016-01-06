@@ -32,28 +32,27 @@ module beachPartyApp
             var rootW = vp.select(parentElem).append("div")
                 .addClass("dataTipContainer")
                 .css("position", "absolute")
-                .css("z-index", "999")
-                .attach("contextmenu", (e) =>
-                {
-                    this.showContextMenu(e);
-                });
+                .css("z-index", "999");
+                // .attach("contextmenu", (e) =>
+                // {
+                //     this.showContextMenu(e);
+                // });
 
             //---- create image to drag with mouse movements ----
             var imgW = rootW.append("div")
                 .addClass("dataTipDragger")
                 .addClass("fnDragDataTip")
-                .css("width", "20px")
-                .attach("mousedown", (e) => this.onMouseDown(e));
+                .css("width", "20px");
+
+            imgW.element()
+                .addEventListener("mousedown", (e) => this.onMouseDown(e));
 
             //---- create associated TEXT window ----
             var textW = rootW.append("div")
                 .addClass("dataTipText")
                 .css("position", "relative")
                 .css("bottom", "40px")                  // a space of about 20 pixels between text & img
-                .css("left", "-1px")
-                .attach("mousedown", (e) =>
-                {
-                });
+                .css("left", "-1px");
 
             this._root = rootW[0];
             this._img = imgW[0];

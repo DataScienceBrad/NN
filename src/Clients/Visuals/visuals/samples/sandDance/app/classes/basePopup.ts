@@ -16,8 +16,29 @@ module beachPartyApp
 
     export class BasePopupClass extends beachParty.DataChangerClass implements IAppControl
     {
+        private _sandDanceElement;
+
+        private get sandDanceElement() {
+            if (!this._sandDanceElement) {
+                this._sandDanceElement = vp.select(".sandDance");
+            }
+
+            return this._sandDanceElement;
+        }
+
+        private _bigBarElement;
+
+        private get bigBarElement() {
+            if (!this._bigBarElement) {
+                this._bigBarElement = vp.select("#playAndIconBar");
+            }
+
+            return this._bigBarElement;
+        }
+
         protected startPosition: PositionOfPanel;
         protected currentPosition: PositionOfPanel;
+
         _root: HTMLElement;
         _ownerElem: HTMLElement;            // not the document parent, but another popup that this popup belongs to
 
@@ -135,11 +156,23 @@ module beachPartyApp
             }
 
             if (isOwnerRoot) {
-                let sandDanceBounds = vp.select(".sandDance").getBounds(true),
-                    bigBarBounds = vp.select("#playAndIconBar").getBounds(true);
+                let sandDanceElement = this.sandDanceElement,
+                    sandDanceHTMLElement: HTMLElement = sandDanceElement.element(),
+                    bigBarElement = this.bigBarElement,
+                    sandDanceBounds = sandDanceElement.getBounds(true),
+                    bigBarBounds = bigBarElement.getBounds(true),
+                    sandDanceRect = sandDanceHTMLElement.getBoundingClientRect();
+
+                let scale = {
+                    x: sandDanceRect.width / sandDanceHTMLElement.offsetWidth,
+                    y: sandDanceRect.height / sandDanceHTMLElement.offsetHeight
+                };
 
                 x += sandDanceBounds.left;//TODO: remove this hard fix.
                 yTop += sandDanceBounds.top + bigBarBounds.bottom;
+
+                x = x / scale.x;
+                yTop = yTop / scale.y;
             }
 
             this.startPosition = {

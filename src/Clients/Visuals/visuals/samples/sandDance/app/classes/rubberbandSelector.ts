@@ -40,6 +40,9 @@ module beachPartyApp
         _onMouseUpFunc = null;
         _isSetCaptureActive = false;
 
+        private myChartElement: vp.dom.IWrapperOuter;
+        private sandDanceElement: HTMLElement;
+
         //---- turn this off until we change this to look like a context menu on touch screen, with normal menu items ----
         _isHoldEnabled = false;
 
@@ -65,7 +68,10 @@ module beachPartyApp
             rubberBand.css("pointer-events", "none");
             rubberBand[0].disabled = true;
 
+            this.myChartElement = vp.select("#myChart");
+
             this.hookEvents(false);
+            this.sandDanceElement = $(".sandDance").get(0);
         }
 
         isDragging()
@@ -118,7 +124,7 @@ module beachPartyApp
         }
 
         public getScale(): { x: number, y: number } {
-            var sandDanceElement = $(".sandDance").get(0),//vp.select(".sandDance").element(),
+            var sandDanceElement = this.sandDanceElement,//vp.select(".sandDance").element(),
                 sandDanceRect = sandDanceElement.getBoundingClientRect();
 
             return {
@@ -437,7 +443,7 @@ module beachPartyApp
 
                         //vp.utils.debug("rubberBandSelector: onMove: pt="+  ptCurrent + ", rc=" + rc); 
 
-                        var rc = vp.select("#myChart").getBounds(false);
+                        var rc = /*vp.select("#myChart")*/this.myChartElement.getBounds(false);
                         var rcBandAdj = vp.geom.createRect(rcBand.left - rc.left, rcBand.top - rc.top, rcBand.width, rcBand.height);
 
                         this.setRubberBand(rcBandAdj);
@@ -561,8 +567,8 @@ module beachPartyApp
 
                     // vp.events.setCaptureWindow(this._onMouseMoveFunc, this._onMouseUpFunc);
 
-                    vp.select(".sandDance").attach("mousemove", this._onMouseMoveFunc);
-                    vp.select(".sandDance").attach("mouseup", this._onMouseUpFunc);
+                    this.sandDanceElement.addEventListener("mousemove", this._onMouseMoveFunc);
+                    this.sandDanceElement.addEventListener("mouseup", this._onMouseUpFunc);
 
                     vp.utils.debug("rubberbandSelector: SET CAPTURE");
                     this._isSetCaptureActive = true;
