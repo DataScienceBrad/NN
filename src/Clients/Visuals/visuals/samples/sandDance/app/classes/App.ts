@@ -438,13 +438,13 @@ module beachPartyApp
                 }
 
                 //---- EVENT STATS ----
-                setInterval((e) =>
-                {
-                    var msg = "Register=" + beachParty.dcRegisterCount + ", Attach=" + vp.events.eventAttachCount;
-
-                    vp.select("#eventStats")
-                        .text(msg);
-                }, 1000);
+//                 setInterval((e) =>
+//                 {
+//                     var msg = "Register=" + beachParty.dcRegisterCount + ", Attach=" + vp.events.eventAttachCount;
+// 
+//                     vp.select("#eventStats")
+//                         .text(msg);
+//                 }, 1000);
             });
 
             this._bpsHelper.subscribe("selectionChanged", true, (msgBlock) =>

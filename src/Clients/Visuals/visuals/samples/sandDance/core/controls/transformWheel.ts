@@ -75,9 +75,9 @@ module beachParty
             vBar.attach("mousedown", (e) => this.onPartMouseDown(e, "vBar"));
 
             //---- support 2nd finger down here, for temp. wheel operation (while first finger holds wheel down) ----
-            circle.attach("pointerdown", (e) => this.onPartMouseDown(e, "circle"));
-            hBar.attach("pointerdown", (e) => this.onPartMouseDown(e, "hBar"));
-            vBar.attach("pointerdown", (e) => this.onPartMouseDown(e, "vBar"));
+            // circle.attach("pointerdown", (e) => this.onPartMouseDown(e, "circle"));
+            // hBar.attach("pointerdown", (e) => this.onPartMouseDown(e, "hBar"));
+            // vBar.attach("pointerdown", (e) => this.onPartMouseDown(e, "vBar"));
 
             circle.attach("mouseup", (e) => {this.onPartMouseUp(e, "circle");});
             hBar.attach("mouseup", (e) => this.onPartMouseUp(e, "hBar"));

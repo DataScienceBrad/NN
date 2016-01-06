@@ -33,7 +33,8 @@ module beachPartyApp
             vp.select(".sandDance").attach("mouseup", (e) => this.enableEngineUI(true));
 
             //---- MOUSE MOVE for tooltips ----
-            vp.select(chartUxElem).attach("mousemove", (e) => this.onUxMouseMove(e));
+            chartUxElem.addEventListener("mousemove", (e) => this.onUxMouseMove(e));
+            // vp.select(chartUxElem).attach("mousemove", (e) => this.onUxMouseMove(e));
 
             //---- KEY DOWN for keyboard commands ----
             vp.select(".sandDance").attach("keydown", (e) => this.onKeyDown(e));

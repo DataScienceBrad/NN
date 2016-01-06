@@ -378,26 +378,26 @@ module beachParty
             });
 
             //---- for IE ----
-            vp.events.attach(this._svgDoc, "pointerup", (e) =>
-            {
-                //alert("got pointerup");
-
-                //---- IE doesn't supply a touch point status, so we have keep our own count (bad) ----
-                if (this._ieTouchCount > 0)
-                {
-                    this._ieTouchCount--;
-                }
-
-                if (this._ieTouchCount === 0)
-                {
-                    this._isPinching = false;
-                    this.onDragChanged();
-
-                    this.setNextMsgDelay();             // prevent final accidental PAN event
-
-                    this.onMouseUpRelated();
-                }
-            });
+//             vp.events.attach(this._svgDoc, "pointerup", (e) =>
+//             {
+//                 //alert("got pointerup");
+// 
+//                 //---- IE doesn't supply a touch point status, so we have keep our own count (bad) ----
+//                 if (this._ieTouchCount > 0)
+//                 {
+//                     this._ieTouchCount--;
+//                 }
+// 
+//                 if (this._ieTouchCount === 0)
+//                 {
+//                     this._isPinching = false;
+//                     this.onDragChanged();
+// 
+//                     this.setNextMsgDelay();             // prevent final accidental PAN event
+// 
+//                     this.onMouseUpRelated();
+//                 }
+//             });
 
             this._svgDoc.onmouseleave = (e) =>
             {
@@ -405,19 +405,19 @@ module beachParty
             };
 
             //---- for IE ----
-            if (vp.utils.isIE)
-            {
-                vp.events.attach(this._svgDoc, "pointerdown", (e) =>
-                {
-                    //alert("got pointerdown event");
-
-                    vp.utils.debug("---> windowMgr.pointerdown called");
-                    this._ieTouchCount++;
-
-                    //this._view.hideToolTip();
-
-                });
-            }
+//             if (vp.utils.isIE)
+//             {
+//                 vp.events.attach(this._svgDoc, "pointerdown", (e) =>
+//                 {
+//                     //alert("got pointerdown event");
+// 
+//                     vp.utils.debug("---> windowMgr.pointerdown called");
+//                     this._ieTouchCount++;
+// 
+//                     //this._view.hideToolTip();
+// 
+//                 });
+//             }
 
             //---- history: we used to use "pointerdown" event for this, but it caused issues with browser control & non IE browers ----
             //---- MOUSEDOWN fires for TOUCH as well as MOUSE DOWN, so we use it ----

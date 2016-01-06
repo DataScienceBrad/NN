@@ -118,7 +118,7 @@ module beachPartyApp
         }
 
         public getScale(): { x: number, y: number } {
-            var sandDanceElement = vp.select(".sandDance").element(),
+            var sandDanceElement = $(".sandDance").get(0),//vp.select(".sandDance").element(),
                 sandDanceRect = sandDanceElement.getBoundingClientRect();
 
             return {

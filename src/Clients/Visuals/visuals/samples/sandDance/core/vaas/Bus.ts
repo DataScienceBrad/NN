@@ -41,8 +41,8 @@ module sandDance {
                     callback(<BusEvent> {
                         date: new Date(),
                         data: data
-                    }, 0);
-                });
+                    });
+                }, 0);
             });
         }
 
