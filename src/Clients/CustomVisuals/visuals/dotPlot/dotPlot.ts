@@ -372,11 +372,13 @@ module powerbi.visuals.samples {
             var dataView = this.dataView = options.dataViews[0];
             this.layout.viewport = options.viewport;
             this.svg.style({
-                "height": this.layout.viewportIn.height,
-                "width": this.layout.viewportIn.width,
                 "left": this.layout.margin.left,
                 "right": this.layout.margin.right,
                 "position": "relative"
+            });
+            this.svg.attr({
+                'width': this.layout.viewportIn.width,
+                'height': this.layout.viewportIn.height
             });
 
             if (this.layout.viewportInIsZero) {
