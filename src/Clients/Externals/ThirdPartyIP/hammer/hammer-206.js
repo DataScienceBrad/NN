@@ -426,6 +426,8 @@ function Input(manager, callback) {
     // smaller wrapper around the handler, for the scope and the enabled state of the manager,
     // so when disabled the input events are completely bypassed.
     this.domHandler = function(ev) {
+        // throw new Error("this.domHandler: fired");
+
         if (boolOrFn(manager.options.enable, [manager])) {
             self.handler(ev);
         }
@@ -865,8 +867,14 @@ if (window.MSPointerEvent && !window.PointerEvent) {
  * @extends Input
  */
 function PointerEventInput() {
-    this.evEl = POINTER_ELEMENT_EVENTS;
-    this.evWin = POINTER_WINDOW_EVENTS;
+    // this.evEl = POINTER_ELEMENT_EVENTS;
+    // this.evWin = POINTER_WINDOW_EVENTS;
+
+    this.evEl = MOUSE_ELEMENT_EVENTS;
+    this.evWin = MOUSE_WINDOW_EVENTS;
+
+    this.allow = true; // used by Input.TouchMouse to disable mouse events
+    this.pressed = false;
 
     Input.apply(this, arguments);
 
@@ -878,49 +886,78 @@ inherit(PointerEventInput, Input, {
      * handle mouse events
      * @param {Object} ev
      */
-    handler: function PEhandler(ev) {
-        var store = this.store;
-        var removePointer = false;
+//     handler: function PEhandler(ev) {
+//         var store = this.store;
+//         var removePointer = false;
+// 
+//         var eventTypeNormalized = ev.type.toLowerCase().replace('ms', '');
+//         var eventType = POINTER_INPUT_MAP[eventTypeNormalized];
+//         var pointerType = IE10_POINTER_TYPE_ENUM[ev.pointerType] || ev.pointerType;
+// 
+//         var isTouch = (pointerType == INPUT_TYPE_TOUCH);
+// 
+//         // get index of the event in the store
+//         var storeIndex = inArray(store, ev.pointerId, 'pointerId');
+// 
+//         // start and mouse must be down
+//         if (eventType & INPUT_START && (ev.button === 0 || isTouch)) {
+//             if (storeIndex < 0) {
+//                 store.push(ev);
+//                 storeIndex = store.length - 1;
+//             }
+//         } else if (eventType & (INPUT_END | INPUT_CANCEL)) {
+//             removePointer = true;
+//         }
+// 
+//         // it not found, so the pointer hasn't been down (so it's probably a hover)
+//         if (storeIndex < 0) {
+//             return;
+//         }
+// 
+//         // update the event in the store
+//         store[storeIndex] = ev;
+// 
+//         this.callback(this.manager, eventType, {
+//             pointers: store,
+//             changedPointers: [ev],
+//             pointerType: pointerType,
+//             srcEvent: ev
+//         });
+// 
+//         if (removePointer) {
+//             // remove from the store
+//             store.splice(storeIndex, 1);
+//         }
+//     }
+    handler: function MEhandler(ev) {
+        var eventType = MOUSE_INPUT_MAP[ev.type];
 
-        var eventTypeNormalized = ev.type.toLowerCase().replace('ms', '');
-        var eventType = POINTER_INPUT_MAP[eventTypeNormalized];
-        var pointerType = IE10_POINTER_TYPE_ENUM[ev.pointerType] || ev.pointerType;
-
-        var isTouch = (pointerType == INPUT_TYPE_TOUCH);
-
-        // get index of the event in the store
-        var storeIndex = inArray(store, ev.pointerId, 'pointerId');
-
-        // start and mouse must be down
-        if (eventType & INPUT_START && (ev.button === 0 || isTouch)) {
-            if (storeIndex < 0) {
-                store.push(ev);
-                storeIndex = store.length - 1;
-            }
-        } else if (eventType & (INPUT_END | INPUT_CANCEL)) {
-            removePointer = true;
+        // on start we want to have the left mouse button down
+        if (eventType & INPUT_START && ev.button === 0) {
+            this.pressed = true;
         }
 
-        // it not found, so the pointer hasn't been down (so it's probably a hover)
-        if (storeIndex < 0) {
+        if (eventType & INPUT_MOVE && ev.which !== 1) {
+            eventType = INPUT_END;
+        }
+
+        // mouse must be down, and mouse events are allowed (see the TouchMouse input)
+        if (!this.pressed || !this.allow) {
             return;
         }
 
-        // update the event in the store
-        store[storeIndex] = ev;
+        if (eventType & INPUT_END) {
+            this.pressed = false;
+        }
 
         this.callback(this.manager, eventType, {
-            pointers: store,
+            pointers: [ev],
             changedPointers: [ev],
-            pointerType: pointerType,
+            pointerType: INPUT_TYPE_MOUSE,
             srcEvent: ev
         });
-
-        if (removePointer) {
-            // remove from the store
-            store.splice(storeIndex, 1);
-        }
     }
+
 });
 
 var SINGLE_TOUCH_INPUT_MAP = {
