@@ -1,6 +1,8 @@
 //---- NOTE: this file should be directly in the project folder (NOT under "scripts") ----
 //---- NOTE #2: this file does NOT need to be referenced by each *.ts file; it will be implicitly referenced by VS/TSC.
 
+/// <reference path="../../../../../Typedefs/jquery/jquery.d.ts" />
+
 /// <reference path="../../../../../Typedefs/hammer/hammer.d.ts" />
 /// <reference path="../../../../../Typedefs/vuePlotCore/vuePlotCore.d.ts" />
 

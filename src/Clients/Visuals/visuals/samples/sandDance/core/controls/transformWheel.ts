@@ -69,19 +69,23 @@ module beachParty
 
             this._hBar = hBar[0];
 
+            let circleElement = circle.element(),
+                hBarElement = hBar.element(),
+                vBarElement = vBar.element();
+
             //---- hook events ----
-            circle.attach("mousedown", (e) => this.onPartMouseDown(e, "circle"));
-            hBar.attach("mousedown", (e) => this.onPartMouseDown(e, "hBar"));
-            vBar.attach("mousedown", (e) => this.onPartMouseDown(e, "vBar"));
+            /*circle.attach*/circleElement.addEventListener("mousedown", (e) => this.onPartMouseDown(e, "circle"));
+            /*hBar.attach*/hBarElement.addEventListener("mousedown", (e) => this.onPartMouseDown(e, "hBar"));
+            /*vBar.attach*/vBarElement.addEventListener("mousedown", (e) => this.onPartMouseDown(e, "vBar"));
 
             //---- support 2nd finger down here, for temp. wheel operation (while first finger holds wheel down) ----
             // circle.attach("pointerdown", (e) => this.onPartMouseDown(e, "circle"));
             // hBar.attach("pointerdown", (e) => this.onPartMouseDown(e, "hBar"));
             // vBar.attach("pointerdown", (e) => this.onPartMouseDown(e, "vBar"));
 
-            circle.attach("mouseup", (e) => {this.onPartMouseUp(e, "circle");});
-            hBar.attach("mouseup", (e) => this.onPartMouseUp(e, "hBar"));
-            vBar.attach("mouseup", (e) => this.onPartMouseUp(e, "vBar"));
+            /*circle.attach*/circleElement.addEventListener("mouseup", (e) => {this.onPartMouseUp(e, "circle");});
+            /*hBar.attach*/hBarElement.addEventListener("mouseup", (e) => this.onPartMouseUp(e, "hBar"));
+            /*vBar.attach*/vBarElement.addEventListener("mouseup", (e) => this.onPartMouseUp(e, "vBar"));
 
             this.setTooltip(true);
         }

@@ -166,7 +166,6 @@ module beachParty
         createAxisData(scale: vp.scales.baseScale, attr: glUtils.GlAttributeClass, rangeMin: number, rangeMax: number)
         {
             /// CAUTION: "scale" was built in world space, but rangeMin/rangeMax are in screen pixels.
-            
             //---- todo: put a real, user-controllable value here ----
             var tickCount = 9;      // scale.getActualBreaks().length;
 
@@ -416,7 +415,7 @@ module beachParty
 
                     bottomAxis
                         .isTickBoxesVisible(showTickBoxes)
-                        .onShade((element, record, index, isNew, lastIndex) =>
+                        .onShade((element: HTMLElement, record, index, isNew, lastIndex) =>
                         {
                             if (index === 0)
                             {
@@ -425,10 +424,19 @@ module beachParty
 
                             if (areBottomLabelsClickable && isNew)
                             {
-                                if (vp.dom.hasClass(element, "vpxAxisLabel"))
+                                let elementItem = $(element);
+
+                                if (elementItem.hasClass("vpxAxisLabel"))
                                 {
-                                    vp.select(element) 
-                                        .attach("click", (e) => this.doSearch(e, "X"))
+                                    element.addEventListener("click", (e) => this.doSearch(e, "X"));
+
+                                    // vp.select(element) 
+                                    //     .attach("click", (e) => this.doSearch(e, "X"))
+                                    //     .css("cursor", "pointer")
+                                    //     .attr("simpleHighlight", "true")
+                                    //     .addClass("clickableAxisLabel");
+
+                                    elementItem
                                         .css("cursor", "pointer")
                                         .attr("simpleHighlight", "true")
                                         .addClass("clickableAxisLabel");
@@ -436,7 +444,7 @@ module beachParty
                                     xLast = utils.prepElementForSearch(element, xCol, scales.x, xBinResults, index, xLast, xIsCat, record,
                                         "label");
                                 }
-                                else if (vp.dom.hasClass(element, "vpxAxisTickBox"))
+                                else if (elementItem.hasClass("vpxAxisTickBox"))
                                 { 
                                     var tickBarTooltip = null;
 
@@ -456,9 +464,13 @@ module beachParty
                                         }
                                     }
 
-                                    vp.select(element)
-                                        .attach("click", (e) => this.doSearch(e, "X"))
-                                        .title(tickBarTooltip);
+                                    element.addEventListener("click", (e) => this.doSearch(e, "X"));
+
+                                    elementItem.attr("title", tickBarTooltip);
+
+                                    // vp.select(element)
+                                    //     .attach("click", (e) => this.doSearch(e, "X"))
+                                    //     .title(tickBarTooltip);
 
                                     xLast = utils.prepElementForSearch(element, xCol, scales.x, xBinResults, index, xLast, xIsCat, record,
                                         "tickBox");

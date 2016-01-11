@@ -995,23 +995,23 @@ module beachPartyApp
         {
             var value = (isDisabled) ? "true" : "false";
 
-            vp.select("#bb" + baseName).attr("data-disabled", value);
-            vp.select("#bb" + baseName + "Value").attr("data-disabled", value);
+            $("#bb" + baseName).attr("data-disabled", value);
+            $("#bb" + baseName + "Value").attr("data-disabled", value);
 
             //---- hide chevron if disabled ----
-            vp.select("#bb" + baseName + "Chevron").css("display", (isDisabled) ? "none" : "");
+            $("#bb" + baseName + "Chevron").css("display", (isDisabled) ? "none" : "");
         }
 
         disableIconButton(baseName: string, isDisabled: boolean)
         {
             var value = (isDisabled) ? "true" : "false";
 
-            vp.select("#" + baseName + "Button").attr("data-disabled", value);
-            vp.select("#" + baseName + "Img").attr("data-disabled", value);
-            vp.select("#" + baseName + "Text").attr("data-disabled", value);
+            $("#" + baseName + "Button").attr("data-disabled", value);
+            $("#" + baseName + "Img").attr("data-disabled", value);
+            $("#" + baseName + "Text").attr("data-disabled", value);
 
             //---- hide chevron if disabled ----
-            vp.select("#" + baseName + "Chevron").css("display", (isDisabled) ? "none" : "");
+            $("#" + baseName + "Chevron").css("display", (isDisabled) ? "none" : "");
         }
 
         onSelectClick()

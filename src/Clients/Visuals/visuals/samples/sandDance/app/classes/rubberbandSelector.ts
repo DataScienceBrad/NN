@@ -88,7 +88,11 @@ module beachPartyApp
         hookEvents(canvasChanged: boolean)
         {
             //---- always process mouse up, so we can track right mouse button up/down state ----
-            vp.select("#chartUxDiv").attach("mouseup", (e) => this.onMouseUp(e));
+            // vp.select("#chartUxDiv").attach("mouseup", (e) => this.onMouseUp(e));
+            document
+                .getElementById("chartUxDiv")
+                .addEventListener("mouseup", (e) => this.onMouseUp(e));
+
 
             this._canvasChanged = canvasChanged;
 
@@ -97,9 +101,11 @@ module beachPartyApp
             {
                 //---- hook MOUSE DOWN ----
                 canvas.onmousedown = (e) => this.onRubberDown(e);
-                vp.select(canvas).attach("touchstart", (e) => this.onRubberDown(e));
+                
+                canvas.addEventListener("touchstart", (e) => this.onRubberDown(e));
+                // vp.select(canvas).attach("touchstart", (e) => this.onRubberDown(e));
 
-                vp.select(canvas).attach("keydown", (e) =>
+                /*vp.select(canvas).attach*/canvas.addEventListener("keydown", (e) =>
                 {
                     if (e.keyCode === vp.events.keyCodes.escape)
                     {

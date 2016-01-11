@@ -968,7 +968,7 @@ module beachParty
             vp.utils.debug("buildNonLayoutStuff: this._usingPrimaryBuffers=" + this._usingPrimaryBuffers);
 
             //---- clear shapes in our svg group (for facet borders, axes, etc) ----
-            vp.select(this._svgChartGroup)
+            vp.select(this._svgChartGroup)//TODO: important!
                 .clear();
 
             this.buildTexture();
@@ -3619,8 +3619,11 @@ module beachParty
                 top += 10;
             }
 
+            let canvas3dElement = $(canvas3dElem);
+
             //---- set bounds of CANVAS3D ----
-            vp.select(canvas3dElem)
+            // vp.select(canvas3dElem)
+            canvas3dElement
                 .css("left", left + "px")
                 .css("top", top + "px")
                 .attr("width", width)
@@ -3629,27 +3632,41 @@ module beachParty
             if (usingFacets)
             {
                 //---- hide big box ----
-                vp.select(canvas3dElem)
+                // vp.select(canvas3dElem)
+                canvas3dElement
                     .css("border", "0px solid #555");
             }
             else if (this._hideAxes)
             {
                 //---- not using axes - show full big bix ----
-                vp.select(canvas3dElem)
+                // vp.select(canvas3dElem)
+                canvas3dElement
                     .css("border", "1px solid #555");
             }
             else
             {
                 //---- using axes - show upper right ----
-                vp.select(canvas3dElem)
-                    .css("border-left", "0px solid #555")
-                    .css("border-bottom", "0px solid #555")
-                    .css("border-top", "1px solid #555")
-                    .css("border-right", "1px solid #555");
+                // vp.select(canvas3dElem)
+                //     .css("border-left", "0px solid #555")
+                //     .css("border-bottom", "0px solid #555")
+                //     .css("border-top", "1px solid #555")
+                //     .css("border-right", "1px solid #555");
+
+                canvas3dElement
+                .css({
+                    "border-left": "0px solid #555",
+                    "border-bottom": "0px solid #555",
+                    "border-top": "1px solid #555",
+                    "border-right": "1px solid #555"
+                });
+                    // .css("border-left", "0px solid #555")
+                    // .css("border-bottom", "0px solid #555")
+                    // .css("border-top", "1px solid #555")
+                    // .css("border-right", "1px solid #555");
             }
 
             //---- set bounds of CANVAS2D ----
-            vp.select(canvas2dElem)
+            /*vp.select*/$(canvas2dElem)
                 .css("left", left + "px")
                 .css("top", top + "px")
                 .attr("width", width)
