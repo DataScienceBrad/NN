@@ -797,37 +797,8 @@ module beachPartyApp
             this._bpsHelper.setCmdId(value);
         }
 
-        hookLocalStorageChanges()
-        {
-            //---- IE bug workaround - listen for storage events from OUTER HTML (not IFRAME) ----
-//             if (vp.utils.isIE)
-//             {
-//                 vp.utils.debug("hookLocalStorageChanges");
-// 
-//                 vp.events.attach(window, "storage", (e) =>
-//                 {
-//                     if (e.key !== "appSettings")
-//                     {
-//                         var process = true;
-//                         if (e.key === "dummy")
-//                         {
-//                             var value = localStorage[e.key];
-//                             if (value === this._sessionId)
-//                             {
-//                                 process = false;
-//                             }
-//                         }
-// 
-//                         if (process)
-//                         {
-//                             //vp.utils.debug("******* shareMgr.changeFunc: e.key=" + e.key);
-//                             //alert("storage event");
-// 
-//                             this._bpsHelper.onLocalStorageChange();
-//                         }
-//                     }
-//                 });
-//             }
+        hookLocalStorageChanges(){
+            
         }
 
         onShowInsightBarChanged()

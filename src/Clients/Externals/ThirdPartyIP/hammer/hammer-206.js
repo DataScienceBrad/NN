@@ -448,8 +448,8 @@ Input.prototype = {
     init: function() {
         this.evEl && addEventListeners(this.element, this.evEl, this.domHandler);
         this.evTarget && addEventListeners(this.target, this.evTarget, this.domHandler);
-        this.evWin && addEventListeners(this.element, this.evWin, this.domHandler);
         // this.evWin && addEventListeners(getWindowForElement(this.element), this.evWin, this.domHandler);
+        this.evWin && addEventListeners(this.element, this.evWin, this.domHandler);
     },
 
     /**
