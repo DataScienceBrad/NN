@@ -3874,9 +3874,9 @@ module beachPartyApp
             //---- only log when past first data load and outside of a "load insight" operation ----
             if (this._isLoggingEnabled)
             {
-                var sessionId = this._machineId + "-" + AppClass.buildId + "-" + this._sessionId;
-                var strGesture = Gesture[gesture];
-                var strElementType = ElementType[elementType];
+                // var sessionId = this._machineId + "-" + AppClass.buildId + "-" + this._sessionId;
+                // var strGesture = Gesture[gesture];
+                // var strElementType = ElementType[elementType];
                 var strAction = Action[action];
                 var strTarget = Target[target];
 

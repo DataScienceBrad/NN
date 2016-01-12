@@ -93,7 +93,6 @@ module beachPartyApp
                 .getElementById("chartUxDiv")
                 .addEventListener("mouseup", (e) => this.onMouseUp(e));
 
-
             this._canvasChanged = canvasChanged;
 
             var canvas = this._dragSelectCanvas;

@@ -94,12 +94,12 @@ module beachParty
 
         public setSelection(selectedPrimaryKeys: string[])
         {
-            var sd = new ShareStateData(this._sessionId, this._changeNumber++, this._fn, selectedPrimaryKeys);
-            var jsonStr = JSON.stringify(sd);
-
-            // localStorage.setItem(this._itemId, jsonStr);
-
-            vp.utils.debug("shareMgr.setSelection: fn=" + this._fn);
+//             var sd = new ShareStateData(this._sessionId, this._changeNumber++, this._fn, selectedPrimaryKeys);
+//             // var jsonStr = JSON.stringify(sd);
+// 
+//             // localStorage.setItem(this._itemId, jsonStr);
+// 
+//             vp.utils.debug("shareMgr.setSelection: fn=" + this._fn);
         }
     }
 
