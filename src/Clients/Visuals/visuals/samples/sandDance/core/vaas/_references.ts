@@ -4,6 +4,9 @@
 
 //---- this list of TS files is needed to control the order the files in which the files and processed and loaded ----
 
+/// <reference path="../../../../../../Typedefs/jquery/jquery.d.ts" />
+/// <reference path="../../../../../../Typedefs/d3/d3.d.ts" />
+
 /// <reference path="Bus.ts" />
 /// <reference path="settingsType.ts" />
 

@@ -327,6 +327,8 @@ module beachParty
                 var xBinResults = (scales.x) ? scales.x._binResults : null;
                 var yBinResults = (scales.y) ? scales.y._binResults : null;
 
+                var showTickBoxes = true;
+
                 if (dc.nvData.y)
                 {
                     var yCol = (dc.yCalcName) ? dc.yCalcName: dc.nvData.y.colName;
@@ -335,7 +337,6 @@ module beachParty
 
                     var yLast = null;
 
-                    var showTickBoxes = true;
                     this._yTickBoxElements = [];
 
                     //--- to minimize movement when possible ----
@@ -345,7 +346,7 @@ module beachParty
                     leftAxis
                         .minWidth(leftMinWidth)
                         .isTickBoxesVisible(showTickBoxes) 
-                        .onShade((element, record, index, isNew) =>
+                        .onShade((element: HTMLElement, record, index, isNew) =>
                         {
                             if (index === 0) 
                             {
@@ -354,18 +355,21 @@ module beachParty
 
                             if (areLeftLabelsClickable && isNew)
                             {
-                                if (vp.dom.hasClass(element, "vpxAxisLabel"))
+                                var elementItem: D3.Selection = d3.select(element);
+
+                                if (elementItem.classed("vpxAxisLabel"))
                                 {
-                                    vp.select(element)
-                                        .attach("click", (e) => this.doSearch(e, "Y"))
-                                        .css("cursor", "pointer")
+                                    element.addEventListener("click", (e) => this.doSearch(e, "Y"));
+
+                                    elementItem
+                                        .style("cursor", "pointer")
                                         .attr("simpleHighlight", "true")
-                                        .addClass("clickableAxisLabel");
+                                        .classed("clickableAxisLabel", true);
 
                                     yLast = utils.prepElementForSearch(element, yCol, scales.y, yBinResults, index, yLast, yIsCat, record,
                                         "label");
                                 }
-                                else if (vp.dom.hasClass(element, "vpxAxisTickBox"))
+                                else if (elementItem.classed("vpxAxisTickBox"))
                                 {
                                     var tickBarTooltip = null;
 
@@ -385,9 +389,11 @@ module beachParty
                                         }
                                     }
 
-                                    vp.select(element)
-                                        .attach("click", (e) => this.doSearch(e, "Y"))
-                                        .title(tickBarTooltip);
+                                    element.addEventListener("click", (e) => this.doSearch(e, "Y"));
+
+                                    elementItem
+                                        .append("title")
+                                        .text(tickBarTooltip);
 
                                     yLast = utils.prepElementForSearch(element, yCol, scales.y, yBinResults, index, yLast, yIsCat, record,
                                         "tickBox");
@@ -424,27 +430,21 @@ module beachParty
 
                             if (areBottomLabelsClickable && isNew)
                             {
-                                let elementItem = $(element);
+                                let elementItem: D3.Selection = d3.select(element);
 
-                                if (elementItem.hasClass("vpxAxisLabel"))
+                                if (elementItem.classed("vpxAxisLabel"))
                                 {
                                     element.addEventListener("click", (e) => this.doSearch(e, "X"));
 
-                                    // vp.select(element) 
-                                    //     .attach("click", (e) => this.doSearch(e, "X"))
-                                    //     .css("cursor", "pointer")
-                                    //     .attr("simpleHighlight", "true")
-                                    //     .addClass("clickableAxisLabel");
-
                                     elementItem
-                                        .css("cursor", "pointer")
+                                        .style("cursor", "pointer")
                                         .attr("simpleHighlight", "true")
-                                        .addClass("clickableAxisLabel");
+                                        .classed("clickableAxisLabel", true);
 
                                     xLast = utils.prepElementForSearch(element, xCol, scales.x, xBinResults, index, xLast, xIsCat, record,
                                         "label");
                                 }
-                                else if (elementItem.hasClass("vpxAxisTickBox"))
+                                else if (elementItem.classed("vpxAxisTickBox"))
                                 { 
                                     var tickBarTooltip = null;
 
@@ -466,11 +466,9 @@ module beachParty
 
                                     element.addEventListener("click", (e) => this.doSearch(e, "X"));
 
-                                    elementItem.attr("title", tickBarTooltip);
-
-                                    // vp.select(element)
-                                    //     .attach("click", (e) => this.doSearch(e, "X"))
-                                    //     .title(tickBarTooltip);
+                                    elementItem
+                                        .append("title")
+                                        .text(tickBarTooltip);
 
                                     xLast = utils.prepElementForSearch(element, xCol, scales.x, xBinResults, index, xLast, xIsCat, record,
                                         "tickBox");
