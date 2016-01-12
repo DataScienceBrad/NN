@@ -24,7 +24,7 @@ module beachPartyApp
 
             var rootW = vp.select(document.createElement("div"))
                 .attr("id", id)
-                .css("position", "absolute")
+                // .css("position", "absolute")
                 .addClass("popupMenu");
 
             //---- holder of menu items ----

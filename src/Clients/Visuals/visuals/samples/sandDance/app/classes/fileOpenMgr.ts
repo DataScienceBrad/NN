@@ -269,7 +269,7 @@ module beachPartyApp
 
             AppClass.instance.logAction(Gesture.click, e.target.id, ElementType.button, Action.open, Target.filePanel, false);
 
-            this.openFileOpenPanel();
+            // this.openFileOpenPanel();
         }
 
         setLocalFileType(fn: string)

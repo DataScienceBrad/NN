@@ -83,20 +83,22 @@ module beachPartyApp
         {
             this.hide();
 
-            var pickerElem = this.getRootElem();
-            var rcPicker = vp.select(pickerElem).getBounds(true);
+            var rc = (<HTMLElement> document.getElementsByClassName("sandDance")[0]).getBoundingClientRect();
 
-            if (right !== undefined)
-            {
-                left = right - rcPicker.width;
-            }
+//             var pickerElem = this.getRootElem();
+//             var rcPicker = vp.select(pickerElem).getBounds(true);
+// 
+//             if (right !== undefined)
+//             {
+//                 left = right - rcPicker.width;
+//             }
+// 
+//             if (bottom !== undefined)
+//             {
+//                 top = bottom - rcPicker.height;
+//             }
 
-            if (bottom !== undefined)
-            {
-                top = bottom - rcPicker.height;
-            }
-
-            this.openWithoutOverlap(left, top);
+            this.openWithoutOverlap(left - rc.left, top - rc.top);
         }
 
         openWithoutPosition(): void {
@@ -155,25 +157,25 @@ module beachPartyApp
                 }
             }
 
-            if (isOwnerRoot) {
-                let sandDanceElement = this.sandDanceElement,
-                    sandDanceHTMLElement: HTMLElement = sandDanceElement.element(),
-                    bigBarElement = this.bigBarElement,
-                    sandDanceBounds = sandDanceElement.getBounds(true),
-                    bigBarBounds = bigBarElement.getBounds(true),
-                    sandDanceRect = sandDanceHTMLElement.getBoundingClientRect();
-
-                let scale = {
-                    x: sandDanceRect.width / sandDanceHTMLElement.offsetWidth,
-                    y: sandDanceRect.height / sandDanceHTMLElement.offsetHeight
-                };
-
-                x += sandDanceBounds.left;//TODO: remove this hard fix.
-                yTop += sandDanceBounds.top + bigBarBounds.bottom;
-
-                x = x / scale.x;
-                yTop = yTop / scale.y;
-            }
+//             if (isOwnerRoot) {
+//                 let sandDanceElement = this.sandDanceElement,
+//                     sandDanceHTMLElement: HTMLElement = sandDanceElement.element(),
+//                     bigBarElement = this.bigBarElement,
+//                     sandDanceBounds = sandDanceElement.getBounds(true),
+//                     bigBarBounds = bigBarElement.getBounds(true),
+//                     sandDanceRect = sandDanceHTMLElement.getBoundingClientRect();
+// 
+//                 let scale = {
+//                     x: sandDanceRect.width / sandDanceHTMLElement.offsetWidth,
+//                     y: sandDanceRect.height / sandDanceHTMLElement.offsetHeight
+//                 };
+// 
+//                 x += sandDanceBounds.left;//TODO: remove this hard fix.
+//                 yTop += sandDanceBounds.top + bigBarBounds.bottom;
+// 
+//                 x = x / scale.x;
+//                 yTop = yTop / scale.y;
+//             }
 
             this.startPosition = {
                 top: yTop,

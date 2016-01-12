@@ -62,8 +62,9 @@ module beachPartyApp
 
                 if (addAutoClose)
                 {
-                    var btHolderW = rootW.append("div")
-                        .css("float", "right");
+                    var btHolderW = rootW
+                        .append("div")
+                        .addClass("top-right-control");
 
                     var imgPinW = btHolderW.append("div")//images/pinLeft.png
                         .addClass("clickIcon")
@@ -102,9 +103,9 @@ module beachPartyApp
                 }
             }
 
-            rootW
-                .css("max-height", maxHeight + "px")
-                .css("max-width", maxWidth + "px");
+            // rootW
+            //     .css("max-height", maxHeight + "px")
+            //     .css("max-width", maxWidth + "px");
 
             if (width !== undefined)
             {
@@ -290,8 +291,8 @@ module beachPartyApp
 
         open(left?: number, top?: number, right?: number, bottom?: number)
         {
-            var rootW = vp.select(this._root)
-                .css("display", "block");
+            var rootW = vp.select(this._root).css("display", "block");
+            var rc = (<HTMLElement> document.getElementsByClassName("sandDance")[0]).getBoundingClientRect();
 
             if (arguments.length === 0)
             {
@@ -311,7 +312,7 @@ module beachPartyApp
                     top = bottom - rootW.height();
                 }
 
-                this.openWithoutOverlap(left, top);
+                this.openWithoutOverlap(left - rc.left, top - rc.top);
             }
         }
 

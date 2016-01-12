@@ -11,7 +11,7 @@ module sandDance {
                 {
                     tabName: "Column", tip: "Specifies which column is used for color mapping", rows:
                     [
-                        { colPickerList: "", tip: "Sets column used to map color", dataName: "colorColumn", includeNone: true, width: 289 },
+                        { colPickerList: "", tip: "Sets column used to map color", dataName: "colorColumn", includeNone: true/*, width: 289*/ },
                     ]
                 },
                 {

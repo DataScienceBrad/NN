@@ -8,6 +8,7 @@
     stroke: #fff;
     fill: #fff;
     overflow: hidden;
+    position: relative;
 
     .canvas {
         position: absolute;
@@ -706,6 +707,7 @@
         display: inline-block;
         background: rgb(56, 56, 56);
         z-index: 1005;
+        overflow: auto;
     }
 
     .popupPanel {
@@ -730,6 +732,7 @@
         display: inline-block;
         background: black;
         z-index: 1005;
+        overflow: auto;
     }
 
     .panelSeparator {
@@ -752,6 +755,10 @@
 
     .panelContent {
         padding: 12px 6px 0;
+        display: block;
+        // overflow: auto;
+        max-height: 172px;
+        min-width: 130px;
     }
 
     .panelLink:link {
@@ -780,6 +787,7 @@
         background: none;
         opacity: 0.85;
         padding: 4px;
+        max-width: 150px;
     }
 
     .panelTextArea {
@@ -1218,14 +1226,16 @@
     }
 
     .chartPicker {
-        padding: 3px;
+        padding: 1px;
 
         .chartPickerImage {
-            @backgroundWidth: 50px;
-            @backgroundHeight: 50px;
+            @backgroundWidth: 35px;
+            @backgroundHeight: 35px;
             width: @backgroundWidth;
             height: @backgroundHeight;
             background-size: @backgroundWidth @backgroundHeight;
+
+            margin: 0px auto;
         }
 
         #chartPickerScatter .chartPickerImage {
@@ -1270,7 +1280,7 @@
     }
 
     .chartPickerEntry {
-        padding: 6px;
+        padding: 3px;
         color: white;
         cursor: pointer;
         border: 1px solid none;
@@ -1322,6 +1332,13 @@
     .insightNotesSpan {
         color: white;
         margin: 0;
+    }
+
+    .top-right-control {
+        position: absolute;
+        right: 0;
+        z-index: 1;
+        
     }
 
     .panelResizer {}
@@ -1523,6 +1540,7 @@
         z-index: 2001;
         border-top: 1px solid #aaa;
         border-bottom: 1px solid #aaa;
+        position: absolute;
     }
     /*---- POPUP MENU ITEM ----*/
     .popupMenuItemHolder {
@@ -1838,7 +1856,7 @@
     #rightPanel {
         border: 0 solid green;
         width: 160px;
-        right: 20px;
+        right: 5px;
         top: 2px;
         position: absolute;
         background: none;
@@ -1851,7 +1869,7 @@
     #bottomPanel {
         position: absolute;
         border: 0 solid red;
-        bottom: 32px;
+        bottom: 7px;
         height: 60px;
 
         #xStuff {

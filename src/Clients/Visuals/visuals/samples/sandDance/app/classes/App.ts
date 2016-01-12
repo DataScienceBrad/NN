@@ -16,8 +16,8 @@ module beachPartyApp
         static defaultOpacity = .8;
         static maxCategoryBins = 50;
         static defaultNumericBins = 9;
-        static maxPanelHeight = .65 * window.innerHeight;
-        static maxPanelWidth = .75 * window.innerWidth;
+        static maxPanelHeight = .85 * window.innerHeight;
+        static maxPanelWidth = .9 * window.innerWidth;
         static nextSnapShotNum = 1;
 
         public data: any;
@@ -1025,12 +1025,13 @@ module beachPartyApp
 
             if (picker)
             {
-                var rc = vp.select("#selectButton").getBounds(true);
-                let sandDanceBounds = vp.select(".sandDance").getBounds(true),
-                    bigBarBounds = vp.select("#playAndIconBar").getBounds(true);
-
-                rc.left -= sandDanceBounds.left;//TODO: remove this hard fix.
-                rc.bottom -= sandDanceBounds.top + bigBarBounds.bottom;
+//                 var rc = vp.select("#selectButton").getBounds(true);
+//                 let sandDanceBounds = vp.select(".sandDance").getBounds(true),
+//                     bigBarBounds = vp.select("#playAndIconBar").getBounds(true);
+// 
+//                 rc.left -= sandDanceBounds.left;//TODO: remove this hard fix.
+//                 rc.bottom -= sandDanceBounds.top + bigBarBounds.bottom;
+                var rc = document.getElementById("selectButton").getBoundingClientRect();
 
                 picker.show(rc.left, rc.bottom);
             }
@@ -1423,24 +1424,24 @@ module beachPartyApp
 
             //---- CHART OPTIONS ----
             this.addBigBarEntry(trW, "bbChart", "Chart Options", "Open the Chart Options panel", (e) => this.onChartOptionsClick(e), true, true);
-
-            //---- SPAVER ----
-            this.addBigBarSpacer(trW);
-
-            //---- SPAVER ----
-            this.addBigBarSpacer(trW);
-
-            //---- SPAVER ----
-            this.addBigBarSpacer(trW);
-
-            //---- SPAVER ----
-            this.addBigBarSpacer(trW);
-
-            //---- SPAVER ----
-            this.addBigBarSpacer(trW);
-
-            //---- SPAVER ----
-            this.addBigBarSpacer(trW);
+// 
+//             //---- SPAVER ----
+//             this.addBigBarSpacer(trW);
+// 
+//             //---- SPAVER ----
+//             this.addBigBarSpacer(trW);
+// 
+//             //---- SPAVER ----
+//             this.addBigBarSpacer(trW);
+// 
+//             //---- SPAVER ----
+//             this.addBigBarSpacer(trW);
+// 
+//             //---- SPAVER ----
+//             this.addBigBarSpacer(trW);
+// 
+//             //---- SPAVER ----
+//             this.addBigBarSpacer(trW);
         }
 
         onSelectionClick(e)
@@ -3956,7 +3957,7 @@ module beachPartyApp
 
         openAppPanel(e)
         {
-            this._appPanel = buildJsonPanel("btSettings", settings, "appSettings", true, 0, 0, undefined, undefined);
+            this._appPanel = buildJsonPanel("btSettings", settings, "appSettings", true, 0, 0, undefined, undefined, undefined, undefined, undefined, undefined, undefined, true);
 
             this._appPanel.registerForChange("close", (e) =>
             {
@@ -4006,7 +4007,8 @@ module beachPartyApp
 
         openSortPanel()
         {
-            var rc = vp.select("#bbSort").getBounds(true);
+            // var rc = vp.select("#bbSort").getBounds(true);
+            var rc = document.getElementById("bbSort").getBoundingClientRect();
 
             this._sortPanel = buildJsonPanel("bbSort", this, "sorting", true, rc.left, rc.bottom, undefined, undefined,
             undefined, undefined, undefined, true);
@@ -4251,7 +4253,7 @@ module beachPartyApp
             var left = rc.left;
             var top = rc.bottom;
 
-            var detailsPanel = buildJsonPanel(null, this, "details", true, left, top, undefined, undefined);
+            var detailsPanel = buildJsonPanel(null, this, "details", true, left, top, undefined, undefined, undefined, undefined, undefined, undefined, undefined, true);
             detailsPanel.applyAppPanelOpacity();
             this._detailsPanel = detailsPanel;
 
@@ -4601,7 +4603,10 @@ module beachPartyApp
             {
                 picker.changeRootClass("popupPanel");
 
-                var rc = vp.select("#bbSum").getBounds(true);
+                // var rc = vp.select("#bbSum").getBounds(true);
+                
+                var rc = document.getElementById("bbSum").getBoundingClientRect();
+                
                 picker.show(rc.left, rc.bottom);
             }
         }
@@ -4647,7 +4652,8 @@ module beachPartyApp
         /** Show CHART panel. */
         openChartPanelCore()
         {
-            var rc = vp.select("#bbChart").getBounds(true);
+            // var rc = vp.select("#bbChart").getBounds(true);
+            var rc = document.getElementById("bbChart").getBoundingClientRect();
 
             var chartPanel = buildJsonPanel("bbChart", settings, "chartSettings", true, rc.left, rc.bottom,
                 undefined, undefined, undefined, undefined, undefined, true);
@@ -4711,12 +4717,13 @@ module beachPartyApp
         {
             var x2 = undefined;
             var y2 = undefined;
-            var x = undefined;
-            var y = undefined;
+            var x: number = undefined;
+            var y: number = undefined;
 
             if (isFromLegend)
             {
-                var rc = vp.select("#" + legendButtonName).getBounds(true);
+                // var rc = vp.select("#" + legendButtonName).getBounds(true);
+                var rc = document.getElementById(legendButtonName).getBoundingClientRect();
 
                 if (legendButtonName === "yButton")
                 {
@@ -4736,7 +4743,9 @@ module beachPartyApp
             }
             else
             {
-                var rc = vp.select("#" + bigButtonName).getBounds(true);
+                // var rc = vp.select("#" + bigButtonName).getBounds(true);
+                var rc = document.getElementById(bigButtonName).getBoundingClientRect();
+
                 var x = rc.left;
                 var y = rc.bottom;
             }
@@ -4769,7 +4778,8 @@ module beachPartyApp
         /** Show facet panel. */
         openFacetPanelCore()
         {
-            var rc = vp.select("#bbFacet").getBounds(true);
+            // var rc = vp.select("#bbFacet").getBounds(true);
+            var rc = document.getElementById("bbFacet").getBoundingClientRect();
 
             var facetPanel = buildJsonPanel("bbFacet", this, "facet", true, rc.left, rc.bottom,
             undefined, undefined, undefined, undefined, undefined, true);
@@ -4804,13 +4814,17 @@ module beachPartyApp
 
             if (isFromLegend)
             {
-                var rc = vp.select("#colorLegendTitle").getBounds(true);
+                // var rc = vp.select("#colorLegendTitle").getBounds(true);
+                var rc = document.getElementById("colorLegendTitle").getBoundingClientRect();
+
                 x2 = rc.left;
                 y = rc.top;
             }
             else
             {
-                var rc = vp.select("#bbColor").getBounds(true);
+                // var rc = vp.select("#bbColor").getBounds(true);
+                var rc = document.getElementById("bbColor").getBoundingClientRect();
+
                 x = rc.left;
                 y = rc.bottom;
             }
@@ -4823,9 +4837,9 @@ module beachPartyApp
             var maxHeight = window.innerHeight * .8;
 
             vp.select(colorPanel.getRootElem())
-                .css("max-height", maxHeight + "px")
-                .css("overflow-x", "hidden")  
-                .css("overflow-y", "hidden");     // list already does needed scrolling;
+                .css("max-height", maxHeight + "px");
+                // .css("overflow-x", "hidden")  
+                // .css("overflow-y", "hidden");     // list already does needed scrolling;
 
             //---- adjust height of column picker so it doesn't exceed height of panel ----
             var maxListHeight = maxHeight - 100;       // for tab headers
@@ -5178,13 +5192,17 @@ module beachPartyApp
 
                 if (isFromLegend)
                 {
-                    var rc = vp.select("#sizeLegendTitle").getBounds(true);
+                    // var rc = vp.select("#sizeLegendTitle").getBounds(true);
+                    var rc = document.getElementById("sizeLegendTitle").getBoundingClientRect();
+
                     x2 = rc.left;
                     y = rc.top;
                 }
                 else
                 {
-                    var rc = vp.select("#bbSize").getBounds(true);
+                    // var rc = vp.select("#bbSize").getBounds(true);
+                    var rc = document.getElementById("bbSize").getBoundingClientRect();
+
                     x = rc.left;
                     y = rc.bottom;
                 }
@@ -5207,7 +5225,9 @@ module beachPartyApp
             {
                 picker.changeRootClass("popupPanel");
 
-                var rc = vp.select("#bbLine").getBounds(true);
+                // var rc = vp.select("#bbLine").getBounds(true);
+                var rc = document.getElementById("bbLine").getBoundingClientRect();
+
                 picker.show(rc.left, rc.bottom);
             }
         }
@@ -5226,7 +5246,9 @@ module beachPartyApp
             {
                 picker.changeRootClass("popupPanel");
 
-                var rc = vp.select("#bbText").getBounds(true);
+                // var rc = vp.select("#bbText").getBounds(true);
+                var rc = document.getElementById("bbText").getBoundingClientRect();
+
                 picker.show(rc.left, rc.bottom);
             }
         }
@@ -5252,13 +5274,17 @@ module beachPartyApp
 
                 if (isFromLegend)
                 {
-                    var rc = vp.select("#shapeLegendTitle").getBounds(true);
+                    // var rc = vp.select("#shapeLegendTitle").getBounds(true);
+                    var rc = document.getElementById("shapeLegendTitle").getBoundingClientRect();
+
                     x2 = rc.left;
                     y = rc.top;
                 }
                 else
                 {
-                    var rc = vp.select("#bbShape").getBounds(true);
+                    // var rc = vp.select("#bbShape").getBounds(true);
+                    var rc = document.getElementById("bbShape").getBoundingClientRect();
+
                     x = rc.left;
                     y = rc.bottom;
                 }
@@ -5817,7 +5843,7 @@ module beachPartyApp
         {
             //if (!this.popupJustHidden("chartPicker"))
             {
-                var rc = vp.select("#bbView").getBounds(true);
+                var rc = document.getElementById("bbView").getBoundingClientRect();
 
                 var chartPicker = new ChartPickerClass(this._chartName, (newName: string) =>
                 {
@@ -6221,7 +6247,9 @@ module beachPartyApp
             var rw = vp.select("#rightPanel").width();
             //var th = vp.select("#bigBar").getBounds(false).bottom;
             
-            var th = vp.select("#bigBar").getBounds(true).height + vp.select("#playAndIconBar").getBounds(true).height + 10;
+            // var th = vp.select("#bigBar").getBounds(true).height + vp.select("#playAndIconBar").getBounds(true).height + 10;
+            var rc = (<HTMLElement> document.getElementsByClassName("sandDance")[0]).getBoundingClientRect();
+            var th = document.getElementById("bigBar").getBoundingClientRect().bottom - rc.top;
             var bh = vp.select("#bottomPanel").height();
             var sw = vp.select("#searchPanel").width();
 
@@ -6237,6 +6265,8 @@ module beachPartyApp
 
             var cw = Math.max(1, w - (lw + rw));
             var ch = Math.max(1, h - (th + bh));
+
+            cw = Math.max(cw - 20, 0);
 
             //---- ICON BAR ----
             vp.select("#iconBar")
@@ -6259,14 +6289,14 @@ module beachPartyApp
 
             //---- LEFT PANEL ----
             vp.select("#leftPanel")
-                .css("left", (ibWidth + 20) + "px")
-                .css("top", (th + 10) + "px")
+                .css("left", (ibWidth) + "px")
+                .css("top", (th) + "px")
                 .css("height", (h - th - 20) + "px");
 
             //---- MY CHART ----
             vp.select("#myChart")
-                .css("left", lw + "px")
-                .css("top", (th + 10) + "px")
+                .css("left", (lw) + "px")
+                .css("top", (th) + "px")
                 .width(cw)
                 .height(ch)
                 .css("opacity", "1");        // make visible on first resize;
@@ -6274,13 +6304,13 @@ module beachPartyApp
             //---- FACET LABEL HOLDER ----
             vp.select("#facetLabelHolder")
                 .css("left", lw + "px")
-                .css("top", (th + 10) + "px");
+                .css("top", (th) + "px");
                 //.width(cw)
                 //.height(ch)
 
             //---- RIGHT PANEL ----
             vp.select("#rightPanel")
-                .css("top", (th + 10) + "px")
+                .css("top", (th) + "px")
                 .css("height", (h - th) + "px");
 
             //---- BOTTOM PANEL ----

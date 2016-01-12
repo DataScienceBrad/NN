@@ -375,7 +375,7 @@ module beachPartyApp
                 {
                     if (this._isCol1Indent)
                     {
-                        tdW.css("padding-left", "40px");
+                        tdW.css("padding-left", "30px");
                     }
                     else
                     {
@@ -1400,7 +1400,7 @@ module beachPartyApp
 
     export function buildJsonPanel(openerIds: string, dataOwner: beachParty.DataChangerClass, panelName: string, openPanel: boolean, left?: number,
         top?: number, right?: number, bottom?: number, toggleOpen = true, isCol1Indent = true, hideClose = false,
-        addAutoClose = false, addNormalClose?: boolean): JsonPanelClass
+        addAutoClose = false, addNormalClose?: boolean, isCenter?: boolean): JsonPanelClass
     {
         var panel: JsonPanelClass = null;
 
@@ -1428,7 +1428,11 @@ module beachPartyApp
 
         if (openPanel)
         {
-            panel.open(left, top, right, bottom);
+            if (isCenter) {
+                panel.open();
+            } else {
+                panel.open(left, top, right, bottom);
+            }
         }
 
         return panel;
