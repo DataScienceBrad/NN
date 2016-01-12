@@ -172,6 +172,8 @@ module beachPartyApp
         {
             super();
 
+            this._dataTipMgr = new DataTipMgrClass();
+
             this.saveSettingsHandler = saveSettingsHandler;
             this.loadSettingsHandler = loadSettingsHandler;
 
@@ -206,7 +208,7 @@ module beachPartyApp
             {
                 settings.resetAppSettings();
 
-                this.processUrlParams();
+                // this.processUrlParams();
 
                 this.buildBigBar();
 
@@ -232,10 +234,10 @@ module beachPartyApp
             this.preventHtmlSelection();
 
             //---- prevent overall context menu ----
-            document.oncontextmenu = function ()
-            {
-                return false;
-            };
+            // document.oncontextmenu = function ()
+            // {
+            //     return false;
+            // };
 
             //document.body.addEventListener("MSHoldVisual", function (e) { e.preventDefault(); }, false);
 
@@ -392,8 +394,6 @@ module beachPartyApp
 
                 this._facetMgr.buildLabels(facetLayouts);
             });
-
-            this._dataTipMgr = new DataTipMgrClass();
 
             this._bpsHelper.subscribe("dataFrameLoaded", true, (msgBlock) =>
             {

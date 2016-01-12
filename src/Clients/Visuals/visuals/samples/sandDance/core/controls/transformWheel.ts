@@ -41,7 +41,7 @@ module beachParty
         rebuild()
         {
             var wheelSize = this._wheelSize;
-            var size2 = wheelSize / 2 - 30;
+            var size2 = Math.max(wheelSize / 2 - 30, 0);
 
             var groupW = vp.select(this._group)
                 .clear();
@@ -97,7 +97,7 @@ module beachParty
                 return value;
             }
 
-            this._wheelSize = value;
+            this._wheelSize = Math.max(value, 0);
             this.rebuild();
             this.onDataChanged("wheelSize");
         }
