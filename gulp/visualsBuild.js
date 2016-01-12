@@ -79,7 +79,6 @@ var externalsPath = [
     "src/Clients/Externals/ThirdPartyIP/GlobalizeJS/globalize.min.js",
     "src/Clients/Externals/ThirdPartyIP/GlobalizeJS/globalize.culture.en-US.js",
     "src/Clients/Externals/ThirdPartyIP/jqueryui/1.11.4/jquery-ui.min.js",
-    "src/Clients/Externals/ThirdPartyIP/three/three-r69-min.js",
     "src/Clients/Externals/ThirdPartyIP/hammer/hammer-206.js",
     "src/Clients/Externals/ThirdPartyIP/mat4x/mat4x.js",
     "src/Clients/Externals/vuePlotCore/vuePlotCore.js"

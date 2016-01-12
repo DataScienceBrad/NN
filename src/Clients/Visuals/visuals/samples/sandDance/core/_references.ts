@@ -4,7 +4,6 @@
 //TODO: check if it to need.
 
 /// <reference path="../../../../../Typedefs/vuePlotCore/vuePlotCore.d.ts" />
-/// <reference path="../../../../../Typedefs/three.js/three.d.ts" />
 /// <reference path="../../../../../Typedefs/gl-matrix/gl-matrix.d.ts" /> 
 /// <reference path="../../../../../Typedefs/hammer/hammer.d.ts" />
 
