@@ -50,12 +50,13 @@ module beachPartyApp
 
             //---- add LEFT PANEL ----
             var leftPanelW = panelRow.append("td")
-                .css("border-right", "1px solid gray");
+                .css("border-right", "1px solid gray")
+                .css("vertical-align", "top");
 
             //---- add RIGHT PANEL ----
             var rightPanelW = panelRow.append("td")
             //.css("border", "1px solid gray")
-                .css("width", "200px")
+                // .css("width", "200px")
                 .attr("valign", "top");
 
             //---- add TABS to right panel ----
@@ -85,8 +86,8 @@ module beachPartyApp
                 });
 
             var divW = rightPanelW.append("div")
-                .css("height", "254px")     // keep constant height (as content height changes)
-                .css("width", "290px");
+                .css("height", "152px")     // keep constant height (as content height changes)
+                .css("width", "230px");
 
             this.addPropertyControls(divW, "propertiesContent");
             this.addValueControls(divW, "valuesContent");
@@ -181,7 +182,7 @@ module beachPartyApp
             var divW = rootW.append("div")
                 .css("margin", "10px")
                 .attr("id", id)
-                .css("max-height", "254px")
+                .css("max-height", "130px")
                 .css("overflow-y", "auto")
                 .css("display", "none")     // hide initially
                 .css("white-space", "nowrap");
@@ -340,7 +341,8 @@ module beachPartyApp
             //---- TEXTAREA ----
             var textAreaW = nextRowW.append("td").append("textarea")
                 .addClass("panelTextArea")
-                .css("height", "80px")
+                .css("height", "50px")
+                .css("width", "150px")
                 .attach("keyup", (e) =>
                 {
                     this._selectedEditItem.desc = e.target.value;
