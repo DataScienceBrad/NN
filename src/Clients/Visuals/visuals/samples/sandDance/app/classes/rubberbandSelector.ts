@@ -128,23 +128,15 @@ module beachPartyApp
             this._holdCallback = callback;
         }
 
-        public getScale(): { x: number, y: number } {
-            var sandDanceElement = this.sandDanceElement,//vp.select(".sandDance").element(),
-                sandDanceRect = sandDanceElement.getBoundingClientRect();
-
-            return {
-                x: sandDanceRect.width / sandDanceElement.offsetWidth,
-                y: sandDanceRect.height / sandDanceElement.offsetHeight
-            };
-        }
-
-        setRubberBand(rc)
+        setRubberBand(rc: ClientRect)
         {
 
-            var scale = this.getScale();
+            var scale = sandDance.CommonUtils.instance.getScale();
 
-            var left = rc.left / scale.x;
-            var top = rc.top / scale.y;
+            var left: number = rc.left / scale.x,
+                top: number = rc.top / scale.y,
+                width: number = rc.width / scale.x,
+                height: number = rc.height / scale.y;
 
             //vp.utils.debug("rubberBandSelector.setRubberBand: left=" + rc.left + ", top=" + rc.top + ", width=" + rc.width +
             //    ", height=" + rc.height);
@@ -153,8 +145,8 @@ module beachPartyApp
                 .css("position", "absolute")
                 .css("left", left + "px")
                 .css("top", top + "px")
-                .width(rc.width + "px")
-                .height(rc.height + "px")
+                .width(width + "px")
+                .height(height + "px")
                 .css("display", "block");
         }
 

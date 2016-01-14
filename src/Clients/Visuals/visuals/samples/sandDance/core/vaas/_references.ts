@@ -9,6 +9,7 @@
 
 /// <reference path="Bus.ts" />
 /// <reference path="settingsType.ts" />
+/// <reference path="utils.ts" />
 
 /// <reference path="classes/baseHostHelper.ts" />
 /// <reference path="classes/appHostHelper.ts" />

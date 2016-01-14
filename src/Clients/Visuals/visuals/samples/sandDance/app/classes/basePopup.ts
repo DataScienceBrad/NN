@@ -118,6 +118,7 @@ module beachPartyApp
             var yBottom = yTop + myHeight;
             var yMargin = 0;
             var xMargin = 0;
+            let scale = sandDance.CommonUtils.instance.getScale();
 
             //---- check for TOP overlap ----
             var topOverlap = (yTop - yMargin);
@@ -157,25 +158,8 @@ module beachPartyApp
                 }
             }
 
-//             if (isOwnerRoot) {
-//                 let sandDanceElement = this.sandDanceElement,
-//                     sandDanceHTMLElement: HTMLElement = sandDanceElement.element(),
-//                     bigBarElement = this.bigBarElement,
-//                     sandDanceBounds = sandDanceElement.getBounds(true),
-//                     bigBarBounds = bigBarElement.getBounds(true),
-//                     sandDanceRect = sandDanceHTMLElement.getBoundingClientRect();
-// 
-//                 let scale = {
-//                     x: sandDanceRect.width / sandDanceHTMLElement.offsetWidth,
-//                     y: sandDanceRect.height / sandDanceHTMLElement.offsetHeight
-//                 };
-// 
-//                 x += sandDanceBounds.left;//TODO: remove this hard fix.
-//                 yTop += sandDanceBounds.top + bigBarBounds.bottom;
-// 
-//                 x = x / scale.x;
-//                 yTop = yTop / scale.y;
-//             }
+            x /= scale.x;
+            yTop /= scale.y;
 
             this.startPosition = {
                 top: yTop,

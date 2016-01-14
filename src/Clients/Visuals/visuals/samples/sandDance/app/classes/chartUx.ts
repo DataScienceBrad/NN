@@ -120,7 +120,7 @@ module beachPartyApp
 
                     //---- show tooltips if middle/right mouse button pressed, or if tooltips are enabled ----
                     var getRecord = (e.buttons !== 0 || settings.isTooltipsEnabled());
-                    var scale = this._rubberBandSelector.getScale();
+                    var scale = sandDance.CommonUtils.instance.getScale();
 
                     this._bpsHelper.applyHover(mousePos.x / scale.x, mousePos.y / scale.y, getRecord, null, (msgBlock) =>
                     {
@@ -177,7 +177,7 @@ module beachPartyApp
             {
                 if (rcBand)
                 {
-                    let scale = this._rubberBandSelector.getScale();
+                    let scale = sandDance.CommonUtils.instance.getScale();
 
                     //---- adjust rcBand so that it is relative to "myChart" ----
                     var rc = vp.select("#myChart").getBounds(false);
@@ -185,8 +185,8 @@ module beachPartyApp
                     var rcBandAdj = vp.geom.createRect(
                         (rcBand.left - rc.left) / scale.x,
                         (rcBand.top - rc.top) / scale.y,
-                        rcBand.width,
-                        rcBand.height);
+                        rcBand.width / scale.x,
+                        rcBand.height / scale.y);
 
                     var sd = new SelectionDesc();
                     sd.legendSource = "rect drag";

@@ -179,11 +179,12 @@ module beachPartyApp
 
         private getCenter(): { left: number, top: number } {
             var rc = vp.select(this._root).getBounds(false),
-                chart = vp.select(".sandDance").getBounds(true);
+                chart = vp.select(".sandDance").getBounds(true),
+                scale = sandDance.CommonUtils.instance.getScale();
 
             return {
-                left: chart.width / 2 - rc.width / 2,
-                top: chart.height / 2 - rc.height / 2
+                left: (chart.width / 2 - rc.width / 2) / scale.x,
+                top: (chart.height / 2 - rc.height / 2) / scale.y
             };
         }
 
@@ -342,6 +343,11 @@ module beachPartyApp
                 var width = Math.max(minWidth, rcDown.width + xDiff);
                 var height = Math.max(minHeight, rcDown.height + yDiff);
 
+                var scale = sandDance.CommonUtils.instance.getScale();
+
+                width /= scale.x;
+                height /= scale.y;
+
                 vp.utils.debug("onResizeMouseMove: xDiff=" + xDiff + ", yDiff=" + yDiff + ", width=" + width + ", height=" + height);
 
                 this.removeMaxSizesFromPanel();
@@ -395,7 +401,11 @@ module beachPartyApp
                 var x = pt.x - this._ptDown.x;
                 var y = pt.y - this._ptDown.y;
 
-                let startPosition = this.startPosition || this.getCenter();
+                let startPosition = this.startPosition || this.getCenter(),
+                    scale = sandDance.CommonUtils.instance.getScale();
+
+                x /= scale.x;
+                y /= scale.y;
 
                 let left: number = startPosition.left + x,
                     top: number = startPosition.top + y;
