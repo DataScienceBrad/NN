@@ -81,6 +81,7 @@ module beachParty
         private _transformMgr: TransformMgrClass;
         private _drawPrimitive = bps.DrawPrimitive.cube;            //safest default
 
+        private container: HTMLElement;
         private _canvas3dElem: HTMLCanvasElement;
         private _canvas2dElem: HTMLCanvasElement;
         private _svgDoc: SVGSVGElement;
@@ -97,17 +98,19 @@ module beachParty
         private _lastHoverPos = null;
         private _lastStatsRebuild = 0;
 
-        constructor(dataMgr: DataMgrClass, appMgr: AppMgrClass, canvas3dElem: HTMLCanvasElement, canvas2dElem: HTMLCanvasElement, svgId: string,
+        constructor(container: HTMLElement, dataMgr: DataMgrClass, appMgr: AppMgrClass, canvas3dElem: HTMLCanvasElement, canvas2dElem: HTMLCanvasElement, svgId: string,
             memStatsElem?: HTMLElement, animStatsElem?: HTMLElement, mouseStatsElem?: HTMLElement, moveStatsElem?: HTMLElement,
             drawStatsElem?: HTMLElement, isVaas?: boolean)
         {
             super();
 
+            this.container = container;
+
             this._appMgr = appMgr;
             this._dataMgr = dataMgr;
             this._canvas3dElem = canvas3dElem;
             this._canvas2dElem = canvas2dElem;
-            this._svgDoc = <SVGSVGElement><any> document.getElementById(svgId);
+            this._svgDoc = <SVGSVGElement><any> $(`.${svgId}`, this.container).get(0);
 
             this._memStatsElem = memStatsElem;
             this._animStatsElem = animStatsElem;
@@ -482,37 +485,37 @@ module beachParty
                 {
                     if (usePartyGen)
                     {
-                        chart = new PartyGenPlotClass(this, this._gl, chartState, "FlatCircle");
+                        chart = new PartyGenPlotClass(this, this._gl, chartState, "FlatCircle", this.container);
                     }
                     else
                     {
-                        chart = new FlatCircle(this, this._gl, chartState);
+                        chart = new FlatCircle(this, this._gl, chartState, this.container);
                     }
                 }
                 else if (layout === "Grid")
                 {
                     if (usePartyGen)
                     {
-                        chart = new PartyGenPlotClass(this, this._gl, chartState, "FlatGrid");
+                        chart = new PartyGenPlotClass(this, this._gl, chartState, "FlatGrid", this.container);
                     }
                     else
                     {
-                        chart = new FlatGrid(this, this._gl, chartState);
+                        chart = new FlatGrid(this, this._gl, chartState, this.container);
                     }
                 }
                 else if (layout === "Poisson")
                 {
-                    chart = new PartyGenPlotClass(this, this._gl, chartState, "FlatPoisson");
+                    chart = new PartyGenPlotClass(this, this._gl, chartState, "FlatPoisson", this.container);
                 }
                 else 
                 {
                     if (usePartyGen)
                     {
-                        chart = new PartyGenPlotClass(this, this._gl, chartState, "FlatRandom");
+                        chart = new PartyGenPlotClass(this, this._gl, chartState, "FlatRandom", this.container);
                     }
                     else
                     {
-                        chart = new FlatRandom(this, this._gl, chartState);
+                        chart = new FlatRandom(this, this._gl, chartState, this.container);
                     }
                 }
             }
@@ -520,7 +523,7 @@ module beachParty
             {
                 if (usePartyGen)
                 {
-                    chart = new PartyGenPlotClass(this, this._gl, chartState, "Scatter");
+                    chart = new PartyGenPlotClass(this, this._gl, chartState, "Scatter", this.container);
                 }
                 else
                 {
@@ -534,43 +537,43 @@ module beachParty
                     }
                     else
                     {
-                        chart = new ScatterPlotClass(this, this._gl, chartState);
+                        chart = new ScatterPlotClass(this, this._gl, chartState, this.container);
                     }
                 }
 
             }
             else if (value === "Line")
             {
-                chart = new LinePlotClass(this, this._gl, chartState);
+                chart = new LinePlotClass(this, this._gl, chartState, this.container);
             }
             else if (value === "Radial")
             {
-                chart = new RadialClass(this, this._gl, chartState);
+                chart = new RadialClass(this, this._gl, chartState, this.container);
             }
             else if (value === "Density")
             {
                 if (layout === "Circle") 
                 {
-                    chart = new DensityCircle(this, this._gl, chartState);
+                    chart = new DensityCircle(this, this._gl, chartState, this.container);
                 }
                 else if (layout === "Grid") 
                 {
-                    chart = new DensityGrid(this, this._gl, chartState);
+                    chart = new DensityGrid(this, this._gl, chartState, this.container);
                 }
                 else 
                 {
-                    chart = new DensityRandom(this, this._gl, chartState);
+                    chart = new DensityRandom(this, this._gl, chartState, this.container);
                 }
             }
             else if (value === "Violin")
             {
-                chart = new ViolinClass(this, this._gl, chartState);
+                chart = new ViolinClass(this, this._gl, chartState, this.container);
             }
             else if (value === "Bar")
             {
                 if (layout === "Sum")
                 {
-                    chart = new BarSumClass(this, this._gl, chartState);
+                    chart = new BarSumClass(this, this._gl, chartState, this.container);
                 }
                 else        // Random or Grid
                 {
@@ -578,16 +581,16 @@ module beachParty
                     {
                         if (layout === "Random")
                         {
-                            chart = new PartyGenPlotClass(this, this._gl, chartState, "BarRandom");
+                            chart = new PartyGenPlotClass(this, this._gl, chartState, "BarRandom", this.container);
                         }
                         else 
                         {
-                            chart = new PartyGenPlotClass(this, this._gl, chartState, "BarGrid");
+                            chart = new PartyGenPlotClass(this, this._gl, chartState, "BarGrid", this.container);
                         }
                     }
                     else
                     {
-                        chart = new BarCountClass(this, this._gl, chartState);
+                        chart = new BarCountClass(this, this._gl, chartState, this.container);
                     }
                 }
             }
@@ -595,7 +598,7 @@ module beachParty
             {
                 if (layout === "Sum")
                 {
-                    chart = new ColumnSumClass(this, this._gl, chartState);
+                    chart = new ColumnSumClass(this, this._gl, chartState, this.container);
                 }
                 else        // Random or Grid
                 {
@@ -603,30 +606,30 @@ module beachParty
                     {
                         if (layout === "Random")
                         {
-                            chart = new PartyGenPlotClass(this, this._gl, chartState, "ColumnRandom");
+                            chart = new PartyGenPlotClass(this, this._gl, chartState, "ColumnRandom", this.container);
                         }
                         else 
                         {
-                            chart = new PartyGenPlotClass(this, this._gl, chartState, "ColumnGrid");
+                            chart = new PartyGenPlotClass(this, this._gl, chartState, "ColumnGrid", this.container);
                         }
                     }
                     else
                     {
-                        chart = new ColumnCountClass(this, this._gl, chartState);
+                        chart = new ColumnCountClass(this, this._gl, chartState, this.container);
                     }
                 }
             }
             else if (value === "Scatter-3D")
             {
-                chart = new ScatterPlot3dClass(this, this._gl, chartState);
+                chart = new ScatterPlot3dClass(this, this._gl, chartState, this.container);
             }
             else if (value === "Stacks") 
             {
-                chart = new StacksBinClass(this, this._gl, chartState);
+                chart = new StacksBinClass(this, this._gl, chartState, this.container);
             }
             else if (value === "Squarify") 
             {
-                chart = new PartyGenPlotClass(this, this._gl, chartState, "FlatSquarify");
+                chart = new PartyGenPlotClass(this, this._gl, chartState, "FlatSquarify", this.container);
             }
             else
             {
@@ -935,27 +938,6 @@ module beachParty
             this.onDataChanged("randomY");
         }
 
-        //---- these must be SET thru dataMgr ----
-        //bindings(): any;
-        //bindings(value: any): any;
-        //bindings(value?: any): any
-        //{
-        //    if (value === undefined || value === null)
-        //    {
-        //        return this._bindings;
-        //    }
-
-        //    this._bindings = value;
-        //    this.onDataChanged("bindings");
-
-        //    return this;
-        //}
-
-        //getBindings()
-        //{
-        //    return this._bindings;
-        //}
-
         showChartDebugInfo(): boolean;
         showChartDebugInfo(value: boolean): any;
         showChartDebugInfo(value?: boolean): any
@@ -972,7 +954,7 @@ module beachParty
                 this.rebuildStats();
             }
 
-            vp.select("#debugPanel").css("display", (value) ? "" : "none");
+            vp.select(this.container, ".debugPanel").css("display", (value) ? "" : "none");
 
             this.onDataChanged("showChartDebugInfo");
 

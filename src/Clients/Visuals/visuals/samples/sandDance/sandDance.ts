@@ -33,22 +33,6 @@ module powerbi.visuals.samples {
     import ClassAndSelector = jsCommon.CssConstants.ClassAndSelector;
     import createClassAndSelector = jsCommon.CssConstants.createClassAndSelector;
 
-    module IdAndSelector {
-        let idSelector: string = "#";
-
-        export interface IdAndSelector {
-            id: string;
-            selector: string;
-        }
-
-        export function createIdAndSelector(id: string): IdAndSelector {
-            return {
-                id: id,
-                selector: `${idSelector}${id}`
-            };
-        } 
-    }
-
     export interface SandDanceData {
         [columnName: string]: any[];
     }
@@ -75,56 +59,56 @@ module powerbi.visuals.samples {
     export class SandDance implements IVisual {
         private static ClassName: string = "sandDance";
 
-        private static FileInfoSelector: IdAndSelector.IdAndSelector = IdAndSelector.createIdAndSelector("fileInfo");
+        private static FileInfoSelector: ClassAndSelector = createClassAndSelector("fileInfo");
 
-        private static PlayAndIconBarSelector: IdAndSelector.IdAndSelector = IdAndSelector.createIdAndSelector("playAndIconBar");
-        private static PlayPanelSelector: IdAndSelector.IdAndSelector = IdAndSelector.createIdAndSelector("playPanel");
-        private static PlayExButtonSelector: IdAndSelector.IdAndSelector = IdAndSelector.createIdAndSelector("playExButton");
-        private static StopButtonSelector: IdAndSelector.IdAndSelector = IdAndSelector.createIdAndSelector("stopButton");
+        private static PlayAndIconBarSelector: ClassAndSelector = createClassAndSelector("playAndIconBar");
+        private static PlayPanelSelector: ClassAndSelector = createClassAndSelector("playPanel");
+        private static PlayExButtonSelector: ClassAndSelector = createClassAndSelector("playExButton");
+        private static StopButtonSelector: ClassAndSelector = createClassAndSelector("stopButton");
 
         private static TextButtonSelector: ClassAndSelector = createClassAndSelector("textButton");
 
         private static IconBarSelector: ClassAndSelector = createClassAndSelector("iconBar");
 
         private static SearchPanelSelector: ClassAndSelector = createClassAndSelector("searchPanel");
-        private static BtSearchColSelector: IdAndSelector.IdAndSelector = IdAndSelector.createIdAndSelector("btSearchCol");
-        private static SearchColSelector: IdAndSelector.IdAndSelector = IdAndSelector.createIdAndSelector("searchCol");
+        private static BtSearchColSelector: ClassAndSelector = createClassAndSelector("btSearchCol");
+        private static SearchColSelector: ClassAndSelector = createClassAndSelector("searchCol");
         private static SearchTextSelector: ClassAndSelector = createClassAndSelector("searchText");
 
-        private static LeftPanelSelector: IdAndSelector.IdAndSelector = IdAndSelector.createIdAndSelector("leftPanel");
-        private static YStuffSelector: IdAndSelector.IdAndSelector = IdAndSelector.createIdAndSelector("yStuff");
-        private static YButtonSelector: IdAndSelector.IdAndSelector = IdAndSelector.createIdAndSelector("yButton");
-        private static YBinsSelector: IdAndSelector.IdAndSelector = IdAndSelector.createIdAndSelector("yBins");
-        private static ZStuffSelector: IdAndSelector.IdAndSelector = IdAndSelector.createIdAndSelector("zStuff");
-        private static ZButtonSelector: IdAndSelector.IdAndSelector = IdAndSelector.createIdAndSelector("zButton");
-        private static ZBinsSelecotr: IdAndSelector.IdAndSelector = IdAndSelector.createIdAndSelector("zBins");
+        private static LeftPanelSelector: ClassAndSelector = createClassAndSelector("leftPanel");
+        private static YStuffSelector: ClassAndSelector = createClassAndSelector("yStuff");
+        private static YButtonSelector: ClassAndSelector = createClassAndSelector("yButton");
+        private static YBinsSelector: ClassAndSelector = createClassAndSelector("yBins");
+        private static ZStuffSelector: ClassAndSelector = createClassAndSelector("zStuff");
+        private static ZButtonSelector: ClassAndSelector = createClassAndSelector("zButton");
+        private static ZBinsSelecotr: ClassAndSelector = createClassAndSelector("zBins");
 
-        private static BigBarSelector: IdAndSelector.IdAndSelector = IdAndSelector.createIdAndSelector("bigBar");
+        private static BigBarSelector: ClassAndSelector = createClassAndSelector("bigBar");
         private static NoSpaceTableSelector: ClassAndSelector = createClassAndSelector("noSpaceTable");
 
-        private static ChartSelector: IdAndSelector.IdAndSelector = IdAndSelector.createIdAndSelector("myChart");
+        private static ChartSelector: ClassAndSelector = createClassAndSelector("myChart");
 
-        private static Canvas3DSelector: IdAndSelector.IdAndSelector = IdAndSelector.createIdAndSelector("canvas3d");
-        private static Canvas2DSelector: IdAndSelector.IdAndSelector = IdAndSelector.createIdAndSelector("canvas2d");
-        private static SvgSelector: IdAndSelector.IdAndSelector = IdAndSelector.createIdAndSelector("svgDoc");
+        private static Canvas3DSelector: ClassAndSelector = createClassAndSelector("canvas3d");
+        private static Canvas2DSelector: ClassAndSelector = createClassAndSelector("canvas2d");
+        private static SvgSelector: ClassAndSelector = createClassAndSelector("svgDoc");
 
         private static CanvasElementSelector: ClassAndSelector = createClassAndSelector("canvasElem");
         private static CanvasSelector: ClassAndSelector = createClassAndSelector("canvas");
 
-        private static ChartUxDivSelector: IdAndSelector.IdAndSelector = IdAndSelector.createIdAndSelector("chartUxDiv");
+        private static ChartUxDivSelector: ClassAndSelector = createClassAndSelector("chartUxDiv");
 
-        private static FacetLabelHolderSelector: IdAndSelector.IdAndSelector = IdAndSelector.createIdAndSelector("facetLabelHolder");
+        private static FacetLabelHolderSelector: ClassAndSelector = createClassAndSelector("facetLabelHolder");
 
-        private static RightPanelSelector: IdAndSelector.IdAndSelector = IdAndSelector.createIdAndSelector("rightPanel");
+        private static RightPanelSelector: ClassAndSelector = createClassAndSelector("rightPanel");
         private static ButtonLegendComboSelector: ClassAndSelector = createClassAndSelector("buttonLegendCombo");
         private static LegendSelector: ClassAndSelector = createClassAndSelector("legend");
 
-        private static BottomPanelSelector: IdAndSelector.IdAndSelector = IdAndSelector.createIdAndSelector("bottomPanel");
-        private static XStuffSelector: IdAndSelector.IdAndSelector = IdAndSelector.createIdAndSelector("xStuff");
-        private static XButtonSelector: IdAndSelector.IdAndSelector = IdAndSelector.createIdAndSelector("xButton");
-        private static XBinsSelector: IdAndSelector.IdAndSelector = IdAndSelector.createIdAndSelector("xBins");
+        private static BottomPanelSelector: ClassAndSelector = createClassAndSelector("bottomPanel");
+        private static XStuffSelector: ClassAndSelector = createClassAndSelector("xStuff");
+        private static XButtonSelector: ClassAndSelector = createClassAndSelector("xButton");
+        private static XBinsSelector: ClassAndSelector = createClassAndSelector("xBins");
 
-        private static DebugPanelSelector: IdAndSelector.IdAndSelector = IdAndSelector.createIdAndSelector("debugPanel");
+        private static DebugPanelSelector: ClassAndSelector = createClassAndSelector("debugPanel");
         private static DebugPanelItemSelector: ClassAndSelector = createClassAndSelector("debugPanel-item");
 
         private static Units: string = "px";
@@ -227,19 +211,21 @@ module powerbi.visuals.samples {
 
             this.setSize(visualsOptions.viewport);
 
+            let rootElement: HTMLElement = this.rootElement.take(1)[0]
+
             this.rootElement.style("margin", shapes.Thickness.toCssString(this.margin));
 
-            this.application = new beachPartyApp.AppClass(this.saveSettings.bind(this), this.loadSettings.bind(this));
+            this.application = new beachPartyApp.AppClass(this.saveSettings.bind(this), this.loadSettings.bind(this), <HTMLElement> this.rootElement.node());
             this.application.setViewport(this.viewport.width, this.viewport.height);
             this.application.run();
 
-            this.coreApplication = new beachParty.AppMgrClass();
+            this.coreApplication = new beachParty.AppMgrClass(<HTMLElement> this.rootElement.node());
 
             this.coreApplication.init(
-                SandDance.Canvas3DSelector.id,
-                SandDance.Canvas2DSelector.id,
-                SandDance.SvgSelector.id,
-                SandDance.FileInfoSelector.id,
+                SandDance.Canvas3DSelector.class,
+                SandDance.Canvas2DSelector.class,
+                SandDance.SvgSelector.class,
+                SandDance.FileInfoSelector.class,
                 this.viewport.width,
                 this.viewport.height,
                 SandDance.DebugPanelItems[0],
@@ -293,7 +279,7 @@ module powerbi.visuals.samples {
         private addFileInfo(): void {
             this.mainElement
                 .append("div")
-                .attr("id", SandDance.FileInfoSelector.id);
+                .classed(SandDance.FileInfoSelector.class, true);
         }
 
         private addPlayAndIconBarElement(): void {
@@ -302,26 +288,26 @@ module powerbi.visuals.samples {
 
             trElement = this.mainElement
                 .append("table")
-                .attr("id", SandDance.PlayAndIconBarSelector.id)
+                .classed(SandDance.PlayAndIconBarSelector.class, true)
                 .append("tr");
 
             tdElement = trElement
                 .append("td")
-                .attr("id", SandDance.PlayPanelSelector.id);
+                .classed(SandDance.PlayPanelSelector.class, true);
 
             tdElement
                 .append("span")
-                .attr("id", SandDance.StopButtonSelector.id)
+                .classed(SandDance.StopButtonSelector.class, true)
                 .classed(SandDance.TextButtonSelector.class, true);
 
             tdElement
                 .append("span")
-                .attr("id", SandDance.PlayExButtonSelector.id)
+                .classed(SandDance.PlayExButtonSelector.class, true)
                 .classed(SandDance.TextButtonSelector.class, true);
 
             trElement
                 .append("td")
-                .attr("id", SandDance.IconBarSelector.class)
+                .classed(SandDance.IconBarSelector.class, true)
                 .classed(SandDance.IconBarSelector.class, true);
         }
 
@@ -329,8 +315,8 @@ module powerbi.visuals.samples {
             this.mainElement
                 .append("div")
                 .append("table")
-                .attr("id", SandDance.BigBarSelector.id)
-                .classed(SandDance.BigBarSelector.id, true)
+                .classed(SandDance.BigBarSelector.class, true)
+                .classed(SandDance.BigBarSelector.class, true)
                 .classed(SandDance.NoSpaceTableSelector.class, true);
         }
 
@@ -341,7 +327,6 @@ module powerbi.visuals.samples {
             searchPanel = this.mainElement
                 .append("table")
                 .attr({
-                    "id": SandDance.SearchPanelSelector.class,
                     "data-disabled": false
                 })
                 .classed(SandDance.SearchPanelSelector.class, true)
@@ -350,14 +335,13 @@ module powerbi.visuals.samples {
             tr = searchPanel.append("tr");
 
             tr.append("td")
-                .attr("id", SandDance.BtSearchColSelector.id)
+                .classed(SandDance.BtSearchColSelector.class, true)
                 .append("span")
-                .attr("id", SandDance.SearchColSelector.id);
+                .classed(SandDance.SearchColSelector.class, true);
 
             tr.append("td")
                 .append("input")
                 .attr({
-                    "id": SandDance.SearchTextSelector.class,
                     "type": "text",
                     "title": "search for the specified text in the selected column (to the left)",
                     "placeholder": "Search",
@@ -373,66 +357,66 @@ module powerbi.visuals.samples {
 
             leftPanelElement = this.mainElement
                 .append("div")
-                .attr("id", SandDance.LeftPanelSelector.id);
+                .classed(SandDance.LeftPanelSelector.class, true);
 
             yStuffElement = leftPanelElement
                 .append("div")
-                .attr("id", SandDance.YStuffSelector.id);
+                .classed(SandDance.YStuffSelector.class, true);
 
             yStuffElement
                 .append("div")
-                .attr("id", SandDance.YButtonSelector.id);
+                .classed(SandDance.YButtonSelector.class, true);
 
             yStuffElement
                 .append("div")
-                .attr("id", SandDance.YBinsSelector.id);
+                .classed(SandDance.YBinsSelector.class, true);
 
             zStuffElement = leftPanelElement
                 .append("div") //span
-                .attr("id", SandDance.ZStuffSelector.id);
+                .classed(SandDance.ZStuffSelector.class, true);
 
             zStuffElement
                 .append("div") //span
-                .attr("id", SandDance.ZButtonSelector.id);
+                .classed(SandDance.ZButtonSelector.class, true);
 
             zStuffElement
                 .append("div") //span
-                .attr("id", SandDance.ZBinsSelecotr.id);
+                .classed(SandDance.ZBinsSelecotr.class, true);
         }
 
         private addViewElement(): void {
             this.viewElement = this.mainElement
                 .append("div")
-                .attr("id", SandDance.ChartSelector.id);
+                .classed(SandDance.ChartSelector.class, true);
 
             this.canvas3dElement = this.viewElement
                 .append("canvas")
-                .attr("id", SandDance.Canvas3DSelector.id)
+                .classed(SandDance.Canvas3DSelector.class, true)
                 .classed(SandDance.CanvasElementSelector.class, true)
                 .classed(SandDance.CanvasSelector.class, true);
 
             this.canvas2dElement = this.viewElement
                 .append("canvas")
-                .attr("id", SandDance.Canvas2DSelector.id)
+                .classed(SandDance.Canvas2DSelector.class, true)
                 .classed(SandDance.CanvasElementSelector.class, true)
                 .classed(SandDance.CanvasSelector.class, true);
 
             this.svgElement = this.viewElement
                 .append("svg")
-                .attr("id", SandDance.SvgSelector.id)
+                .classed(SandDance.SvgSelector.class, true)
                 .classed(SandDance.CanvasSelector.class, true);
         }
 
         private addChartUxDivElement(): void {
             this.viewElement
                 .append("div")
-                .attr("id", SandDance.ChartUxDivSelector.id);
+                .classed(SandDance.ChartUxDivSelector.class, true);
         }
 
         private addFacetLabelHolderElement(): void {
             this.mainElement
                 .append("div")
-                .attr("id", SandDance.FacetLabelHolderSelector.id);
+                .classed(SandDance.FacetLabelHolderSelector.class, true);
         }
 
         private addRightPanelElement(): void {
@@ -451,7 +435,7 @@ module powerbi.visuals.samples {
 
             rightPanel = this.mainElement
                 .append("div")
-                .attr("id", SandDance.RightPanelSelector.id);
+                .classed(SandDance.RightPanelSelector.class, true);
 
             tables.forEach((table: PanelTable) => {
                 this.addRightPanelItem(rightPanel, table.ids);
@@ -469,25 +453,25 @@ module powerbi.visuals.samples {
 
             firstTr = table
                 .append("tr")
-                .attr("id", () => ids[0] === undefined ? "" : ids[0]);
+                .classed(ids[0] === undefined ? "" : ids[0], true);
 
             secondTr = table
                 .append("tr");
 
             firstTr
                 .append("td")
-                .attr("id", ids[1]);
+                .classed(ids[1], true);
 
             firstTr
                 .append("td")
-                .attr("id", ids[2])
+                .classed(ids[2], true)
                 .style("display", "none");
 
             secondTr
                 .append("td")
                 .attr("colspan", 2)
                 .append("div")
-                .attr("id", ids[3])
+                .classed(ids[3], true)
                 .classed(SandDance.LegendSelector.class, true)
                 .style("display", "none");
         }
@@ -499,19 +483,19 @@ module powerbi.visuals.samples {
 
             bottomPanel = this.mainElement
                 .append("div")
-                .attr("id", SandDance.BottomPanelSelector.id);
+                .classed(SandDance.BottomPanelSelector.class, true);
 
             table = bottomPanel
                 .append("table")
-                .attr("id", SandDance.XStuffSelector.id);
+                .classed(SandDance.XStuffSelector.class, true);
 
             tr = table.append("tr");
 
             tr.append("td")
-                .attr("id", SandDance.XButtonSelector.id);
+                .classed(SandDance.XButtonSelector.class, true);
 
             tr.append("td")
-                .attr("id", SandDance.XBinsSelector.id);
+                .classed(SandDance.XBinsSelector.class, true);
         }
 
         private addDebugPanelElement(): void {
@@ -519,12 +503,12 @@ module powerbi.visuals.samples {
 
             debugPanel = this.mainElement
                 .append("div")
-                .attr("id", SandDance.DebugPanelSelector.id);
+                .classed(SandDance.DebugPanelSelector.class, true);
 
             SandDance.DebugPanelItems.forEach((debugPanelItem: string) => {
                 debugPanel
                     .append("div")
-                    .attr("id", debugPanelItem)
+                    .classed(debugPanelItem, true)
                     .classed(SandDance.DebugPanelItemSelector.class, true);
             });
         }

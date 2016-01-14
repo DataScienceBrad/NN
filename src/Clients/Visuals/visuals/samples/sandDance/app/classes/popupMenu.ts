@@ -11,10 +11,10 @@ module beachPartyApp
     {
         public context = null;
 
-        constructor(openerIds: string, id: string, names: any[], callback, hideAfterCallback = false, limitHeight = true, verticalMargin = 0,
+        constructor(container: HTMLElement, openerIds: string, id: string, names: any[], callback, hideAfterCallback = false, limitHeight = true, verticalMargin = 0,
             iconWidth?: number, ownerElem?: HTMLElement, internalOwnerElement: HTMLElement = ownerElem)
         {
-            super(openerIds, ownerElem);
+            super(container, openerIds, ownerElem);
 
             var maxPanelHeight = AppClass.maxPanelHeight;
 
@@ -23,7 +23,7 @@ module beachPartyApp
             //    .remove();
 
             var rootW = vp.select(document.createElement("div"))
-                .attr("id", id)
+                .addClass(id)
                 // .css("position", "absolute")
                 .addClass("popupMenu");
 
@@ -46,7 +46,7 @@ module beachPartyApp
             if (internalOwnerElement) {
                 currentOwnerElement = vp.select(internalOwnerElement);
             } else {
-                currentOwnerElement = vp.select(".sandDance");
+                currentOwnerElement = vp.select(this.container/*, ".sandDance"*/);
             }
 
             currentOwnerElement.append(rootW[0]);

@@ -9,22 +9,26 @@ module beachPartyApp
 {
     export class FacetLegendClass extends beachParty.DataChangerClass
     {
+        private container: HTMLElement;
+
         _fm: bps.MappingData;
 
         _rootElem: HTMLElement;
         _titleElem: HTMLElement;
 
-        constructor(rootName: string, cm: bps.MappingData)
+        constructor(container: HTMLElement, rootName: string, cm: bps.MappingData)
         {
             super();
 
+            this.container = container;
+
             this._fm = cm;
-            var root = vp.select("#" + rootName);
+            var root = vp.select(this.container, "." + rootName);
 
             //---- add colName as TITLE ----
             var title = root.append("span")
                 .addClass("legendTitle textButton")
-                .id("facetLegendTitle")
+                .addClass("facetLegendTitle")
                 .text(cm.colName)
                 .attach("click", (e) =>
                 {

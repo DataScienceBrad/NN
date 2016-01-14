@@ -15,14 +15,14 @@ module beachParty
         _vBar: SVGLineElement;
         _hBar: SVGLineElement;
 
-        _svgParent: any;
+        _svgParent: HTMLElement;
         _windowMgr: WindowMgrClass;
         _center: SVGRect;
         _partTouched = "";
         _isActive = true;
         _wheelSize = 0;
 
-        constructor(windowMgr: WindowMgrClass, svgParent: any, wheelSize: number)
+        constructor(windowMgr: WindowMgrClass, svgParent: HTMLElement, wheelSize: number)
         {
             super("transformerWheel", null);
 
@@ -138,8 +138,6 @@ module beachParty
 
         onPartMouseDown(e, part: string)
         {
-            //vp.select("#consoleDiv").text("onParseMouseDown: part=" + part);
-
             if (this._isActive)
             {
                 if (part === "vBar" || part === "hBar")
@@ -161,7 +159,6 @@ module beachParty
         {
             if (!isRelativeToGroup)
             {
-                //var rcx = vp.select(this._group).getBounds(false);
                 var rcx = this._group.getBoundingClientRect();
                 pt.x -= rcx.left;
                 pt.y -= rcx.top;
@@ -194,11 +191,6 @@ module beachParty
 
         show(value: boolean)
         {
-            //var vis = (value) ? "visible" : "hidden";
-
-            //vp.select(this._group)
-            //    .css("visibility", vis);
-
             var opacity = (value) ? 1 : 0;
 
             vp.select(this._group)

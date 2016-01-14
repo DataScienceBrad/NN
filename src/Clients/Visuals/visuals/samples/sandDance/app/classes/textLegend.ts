@@ -9,11 +9,7 @@ module beachPartyApp
 {
     export class TextLegendClass extends beachParty.DataChangerClass
     {
-        //_colorPalette: any[];
-        //_isContinuous: boolean;
-        //_isCategory: boolean;
-        //_numSteps: number;
-        //_breaks: any[];
+        private container: HTMLElement;
 
         _tm: bps.TextMappingData;
 
@@ -21,17 +17,19 @@ module beachPartyApp
         _titleElem: HTMLElement;
         _paletteElem: HTMLElement;
 
-        constructor(rootName: string, tm: bps.TextMappingData)
+        constructor(container: HTMLElement, rootName: string, tm: bps.TextMappingData)
         {
             super();
 
+            this.container = container;
+
             this._tm = tm;
-            var root = vp.select("#" + rootName);
+            var root = vp.select(this.container, "." + rootName);
 
             //---- add colName as TITLE ----
             var title = root.append("span")
                 .addClass("legendTitle textButton")
-                .id("textLegendTitle")
+                .addClass("textLegendTitle")
                 .text(tm.colName);
 
             //---- add PALETTE ----

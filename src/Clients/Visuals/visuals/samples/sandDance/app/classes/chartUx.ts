@@ -9,6 +9,8 @@ module beachPartyApp
 {
     export class ChartUxClass extends beachParty.DataChangerClass
     {
+        private container: HTMLElement;
+
         private _chartUxElem: HTMLElement;
 
         private _rubberBandSelector: RubberBandSelectorClass;
@@ -17,28 +19,29 @@ module beachPartyApp
         private _hoverPrimaryKey;
         private _maxToolTipColumns;
 
-        constructor(bpsHelper: bps.ChartHostHelperClass, maxToolTipColumns: number)
+        constructor(container: HTMLElement, bpsHelper: bps.ChartHostHelperClass, maxToolTipColumns: number)
         {
             super();
+
+            this.container = container;
 
             this._bpsHelper = bpsHelper;
             this._maxToolTipColumns = maxToolTipColumns;
 
             this.buildRubberBand();
 
-            var chartUxElem = document.getElementById("chartUxDiv");
+            var chartUxElem: HTMLElement = $(".chartUxDiv", this.container).get(0);
             this._chartUxElem = chartUxElem;
 
-            var sandDanceElement = $(".sandDance").get(0);
             //vp.select(chartUxElem).attach("mousedown", (e) => this.onWindowMouseDown(e));
-            sandDanceElement.addEventListener("mouseup", (e) => this.enableEngineUI(true));
+            this.container.addEventListener("mouseup", (e) => this.enableEngineUI(true));
 
             //---- MOUSE MOVE for tooltips ----
             chartUxElem.addEventListener("mousemove", (e) => this.onUxMouseMove(e));
             // vp.select(chartUxElem).attach("mousemove", (e) => this.onUxMouseMove(e));
 
             //---- KEY DOWN for keyboard commands ----
-            sandDanceElement.addEventListener("keydown", (e) => this.onKeyDown(e));
+            this.container.addEventListener("keydown", (e) => this.onKeyDown(e));
 
             //---- DBL CLICK for reset transform ----
             chartUxElem.addEventListener("dblclick", (e) => this.onDblClick(e));
@@ -97,7 +100,7 @@ module beachPartyApp
                     else
                     {
                         //---- ADD dataTip ----
-                        var colName = vp.select("#searchCol").text();
+                        var colName = vp.select(this.container, ".searchCol").text();
                         var pt = vp.events.mousePosition(e);
 
                         DataTipMgrClass.instance.addDataTip(colName, pt);
@@ -134,7 +137,7 @@ module beachPartyApp
                             }
                             else
                             {
-                                vp.select(this._chartUxElem).title("");
+                                vp.select(this.container, this._chartUxElem).title("");
                             }
 
                             //vp.utils.debug("chartUx: hover primaryKey=" + msgBlock.primaryKey);
@@ -153,7 +156,7 @@ module beachPartyApp
 
         enableEngineUI(value: boolean)
         {
-            vp.select("#myChart").css("pointer-events", (value) ? "" : "none");
+            vp.select(this.container, ".myChart").css("pointer-events", (value) ? "" : "none");
 
             if (!value)
             {
@@ -169,8 +172,8 @@ module beachPartyApp
 
         buildRubberBand()
         {
-            var chartUxElem = document.getElementById("chartUxDiv");
-            this._rubberBandSelector = new RubberBandSelectorClass(chartUxElem);
+            var chartUxElem: HTMLElement = $(".chartUxDiv", this.container).get(0);
+            this._rubberBandSelector = new RubberBandSelectorClass(this.container, chartUxElem);
 
             //---- hook the RECT SELECT event ----
             this._rubberBandSelector.attachOnSelect((evt, rcBand, toggle, mouseDownOrigin) =>
@@ -180,7 +183,7 @@ module beachPartyApp
                     let scale = sandDance.CommonUtils.instance.getScale();
 
                     //---- adjust rcBand so that it is relative to "myChart" ----
-                    var rc = vp.select("#myChart").getBounds(false);
+                    var rc = vp.select(this.container, ".myChart").getBounds(false);
 
                     var rcBandAdj = vp.geom.createRect(
                         (rcBand.left - rc.left) / scale.x,

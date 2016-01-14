@@ -9,6 +9,8 @@ module beachPartyApp
 {
     export class RotateRingClass 
     {
+        private container: HTMLElement;
+
         _root: HTMLDivElement;
         _fullOpacity = "0";//"1"
         //_radius = 0;               // size of 3D transform center
@@ -17,9 +19,11 @@ module beachPartyApp
         _pulseDuration = 0;
         //_rcRotation = null;
 
-        constructor()
+        constructor(container: HTMLElement)
         {
-            var rootW = vp.select(".sandDance").append("div")
+            this.container = container;
+
+            var rootW = vp.select(this.container).append("div")
                 .addClass("rotateRing")
                 .css("position", "absolute")
                 .css("opacity", "0");

@@ -54,9 +54,9 @@ module beachParty
         _halfSizeSize = 0;
         _z = 0;
 
-        constructor(view: DataViewClass, gl: any, chartState: any)
+        constructor(view: DataViewClass, gl: any, chartState: any, container: HTMLElement)
         {
-            super("scatterPlotClass", view, gl, chartState);
+            super("scatterPlotClass", view, gl, chartState, container);
         }
 
         computeFacetStats(dc: DrawContext, nvFacetBuckets: any[])

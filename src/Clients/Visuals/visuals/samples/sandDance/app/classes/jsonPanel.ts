@@ -25,10 +25,10 @@ module beachPartyApp
         _currentTabContentElem: HTMLElement;
         _currentTabButtonElem: HTMLElement;
 
-        constructor(openerIds: string, dataOwner: beachParty.DataChangerClass, name: string, json: any, bgColor?: string,
+        constructor(container: HTMLElement, openerIds: string, dataOwner: beachParty.DataChangerClass, name: string, json: any, bgColor?: string,
             isCol1Indent = true, hideClose = false, addAutoClose = false, addNormalClose?: boolean)
         {
-            super(name, json.isDialog, bgColor, json.title, json.width, json.height, json.resizable, json.tip, hideClose, addAutoClose,
+            super(container, name, json.isDialog, bgColor, json.title, json.width, json.height, json.resizable, json.tip, hideClose, addAutoClose,
                 addNormalClose);
 
             this._dataOwner = dataOwner;
@@ -101,7 +101,8 @@ module beachPartyApp
 
                 var tabButtonW = tabButtonContainerW.append("span")
                     .addClass("tabButton")
-                    .id(id)
+                    .addClass(id)
+                    .attr("tabId", id)
                     .text(tab.tabName)
                     .title(tab.tip);
 
@@ -142,17 +143,17 @@ module beachPartyApp
             }
 
             //---- make new tab content visible ----
-            var buttonId = tabButton.id;
+            var buttonId = $(tabButton).attr("tabId");
             var contentId = buttonId + "Content";
 
-            var tabContentW = vp.select("#" + contentId);
+            var tabContentW = vp.select(this.container, "." + contentId);
 
             if (tabContentW.length)
             {
                 tabContentW
                     .css("display", "");         // makes it default to visible;
 
-                var tabButtonW = vp.select("#" + buttonId)
+                var tabButtonW = vp.select(this.container, "." + buttonId)
                     .addClass("tabButtonOpen");
 
                 this._currentTabContentElem = tabContentW[0];
@@ -192,7 +193,7 @@ module beachPartyApp
                 {
                     rowSpanTdW = outerRowW.append("td")
                         .css("vertical-align", "top")
-                        .id("rowSpanHolder");
+                        .addClass("rowSpanHolder");
                         //.attr("rowSpan", "99")
                 }
 
@@ -208,7 +209,7 @@ module beachPartyApp
                 {
                     rowSpanTdW = outerRowW.append("td")
                         .css("vertical-align", "top")
-                        .id("rowSpanHolder");
+                        .addClass("rowSpanHolder");
                         //.attr("rowSpan", "99")
                 }
 
@@ -245,7 +246,7 @@ module beachPartyApp
             {
                 tableW
                     .css("display", "none")
-                    .id(id);
+                    .addClass(id);
             }
 
             for (var i = 0; i < rows.length; i++)
@@ -936,7 +937,7 @@ module beachPartyApp
             }
 
             tdW2.append("span")
-                .id(parentId)
+                .addClass(parentId)
                 .css("margin-top", "-10px")
                 .css("margin-bottom", "8px")
                 .css("margin-left", "10px")
@@ -945,7 +946,7 @@ module beachPartyApp
 
             var initValue = this.getValue(row.dataName);
 
-            var numAdjuster = new NumAdjusterClass(parentId, "", initValue, row.min, row.max, row.tip,
+            var numAdjuster = new NumAdjusterClass(this.container, parentId, "", initValue, row.min, row.max, row.tip,
                 AdjusterStyle.bottomInPanel, row.roundValues, row.syncChanges, row.spreadLow);
 
             numAdjuster.show(true);
@@ -1257,7 +1258,7 @@ module beachPartyApp
             var cbW = tdW.append("input")
                 .addClass("panelCheckbox")
                 .attr("type", "checkbox")
-                .attr("id", cbName)
+                .addClass(cbName)
                 .title(row.tip)
                 .attach("dblclick", (e) =>
                 {
@@ -1329,7 +1330,7 @@ module beachPartyApp
             var cb = tdW.append("input")
                 .addClass("panelRadio")
                 .attr("type", "radio")
-                .attr("id", rbName)
+                .addClass(rbName)
                 .attr("name", row.dataName)         // for grouping radio buttons together
                 .title(row.tip)
                 .attach("dblclick", (e) =>
@@ -1398,7 +1399,7 @@ module beachPartyApp
 
     }
 
-    export function buildJsonPanel(openerIds: string, dataOwner: beachParty.DataChangerClass, panelName: string, openPanel: boolean, left?: number,
+    export function buildJsonPanel(container: HTMLElement, openerIds: string, dataOwner: beachParty.DataChangerClass, panelName: string, openPanel: boolean, left?: number,
         top?: number, right?: number, bottom?: number, toggleOpen = true, isCol1Indent = true, hideClose = false,
         addAutoClose = false, addNormalClose?: boolean, isCenter?: boolean): JsonPanelClass
     {
@@ -1410,20 +1411,20 @@ module beachPartyApp
 
         // var desc = w.panelDescriptions[panelName];
 
-        panel = new JsonPanelClass(openerIds, dataOwner, panelName, desc, undefined, isCol1Indent, hideClose, addAutoClose, addNormalClose);
+        panel = new JsonPanelClass(container, openerIds, dataOwner, panelName, desc, undefined, isCol1Indent, hideClose, addAutoClose, addNormalClose);
 
         var rc = vp.dom.getBounds(panel.getRootElem(), true);
 
         if ((left === undefined || left === null) && (right === undefined || right === null))
         {
             //---- center horizontally ----
-            left = vp.select(".sandDance").element().innerWidth / 2 - rc.width / 2;
+            left = $(container).innerWidth() / 2 - rc.width / 2;
         }
 
         if ((top === undefined || top === null) && (bottom === undefined || bottom === null))
         {
             //---- center vertically ----
-            top = vp.select(".sandDance").element().innerHeight / 2 - rc.height / 2;
+            top = $(container).innerHeight() / 2 - rc.height / 2;
         }
 
         if (openPanel)

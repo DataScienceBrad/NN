@@ -74,24 +74,24 @@ module beachPartyApp
             }
         }
 
-        public static setButtonSelectedState(baseName: string, value: boolean, fnNorm: string, fnSelect: string)
+        public static setButtonSelectedState(container: HTMLElement, baseName: string, value: boolean, fnNorm: string, fnSelect: string)
         {
-            var buttonName = "#" + baseName + "Button";
-            var imgName = "#" + baseName + "Img";
+            var buttonName = "." + baseName + "Button";
+            var imgName = "." + baseName + "Img";
 
             if (value)
             {
                 //---- mark as SELECTED and change images, if needed ----
-                vp.select(buttonName).attr("data-selected", "true");
-                vp.select(imgName).attr("data-selected", "true");
-                vp.select(imgName).removeClass(fnNorm).addClass(fnSelect);
+                vp.select(container, buttonName).attr("data-selected", "true");
+                vp.select(container, imgName).attr("data-selected", "true");
+                vp.select(container, imgName).removeClass(fnNorm).addClass(fnSelect);
             }
             else
             {
                 //---- mark as NOT SELECTED and change images, if needed ----
-                vp.select(buttonName).attr("data-selected", "false");
-                vp.select(imgName).attr("data-selected", "false");
-                vp.select(imgName).removeClass(fnSelect).addClass(fnNorm);
+                vp.select(container, buttonName).attr("data-selected", "false");
+                vp.select(container, imgName).attr("data-selected", "false");
+                vp.select(container, imgName).removeClass(fnSelect).addClass(fnNorm);
             }
         }
 

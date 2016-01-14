@@ -16,21 +16,13 @@ module beachPartyApp
 
     export class BasePopupClass extends beachParty.DataChangerClass implements IAppControl
     {
-        private _sandDanceElement;
-
-        private get sandDanceElement() {
-            if (!this._sandDanceElement) {
-                this._sandDanceElement = document.getElementsByClassName("sandDance")[0];
-            }
-
-            return this._sandDanceElement;
-        }
+        protected container: HTMLElement;
 
         private _bigBarElement;
 
         private get bigBarElement() {
             if (!this._bigBarElement) {
-                this._bigBarElement = vp.select("#playAndIconBar");
+                this._bigBarElement = vp.select(this.container, ".playAndIconBar");
             }
 
             return this._bigBarElement;
@@ -51,9 +43,11 @@ module beachPartyApp
         _popupId: number;
         _hasTitle = false;
 
-        constructor(openerIds: string, ownerElem?: HTMLElement)
+        constructor(container: HTMLElement, openerIds: string, ownerElem?: HTMLElement)
         {
             super();
+
+            this.container = container;
 
             this._openerIds = openerIds;
             this.installEventHandlers();
@@ -69,7 +63,7 @@ module beachPartyApp
                 if (ids.length)
                 {
                     var id = ids[0];
-                    vp.select("#" + id).attr("data-selected", (value) ? "true" : "false");
+                    vp.select(this.container, "." + id).attr("data-selected", (value) ? "true" : "false");
                 }
             }
         }
@@ -83,20 +77,7 @@ module beachPartyApp
         {
             this.hide();
 
-            var rc = (<HTMLElement> document.getElementsByClassName("sandDance")[0]).getBoundingClientRect();
-
-//             var pickerElem = this.getRootElem();
-//             var rcPicker = vp.select(pickerElem).getBounds(true);
-// 
-//             if (right !== undefined)
-//             {
-//                 left = right - rcPicker.width;
-//             }
-// 
-//             if (bottom !== undefined)
-//             {
-//                 top = bottom - rcPicker.height;
-//             }
+            var rc = this.container.getBoundingClientRect();
 
             this.openWithoutOverlap(left - rc.left, top - rc.top);
         }
@@ -296,8 +277,8 @@ module beachPartyApp
             //---- set this to install async so that current click doesn't interfere ----
             setTimeout((e) => 
             {
-                this.sandDanceElement.addEventListener("keydown", this._keyboardFunc);
-                this.sandDanceElement.addEventListener("mousedown", this._mouseDownFunc);
+                this.container.addEventListener("keydown", this._keyboardFunc);
+                this.container.addEventListener("mousedown", this._mouseDownFunc);
                 this._root.addEventListener("dblclick", this._dblClickFunc);
             }, 1);
 
@@ -308,8 +289,8 @@ module beachPartyApp
             var elem = this._root;
 
             //---- remove our DOCUMENT event handlers ----
-            this.sandDanceElement.removeEventListener("keydown", this._keyboardFunc);
-            this.sandDanceElement.removeEventListener("mousedown", this._mouseDownFunc);
+            this.container.removeEventListener("keydown", this._keyboardFunc);
+            this.container.removeEventListener("mousedown", this._mouseDownFunc);
             this._root.removeEventListener("dblclick", this._dblClickFunc);
 
             if (this.isVisible())

@@ -16,6 +16,8 @@ module beachPartyApp
         static insightWidth = 200;
         static insightHeight = 130;
 
+        private container: HTMLElement;
+
         _session: InsightSession;
         _isShowingInsightsPanel = false;
         _currentInsight: InsightData = null;
@@ -39,9 +41,11 @@ module beachPartyApp
         _playbackDuration = 3;      // 3 seconds
         _isLooping = true;             // should playback restart once end is reached
 
-        constructor()
+        constructor(container: HTMLElement)
         {
             super();
+
+            this.container = container;
 
             this._session = new InsightSession();
         }
@@ -250,7 +254,7 @@ module beachPartyApp
             //---- invoke the INSIGHTS CONTEXT MENU ----
             var menuItems = this.getInsightsMenuItems();
 
-            var pm = new PopupMenuClass(null, "pmInsights", menuItems, (e, menu, textIndex, menuIndex) =>
+            var pm = new PopupMenuClass(this.container, null, "pmInsights", menuItems, (e, menu, textIndex, menuIndex) =>
             {
                 var name = (<MenuItemData>menuItems[menuIndex]).text;
 
@@ -293,7 +297,7 @@ module beachPartyApp
 
             }, true);
 
-            var rc = vp.select("#insightMenuButton").getBounds(false);
+            var rc = vp.select(this.container, ".insightMenuButton").getBounds(false);
 
             vp.select(pm.getRootElem())
                 .css("background", "rgb(69, 69, 69)")  // match color on button bg
@@ -343,7 +347,7 @@ module beachPartyApp
             //---- invoke the INSIGHTS CONTEXT MENU ----
             var menuItems = this.getInsightEntryMenuItems();
 
-            var pm = new PopupMenuClass(null, "pmEntryInsights", menuItems, (e, menu, textIndex, menuIndex) =>
+            var pm = new PopupMenuClass(this.container, null, "pmEntryInsights", menuItems, (e, menu, textIndex, menuIndex) =>
             {
                 var name = (<MenuItemData>menuItems[menuIndex]).text;
 
@@ -390,7 +394,7 @@ module beachPartyApp
             //---- make a copy of the specified insight for editing (in case we cancel, this makes it easy to reverse the changes) ----
             this._editInsight = vp.utils.copyMap(insight);
 
-            this._currentPanel = buildJsonPanel(null, this, "editInsight", true, pt.x, pt.y, undefined, undefined, undefined, false);
+            this._currentPanel = buildJsonPanel(this.container, null, this, "editInsight", true, pt.x, pt.y, undefined, undefined, undefined, false);
 
             ////---- initialize TinyMCE rich text area to convert all textAreas into RICH text areas ----
             //tinymce.init({ selector: 'textarea', setupcontent_callback: "myCustomSetupContent" });
@@ -457,7 +461,7 @@ module beachPartyApp
 
             this._editInsight = insight;
 
-            this._currentPanel = buildJsonPanel(null, this, "addInsight", true, left, top, undefined, undefined, undefined, false);
+            this._currentPanel = buildJsonPanel(this.container, null, this, "addInsight", true, left, top, undefined, undefined, undefined, false);
 
             this._currentPanel.registerForChange("onAccept", (e) =>
             {
@@ -607,8 +611,8 @@ module beachPartyApp
                     "&body=Here's a link to my BeachParty session: %0D%0A" + "%0D%0A" + "%09" +  
                     appPath + "/BeachPartyApp.html?session=" + sessionId + "%0D%0A" + "%0D%0A";
 
-                vp.select("#helperAnchor").attr("href", url);
-                vp.select("#helperAnchor")[0].click();
+                vp.select(this.container, ".helperAnchor").attr("href", url);
+                vp.select(this.container, ".helperAnchor")[0].click();
             });
         }
 
@@ -616,7 +620,7 @@ module beachPartyApp
         {
             this.editSessionName(name);
 
-            this._currentPanel = buildJsonPanel(null, this, "editSessionName", true);
+            this._currentPanel = buildJsonPanel(this.container, null, this, "editSessionName", true);
 
             this._currentPanel.registerForChange("onAccept", (e) =>
             {
@@ -642,7 +646,7 @@ module beachPartyApp
             this._session.insights = [];
             this._sessionName = "untitled";
 
-            vp.select("#insightList")
+            vp.select(this.container, ".insightList")
                 .clear();
 
             //this.showInsightBar(false);
@@ -758,7 +762,7 @@ module beachPartyApp
 
             this.showInsightBar(this._isShowingInsightsPanel);
 
-            AppUtils.setButtonSelectedState("insight", this._isShowingInsightsPanel, "fnIconBarToggleInsightNorm", "fnIconBarToggleInsightSelect");
+            AppUtils.setButtonSelectedState(this.container, "insight", this._isShowingInsightsPanel, "fnIconBarToggleInsightNorm", "fnIconBarToggleInsightSelect");
         }
 
         isPanelOpen()
@@ -773,7 +777,7 @@ module beachPartyApp
                 return this._isShowingInsightsPanel;
             }
 
-            vp.select("#insightPanel").css("display", (value) ? "" : "none");
+            vp.select(this.container, ".insightPanel").css("display", (value) ? "" : "none");
 
             //this.layoutScreen();
             this.onDataChanged("layout");
@@ -849,7 +853,7 @@ module beachPartyApp
 
         addInsightToBar(insight: InsightData)
         {
-            var insightBarW = vp.select("#insightList");
+            var insightBarW = vp.select(this.container, ".insightList");
             var tip = this.getInsightTooltip(insight);
 
             var insightW = insightBarW.append("div")
@@ -869,7 +873,7 @@ module beachPartyApp
 
             //---- type of insight ICON ----
             var iconW = rowW.append("div")
-                .id("insightTypeMenuButton")
+                .addClass("insightTypeMenuButton")
                 .addClass("clickIcon")
                 .addClass(iconUrl)
                 .css("width", "28px")
@@ -1014,7 +1018,7 @@ module beachPartyApp
             this._forceShow = false;
             this._insightEntryElems = [];
 
-            vp.select("#insightList")
+            vp.select(this.container, ".insightList")
                 .clear();
 
             for (var i = 0; i < this._session.insights.length; i++)
@@ -1026,7 +1030,7 @@ module beachPartyApp
             //---- open the bar, if requested ----
             if (forceShow)
             {
-                vp.select("#insightPanel")
+                vp.select(this.container, ".insightPanel")
                     .css("display", "");             // show it;
 
                 this._isShowingInsightsPanel = true;

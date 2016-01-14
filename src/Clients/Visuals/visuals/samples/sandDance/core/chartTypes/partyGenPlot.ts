@@ -32,9 +32,9 @@ module beachParty
 
         _leafRcArray: CellData[];
 
-        constructor(view: DataViewClass, gl: any, chartState: any, chartType: string)
+        constructor(view: DataViewClass, gl: any, chartState: any, chartType: string, container: HTMLElement)
         {
-            super("partyGenPlotClass", view, gl, chartState);
+            super("partyGenPlotClass", view, gl, chartState, container);
 
             this._chartType = chartType;
 

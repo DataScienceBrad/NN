@@ -424,13 +424,6 @@ module beachParty
 
             gl.bindTexture(gl.TEXTURE_2D, this._texture);
             gl.texImage2D(gl.TEXTURE_2D, level, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
-
-            //if (level == 5)
-            //{
-            //    vp.select("#imgDebug")
-            //        .attr("src", img.toDataURL())
-            //        .css("display", "block")
-            //}
         }
     }
 }

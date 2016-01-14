@@ -9,6 +9,8 @@ module beachPartyApp
 {
     export class ColorLegendClass extends beachParty.DataChangerClass
     {
+        private container: HTMLElement;
+
         //---- constants ----
         _maxPaletteHeight = 200;
         _entryHeight = 20;
@@ -27,22 +29,24 @@ module beachPartyApp
         _bpsHelper: bps.ChartHostHelperClass;
         _app: AppClass;                 // need to get latest ColInfo on legend build
 
-        constructor(app: AppClass, rootName: string, bpsHelper: bps.ChartHostHelperClass)
+        constructor(container: HTMLElement, app: AppClass, rootName: string, bpsHelper: bps.ChartHostHelperClass)
         {
             super();
+
+            this.container = container;
 
             this._app = app;
             this._cm = null;
             this._bpsHelper = bpsHelper;
 
-            var root = vp.select("#" + rootName)
+            var root = vp.select(this.container, "." + rootName)
                 .addClass("legend")
                 .css("margin-bottom", "20px");
 
             //---- add colName as TITLE ----
             var title = root.append("div")
                 .addClass("legendTitle textButton")
-                .id("colorLegendTitle")
+                .addClass("colorLegendTitle")
                 .attach("click", (e) =>
                 {
                     AppUtils.callPanelOpen(e, (e) => this.onDataChanged("colorPanelRequest"));

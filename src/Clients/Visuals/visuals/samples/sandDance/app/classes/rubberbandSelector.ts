@@ -19,6 +19,8 @@ module beachPartyApp
     is to eventually use the standard browser context menu event in its place. */
     export class RubberBandSelectorClass extends beachParty.DataChangerClass
     {
+        private container: HTMLElement;
+
         //---- state ----
         _id = nextSelectorId++;
         _isEnabled = true;
@@ -41,14 +43,15 @@ module beachPartyApp
         _isSetCaptureActive = false;
 
         private myChartElement: vp.dom.IWrapperOuter;
-        private sandDanceElement: HTMLElement;
 
         //---- turn this off until we change this to look like a context menu on touch screen, with normal menu items ----
         _isHoldEnabled = false;
 
-        constructor(dragSelectCanvas: HTMLElement)
+        constructor(container: HTMLElement, dragSelectCanvas: HTMLElement)
         {
             super();
+
+            this.container = container;
 
             this._onMouseMoveFunc = (e) => this.onRubberMove(e);
             this._onMouseUpFunc = (e) => this.onRubberUp(e);
@@ -56,7 +59,7 @@ module beachPartyApp
             this._dragSelectCanvas = dragSelectCanvas;
 
             var rubberBand = vp.select(document.createElement("span"))     //   createTextBlock()
-                .id("rubberBandSelector")
+                .addClass("rubberBandSelector")
                 .addClass("rubberBand")
                 .css("z-index", "9999")
                 .css("display", "none");
@@ -68,10 +71,9 @@ module beachPartyApp
             rubberBand.css("pointer-events", "none");
             rubberBand[0].disabled = true;
 
-            this.myChartElement = vp.select("#myChart");
+            this.myChartElement = vp.select(this.container, ".myChart");
 
             this.hookEvents(false);
-            this.sandDanceElement = $(".sandDance").get(0);
         }
 
         isDragging()
@@ -89,8 +91,7 @@ module beachPartyApp
         {
             //---- always process mouse up, so we can track right mouse button up/down state ----
             // vp.select("#chartUxDiv").attach("mouseup", (e) => this.onMouseUp(e));
-            document
-                .getElementById("chartUxDiv")
+            $(".chartUxDiv", this.container).get(0)
                 .addEventListener("mouseup", (e) => this.onMouseUp(e));
 
             this._canvasChanged = canvasChanged;
@@ -113,7 +114,7 @@ module beachPartyApp
                 });
 
                 //canvas.appendChild(this._rubberBand.getNative());
-                vp.select("#myChart").append(this._rubberBand[0]);
+                vp.select(this.container, ".myChart").append(this._rubberBand[0]);
                 //document.body.appendChild(this._rubberBand[0]);
             }
         }
@@ -564,8 +565,8 @@ module beachPartyApp
 
                     // vp.events.setCaptureWindow(this._onMouseMoveFunc, this._onMouseUpFunc);
 
-                    this.sandDanceElement.addEventListener("mousemove", this._onMouseMoveFunc);
-                    this.sandDanceElement.addEventListener("mouseup", this._onMouseUpFunc);
+                    this.container.addEventListener("mousemove", this._onMouseMoveFunc);
+                    this.container.addEventListener("mouseup", this._onMouseUpFunc);
 
                     vp.utils.debug("rubberbandSelector: SET CAPTURE");
                     this._isSetCaptureActive = true;
@@ -649,6 +650,6 @@ module beachPartyApp
 
     export function createRubberBandSelector(canvas: HTMLElement): RubberBandSelectorClass
     {
-        return new RubberBandSelectorClass(canvas);
+        return new RubberBandSelectorClass(this.container, canvas);
     }
 } 

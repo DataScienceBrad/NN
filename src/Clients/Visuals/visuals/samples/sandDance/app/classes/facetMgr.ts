@@ -9,17 +9,21 @@ module beachPartyApp
 {
     export class FacetMgrClass extends beachParty.DataChangerClass 
     {
+        private container: HTMLElement;
+
         _facetLayouts: bps.FacetLayoutInfo[];
 
-        constructor()
+        constructor(container: HTMLElement)
         {
             super();
+
+            this.container = container;
         }
 
         buildLabels(facetLayouts: bps.FacetLayoutInfo[])
         {
             this._facetLayouts = facetLayouts;
-            var rootW = vp.select("#facetLabelHolder");      // #chartUxDiv")
+            var rootW = vp.select(this.container, ".facetLabelHolder");      // #chartUxDiv")
 
             //---- clear previous labels ----
             rootW.clear();

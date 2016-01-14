@@ -9,6 +9,8 @@ module beachPartyApp
 {
     export class NumAdjusterClass extends beachParty.DataChangerClass
     {
+        private container: HTMLElement;
+
         _root: HTMLElement;
         _nameText: HTMLElement;
         _valueText: HTMLElement;
@@ -44,10 +46,12 @@ module beachPartyApp
 
         /** if "syncChanges" is true, a dataChanged event on "value" is issued whenever the numAdjuster value is changed.  if false,
         event is only triggered on mouse up. */
-        constructor(rootName: string, name: string, initialValue: number, minValue: number, maxValue: number, tooltip: string, style: AdjusterStyle,
+        constructor(container: HTMLElement, rootName: string, name: string, initialValue: number, minValue: number, maxValue: number, tooltip: string, style: AdjusterStyle,
             roundValues?: boolean, syncChanges?: boolean, spreadLow?: boolean)
         {
             super();
+
+            this.container = container;
 
             this._value = initialValue;
             this._minValue = minValue;
@@ -60,7 +64,7 @@ module beachPartyApp
             this._spreadLow = spreadLow;
 
             //---- adjust ROOT ----
-            var root = vp.select("#" + rootName)//facetBins
+            var root = vp.select(this.container, "." + rootName)//facetBins
                 .addClass("numAdjuster")
                 .title(tooltip)
                 .css("position", "relative")    
@@ -293,7 +297,7 @@ module beachPartyApp
 
                 // vp.events.setCaptureWindow((e) => this.onMouseMove(e), (e) => this.onMouseUp(e)/*, ["myChart"]*/);
 
-                let sandDanceElement = vp.select(".sandDance");
+                let sandDanceElement = vp.select(this.container);
 
                 sandDanceElement.attach("mousemove", this._onMouseMove);
                 sandDanceElement.attach("mouseup", this._onMouseUp);
@@ -423,7 +427,7 @@ module beachPartyApp
 
             // vp.events.releaseCaptureWindow();
 
-            let sandDanceElement = vp.select(".sandDance");
+            let sandDanceElement = vp.select(this.container);
 
             sandDanceElement.detach("mousemove", this._onMouseMove);
             sandDanceElement.detach("mouseup", this._onMouseUp);

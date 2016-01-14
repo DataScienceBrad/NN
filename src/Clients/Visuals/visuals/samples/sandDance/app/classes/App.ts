@@ -30,6 +30,8 @@ module beachPartyApp
         private saveSettingsHandler: (settings: any, type: sandDance.SettingsType)  => void;
         private loadSettingsHandler: (type: sandDance.SettingsType) => any;
 
+        private container: HTMLElement;
+
         _chartIsLoaded = false;
         _isOrthoCamera = false;
         _useFacets = false;
@@ -168,11 +170,16 @@ module beachPartyApp
 
         //_chartMenuItems: any[] = null;
 
-        constructor(saveSettingsHandler: (settings: any, type: sandDance.SettingsType) => void, loadSettingsHandler: (type: sandDance.SettingsType) => any)
+        constructor(
+            saveSettingsHandler: (settings: any, type: sandDance.SettingsType) => void,
+            loadSettingsHandler: (type: sandDance.SettingsType) => any,
+            container: HTMLElement)
         {
             super();
 
-            this._dataTipMgr = new DataTipMgrClass();
+            this.container = container;
+
+            this._dataTipMgr = new DataTipMgrClass(this.container);
 
             this.saveSettingsHandler = saveSettingsHandler;
             this.loadSettingsHandler = loadSettingsHandler;
@@ -182,7 +189,7 @@ module beachPartyApp
             if (!this.isBrowserModern())
             {
                 //---- show old browser message ----
-                vp.select("#oldBrowserMsg").css("display", "");
+                $(".oldBrowserMsg", this.container).css("display", "");
 
                 throw "error - browser now supported";
             }
@@ -228,7 +235,7 @@ module beachPartyApp
             // [see http://stackoverflow.com/questions/12906789/preventing-an-image-from-being-draggable-or-selectable-without-using-js]
             if (vp.utils.isFireFox)
             {
-                vp.select("img").attach('dragstart', function (e) { e.preventDefault(); });
+                vp.select(this.container, "img").attach('dragstart', function (e) { e.preventDefault(); });
             }
 
             this.preventHtmlSelection();
@@ -373,11 +380,6 @@ module beachPartyApp
 
                 this.pulse3DCircleIfAppropriate();
 
-                //---- create a fake "event" object ----
-                // var rc = vp.select("#myChart").getBounds(true);
-
-                //var evt = { which: 1, pageX: rc.left + mousePos.x, pageY: rc.top + mousePos.y, type: "mouse"};
-
                 this.onWindowMouseDown(null);
 
                 vp.utils.debug("client detected chart mouseDown: primaryKey=" + primaryKey);
@@ -405,11 +407,6 @@ module beachPartyApp
 
                 this.closeScrubberDialog();
 
-                //var pi = this.getPreload(msgBlock.preload);
-                //this._selectedSampleName = (pi) ? this._preload.name : "";
-
-                //vp.utils.debug("DATAFRAME msg received: recordCount=" + this._recordCount + ", filename=" + this._filename);
-
                 this._selectedCount = 0;
                 this._filteredInCount = this._recordCount;
 
@@ -427,24 +424,9 @@ module beachPartyApp
                     //---- we set undo=true in this call to make the current app state the base/home state of undoMgr ----
                     this.logAction(Gesture.none, null, ElementType.none, Action.start, Target.app, true, "machineId", this._machineId, "buildNum", AppClass.buildId);
 
-                    ////---- mark the completion of app init and save the app state as the undo base entry ----
-                    //this.createInsight(true, true, (insight) =>
-                    //{
-                    //    this._undoMgr.push(insight, "inital app state");
-                    //});
-
                     this.makeUIVisible();
                     this.hookLocalStorageChanges();
                 }
-
-                //---- EVENT STATS ----
-//                 setInterval((e) =>
-//                 {
-//                     var msg = "Register=" + beachParty.dcRegisterCount + ", Attach=" + vp.events.eventAttachCount;
-// 
-//                     vp.select("#eventStats")
-//                         .text(msg);
-//                 }, 1000);
             });
 
             this._bpsHelper.subscribe("selectionChanged", true, (msgBlock) =>
@@ -486,7 +468,7 @@ module beachPartyApp
                 this.onFilterChangedFromEngine();
             });
 
-            var searchTextElem = <HTMLInputElement>document.getElementById("searchText");
+            var searchTextElem: HTMLInputElement = <HTMLInputElement> $(".searchText", this.container).get(0);
             searchTextElem.onkeyup = (e) =>
             {
                 if (e.keyCode === vp.events.keyCodes.enter)
@@ -652,9 +634,9 @@ module beachPartyApp
             //---- this assumes that our app & BeachParty engine share the same server ----
             this._bpsHelper = bps.createBpsHelper("myChart");
 
-            settings = new AppSettingsMgr(this._bpsHelper, this.saveSettingsHandler, this.loadSettingsHandler);
+            settings = new AppSettingsMgr(this.container, this._bpsHelper, this.saveSettingsHandler, this.loadSettingsHandler);
 
-            this._fileOpenMgr = new FileOpenMgr(this._bpsHelper, this.saveSettingsHandler, this.loadSettingsHandler);
+            this._fileOpenMgr = new FileOpenMgr(this.container, this._bpsHelper, this.saveSettingsHandler, this.loadSettingsHandler);
 
             this._undoMgr = new UndoMgrClass();
             this._undoMgr.registerForChange("undoStack", (e) => this.onUndoStackChange());
@@ -689,8 +671,7 @@ module beachPartyApp
             this._machineId = machineId + "";
             this._sessionId = sessionId + "";
 
-            //var myChart = document.getElementById("myChart");
-            this._rotateRing = new RotateRingClass();
+            this._rotateRing = new RotateRingClass(this.container);
 
             //----- regenerate sessionId/machineId ----
             //delete localStorage["machineId"];       // = undefined;
@@ -725,7 +706,7 @@ module beachPartyApp
             this._yMapping = new bps.MappingData("", defaultBinCount);
             this._zMapping = new bps.MappingData("", 3);            // this._defaultBins);
 
-            this._insightMgr = new InsightMgrClass();
+            this._insightMgr = new InsightMgrClass(this.container);
             this._insightMgr.registerForChange("layout", (e) => this.layoutScreen());
             this._insightMgr.registerForChange("insightLoaded", (e) => this.loadInsight());
             this._insightMgr.registerForChange("currentInsight", (e) => this.onCurrentInsightChanged());
@@ -745,24 +726,24 @@ module beachPartyApp
             //---- enable DRAG and DROP on whole client document ---
             setTimeout((e) =>
             {
-                vp.select(".sandDance")
+                vp.select(this.container)
                     .attach("dragover", (e) => e.preventDefault())
                     .attach("drop", (e) => this._fileOpenMgr.processDroppedTextOrFile(e));
             }, 1);
 
             //---- set image sources ----
-            vp.select("#imgCreateInsight").addClass("fnInsightCreate");
-            vp.select("#insightMenuButton").addClass("fnInsightMenu");
-            vp.select("#insightCloseButton").addClass("fnClose");
-            vp.select("#dataTipIcon").addClass("fnIconBarDataTip");
-            vp.select("#imgDataSlicer").addClass("fnIconBarSlicer");
+            vp.select(this.container, ".imgCreateInsight").addClass("fnInsightCreate");
+            vp.select(this.container, ".insightMenuButton").addClass("fnInsightMenu");
+            vp.select(this.container, ".insightCloseButton").addClass("fnClose");
+            vp.select(this.container, ".dataTipIcon").addClass("fnIconBarDataTip");
+            vp.select(this.container, ".imgDataSlicer").addClass("fnIconBarSlicer");
 
-            this._chartUx = new ChartUxClass(this._bpsHelper, this._maxToolTipColumns);
+            this._chartUx = new ChartUxClass(this.container, this._bpsHelper, this._maxToolTipColumns);
 
-            this._facetMgr = new FacetMgrClass();
+            this._facetMgr = new FacetMgrClass(this.container);
 
             //---- hook WINDOW keyboard/mouse down ----
-            var windowW = vp.select(".sandDance");
+            var windowW = vp.select(this.container);
 
             //---- do these AFTER creating chartUx/rubberBand ----
             windowW.attach("mousedown", (e) => this.onWindowMouseDown(e));
@@ -807,7 +788,7 @@ module beachPartyApp
 
         onFilenameChanged()
         {
-            vp.select("#filenameText")
+            vp.select(this.container, ".filenameText")
                 .text(this._filename);
 
             this.setBigValue("Data", this._filename);
@@ -852,7 +833,7 @@ module beachPartyApp
         buildIconBar()
         {
             /// Note: it is much easier to get consistent, predictable results by building this toolbar in code, rather than HTML. 
-            var tpW = vp.select("#iconBar")
+            var tpW = vp.select(this.container, ".iconBar")
                 .clear()
                 .css("min-height", "16px");
 
@@ -862,7 +843,7 @@ module beachPartyApp
 
             var rowW = tableW.append("tr")
                 .css("white-space", "nowrap")
-                .id("iconBarRow");
+                .addClass("iconBarRow");
 
             var leftW = rowW.append("td")
                 .css("width", "100px");
@@ -932,9 +913,9 @@ module beachPartyApp
             this.addIconTextPair("y", "Select a column for Y-axis mapping or grouping", null, "Y", true, undefined, undefined, true);
             this.addIconTextPair("z", "Select a column for Z-axis mapping or grouping", null, "Z", true);
 
-            let xButtonElement = vp.select("#xButton"),
-                yButtonElement = vp.select("#yButton"),
-                zButtonElement = vp.select("#zButton");
+            let xButtonElement = vp.select(this.container, ".xButton"),
+                yButtonElement = vp.select(this.container, ".yButton"),
+                zButtonElement = vp.select(this.container, ".zButton");
 
             //---- initially hide X, Y, and Z buttons ----
             xButtonElement.css("display", "none");
@@ -966,23 +947,23 @@ module beachPartyApp
         {
             var value = (isDisabled) ? "true" : "false";
 
-            $("#bb" + baseName).attr("data-disabled", value);
-            $("#bb" + baseName + "Value").attr("data-disabled", value);
+            $(".bb" + baseName, this.container).attr("data-disabled", value);
+            $(".bb" + baseName + "Value", this.container).attr("data-disabled", value);
 
             //---- hide chevron if disabled ----
-            $("#bb" + baseName + "Chevron").css("display", (isDisabled) ? "none" : "");
+            $(".bb" + baseName + "Chevron", this.container).css("display", (isDisabled) ? "none" : "");
         }
 
         disableIconButton(baseName: string, isDisabled: boolean)
         {
             var value = (isDisabled) ? "true" : "false";
 
-            $("#" + baseName + "Button").attr("data-disabled", value);
-            $("#" + baseName + "Img").attr("data-disabled", value);
-            $("#" + baseName + "Text").attr("data-disabled", value);
+            $("." + baseName + "Button", this.container).attr("data-disabled", value);
+            $("." + baseName + "Img", this.container).attr("data-disabled", value);
+            $("." + baseName + "Text", this.container).attr("data-disabled", value);
 
             //---- hide chevron if disabled ----
-            $("#" + baseName + "Chevron").css("display", (isDisabled) ? "none" : "");
+            $("." + baseName + "Chevron", this.container).css("display", (isDisabled) ? "none" : "");
         }
 
         onSelectClick()
@@ -1025,13 +1006,7 @@ module beachPartyApp
 
             if (picker)
             {
-//                 var rc = vp.select("#selectButton").getBounds(true);
-//                 let sandDanceBounds = vp.select(".sandDance").getBounds(true),
-//                     bigBarBounds = vp.select("#playAndIconBar").getBounds(true);
-// 
-//                 rc.left -= sandDanceBounds.left;//TODO: remove this hard fix.
-//                 rc.bottom -= sandDanceBounds.top + bigBarBounds.bottom;
-                var rc = document.getElementById("selectButton").getBoundingClientRect();
+                var rc = $(".selectButton", this.container).get(0).getBoundingClientRect();
 
                 picker.show(rc.left, rc.bottom);
             }
@@ -1047,7 +1022,7 @@ module beachPartyApp
                 imgSrc = imgSrc.replace("white", "black");
             }
 
-            let element = vp.select("#selectImg");
+            let element = vp.select(this.container, ".selectImg");
 
             imgSources.forEach((srcClass) => {
                 element.removeClass(srcClass);
@@ -1063,12 +1038,12 @@ module beachPartyApp
         fixUpButtonsAfterRuleChange()
         {
             //---- handle exceptions to app options for text/icons/chevrons in buttons ----
-            vp.select("#xText").css("display", "block");
-            vp.select("#yText").css("display", "block");
-            vp.select("#zText").css("display", "block");
+            vp.select(this.container, ".xText").css("display", "block");
+            vp.select(this.container, ".yText").css("display", "block");
+            vp.select(this.container, ".zText").css("display", "block");
 
-            vp.select("#searchColumnChevron").css("display", "inline-block");
-            vp.select("#insightChevron").css("display", "none");
+            vp.select(this.container, ".searchColumnChevron").css("display", "inline-block");
+            vp.select(this.container, ".insightChevron").css("display", "none");
         }
 
         onWindowMouseDown(e?: any)
@@ -1117,19 +1092,19 @@ module beachPartyApp
             //this._insightMgr.closeMenus();
 
             //---- new code - find all close all popupMenu's and panels without a title bar ----
-            var popups = vp.select(".popupMenu");
+            var popups = vp.select(this.container, ".popupMenu");
             popups.toArray().forEach((p) =>
             {
                 p.jsObj.close();
             });
 
-            var panels = vp.select(".panel");
+            var panels = vp.select(this.container, ".panel");
             panels.toArray().forEach((p) =>
             {
                 p.jsObj.close();
             });
 
-            var panels = vp.select(".popupPanel");
+            var panels = vp.select(this.container, ".popupPanel");
             panels.toArray().forEach((p) =>
             {
                 p.jsObj.close();
@@ -1177,11 +1152,11 @@ module beachPartyApp
 
         showPlayUI(value: boolean, isPaused?: boolean)
         {
-            vp.select("#iconBar").css("display", (value) ? "none" : "");
-            vp.select("#searchPanel").css("display", (value) ? "none" : "");
-            vp.select("#btSettings").css("display", (value) ? "none" : "");
+            vp.select(this.container, ".iconBar").css("display", (value) ? "none" : "");
+            vp.select(this.container, ".searchPanel").css("display", (value) ? "none" : "");
+            vp.select(this.container, ".btSettings").css("display", (value) ? "none" : "");
 
-            vp.select("#playPanel").css("display", (value || isPaused) ? "" : "none");
+            vp.select(this.container, ".playPanel").css("display", (value || isPaused) ? "" : "none");
 
             //---- show/hide axis bins adjusters ----
             this.updateUiForLayoutChange(value);
@@ -1189,10 +1164,7 @@ module beachPartyApp
 
         onPlaybackStarted()
         {
-            //vp.select("#stopButton")
-            //    .css("display", "")
-
-            vp.select("#playExButton")
+            vp.select(this.container, ".playExButton")
                 .text("Pause");
 
             this.showPlayUI(true);
@@ -1205,9 +1177,7 @@ module beachPartyApp
 
         onPlaybackPaused()
         {
-            //vp.select("#stopButton").css("display", "");
-
-            vp.select("#playExButton")
+            vp.select(this.container, ".playExButton")
                 .text("Resume");
 
             this.showPlayUI(false, true);
@@ -1219,8 +1189,6 @@ module beachPartyApp
 
         onPlaybackStopped()
         {
-            //vp.select("#stopButton").css("display", "none")
-
             this.showPlayUI(false);
 
             if (this._showInsightPanelOnStop)
@@ -1233,7 +1201,7 @@ module beachPartyApp
 
         onPlayExClick(e)
         {
-            var text = vp.select("#playExButton").text();
+            var text = vp.select(this.container, ".playExButton").text();
 
             if (text === "Pause")
             {
@@ -1261,7 +1229,7 @@ module beachPartyApp
         {
             var textW = parentW.append("div")
                 .addClass("textButton")
-                .id(id)
+                .addClass(id)
                 .css("margin-top", topAdjust + "px")
                 .title(tooltip)
                 .attach("click", (e) =>
@@ -1289,7 +1257,8 @@ module beachPartyApp
             //---- CONTAINER ----
             var tdW = trW.append("td")
                 .addClass("bigBarEntry")
-                .id(id)
+                .addClass(id)
+                // .id(id)
                 .css("float", "left")
                 .title(tooltip);
 
@@ -1317,13 +1286,15 @@ module beachPartyApp
                 //---- VALUE TEXT ----
                 divW.append("span")
                     .text("None")
-                    .id(id + "Value")
+                    .addClass(id + "Value")
+                    // .id(id + "Value")
                     .addClass("bigBarValue noneValue");
 
                 //---- VALUE CHEVRON ----
                 divW.append("div")//img
                     .addClass("chevronOfCombo")
-                    .id(id + "Chevron");
+                    .addClass(id + "Chevron");
+                    // .id(id + "Chevron");
                     //.attr("src", "Images/smallChevron3.png")
                     // .css("width", "8px")
                     // .css("opacity", ".5")
@@ -1352,7 +1323,7 @@ module beachPartyApp
 
         buildBigBar()
         {
-            var trW = vp.select("#bigBar")
+            var trW = vp.select(this.container, ".bigBar")
                 .append("tr");
 
             //---- DATASET ----
@@ -1457,7 +1428,7 @@ module beachPartyApp
         onChartNotesClick()
         {
             //---- for now, click means HIDE notes ----
-            vp.select("#chartNotes")
+            vp.select(this.container, ".chartNotes")
                 .css("display", "none");
         }
 
@@ -1505,10 +1476,10 @@ module beachPartyApp
                         var rcPlot = msgBlock.rcPlot;
 
                         //---- convert rcPlot from relative to window coordinates ----
-                        var rcChart = vp.select("#myChart").getBounds(false);
+                        var rcChart = vp.select(this.container, ".myChart").getBounds(false);
                         rcPlot = vp.geom.createRect(rcChart.left + rcPlot.left, rcChart.top + rcPlot.top, rcPlot.width, rcPlot.height);
 
-                        this._notesPanel = new NotesPanelClass(title, notes, insight.notesBounds, rcPlot);
+                        this._notesPanel = new NotesPanelClass(this.container, title, notes, insight.notesBounds, rcPlot);
 
                         //---- track panel movements ----
                         this._notesPanel.registerForChange("location", (e) => this.onInsightBoundsChange(insight));
@@ -1703,29 +1674,6 @@ module beachPartyApp
             this.logAction(Gesture.click, null, ElementType.button, Action.remap, Target.colorMapping, true);
         }
 
-//         onPlotMoved(rcPlot: ClientRect, rcRotateRing: ClientRect)//TODO: old version
-//         {
-//             //---- move chartUxDiv to capture events that happen within the plot area of the chart -----
-//             var rc = vp.select("#myChart").getBounds(false);
-// 
-//             var left = rc.left + rcPlot.left;
-//             var top = rc.top + rcPlot.top;
-// 
-//             //---- screen relative ----
-//             this._rcPlot = vp.geom.createRect(left, top, rcPlot.width, rcPlot.height);
-// 
-//             //---- rcPlot relative ----
-//             this._rcRotateRing = rcRotateRing;
-// 
-//             vp.select("#chartUxDiv")
-//                 .css("left", left + "px")
-//                 .css("top", top + "px")
-//                 .css("width", rcPlot.width + "px")
-//                 .css("height", rcPlot.height + "px")
-// 
-//             //vp.utils.debug("---> onPlotMoved");
-//         }
-
         onPlotMoved(rcPlot: ClientRect, rcRotateRing: ClientRect)//TODO: this temporarily hack, remove it asap
         {
             //---- move chartUxDiv to capture events that happen within the plot area of the chart -----
@@ -1741,7 +1689,7 @@ module beachPartyApp
             //---- rcPlot relative ----
             this._rcRotateRing = rcRotateRing;
 
-            vp.select("#chartUxDiv")
+            vp.select(this.container, ".chartUxDiv")
                 .css("left", left + "px")
                 .css("top", top + "px")
                 .css("width", rcPlot.width + "px")
@@ -1757,7 +1705,7 @@ module beachPartyApp
 
         quickStats(msg: string)
         {
-            vp.select("#lastCycleFPS")
+            vp.select(this.container, ".lastCycleFPS")
                 .text(msg);
         }
 
@@ -1771,25 +1719,25 @@ module beachPartyApp
             this._feedbackType = "Ideas";
             this._feedbackText = "";
 
-            var rc = vp.select("#btFeedback").getBounds(false);
+            var rc = vp.select(this.container, ".btFeedback").getBounds(false);
 
-            buildJsonPanel("btFeedback", this, "feedback", true, undefined, rc.bottom+5,
+            buildJsonPanel(this.container, "btFeedback", this, "feedback", true, undefined, rc.bottom+5,
                 rc.right+0, undefined, undefined, undefined, undefined, undefined, true);
         }
 
         makeUIVisible()
         {
-            vp.select("#iconBar").css("display", "inline-block");
-            vp.select("#bigBar").css("display", "");
-            vp.select("#searchPanel").css("display", "");
+            vp.select(this.container, ".iconBar").css("display", "inline-block");
+            vp.select(this.container, ".bigBar").css("display", "");
+            vp.select(this.container, ".searchPanel").css("display", "");
 
-            vp.select("#feedbackBar")
+            vp.select(this.container, ".feedbackBar")
                 .css("display", "")
                 .css("right", "30px");
 
             this.layoutScreen();
 
-            vp.select(vp.select("#myChart")[0].firstChild)
+            vp.select(this.container, ".myChart")
                 .css("opacity", "1");        // make visible on first resize;
         }
 
@@ -2137,7 +2085,7 @@ module beachPartyApp
             //---- only open if not already open ----
             if (! this._scrubberDialog)
             {
-                this._scrubberDialog = new ScrubberDialogClass(this._origColInfos, this._colInfos);
+                this._scrubberDialog = new ScrubberDialogClass(this.container, this._origColInfos, this._colInfos);
 
                 this._scrubberDialog.registerForChange("ok", (e) =>
                 {
@@ -2291,7 +2239,7 @@ module beachPartyApp
             this._bpsHelper.setShowing3DWheel(value);
 
             //---- reflect in UI ----
-            vp.select("#wheelButton")
+            vp.select(this.container, ".wheelButton")
                 .attr("data-selected", value + "");
 
             this.onDataChanged("isShowing3DWheel");
@@ -2826,9 +2774,9 @@ module beachPartyApp
             //this._wheelDownTime = vp.utils.now();
 
             //---- hide the chartUxDiv when transforMode = true ----
-            vp.select("#chartUxDiv").css("display", (this._isTransformMode) ? "none" : "");
+            vp.select(this.container, ".chartUxDiv").css("display", (this._isTransformMode) ? "none" : "");
 
-            AppUtils.setButtonSelectedState("wheel", this._isTransformMode, "fnIconBarToggle3dNorm", "fnIconBarToggle3dSelect");
+            AppUtils.setButtonSelectedState(this.container, "wheel", this._isTransformMode, "fnIconBarToggle3dNorm", "fnIconBarToggle3dSelect");
 
             if (!settings._showWheelDuringTransformMode)
             {
@@ -2952,10 +2900,10 @@ module beachPartyApp
 
             this._bpsHelper.setFacetMapping(fm);
 
-            vp.select("#facetText")
+            vp.select(this.container, ".facetText")
                 .css("font-style", (fm.colName) ? "italic" : "normal");
 
-            vp.select("#facetBins")
+            vp.select(this.container, ".facetBins")
                 .css("display", (fm.colName) ? "" : "none");
 
             var colName = (fm.colName) ? fm.colName : "";
@@ -3083,7 +3031,7 @@ module beachPartyApp
 
             this._bpsHelper.setImageMapping(im);
 
-            vp.select("#imageText")
+            vp.select(this.container, ".imageText")
                 .css("font-style", (im.colName) ? "italic" : "normal");
 
             var colName = (im.colName) ? im.colName : "";
@@ -3107,7 +3055,7 @@ module beachPartyApp
 
             this._bpsHelper.setSizeMapping(sm);
 
-            vp.select("#sizeText")
+            vp.select(this.container, ".sizeText")
                 .css("font-style", (sm.colName) ? "italic" : "normal");
 
             var colName = (sm.colName) ? sm.colName : "";
@@ -3190,7 +3138,7 @@ module beachPartyApp
             this.setBigValue("Color", cm.colName);
             //vp.select("#bbColorValue").text((cm.colName) ? cm.colName : "");
 
-            vp.select("#colorText")
+            vp.select(this.container, ".colorText")
                 .css("font-style", (cm.colName) ? "italic" : "normal");
 
             this.onDataChanged("colorMapping");
@@ -3205,7 +3153,7 @@ module beachPartyApp
 
             this._bpsHelper.setXMapping(xm);
 
-            vp.select("#xText").text("X: " + xm.colName);
+            vp.select(this.container, ".xText").text("X: " + xm.colName);
             this.setBigValue("X", xm.colName);
 
             this.onDataChanged("xMapping");
@@ -3219,7 +3167,7 @@ module beachPartyApp
             this._bpsHelper.setYMapping(ym);
 
             //--- wierd layout issues - try a timer ----
-            vp.select("#yText").text("Y: " + ym.colName);
+            vp.select(this.container, ".yText").text("Y: " + ym.colName);
             this.setBigValue("Y", ym.colName);
 
             this.manualLayoutForYStuff();
@@ -3234,7 +3182,7 @@ module beachPartyApp
             this._bpsHelper.setZMapping(zm);
             var colName = (zm) ? zm.colName : "";
 
-            vp.select("#zText").text("Z: " + colName);
+            vp.select(this.container, ".zText").text("Z: " + colName);
             this.setBigValue("Z", colName);
 
             this.onDataChanged("zMapping");
@@ -3242,13 +3190,13 @@ module beachPartyApp
 
         manualLayoutForYStuff()
         {
-            var rc = vp.select("#yText").getBounds(false);
+            var rc = vp.select(this.container, ".yText").getBounds(false);
             var textHeight = (rc) ? rc.height : 0;
 
             //---- adjust position of chevron due to y text rotation ----
             var chevTop = textHeight / 2 - 15;
 
-            vp.select("#yChevron")
+            vp.select(this.container, ".yChevron")
                 .css("position", "relative")
                 .css("left", "50px")
                 .css("top", chevTop + "px");
@@ -3256,7 +3204,7 @@ module beachPartyApp
             //---- adjust yButton to correct size, so that background (hover) will cover the text and chevron correctly ----
             var buttonTop = -(10 + textHeight / 2);
 
-            vp.select("#yButton")
+            vp.select(this.container, ".yButton")
                 .css("width", "35px")
                 .css("height", textHeight + "px")
                 .css("position", "relative")
@@ -3265,7 +3213,7 @@ module beachPartyApp
 
             //---- adjust position of y bin numAdjuster to be under the name ----
             var binTop = 4 - (textHeight / 2);
-            vp.select("#yBins")
+            vp.select(this.container, ".yBins")
                 .css("top", binTop + "px")
                 .css("left", "2px");
         }
@@ -3385,14 +3333,14 @@ module beachPartyApp
 
         showInfoMsg(title: string, msg: string)
         {
-            vp.select("#infoMsgTitle")
+            vp.select(this.container, ".infoMsgTitle")
                 .text(title);
 
             var str = msg.replace(/\r\n/g, "<br />");
 
-            vp.select("#infoMsgText").html(str);
+            vp.select(this.container, ".infoMsgText").html(str);
 
-            vp.select("#infoMsgBox")
+            vp.select(this.container, ".infoMsgBox")
                 .css("max-width", (window.innerWidth - 50) + "px")
                 .css("display", "");      // show
 
@@ -3421,7 +3369,7 @@ module beachPartyApp
             var left = 300;
             var top = 100;
 
-            buildJsonPanel(null, this, "errorPanel", true, left, top, undefined, undefined);
+            buildJsonPanel(this.container, null, this, "errorPanel", true, left, top, undefined, undefined);
         }
 
         searchCol(value?: string)
@@ -3437,7 +3385,7 @@ module beachPartyApp
 
                 //this._bpsHelper.search(this._searchCol, this._searchValue);
 
-                vp.select("#searchCol")
+                vp.select(this.container, ".searchCol")
                     .text(value);
 
                 this.onDataChanged("searchCol");
@@ -3493,7 +3441,7 @@ module beachPartyApp
             var height = szPixels;
 
             //---- create canvas we can draw on ----
-            var canvasW = vp.select(document.body).append("canvas")
+            var canvasW = vp.select(this.container).append("canvas")
                 .attr("width", width)
                 .attr("height", height);
 
@@ -3742,7 +3690,7 @@ module beachPartyApp
         buildLegends()
         {
             //---- COLOR legend ----
-            var colorLegend = new ColorLegendClass(this, "colorLegend", this._bpsHelper);
+            var colorLegend = new ColorLegendClass(this.container, this, "colorLegend", this._bpsHelper);
             this._colorLegend = colorLegend;
             colorLegend.registerForChange("colorPanelRequest", (e) =>
             {
@@ -3752,7 +3700,7 @@ module beachPartyApp
             beachParty.connectModelView(this, "colorMapping", colorLegend, "colorMapping");
 
             //---- SIZE legend ----
-            var sizeLegend = new SizeLegendClass(this, "sizeLegend", this._bpsHelper);
+            var sizeLegend = new SizeLegendClass(this.container, this, "sizeLegend", this._bpsHelper);
             this._sizeLegend = sizeLegend;
             sizeLegend.registerForChange("sizePanelRequest", (e) =>
             {
@@ -3762,7 +3710,7 @@ module beachPartyApp
             beachParty.connectModelView(this, "sizeMapping", sizeLegend, "sizeMapping");
 
             //---- IMAGE legend ----
-            var imageLegend = new ImageLegendClass(this, "imageLegend", this._bpsHelper);
+            var imageLegend = new ImageLegendClass(this.container, this, "imageLegend", this._bpsHelper);
             this._imageLegend = imageLegend;
             imageLegend.registerForChange("imagePanelRequest", (e) =>
             {
@@ -3772,7 +3720,7 @@ module beachPartyApp
             beachParty.connectModelView(this, "imageMapping", imageLegend, "imageMapping");
 
             //---- TEXT legend ----
-            var textLegend = new TextLegendClass("textLegend", this._textMapping);
+            var textLegend = new TextLegendClass(this.container, "textLegend", this._textMapping);
             this._textLegend = textLegend;
 
             beachParty.connectModelView(this, "textMapping", textLegend, "textMapping");
@@ -3810,7 +3758,7 @@ module beachPartyApp
         buildBinAdjusters()
         {
             //---- FACET bins ----
-            this._facetBinAdjuster = new NumAdjusterClass("facetBins", "Bins", this.facetBins(), 1, 99, "The number of facet bins to create.  Drag in circle to change.",
+            this._facetBinAdjuster = new NumAdjusterClass(this.container, "facetBins", "Bins", this.facetBins(), 1, 99, "The number of facet bins to create.  Drag in circle to change.",
                 AdjusterStyle.right, true, false, true);
 
             beachParty.connectModelView(this, "facetBins", this._facetBinAdjuster, "value");
@@ -3831,7 +3779,7 @@ module beachPartyApp
             //});
 
             //---- OPACITY adjuster ----
-            this._opacityAdjuster = new NumAdjusterClass("opacityAdj", "Opacity", settings._shapeOpacity, 0, 1, "Adjust the opacity of the shapes.  Drag in circle to change.",
+            this._opacityAdjuster = new NumAdjusterClass(this.container, "opacityAdj", "Opacity", settings._shapeOpacity, 0, 1, "Adjust the opacity of the shapes.  Drag in circle to change.",
                 AdjusterStyle.right, false, true);
 
             beachParty.connectModelView(settings, "shapeOpacity", this._opacityAdjuster, "value");
@@ -3850,19 +3798,19 @@ module beachPartyApp
             //beachParty.connectModelView(this, "textOpacity", this._textOpacityAdjuster, "value");
 
             //---- X bins ----
-            this._xBinAdjuster = new NumAdjusterClass("xBins", "Bins", this.xBins(), 1, 999, "The number of X-axis bins to create.  Drag in circle to change.",
+            this._xBinAdjuster = new NumAdjusterClass(this.container, "xBins", "Bins", this.xBins(), 1, 999, "The number of X-axis bins to create.  Drag in circle to change.",
                 AdjusterStyle.bottom, true, false, true);
 
             beachParty.connectModelView(this, "xBins", this._xBinAdjuster, "value");
 
             //---- Y bins ----
-            this._yBinAdjuster = new NumAdjusterClass("yBins", "Bins", this.yBins(), 1, 999, "The number of Y-axis bins to create.  Drag in circle to change.",
+            this._yBinAdjuster = new NumAdjusterClass(this.container, "yBins", "Bins", this.yBins(), 1, 999, "The number of Y-axis bins to create.  Drag in circle to change.",
                 AdjusterStyle.left, true, false, true);
 
             beachParty.connectModelView(this, "yBins", this._yBinAdjuster, "value");
 
             //---- Z bins ----
-            this._zBinAdjuster = new NumAdjusterClass("zBins", "Bins", this.zBins(), 1, 10,
+            this._zBinAdjuster = new NumAdjusterClass(this.container, "zBins", "Bins", this.zBins(), 1, 10,
                 "The number of z bins to create.  Drag in circle to change.", AdjusterStyle.left, true, false, false);
 
             beachParty.connectModelView(this, "zBins", this._zBinAdjuster, "value");
@@ -3957,7 +3905,7 @@ module beachPartyApp
 
         openAppPanel(e)
         {
-            this._appPanel = buildJsonPanel("btSettings", settings, "appSettings", true, 0, 0, undefined, undefined, undefined, undefined, undefined, undefined, undefined, true);
+            this._appPanel = buildJsonPanel(this.container, "btSettings", settings, "appSettings", true, 0, 0, undefined, undefined, undefined, undefined, undefined, undefined, undefined, true);
 
             this._appPanel.registerForChange("close", (e) =>
             {
@@ -4008,9 +3956,9 @@ module beachPartyApp
         openSortPanel()
         {
             // var rc = vp.select("#bbSort").getBounds(true);
-            var rc = document.getElementById("bbSort").getBoundingClientRect();
+            var rc = $(".bbSort", this.container).get(0).getBoundingClientRect();
 
-            this._sortPanel = buildJsonPanel("bbSort", this, "sorting", true, rc.left, rc.bottom, undefined, undefined,
+            this._sortPanel = buildJsonPanel(this.container, "bbSort", this, "sorting", true, rc.left, rc.bottom, undefined, undefined,
             undefined, undefined, undefined, true);
             
             //---- adjust height of column picker so it doesn't exceed height of panel ----
@@ -4018,7 +3966,7 @@ module beachPartyApp
             var maxListHeight = panelMaxHeight - 165;
 
             var panelRoot = this._sortPanel.getRootElem();
-            var contentW = vp.select(panelRoot, "#tab0Content");
+            var contentW = vp.select(panelRoot, ".tab0Content");
 
             vp.select(contentW[0], ".listBox")
                 .css("max-height", maxListHeight + "px");
@@ -4071,20 +4019,20 @@ module beachPartyApp
 
         openSlicerPanel(e)
         {
-            var colName = vp.select("#searchCol").text();
+            var colName = vp.select(this.container, ".searchCol").text();
 
             this.openSlicerCore(colName);
         }
 
         openSlicerCore(colName: string, value?: string, toggleOpen = true)
         {
-            var rc = vp.select("#selectedCountText").getBounds(false);
+            var rc = vp.select(this.container, ".selectedCountText").getBounds(false);
             var left = rc.left;
             var top = rc.bottom;
             this.slicerColName(colName);
             this._slicerInitialValue = value;
 
-            var panel = buildJsonPanel(null, this, "slicer", true, left, top, undefined, undefined, toggleOpen);
+            var panel = buildJsonPanel(this.container, null, this, "slicer", true, left, top, undefined, undefined, toggleOpen);
             this._slicerPanel = panel;
 
             if (panel)
@@ -4150,14 +4098,14 @@ module beachPartyApp
         /** User did pointer-down on dataTip icon: create a new datatip that user can drag. */
         onNewDataTipDown(e)
         {
-            var dataTipIcon = vp.select("#dataTipIcon")[0];
+            var dataTipIcon = vp.select(this.container, ".dataTipIcon")[0];
             var offset = vp.events.mousePosition(e, dataTipIcon);
 
             //---- adjust for some offset around icon ----
             offset.x -= 4;
             offset.y -= 4;
 
-            var colName = vp.select("#searchCol").text();
+            var colName = vp.select(this.container, ".searchCol").text();
 
             var dataTip = this._dataTipMgr.addDataTip(colName);
 
@@ -4249,11 +4197,11 @@ module beachPartyApp
 
         openDetailsPanel()
         {
-            var rc = vp.select("#detailsButton").getBounds(true);
+            var rc = vp.select(this.container, ".detailsButton").getBounds(true);
             var left = rc.left;
             var top = rc.bottom;
 
-            var detailsPanel = buildJsonPanel(null, this, "details", true, left, top, undefined, undefined, undefined, undefined, undefined, undefined, undefined, true);
+            var detailsPanel = buildJsonPanel(this.container, null, this, "details", true, left, top, undefined, undefined, undefined, undefined, undefined, undefined, undefined, true);
             detailsPanel.applyAppPanelOpacity();
             this._detailsPanel = detailsPanel;
 
@@ -4318,7 +4266,7 @@ module beachPartyApp
                 //---- ICON ONLY button ----
                 tdW
                     .title(tooltip)
-                    .id(rootName + "Button")
+                    .addClass(rootName + "Button")
                     .addClass("iconOnlyHolder")
                     //.css("border", "1px solid green")
                     .attach("click", (e) =>
@@ -4327,7 +4275,7 @@ module beachPartyApp
                     });
 
                 tdW.append("div") //img
-                    .id(rootName + "Img")
+                    .addClass(rootName + "Img")
                     .addClass(imgSrc) //src
                     .addClass("clickIcon")
                     .addClass("iconBarIcon")
@@ -4343,7 +4291,7 @@ module beachPartyApp
             {
                 //---- ICON/TEXT COMBO ----
                 tdW.append("span")
-                    .id(rootName + "Button")
+                    .addClass(rootName + "Button")
                     .attach("click", (e) =>
                     {
                         this[callbackName](e);
@@ -4357,7 +4305,7 @@ module beachPartyApp
         addIconTextPair(rootName: string, tooltip: string, imgSrc: string, text: string, addChevron?: boolean, isDisabled?: boolean,
             isLeftAligned?: boolean, isRotated?: boolean)
         {
-            var root = vp.select("#" + rootName + "Button")
+            var root = vp.select(this.container, "." + rootName + "Button")
                 .addClass("iconTextCombo")
                 .css("display", "inline-block")
                 .title(tooltip);
@@ -4374,7 +4322,7 @@ module beachPartyApp
                 tdW.append("div")
                     .addClass("iconOfCombo")
                     .addClass(imgSrc)
-                    .id(rootName + "Img")
+                    .addClass(rootName + "Img")
                 //.css("margin", (isLeftAligned) ? "0px" : "auto")
                     .attach("dragstart", function (e)
                     {
@@ -4391,7 +4339,7 @@ module beachPartyApp
                 .css("margin-top", "-0px")
                 .css("text-align", (isLeftAligned) ? "left" : "center")
                 .css("white-space", "nowrap")
-                .id(rootName + "Text")
+                .addClass(rootName + "Text")
                 .text(text);
 
             if (isDisabled)
@@ -4409,7 +4357,7 @@ module beachPartyApp
                     .addClass("chevron-background")
                     //.attr("src", "Images/smallChevron3.png")
                     .css("margin-left", (isRotated) ? "-30px" : "-8px")
-                    .id(rootName + "Chevron")
+                    .addClass(rootName + "Chevron")
                     .attach("dragstart", function (e)
                     {
                         //---- prevent drag of icon ----
@@ -4430,7 +4378,7 @@ module beachPartyApp
             //---- define a funtion to prevent select on all non-textbox/non-HTML elements ----
 
             //---- but, keep it for now - it does prevent selection issues when setting legend constant values by dragging mouse ----
-            document.body.onselectstart = (e) =>
+            /*document.body*/this.container.onselectstart = (e) =>
             {
                 var tt = vp.select(e.target);
                 var isTextBox = ((tt.is("input")) && (tt.attr("type") === "text"));
@@ -4605,7 +4553,7 @@ module beachPartyApp
 
                 // var rc = vp.select("#bbSum").getBounds(true);
                 
-                var rc = document.getElementById("bbSum").getBoundingClientRect();
+                var rc = $(".bbSum", this.container).get(0).getBoundingClientRect();
                 
                 picker.show(rc.left, rc.bottom);
             }
@@ -4653,9 +4601,9 @@ module beachPartyApp
         openChartPanelCore()
         {
             // var rc = vp.select("#bbChart").getBounds(true);
-            var rc = document.getElementById("bbChart").getBoundingClientRect();
+            var rc = $(".bbChart", this.container).get(0).getBoundingClientRect();
 
-            var chartPanel = buildJsonPanel("bbChart", settings, "chartSettings", true, rc.left, rc.bottom,
+            var chartPanel = buildJsonPanel(this.container, "bbChart", settings, "chartSettings", true, rc.left, rc.bottom,
                 undefined, undefined, undefined, undefined, undefined, true);
 
             this._chartPanel = chartPanel;
@@ -4723,7 +4671,7 @@ module beachPartyApp
             if (isFromLegend)
             {
                 // var rc = vp.select("#" + legendButtonName).getBounds(true);
-                var rc = document.getElementById(legendButtonName).getBoundingClientRect();
+                var rc = $("." + legendButtonName, this.container).get(0).getBoundingClientRect();
 
                 if (legendButtonName === "yButton")
                 {
@@ -4744,7 +4692,7 @@ module beachPartyApp
             else
             {
                 // var rc = vp.select("#" + bigButtonName).getBounds(true);
-                var rc = document.getElementById(bigButtonName).getBoundingClientRect();
+                var rc = $("." + bigButtonName, this.container).get(0).getBoundingClientRect();
 
                 var x = rc.left;
                 var y = rc.bottom;
@@ -4752,7 +4700,7 @@ module beachPartyApp
 
             var buttonNames = bigButtonName + " " + legendButtonName;
 
-            var axisPanel = buildJsonPanel(buttonNames, this, panelName, true, x, y,
+            var axisPanel = buildJsonPanel(this.container, buttonNames, this, panelName, true, x, y,
                 x2, y2, undefined, undefined, undefined, true);
 
             //this._facetPanel = xPanel;
@@ -4762,7 +4710,7 @@ module beachPartyApp
             var maxListHeight = panelMaxHeight - 75;
 
             var panelRoot = axisPanel.getRootElem();
-            var contentW = vp.select(panelRoot, "#tab0Content");
+            var contentW = vp.select(panelRoot, ".tab0Content");
 
             vp.select(contentW[0], ".listBox")
                 .css("max-height", maxListHeight + "px");
@@ -4779,9 +4727,9 @@ module beachPartyApp
         openFacetPanelCore()
         {
             // var rc = vp.select("#bbFacet").getBounds(true);
-            var rc = document.getElementById("bbFacet").getBoundingClientRect();
+            var rc = $(".bbFacet", this.container).get(0).getBoundingClientRect();
 
-            var facetPanel = buildJsonPanel("bbFacet", this, "facet", true, rc.left, rc.bottom,
+            var facetPanel = buildJsonPanel(this.container, "bbFacet", this, "facet", true, rc.left, rc.bottom,
             undefined, undefined, undefined, undefined, undefined, true);
 
             this._facetPanel = facetPanel;
@@ -4791,7 +4739,7 @@ module beachPartyApp
             var maxListHeight = panelMaxHeight - 75;
 
             var panelRoot = facetPanel.getRootElem();
-            var contentW = vp.select(panelRoot, "#tab0Content");
+            var contentW = vp.select(panelRoot, ".tab0Content");
 
             vp.select(contentW[0], ".listBox")
                 .css("max-height", maxListHeight + "px");
@@ -4815,7 +4763,7 @@ module beachPartyApp
             if (isFromLegend)
             {
                 // var rc = vp.select("#colorLegendTitle").getBounds(true);
-                var rc = document.getElementById("colorLegendTitle").getBoundingClientRect();
+                var rc = $(".colorLegendTitle", this.container).get(0).getBoundingClientRect();
 
                 x2 = rc.left;
                 y = rc.top;
@@ -4823,13 +4771,13 @@ module beachPartyApp
             else
             {
                 // var rc = vp.select("#bbColor").getBounds(true);
-                var rc = document.getElementById("bbColor").getBoundingClientRect();
+                var rc = $(".bbColor", this.container).get(0).getBoundingClientRect();
 
                 x = rc.left;
                 y = rc.bottom;
             }
 
-            var colorPanel = buildJsonPanel("bbColor colorLegendTitle", this, "color", true, x, y, x2, y2,
+            var colorPanel = buildJsonPanel(this.container, "bbColor colorLegendTitle", this, "color", true, x, y, x2, y2,
                 undefined, undefined, undefined, true);
 
             //---- allow colorPanel to be 80% of window height ----
@@ -4845,7 +4793,7 @@ module beachPartyApp
             var maxListHeight = maxHeight - 100;       // for tab headers
 
             var panelRoot = colorPanel.getRootElem();
-            var contentW = vp.select(panelRoot, "#tab0Content");
+            var contentW = vp.select(panelRoot, ".tab0Content");
 
             vp.select(contentW[0], ".listBox")
                 .css("max-height", maxListHeight + "px");
@@ -4891,7 +4839,7 @@ module beachPartyApp
 
         onSearchClick(e)
         {
-            var text = vp.select("#searchText").value();
+            var text = vp.select(this.container, ".searchText").value();
             var gesture = (e.keyCode) ? Gesture.keyDown : Gesture.click;
 
             //---- parse text for comparison or range operators ----
@@ -5013,14 +4961,14 @@ module beachPartyApp
 
                 this.logAction(Gesture.select, null, ElementType.picklist, Action.adjust, Target.searchCol, true, "colName", mid.text);
 
-                var st = vp.select("#searchText")[0];
+                var st = vp.select(this.container, ".searchText")[0];
                 st.focus();
             });
 
             if (picker)
             {
-                var rcText = vp.select("#searchCol").getBounds(true);
-                var rcMenu = vp.select("#generalColPicker").getBounds(true);
+                var rcText = vp.select(this.container, ".searchCol").getBounds(true);
+                var rcMenu = vp.select(this.container, ".generalColPicker").getBounds(true);
 
                 var x = rcText.left - rcMenu.width;
                 var y = rcText.top + 4;
@@ -5111,7 +5059,7 @@ module beachPartyApp
             var listBox = new ListBoxClass(parent, colItems, callback);
 
             vp.select(listBox._root)
-                .id("knownDataPickerList");
+                .addClass("knownDataPickerList");
 
             return listBox;
         }
@@ -5156,7 +5104,7 @@ module beachPartyApp
 
             if (colItems)
             {
-                pm = new PopupMenuClass(openerIds, "generalColPicker", colItems, (e, menu, textIndex, menuIndex) =>
+                pm = new PopupMenuClass(this.container, openerIds, "generalColPicker", colItems, (e, menu, textIndex, menuIndex) =>
                 {
                     var mid = <MenuItemData>colItems[menuIndex];
                     callback(mid, colItems);
@@ -5193,7 +5141,7 @@ module beachPartyApp
                 if (isFromLegend)
                 {
                     // var rc = vp.select("#sizeLegendTitle").getBounds(true);
-                    var rc = document.getElementById("sizeLegendTitle").getBoundingClientRect();
+                    var rc = $(".sizeLegendTitle", this.container).get(0).getBoundingClientRect();
 
                     x2 = rc.left;
                     y = rc.top;
@@ -5201,7 +5149,7 @@ module beachPartyApp
                 else
                 {
                     // var rc = vp.select("#bbSize").getBounds(true);
-                    var rc = document.getElementById("bbSize").getBoundingClientRect();
+                    var rc = $(".bbSize", this.container).get(0).getBoundingClientRect();
 
                     x = rc.left;
                     y = rc.bottom;
@@ -5226,7 +5174,7 @@ module beachPartyApp
                 picker.changeRootClass("popupPanel");
 
                 // var rc = vp.select("#bbLine").getBounds(true);
-                var rc = document.getElementById("bbLine").getBoundingClientRect();
+                var rc = $(".bbLine", this.container).get(0).getBoundingClientRect();
 
                 picker.show(rc.left, rc.bottom);
             }
@@ -5247,7 +5195,7 @@ module beachPartyApp
                 picker.changeRootClass("popupPanel");
 
                 // var rc = vp.select("#bbText").getBounds(true);
-                var rc = document.getElementById("bbText").getBoundingClientRect();
+                var rc = $(".bbText", this.container).get(0).getBoundingClientRect();
 
                 picker.show(rc.left, rc.bottom);
             }
@@ -5275,7 +5223,7 @@ module beachPartyApp
                 if (isFromLegend)
                 {
                     // var rc = vp.select("#shapeLegendTitle").getBounds(true);
-                    var rc = document.getElementById("shapeLegendTitle").getBoundingClientRect();
+                    var rc = $(".shapeLegendTitle", this.container).get(0).getBoundingClientRect();
 
                     x2 = rc.left;
                     y = rc.top;
@@ -5283,7 +5231,7 @@ module beachPartyApp
                 else
                 {
                     // var rc = vp.select("#bbShape").getBounds(true);
-                    var rc = document.getElementById("bbShape").getBoundingClientRect();
+                    var rc = $(".bbShape", this.container).get(0).getBoundingClientRect();
 
                     x = rc.left;
                     y = rc.bottom;
@@ -5576,10 +5524,10 @@ module beachPartyApp
 
         setBigValue(baseName: string, value: string, toolTip?: string)
         {
-            var buttonW = vp.select("#bb" + baseName);
+            var buttonW = vp.select(this.container, ".bb" + baseName);
             if (buttonW[0])
             {
-                var valueW = vp.select("#bb" + baseName + "Value");
+                var valueW = vp.select(this.container, ".bb" + baseName + "Value");
 
                 if (!value)
                 {
@@ -5607,13 +5555,13 @@ module beachPartyApp
 
             if (countMsg)
             {
-                vp.select("#itemCountText")
+                vp.select(this.container, ".itemCountText")
                     .text(countMsg)
                     .css("display", "");
             }
             else
             {
-                vp.select("#itemCountText")
+                vp.select(this.container, ".itemCountText")
                     .css("display", "none");
             }
         }
@@ -5647,11 +5595,11 @@ module beachPartyApp
         onUndoStackChange()
         {
             var undoTip = this._undoMgr.getUndoTooltip();
-            vp.select("#undoButton")
+            vp.select(this.container, ".undoButton")
                 .title(undoTip);
 
             var redoTip = this._undoMgr.getRedoTooltip();
-            vp.select("#redoButton")
+            vp.select(this.container, ".redoButton")
                 .title(redoTip);
 
             var isUndoAvail = this._undoMgr.isUndoAvailable();
@@ -5667,14 +5615,14 @@ module beachPartyApp
             var countMsg = (vp.formatters.comma(this._selectedCount) + " selected");
             if (countMsg)
             {
-                vp.select("#selectedCountText")
+                vp.select(this.container, ".selectedCountText")
                     .text(countMsg)
                     .css("display", "")
                     .attr("data-disabled", (this._selectedCount) ? "false" : "true");
             }
             else
             {
-                vp.select("#selectedCountText")
+                vp.select(this.container, ".selectedCountText")
                     .css("display", "none");
             }
 
@@ -5709,10 +5657,10 @@ module beachPartyApp
                 var countMsg = (vp.formatters.comma(this._filteredInCount)) + " of " + (vp.formatters.comma(this._recordCount)) + " items";
             }
 
-            vp.select("#filteredInCountText")
+            vp.select(this.container, ".filteredInCountText")
                 .text(countMsg);
 
-            vp.select("#filteredInCountTextHolder")
+            vp.select(this.container, ".filteredInCountTextHolder")
                 .attr("data-disabled", (dim) ? "true" : "false");
 
             this.updateResetButton();
@@ -5843,9 +5791,9 @@ module beachPartyApp
         {
             //if (!this.popupJustHidden("chartPicker"))
             {
-                var rc = document.getElementById("bbView").getBoundingClientRect();
+                var rc = $(".bbView", this.container).get(0).getBoundingClientRect();
 
-                var chartPicker = new ChartPickerClass(this._chartName, (newName: string) =>
+                var chartPicker = new ChartPickerClass(this.container, this._chartName, (newName: string) =>
                 {
                     this.changeToChart(newName, null, Gesture.click);
                     this.logAction(Gesture.select, null, ElementType.picklist, Action.adjust, Target.chartType, true, "name", newName);
@@ -5891,14 +5839,14 @@ module beachPartyApp
 
             if (layouts)
             {
-                var pm = new PopupMenuClass(null, "pmLayout", layouts, (e, menu, textIndex, menuIndex) =>
+                var pm = new PopupMenuClass(this.container, null, "pmLayout", layouts, (e, menu, textIndex, menuIndex) =>
                 {
                     var layout = layouts[menuIndex];
                     this.changeToLayout(layout, true);
 
                 }, true);
 
-                var rc = vp.select("#layoutText").getBounds(false);
+                var rc = vp.select(this.container, ".layoutText").getBounds(false);
                 //var pt = vp.events.mousePosition(e);
 
                 this.setContextMenu(pm);
@@ -5972,12 +5920,12 @@ module beachPartyApp
 
             name = name || "none";
 
-            vp.select("#layoutButton")
+            vp.select(this.container, ".layoutButton")
             //.css("display", (name) ? "inline-block" : "none");
                 .css("opacity", (layoutDisabled) ? ".5" : "1");
 
             //---- update the UI ----
-            vp.select("#layoutText")
+            vp.select(this.container, ".layoutText")
                 .text(name);
 
             //---- hide/show X axis ----
@@ -5992,25 +5940,25 @@ module beachPartyApp
             var showZ = (chartName === "Scatter-3D");
             var showZBin = (chartName === "Stacks");
 
-            vp.select("#bbX").css("display", (showX) ? "" : "none");
-            vp.select("#bbY").css("display", (showY) ? "" : "none");
-            vp.select("#bbZ").css("display", (showZ) ? "" : "none");
+            vp.select(this.container, ".bbX").css("display", (showX) ? "" : "none");
+            vp.select(this.container, ".bbY").css("display", (showY) ? "" : "none");
+            vp.select(this.container, ".bbZ").css("display", (showZ) ? "" : "none");
 
             this._xBinAdjuster.show(showXBin && ! hideBins);
             this._yBinAdjuster.show(showYBin && !hideBins);
             this._zBinAdjuster.show(showZBin && !hideBins);
 
-            vp.select("#xButton")
+            vp.select(this.container, ".xButton")
                 .css("display", (showX) ? "" : "none");
 
-            vp.select("#yButton")
+            vp.select(this.container, ".yButton")
                 .css("display", (showY) ? "" : "none");
 
-            vp.select("#zButton")
+            vp.select(this.container, ".zButton")
                 .css("display", (showZ) ? "" : "none");
 
              //---- adjust xStuff to keep in place when showZ is true ----
-            vp.select("#xStuff")
+            vp.select(this.container, ".xStuff")
                 .css("top", (showZ) ? "15px" : ((showXBin) ? "5px" : "21px"));
 
             //---- ensure this is called the first time we show the Y button / bins ----
@@ -6089,9 +6037,9 @@ module beachPartyApp
             var isLineEnabled = this.isLineByEnabled();
 
             //this.disableBigButton("Sum", (!isSumEnabled));
-            vp.select("#bbSum").css("display", isSumEnabled ? "" : "none");
+            vp.select(this.container, ".bbSum").css("display", isSumEnabled ? "" : "none");
 
-            vp.select("#bbLine").css("display", isLineEnabled ? "" : "none");
+            vp.select(this.container, ".bbLine").css("display", isLineEnabled ? "" : "none");
 
             this.onChartChanged(layout);
         }
@@ -6218,12 +6166,12 @@ module beachPartyApp
         onLegendsChanged()
         {
             var isLegendNeeded = (this.isSet(this._currentColorMapping) || this.isSet(this._sizeMapping) || this.isSet(this._imageMapping));
-            var isRightPanelShowing = (vp.select("#rightPanel").css("display") === "block");
+            var isRightPanelShowing = (vp.select(this.container, ".rightPanel").css("display") === "block");
 
             if (isLegendNeeded !== isRightPanelShowing)
             {
                 //---- hide or show right panel ----
-                vp.select("#rightPanel").css("display", (isLegendNeeded) ? "block" : "none");
+                vp.select(this.container, ".rightPanel").css("display", (isLegendNeeded) ? "block" : "none");
 
                 this.layoutScreen(this.width, this.height);
             }
@@ -6237,21 +6185,19 @@ module beachPartyApp
             var h = height || this.height;//window.innerHeight;//TODO: replace 
 
             //---- we set the bounds of the chart manually ----
-            var ibWidth = vp.select("#insightPanel").width();
+            var ibWidth = vp.select(this.container, ".insightPanel").width();
             if (ibWidth > 0)
             {
                 ibWidth += 15 - 10;      // vertical scrollbar and fudge factor
             }
 
-            var lw = ibWidth + vp.select("#leftPanel").width();
-            var rw = vp.select("#rightPanel").width();
-            //var th = vp.select("#bigBar").getBounds(false).bottom;
-            
-            // var th = vp.select("#bigBar").getBounds(true).height + vp.select("#playAndIconBar").getBounds(true).height + 10;
-            var rc = (<HTMLElement> document.getElementsByClassName("sandDance")[0]).getBoundingClientRect();
-            var th = document.getElementById("bigBar").getBoundingClientRect().bottom - rc.top;
-            var bh = vp.select("#bottomPanel").height();
-            var sw = vp.select("#searchPanel").width();
+            var lw = ibWidth + vp.select(this.container, ".leftPanel").width();
+            var rw = vp.select(this.container, ".rightPanel").width();
+
+            var rc = this.container.getBoundingClientRect();
+            var th = $(".bigBar", this.container).get(0).getBoundingClientRect().bottom - rc.top;
+            var bh = vp.select(this.container, ".bottomPanel").height();
+            var sw = vp.select(this.container, ".searchPanel").width();
 
             //---- chrome/firefox layouts are different ----
             if (vp.utils.isChrome)
@@ -6269,7 +6215,7 @@ module beachPartyApp
             cw = Math.max(cw - 20, 0);
 
             //---- ICON BAR ----
-            vp.select("#iconBar")
+            vp.select(this.container, ".iconBar")
                 //.width(w - logoWidth)
                 .width(w - (sw + 40));
 
@@ -6278,23 +6224,23 @@ module beachPartyApp
             //    .width(cw + lw + rw - 22)
 
             //---- INSIGHT PANEL ----
-            vp.select("#insightPanel")
+            vp.select(this.container, ".insightPanel")
                 .css("left", "10px")
                 .css("top", (th + 10) + "px")
                 .height(h - (th + 20));
 
             //---- INSIGHT PANEL LIST ----
-            vp.select("#insightListHolder")
+            vp.select(this.container, ".insightListHolder")
                .height(h - (th + 20 + 90));
 
             //---- LEFT PANEL ----
-            vp.select("#leftPanel")
+            vp.select(this.container, ".leftPanel")
                 .css("left", (ibWidth) + "px")
                 .css("top", (th) + "px")
                 .css("height", (h - th - 20) + "px");
 
             //---- MY CHART ----
-            vp.select("#myChart")
+            vp.select(this.container, ".myChart")
                 .css("left", (lw) + "px")
                 .css("top", (th) + "px")
                 .width(cw)
@@ -6302,40 +6248,37 @@ module beachPartyApp
                 .css("opacity", "1");        // make visible on first resize;
 
             //---- FACET LABEL HOLDER ----
-            vp.select("#facetLabelHolder")
+            vp.select(this.container, ".facetLabelHolder")
                 .css("left", lw + "px")
                 .css("top", (th) + "px");
                 //.width(cw)
                 //.height(ch)
 
             //---- RIGHT PANEL ----
-            vp.select("#rightPanel")
+            vp.select(this.container, ".rightPanel")
                 .css("top", (th) + "px")
                 .css("height", (h - th) + "px");
 
             //---- BOTTOM PANEL ----
-            vp.select("#bottomPanel")
+            vp.select(this.container, ".bottomPanel")
                 .css("left", lw + "px")
                 .width(cw - 30);
 
             //---- CHART NOTES ----
-            vp.select("#chartNotesHolder")
+            vp.select(this.container, ".chartNotesHolder")
                 .css("left", lw + "px")
                 .css("top", th + "px")
                 .width(cw);
 
             //---- INFO MSG ----
-            vp.select("#infoMsgBox")
+            vp.select(this.container, ".infoMsgBox")
                 .css("left", (10) + "px")
                 .css("top", Math.max(75, (th+4)) + "px");
 
             //---- SEARCH PANEL (Chrome bug workaround) ----
             if (vp.utils.isChrome)
             {
-                //var rc = vp.select("#searchPanel").width();
-                //var right = vp.select("#searchPanel").css("right");
-
-                vp.select("#searchPanel")
+                vp.select(this.container, ".searchPanel")
                     .css("right", "124px");
             }
 
@@ -6346,7 +6289,7 @@ module beachPartyApp
 
         hideInfoMsg()
         {
-            vp.select("#infoMsgBox").css("display", "none");
+            vp.select(this.container, ".infoMsgBox").css("display", "none");
         }
 
         getDefaultXYZCols()

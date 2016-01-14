@@ -20,6 +20,8 @@ module beachParty
     //------------------------------------
     export class BaseGlVisClass extends DataChangerClass      //implements IDataViewer
     {
+        private container: HTMLElement;
+
         //---- PROGRAM / SHADER stuff ----
         private _vertexShaderId: string;
         private _fragmentShaderId: string;
@@ -205,9 +207,11 @@ module beachParty
         _cycleFrameCount = 0;
         _nextBuildId = 0;
 
-        constructor(chartClass: string, view: DataViewClass, gl: any, chartState: ChartState)
+        constructor(chartClass: string, view: DataViewClass, gl: any, chartState: ChartState, container: HTMLElement)
         {
             super();
+
+            this.container = container;
 
             this._chartClass = chartClass;
             this._view = view;
@@ -492,31 +496,10 @@ module beachParty
             {
                 this.onTextureLoaded(null, 0);
 
-                vp.select("#imgDebug")
+                vp.select(this.container, ".imgDebug")
                     .css("display", "none");
             }
         }
-
-        //makeTestTexture(gl, id: string, texUnit)
-        //{
-        //    var texture = gl.createTexture();
-
-        //    gl.activeTexture(texUnit);                // make this the active texture unit/register
-        //    gl.bindTexture(gl.TEXTURE_2D, texture);     // bind our texture to the active unit
-
-        //    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
-        //    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-
-        //    //---- non-power of two ----
-        //    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-        //    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-        //    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-
-        //    var img = document.getElementById(id);
-        //    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
-
-        //    return texture;
-        //}
 
         /** called when a new texture is ready to be applied. */
         onTextureLoaded(newTexture, textureCount: number)
@@ -2511,17 +2494,12 @@ module beachParty
                 drawBufferIndex++;
             }
 
-            //var debugMsg = "record drawn: " + i;
-            //vp.select("#consoleDiv").text(debugMsg);
-
             if (this._lm.colName)
             {
                 this.drawLinesBetweenShapes(dc, buffers, facetOffset);
             }
 
             start = this.addToBuildPerf("layoutEx", start);
-
-            //vp.utils.debug("finished layout of " + dc.recordCount + " shapes");
 
             this.fillGridLinesBuffer(dc, facetOffset);
 
@@ -3622,7 +3600,6 @@ module beachParty
             let canvas3dElement = $(canvas3dElem);
 
             //---- set bounds of CANVAS3D ----
-            // vp.select(canvas3dElem)
             canvas3dElement
                 .css("left", left + "px")
                 .css("top", top + "px")
@@ -3632,41 +3609,28 @@ module beachParty
             if (usingFacets)
             {
                 //---- hide big box ----
-                // vp.select(canvas3dElem)
                 canvas3dElement
                     .css("border", "0px solid #555");
             }
             else if (this._hideAxes)
             {
                 //---- not using axes - show full big bix ----
-                // vp.select(canvas3dElem)
                 canvas3dElement
                     .css("border", "1px solid #555");
             }
             else
             {
                 //---- using axes - show upper right ----
-                // vp.select(canvas3dElem)
-                //     .css("border-left", "0px solid #555")
-                //     .css("border-bottom", "0px solid #555")
-                //     .css("border-top", "1px solid #555")
-                //     .css("border-right", "1px solid #555");
-
-                canvas3dElement
-                .css({
+                canvas3dElement.css({
                     "border-left": "0px solid #555",
                     "border-bottom": "0px solid #555",
                     "border-top": "1px solid #555",
                     "border-right": "1px solid #555"
                 });
-                    // .css("border-left", "0px solid #555")
-                    // .css("border-bottom", "0px solid #555")
-                    // .css("border-top", "1px solid #555")
-                    // .css("border-right", "1px solid #555");
             }
 
             //---- set bounds of CANVAS2D ----
-            /*vp.select*/$(canvas2dElem)
+            $(canvas2dElem)
                 .css("left", left + "px")
                 .css("top", top + "px")
                 .attr("width", width)
@@ -3818,11 +3782,6 @@ module beachParty
                     //performance.measure("buildChartElapsed");
 
                     this._moveFrameCount++;
-
-                    ////---- hide canvas2d until animation is complete ----
-                    //vp.select(this._view.getContext2d())
-                    //    .css("opacity", ".4")
-                    //    .css("transition", "opacity .s ease- in -out")
 
                     if (!this._omitAnimOnNextBuild)
                     {
@@ -4099,11 +4058,6 @@ module beachParty
                     HitTestRect.markCacheBuildNeeded(this._transformer, this._boundingBoxMgr);
                     this._transformer._transformChanged = false;
                 }
-
-                ////---- show canvas2d after animation is complete ----
-                //vp.select(this._view.getContext2d())
-                //    .css("opacity", "1")
-                //    .css("transition", "opacity .4s ease- in -out")
             }
 
             this.onDataChanged("drawFrameCore");

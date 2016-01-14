@@ -9,6 +9,8 @@ module beachParty
 {
     export class CmdMgrClass extends DataChangerClass
     {
+        private container: HTMLElement;
+
         //_cmdHistory = [];
         _pendingVaasCmds = [];
         _clientCmdId = null;
@@ -16,10 +18,11 @@ module beachParty
         _appMgr: AppMgrClass;
         _windowMgr: WindowMgrClass;
 
-        constructor(appMgr: AppMgrClass)
+        constructor(appMgr: AppMgrClass, container: HTMLElement)
         {
             super();
 
+            this.container = container;
             this._appMgr = appMgr;
         }
 
@@ -87,7 +90,7 @@ module beachParty
                 //---- process cmd from parent document (usually running VAAS) ----
                 if (cmd === "setbackground")
                 {
-                    vp.select(document.body)
+                    vp.select(/*document.body*/this.container)
                         .css("background", msgBlock.param);
                 }
                 else if (cmd === "setplotbackground")
@@ -728,7 +731,7 @@ module beachParty
             //---- did client request a copy of the plot image? ----
             if (getSnapshot)
             {
-                var canvas = <HTMLCanvasElement>vp.select("#canvas3d")[0];
+                var canvas = <HTMLCanvasElement>vp.select(this.container, ".canvas3d")[0];
 
                 //---- PNG is messed up for IE/Chrome/Firefox; JPEG seems to work correctly ----
                 svd.imageAsUrl = canvas.toDataURL("image/jpeg", 1);
@@ -739,48 +742,6 @@ module beachParty
             var msgBlock = { msg: "SystemViewData", responseId: requestId, param: param };
             this._appMgr.postMessageToParent(msgBlock);
         }
-
-        //processSnapShotAsync(callback)
-        //{
-        //    var canvas = <HTMLCanvasElement>vp.select("#canvas3d")[0];
-
-        //    //---- IE returns scrambled colors for both PNG and JPEG; we use PNG for best quality ----
-        //    var url = canvas.toDataURL("image/png", 1);
-
-        //    //---- create a temp canvas to render our URL image ----
-        //    var tempCanvas = document.createElement("canvas");
-        //    tempCanvas.width = canvas.width;
-        //    tempCanvas.height = canvas.height;
-
-        //    //---- get the image bytes and put them in the correct order ----
-        //    var ctx = tempCanvas.getContext("2d");
-        //    var img = new Image();
-        //    img.onload = (e) =>
-        //    {
-        //        ctx.drawImage(img, 0, 0);
-
-        //        var image = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        //        var data = image.data;
-
-        //        //---- IE format ----
-        //        for (var i = 0; i < data.length; i += 4)
-        //        {
-        //            //---- swap [1] and [3] ----
-        //            var temp = data[i + 1];
-        //            data[i + 1] = data[i + 3];
-        //            data[i + 3] = temp;
-        //        }
-
-        //        ctx.putImageData(image, 0, 0);
-
-        //        var finalUrl = tempCanvas.toDataURL();
-
-        //        callback(finalUrl);
-        //    };
-
-        //    //---- start the ASYNC load of "img" and eventually trigger the "onload" handler above ----
-        //    img.src = url;
-        //}
 
         requestDataVectors(dataMgr: DataMgrClass, names: string[])
         {

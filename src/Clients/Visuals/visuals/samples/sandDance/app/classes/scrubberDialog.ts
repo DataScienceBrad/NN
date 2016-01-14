@@ -34,9 +34,9 @@ module beachPartyApp
         _currentTabContentElem: HTMLElement;
         _currentTabButtonElem: HTMLElement;
 
-        constructor(origColInfos: bps.ColInfo[], colInfos: bps.ColInfo[])
+        constructor(container: HTMLElement, origColInfos: bps.ColInfo[], colInfos: bps.ColInfo[])
         {
-            super("scrubberDialog", true, null, "Data Scrubber", null, null);
+            super(container, "scrubberDialog", true, null, "Data Scrubber", null, null);
 
             this._origColInfos = origColInfos;
             this._startingColInfos = colInfos;
@@ -67,7 +67,7 @@ module beachPartyApp
             var propsW = tabsHolderW.append("span")
                 .addClass("tabButton")
                 .text("Properties")
-                .id("properties")
+                .attr("tabId", "properties")
                 .title("View or Edit the properties of the column")
                 .attach("click", (e) =>
                 {
@@ -78,7 +78,7 @@ module beachPartyApp
             tabsHolderW.append("span")
                 .addClass("tabButton")
                 .text("Values")
-                .id("values")
+                .attr("tabId", "values")
                 .title("View or Edit the values of the column")
                 .attach("click", (e) =>
                 {
@@ -159,17 +159,17 @@ module beachPartyApp
             }
 
             //---- make new tab content visible ----
-            var buttonId = tabButton.id;
+            var buttonId = $(tabButton).attr("tabId");
             var contentId = buttonId + "Content";
 
-            var tabContentW = vp.select("#" + contentId);
+            var tabContentW = vp.select(this.container, "." + contentId);
 
             if (tabContentW.length)
             {
                 tabContentW
                     .css("display", "");         // makes it default to visible;
 
-                var tabButtonW = vp.select("#" + buttonId)
+                var tabButtonW = vp.select(tabButton/*this.container, "." + buttonId*/)
                     .addClass("tabButtonOpen");
 
                 this._currentTabContentElem = tabContentW[0];
@@ -181,7 +181,7 @@ module beachPartyApp
         {
             var divW = rootW.append("div")
                 .css("margin", "10px")
-                .attr("id", id)
+                .addClass(id)
                 .css("max-height", "130px")
                 .css("overflow-y", "auto")
                 .css("display", "none")     // hide initially
@@ -193,7 +193,7 @@ module beachPartyApp
             //---- add DOWN button ----
             var upW = upDownW.append("span")
                 .addClass("panelButton")
-                .id("downButton")
+                .addClass("downButton")
                 .css("float", "right")
                 .css("margin-right", "10px")
                 .css("margin-bottom", "5px")
@@ -207,7 +207,7 @@ module beachPartyApp
             //---- add UP button ----
             var upW = upDownW.append("span")
                 .addClass("panelButton")
-                .id("upButton")
+                .addClass("upButton")
                 .css("float", "right")
                 .html("&#8593;")         // up arrow
                 .title("Move the selected value up")
@@ -232,10 +232,10 @@ module beachPartyApp
                 downDisabled = (this._selectedValueIndex >= this._selectedEditItem.sortedKeys.length - 1);
             }
 
-            vp.select(this._root, "#upButton")
+            vp.select(this._root, ".upButton")
                 .attr("data-disabled", upDisabled ? "true" : "false");
 
-            vp.select(this._root, "#downButton")
+            vp.select(this._root, ".downButton")
                 .attr("data-disabled", downDisabled ? "true" : "false");
         }
 
@@ -273,7 +273,7 @@ module beachPartyApp
             var tableW = rootW.append("table")
                 //.css("border", "1px solid blue")
                 .css("margin", "10px")
-                .attr("id", id);
+                .addClass(id);
 
             //---- 2nd row ----
             var nextRowW = tableW.append("tr")
@@ -306,7 +306,7 @@ module beachPartyApp
 
             //---- don't use HTML SELECT elements - they don't style well on Windows ----
             var tdW = nextRowW.append("td");
-            var picker = new PickerClass(tdW[0], null, ["string", "number", "date"], "string", "set how this column's values are recognized", false);
+            var picker = new PickerClass(this.container, tdW[0], null, ["string", "number", "date"], "string", "set how this column's values are recognized", false);
 
             picker.registerForChange("value", (e) =>
             {
@@ -877,7 +877,7 @@ module beachPartyApp
             return newMap;
         }
 
-        loadColumValuesFromValueMapInSortedKeysOrder(valueMap: bps.ValueMapEntry[], table)
+        loadColumValuesFromValueMapInSortedKeysOrder(valueMap: bps.ValueMapEntry[], table: HTMLTableElement)
         {
             var selectedItem = this._selectedEditItem;
 

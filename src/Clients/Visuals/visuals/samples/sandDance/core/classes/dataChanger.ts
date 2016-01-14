@@ -39,8 +39,8 @@ module beachParty
         _callbacks: any = {};                           // used to register listeners for changes to our data
         _pendingDataChange: any = {};                   // used to set "changer" for an upcoming "onDataChanged()" call
 
-        constructor()
-        {
+        constructor() {
+            
         }
 
         registerForChange(name: string, callback: any)

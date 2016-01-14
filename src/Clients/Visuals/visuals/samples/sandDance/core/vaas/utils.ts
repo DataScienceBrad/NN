@@ -26,7 +26,7 @@
 
 /// <reference path="_references.ts" />
 
-module sandDance {
+module sandDance { //TODO: optimize this class.
     export class CommonUtils {
         private static _instance: CommonUtils;
 
@@ -48,7 +48,7 @@ module sandDance {
 
         public get sandDanceElement(): HTMLElement {
             if (!this._sandDanceElement) {
-                this._sandDanceElement = $(".sandDance").get(0);
+                this._sandDanceElement = $(".sandDance").get(0);//FIXME: this line contains error and bug!
             }
 
             return this._sandDanceElement;

@@ -18,9 +18,9 @@ module beachParty
         _maxShapeSize = 1;
         _maxCountOverFacets = 0;
 
-        constructor(view: DataViewClass, gl: any, chartState: any)
+        constructor(view: DataViewClass, gl: any, chartState: any, container: HTMLElement)
         {
-            super("flatCircle", view, gl, chartState);
+            super("flatCircle", view, gl, chartState, container);
 
             this._hideAxes = true;
         }

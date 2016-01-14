@@ -9,6 +9,8 @@ module beachPartyApp
 {
     export class AppSettingsMgr extends beachParty.DataChangerClass 
     {
+        private container: HTMLElement;
+
         _bpsHelper: bps.ChartHostHelperClass;
         _isSavingSettingsDisabled = true;
         _persistChangesDisabledFromUrlParams = false;
@@ -56,8 +58,10 @@ module beachPartyApp
         private saveSettingsHandler: (settings: any, type: sandDance.SettingsType) => void;
         private loadSettingsHandler: (type: sandDance.SettingsType) => any;
 
-        constructor(bpsHelper: bps.ChartHostHelperClass, saveSettingsHandler: (settings: any, type: sandDance.SettingsType) => void, loadSettingsHandler: (type: sandDance.SettingsType) => any) {
+        constructor(container: HTMLElement, bpsHelper: bps.ChartHostHelperClass, saveSettingsHandler: (settings: any, type: sandDance.SettingsType) => void, loadSettingsHandler: (type: sandDance.SettingsType) => any) {
             super();
+
+            this.container = container;
 
             this.saveSettingsHandler = saveSettingsHandler;
             this.loadSettingsHandler = loadSettingsHandler;
@@ -800,12 +804,12 @@ module beachPartyApp
 
             if (value)
             {
-                vp.select("#iconBarRow").css("height", "");
+                vp.select(this.container, ".iconBarRow").css("height", "");
                 this._appStyleSheet.addRule(".textOfCombo", "display: block");
             }
             else
             {
-                vp.select("#iconBarRow");
+                vp.select(this.container, ".iconBarRow");
                 this._appStyleSheet.addRule(".textOfCombo", "display: none");
             }
 
@@ -1127,7 +1131,7 @@ module beachPartyApp
 
             this._isShowingLastCycleStats = value;
 
-            vp.select("#lastCycleFPS").css("display", (value) ? "" : "none");
+            vp.select(this.container, ".lastCycleFPS").css("display", (value) ? "" : "none");
             this.saveAppSettings();
 
             this.onDataChanged("isShowingLastCycle");
@@ -1142,7 +1146,7 @@ module beachPartyApp
 
             this._isShowingEventStats = value;
 
-            vp.select("#eventStats").css("display", (value) ? "" : "none");
+            vp.select(this.container, ".eventStats").css("display", (value) ? "" : "none");
             this.saveAppSettings();
 
             this.onDataChanged("isShowingEventStats");

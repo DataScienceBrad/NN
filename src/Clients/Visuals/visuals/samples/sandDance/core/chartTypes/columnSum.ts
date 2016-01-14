@@ -35,9 +35,9 @@ module beachParty
         _yMin = 0;
         _yMax = 0;
 
-        constructor(view: DataViewClass, gl: any, chartState: any)
+        constructor(view: DataViewClass, gl: any, chartState: any, container: HTMLElement)
         {
-            super("columnSumClass", view, gl, chartState);
+            super("columnSumClass", view, gl, chartState, container);
         }
 
         /** Responsiblities: 

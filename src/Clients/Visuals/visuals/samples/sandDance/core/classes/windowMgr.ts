@@ -10,6 +10,8 @@ module beachParty
     /** Manages the UI events (mouse and touch) for the chart.  These should eventually ALL be moved to the client. */
     export class WindowMgrClass extends DataChangerClass
     {
+        private container: HTMLElement;
+
         private _dataMgr: DataMgrClass;
         private _view: DataViewClass;
         private _svgDoc: HTMLElement;
@@ -43,10 +45,12 @@ module beachParty
         _visStatsElem: HTMLElement;
         _gpuStatsElem: HTMLElement;
 
-        constructor(appMgr: AppMgrClass, dataView: DataViewClass, svgDoc: HTMLElement, canvasElem: HTMLCanvasElement, dataMgr: DataMgrClass,
+        constructor(container: HTMLElement, appMgr: AppMgrClass, dataView: DataViewClass, svgDoc: HTMLElement, canvasElem: HTMLCanvasElement, dataMgr: DataMgrClass,
             fileInfoElem: HTMLElement, visStatsElem: HTMLElement, gpuStatsElem: HTMLElement, isVaas: boolean)
         {
             super();
+
+            this.container = container;
 
             this._appMgr = appMgr;
             this._view = dataView;
@@ -108,12 +112,12 @@ module beachParty
             canvasElem.focus();
 
             //---- enalble DRAG and DROP on whole PLOT ENGINE document ---
-            setTimeout((e) =>
-            {
-                vp.select(document.body)
-                    .attach("dragover", (e) => e.preventDefault())
-                    .attach("drop", (e) => this.processEngineDroppedTextOrFile(e));
-            }, 1);
+            // setTimeout((e) =>
+            // {
+            //     vp.select(document.body)
+            //         .attach("dragover", (e) => e.preventDefault())
+            //         .attach("drop", (e) => this.processEngineDroppedTextOrFile(e));
+            // }, 1);
         }
 
         processEngineDroppedTextOrFile(e)
@@ -318,7 +322,7 @@ module beachParty
         openLocalFile()
         {
             //---- invoke the "file open" dialog by manually triggering the event ----
-            vp.select("#fileBrowse")[0].click();
+            // vp.select("#fileBrowse")[0].click();
         }
 
         onDataStreamChanged()
@@ -416,12 +420,14 @@ module beachParty
             this.hookHammerEvents();
 
             //---- always do this, so we can update 3D transform mode cursor ----
-            vp.select(".sandDance").attach("movemove", (e) => this.onPlotMouseMove(e));
+            // vp.select(".sandDance").attach("movemove", (e) => this.onPlotMouseMove(e));
+            this.container.addEventListener("movemove", (e) => this.onPlotMouseMove(e));
 
             if (window.location.href.contains("isBrowserControl"))
             {
                 //---- in case of hammer pan not working, hook mousemove also (hammer doesn't work in browser control?) ----
-                vp.select(".sandDance").attach("mousemove", (e) =>
+                // vp.select(".sandDance").attach("mousemove", (e) =>
+                this.container.addEventListener("mousemove", (e) =>
                 {
                     if (this._isTouchEnabled && !this._isPinching)
                     {

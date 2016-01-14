@@ -37,9 +37,9 @@ module beachParty
         _space: number;
         _maxShapeSize: number;
 
-        constructor(view: DataViewClass, gl: any, chartState: any)
+        constructor(view: DataViewClass, gl: any, chartState: any, container: HTMLElement)
         {
-            super("densityGrid", view, gl, chartState);
+            super("densityGrid", view, gl, chartState, container);
         }
 
         /** Adjust scales as needed for our chart. */

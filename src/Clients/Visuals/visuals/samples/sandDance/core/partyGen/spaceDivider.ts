@@ -91,7 +91,7 @@ module beachParty
             this.cellShape = CellShape.rectangle;
         }
 
-        drawLabelsOnTop(cellData: CellData, svg, name: string)
+        drawLabelsOnTop(cellData: CellData, svg: SVGElement, name: string)
         {
             var textHeight = 18;
             var rc = cellData.rect;
@@ -938,7 +938,7 @@ module beachParty
             return maxCount;
         }
 
-        drawContainerOutlines(svg, cellArray: CellData[], data: FrameOrArrayClass)
+        drawContainerOutlines(svg: SVGElement, cellArray: CellData[], data: FrameOrArrayClass)
         {
             //---- draw containers in red ----
             for (var i = 0; i < cellArray.length; i++)

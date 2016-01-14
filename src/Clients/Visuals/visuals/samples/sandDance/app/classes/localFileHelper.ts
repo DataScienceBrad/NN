@@ -12,16 +12,16 @@ module beachPartyApp
         public static loadFile(fileExts: string, callback)
         {
             //---- click on the hidden FILE button to invoke the brower's FILE OPEN dialog ----
-            var button = document.getElementById("inputFileOpen");
-            button.setAttribute("accept", fileExts);
-
-            //---- MUST clear out previous contents of button (or onchange may not work) ----
-            button.onchange = null;
-            vp.dom.value(button, "");
-
-            button.onchange = (e) => this.loadFileStageTwo(button, callback);
-
-            button.click();
+//             var button = document.getElementById("inputFileOpen");
+//             button.setAttribute("accept", fileExts);
+// 
+//             //---- MUST clear out previous contents of button (or onchange may not work) ----
+//             button.onchange = null;
+//             vp.dom.value(button, "");
+// 
+//             button.onchange = (e) => this.loadFileStageTwo(button, callback);
+// 
+//             button.click();
         }
 
         private static loadFileStageTwo(button: any, callback)
@@ -54,14 +54,14 @@ module beachPartyApp
             }
             else
             {
-                var downloadLink = <any>document.getElementById("helperAnchor");
-                var anyWindow = <any>window;
-
-                downloadLink.download = fn;
-                downloadLink.innerHTML = "Download File";
-                downloadLink.href = anyWindow.URL.createObjectURL(blobObject);
-
-                downloadLink.click();
+//                 var downloadLink = <any>document.getElementById("helperAnchor");
+//                 var anyWindow = <any>window;
+// 
+//                 downloadLink.download = fn;
+//                 downloadLink.innerHTML = "Download File";
+//                 downloadLink.href = anyWindow.URL.createObjectURL(blobObject);
+// 
+//                 downloadLink.click();
             }
         }
 

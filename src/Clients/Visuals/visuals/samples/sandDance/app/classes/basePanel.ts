@@ -32,17 +32,17 @@ module beachPartyApp
         _onResizeMouseUpFunc = null;    // setCapture
         _resizeElem: HTMLElement;
 
-        constructor(name: string, isDialog: boolean, bgColor?: string, title?: string, width?: number, height?: number, resizeable?: boolean,
+        constructor(container: HTMLElement, name: string, isDialog: boolean, bgColor?: string, title?: string, width?: number, height?: number, resizeable?: boolean,
             tooltip?: string, hideClose?: boolean, addAutoClose?: boolean, addNormalClose?: boolean)
         {
-            super(name);
+            super(container, name);
 
             //---- create ROOT ----
             var maxHeight = AppClass.maxPanelHeight;
             var maxWidth = AppClass.maxPanelWidth;
 
-            var rootW = vp.select(".sandDance").append("div")
-                .id(name + "Panel");
+            var rootW = vp.select(container).append("div")
+                .addClass(name + "Panel");
                 //.css("overflow-y", "auto")          // make each panel do more intelligent sizing of contained lists
 
             rootW.element()
@@ -69,7 +69,7 @@ module beachPartyApp
                     var imgPinW = btHolderW.append("div")//images/pinLeft.png
                         .addClass("clickIcon")
                         .addClass("fnPinLeft")
-                        .id("imgPin");
+                        .addClass("imgPin");
                         //.attr("src", fnPinLeft)
                         // .css("width", "15px")
                         // .css("height", "15px")
@@ -179,7 +179,7 @@ module beachPartyApp
 
         private getCenter(): { left: number, top: number } {
             var rc = vp.select(this._root).getBounds(false),
-                chart = vp.select(".sandDance").getBounds(true),
+                chart = vp.select(this.container).getBounds(true),
                 scale = sandDance.CommonUtils.instance.getScale();
 
             return {
@@ -293,7 +293,7 @@ module beachPartyApp
         open(left?: number, top?: number, right?: number, bottom?: number)
         {
             var rootW = vp.select(this._root).css("display", "block");
-            var rc = (<HTMLElement> document.getElementsByClassName("sandDance")[0]).getBoundingClientRect();
+            var rc = this.container.getBoundingClientRect();
 
             if (arguments.length === 0)
             {

@@ -14,9 +14,9 @@ module beachParty
         _ptLast = null;
         _inverseSizeFactor = 0;
 
-        constructor(view: DataViewClass, gl: any, chartState: any)
+        constructor(view: DataViewClass, gl: any, chartState: any, container: HTMLElement)
         {
-            super("linePlotClass", view, gl, chartState);
+            super("linePlotClass", view, gl, chartState, container);
 
             if (useLinePrim)
             {

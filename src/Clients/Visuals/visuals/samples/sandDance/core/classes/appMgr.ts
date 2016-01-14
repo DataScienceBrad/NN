@@ -11,6 +11,8 @@ module beachParty
     {
         static current = <AppMgrClass> null;
 
+        private container: HTMLElement;
+
         _appSettings: AppSettingsClass; 
         _canvas3dElem: HTMLCanvasElement;
         _canvas2dElem: HTMLCanvasElement;
@@ -36,9 +38,11 @@ module beachParty
         _cmdExecTime = 0;
         _traceMgr: TraceMgrClass;
 
-        constructor()
+        constructor(container: HTMLElement)
         {
             super(); 
+
+            this.container = container;
 
             AppMgrClass.current = this;
         }
@@ -61,7 +65,7 @@ module beachParty
             vp.utils.setDebugId("vaas");
             this._appSettings = new AppSettingsClass();
 
-            this._cmdMgr = new CmdMgrClass(this);
+            this._cmdMgr = new CmdMgrClass(this, this.container);
 
             this.processCmdLineParams(urlParams);
 
@@ -83,11 +87,11 @@ module beachParty
                 this.dispatchMsgToCmdMgr(e.data);
             });
 
-            var visStatsElem = document.getElementById(visStatsId);
-            var gpuStatsElem = document.getElementById(gpuStatsId);
-            var hitStatsElem = document.getElementById(hitStatsId);
-            var moveStatsElem = document.getElementById(moveStatsId);
-            var drawStatsElem = document.getElementById(drawStatsId);
+            var visStatsElem: HTMLElement = $("." + visStatsId, this.container).get(0);
+            var gpuStatsElem: HTMLElement = $("." + gpuStatsId, this.container).get(0);
+            var hitStatsElem: HTMLElement = $("." + hitStatsId, this.container).get(0);
+            var moveStatsElem: HTMLElement = $("." + moveStatsId, this.container).get(0);
+            var drawStatsElem: HTMLElement = $("." + drawStatsId, this.container).get(0);
 
             var preloadMgr = new PreloadMgrClass();
             this._preloadMgr = preloadMgr;
@@ -97,10 +101,10 @@ module beachParty
             var dataMgr = new DataMgrClass(this, this._preloadMgr, isClientEdition);
             this._dataMgr = dataMgr;
 
-            this._canvas3dElem = <HTMLCanvasElement> document.getElementById(canvas3dId);
-            this._canvas2dElem = <HTMLCanvasElement> document.getElementById(canvas2dId);
+            this._canvas3dElem = <HTMLCanvasElement> $("." + canvas3dId, this.container).get(0);
+            this._canvas2dElem = <HTMLCanvasElement> $("." + canvas2dId, this.container).get(0);
 
-            var dataView = new DataViewClass(dataMgr, this, this._canvas3dElem, this._canvas2dElem, svgId, visStatsElem,
+            var dataView = new DataViewClass(this.container, dataMgr, this, this._canvas3dElem, this._canvas2dElem, svgId, visStatsElem,
                 gpuStatsElem, hitStatsElem, moveStatsElem, drawStatsElem, this._isVaas);
             this._dataView = dataView;
 
@@ -108,12 +112,12 @@ module beachParty
 
             this.hookEventsForHost();
 
-            var svgDoc = document.getElementById(svgId);
+            var svgDoc: HTMLElement = $("." + svgId, this.container).get(0);
             this._svgDoc = svgDoc;
 
-            var fileInfoElem = document.getElementById(fileInfoId);
+            var fileInfoElem: HTMLElement = $("." + fileInfoId, this.container).get(0);
 
-            var windowMgr = new WindowMgrClass(this, dataView, svgDoc, this._canvas3dElem, dataMgr, fileInfoElem,
+            var windowMgr = new WindowMgrClass(this.container, this, dataView, svgDoc, this._canvas3dElem, dataMgr, fileInfoElem,
                 visStatsElem, gpuStatsElem, this._isVaas);
             this._windowMgr = windowMgr;
 
@@ -167,12 +171,6 @@ module beachParty
         //---- called from this class and from host code (when chart engine is hosted directly in a div) ----
         dispatchMsgToCmdMgr(msg: string)
         {
-            //this._msgBytesReceived += msg.length;
-
-            ////---- debug - show how many bytes of msgs received in this session ----
-            //var text = "msgBytesReceived: " + vp.formatters.format(this._msgBytesReceived);
-            //vp.select("#consoleDiv").text(text);
-
             var msgBlock = JSON.parse(msg);
 
             this._cmdMgr.dispatchCmd(msgBlock);
@@ -602,25 +600,8 @@ module beachParty
 
         public layoutWindow(width?: number, height?: number)
         {
-            //(<any>window).foo.bar = 3;
-
-            //vp.utils.debug("appMgr.layoutWindow called");
-// 
-//             if (this._isHostedDirect)
-//             {
-//                 var divW = vp.select("#" + this._visId);
-// 
-//                 var width = <number>divW.width();
-//                 var height = <number>divW.height();
-//             }
-//             else
-//             {
-//                 var width = window.innerWidth - 2;
-//                 var height = window.innerHeight - 2;
-//             }
-
             if (!width && !height) {
-                let chartBounds = vp.select("#myChart").getBounds(true);
+                let chartBounds = vp.select(this.container, ".myChart").getBounds(true);
 
                 width = chartBounds.width;
                 height = chartBounds.height;

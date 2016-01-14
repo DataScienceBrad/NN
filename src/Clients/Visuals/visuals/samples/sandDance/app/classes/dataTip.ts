@@ -9,6 +9,8 @@ module beachPartyApp
 {
     export class DataTipClass extends beachParty.DataChangerClass implements IAppControl
     {
+        private container: HTMLElement;
+
         _root: HTMLDivElement;
         _img: HTMLImageElement;
         _text: HTMLDivElement;
@@ -22,9 +24,11 @@ module beachPartyApp
         _isRealDrag = false;            // true if datatip has been dragged more than just accidental movement during a click
         _dataTipPanel: DataTipPanelClass;
 
-        constructor(parentElem: HTMLElement, bpsHelper: bps.ChartHostHelperClass)
+        constructor(container: HTMLElement, parentElem: HTMLElement, bpsHelper: bps.ChartHostHelperClass)
         {
             super();
+
+            this.container = container;
 
             this._bpsHelper = bpsHelper;
 
@@ -70,7 +74,7 @@ module beachPartyApp
                     new MenuItemData("Delete", "Delete this data tip"),
                 ];
 
-            var pm = new PopupMenuClass(null, "pmInsights", items, (e, menu, textIndex, menuIndex) =>
+            var pm = new PopupMenuClass(this.container, null, "pmInsights", items, (e, menu, textIndex, menuIndex) =>
             {
                 var name = (<MenuItemData> items[menuIndex]).text;
 
@@ -80,7 +84,7 @@ module beachPartyApp
                 }
                 else if (name === "Properties")
                 {
-                    this._dataTipPanel = new DataTipPanelClass(this);
+                    this._dataTipPanel = new DataTipPanelClass(this.container, this);
 
                     var rc = vp.select(this._img).getBounds(false);
                     this._dataTipPanel.show(rc.right, rc.bottom);
@@ -198,7 +202,7 @@ module beachPartyApp
                         y += rcPlot.top;
 
                         //---- offset by rcChart ----
-                        var rcChart = vp.select("#myChart").getBounds(true);
+                        var rcChart = vp.select(this.container, ".myChart").getBounds(true);
                         x += rcChart.left;
                         y += rcChart.top;
 
@@ -221,7 +225,7 @@ module beachPartyApp
             {
                 var rcScreen = vp.dom.getBounds(this._img);
 
-                var rcPlot = vp.select("#myChart")
+                var rcPlot = vp.select(this.container, ".myChart")
                     .getBounds(false);
 
                 //--- bug workaround: -= operator broken for ClientRect properties ----
@@ -345,7 +349,7 @@ module beachPartyApp
                 //---- if outside of plot, remove ----
                 var rcImg = vp.dom.getBounds(this._img);
 
-                var rcPlot = vp.select("#myChart")
+                var rcPlot = vp.select(this.container, ".myChart")
                     .getBounds(false);
 
                 if (!vp.geom.rectIntersectsRect(rcImg, rcPlot))

@@ -11,20 +11,24 @@ module beachPartyApp
     {
         static instance: DataTipMgrClass;
 
+        private container: HTMLElement;
+
         _dataTips: DataTipClass[] = [];
 
-        constructor()
+        constructor(container: HTMLElement)
         {
             super();
+
+            this.container = container;
 
             DataTipMgrClass.instance = this;
         }
 
         addDataTip(colName: string, pt?: any)
         {
-            var rootW = vp.select("#dataTipsRoot");
+            var rootW = vp.select(this.container, ".dataTipsRoot");
 
-            var dataTip = new DataTipClass(rootW[0], bps.ChartHostHelperClass.instance);
+            var dataTip = new DataTipClass(this.container, rootW[0], bps.ChartHostHelperClass.instance);
             this._dataTips.push(dataTip);
 
             dataTip.setColumnName(colName);
@@ -92,7 +96,7 @@ module beachPartyApp
         clearDataTips()
         {
             //---- remove old data tips ----
-            vp.select("#dataTipsRoot")
+            vp.select(this.container, ".dataTipsRoot")
                 .clear();
 
             this._dataTips = [];

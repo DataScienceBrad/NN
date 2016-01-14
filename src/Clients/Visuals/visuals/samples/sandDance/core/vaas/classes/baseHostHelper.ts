@@ -51,34 +51,6 @@ module bps
             // window.addEventListener("message", (e) => { this.onMsgFromVis(e.data); });
             
             sandDance.hostBus.addEventListener("message", (e) => { this.onMsgFromVis(e.data); });
-// 
-//              var elem = <HTMLElement> document.getElementById(bpsChartOrIFrameId);
-//             if (!elem)
-//             {
-//                 throw "Error: cannot find element id=" + bpsChartOrIFrameId;
-//             }
-//             else
-//             {
-//                 if (elem.tagName == "IFRAME")
-//                 {
-//                     this.processChartTag(elem, baseServerDir, <HTMLIFrameElement> elem);
-//                     this._iframe = <HTMLIFrameElement> elem;
-//                 }
-//                 else if (elem.tagName === "BPS-CHART")
-//                 {
-//                     this.processChartTag(elem, baseServerDir, null);
-//                     this._iframe = <HTMLIFrameElement> elem.firstChild;
-//                 }
-//                 else if (isDivHost)
-//                 {
-//                     this.processChartTag(elem, baseServerDir, <HTMLIFrameElement> elem);
-//                     this._iframe = <HTMLIFrameElement> elem;
-//                 }
-//                 else
-//                 {
-//                     throw "Error: element must be a <bps-chart> or <iframe> element: " + bpsChartOrIFrameId;
-//                 }
-//             }
         }
 
         public setCmdId(value: string)

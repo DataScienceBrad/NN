@@ -11,6 +11,8 @@ module beachPartyApp
     {
         static instance: FileOpenMgr;
 
+        private container: HTMLElement;
+
         _bpsHelper: bps.ChartHostHelperClass;
         _fileOpenPanel = <JsonPanelClass>null;
 
@@ -31,11 +33,14 @@ module beachPartyApp
         private loadSettingsHandler: (type: sandDance.SettingsType) => any;
 
         constructor(
+            container: HTMLElement,
             bpsHelper: bps.ChartHostHelperClass,
             saveSettingsHandler: (settings: any, type: sandDance.SettingsType)  => void,
             loadSettingsHandler: (type: sandDance.SettingsType) => any)
         {
             super();
+
+            this.container = container;
 
             this.saveSettingsHandler = saveSettingsHandler;
             this.loadSettingsHandler = loadSettingsHandler;
@@ -59,11 +64,11 @@ module beachPartyApp
         /** Show FILE OPEN panel. */
         openFileOpenPanel()
         {
-            var rc = vp.select("#bbData").getBounds(false);
+            var rc = vp.select(this.container, ".bbData").getBounds(false);
             var left = rc.left;
             var top = rc.bottom;
 
-            this._fileOpenPanel = buildJsonPanel("bbData", this, "fileOpen", true, left, top);
+            this._fileOpenPanel = buildJsonPanel(this.container, "bbData", this, "fileOpen", true, left, top);
 
             //---- make sure actions don't auto-close (except for "load" button) ----
             this._fileOpenPanel._isPinnedDown = true;
@@ -73,13 +78,13 @@ module beachPartyApp
             //---- hide SQL for the client edition ----
             if (AppClass.instance._edition === "client")
             {
-                vp.select(elem, "#tab3").css("display", "none");
+                vp.select(elem, ".tab3").css("display", "none");
             }
 
             //---- adjust length of knownDataPickerList ----
             var panelHeight = vp.select(elem).height();
 
-            vp.select(elem, "#knownDataPickerList")
+            vp.select(elem, ".knownDataPickerList")
                 .css("max-height", (panelHeight - 65) + "px");
 
         }
@@ -625,7 +630,7 @@ module beachPartyApp
 
         openKnownFile(name: string, fromUI: boolean, callback?: any)
         {
-            vp.select("#filenameText")
+            vp.select(this.container, ".filenameText")
                 .text("[loading file: " + name + "]");
 
             //---- clear local file data from last load ----

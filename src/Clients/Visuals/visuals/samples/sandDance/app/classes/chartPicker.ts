@@ -13,9 +13,9 @@ module beachPartyApp
         _callback = null;
         _currentChart = null;
 
-        constructor(currentChart: string, callback)
+        constructor(container: HTMLElement, currentChart: string, callback)
         {
-            super("bbView", true, null, null, null, null);
+            super(container, "bbView", true, null, null, null, null);
 
             this._callback = callback;
             this._currentChart = currentChart;
@@ -56,7 +56,7 @@ module beachPartyApp
 
             var tdW = rowW.append("td")
                 .addClass("chartPickerEntry")
-                .id(`chartPicker${title}`)
+                .addClass(`chartPicker${title}`)
                 .title(tooltip);
                 
             tdW.element()

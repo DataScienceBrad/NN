@@ -41,9 +41,9 @@ module beachParty
 
         _xBetween = 0;
 
-        constructor(view: DataViewClass, gl: any, chartState: any)
+        constructor(view: DataViewClass, gl: any, chartState: any, container: HTMLElement)
         {
-            super("columnCountClass", view, gl,chartState);
+            super("columnCountClass", view, gl,chartState, container);
         }
 
         /** Responsiblities: 
