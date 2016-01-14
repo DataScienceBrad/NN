@@ -256,9 +256,7 @@ module powerbi.visuals.samples {
                 .append("div")
                 .classed(SandDance.ClassName, true);
 
-            // this.rootElement.on("mousemove", () => {
-            //     d3.event.stopPropagation();
-            // });
+            this.onStopPropagationHandler(this.rootElement, ["mousedown", "mousemove", "pointerdown", "pointermove"]);
 
             this.mainElement = this.rootElement
                 .append("div");
@@ -276,6 +274,20 @@ module powerbi.visuals.samples {
             this.addBottomPanelElement();
             //TODO: infoMsgBox ?
             this.addDebugPanelElement();
+        }
+
+        private onStopPropagationHandler(element: D3.Selection, events: string[]): void {
+            if (!element || !events) {
+                return;
+            }
+
+            let stopPropagationHandler: () => void = () => {
+                d3.event.stopPropagation();
+            };
+
+            events.forEach((event: string) => {
+                element.on(event, stopPropagationHandler);
+            });
         }
 
         private addFileInfo(): void {

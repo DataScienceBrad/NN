@@ -20,7 +20,7 @@ module beachPartyApp
 
         private get sandDanceElement() {
             if (!this._sandDanceElement) {
-                this._sandDanceElement = vp.select(".sandDance");
+                this._sandDanceElement = document.getElementsByClassName("sandDance")[0];
             }
 
             return this._sandDanceElement;
@@ -312,8 +312,8 @@ module beachPartyApp
             //---- set this to install async so that current click doesn't interfere ----
             setTimeout((e) => 
             {
-                document.addEventListener("keydown", this._keyboardFunc);
-                document.addEventListener("mousedown", this._mouseDownFunc);
+                this.sandDanceElement.addEventListener("keydown", this._keyboardFunc);
+                this.sandDanceElement.addEventListener("mousedown", this._mouseDownFunc);
                 this._root.addEventListener("dblclick", this._dblClickFunc);
             }, 1);
 
@@ -324,8 +324,8 @@ module beachPartyApp
             var elem = this._root;
 
             //---- remove our DOCUMENT event handlers ----
-            document.removeEventListener("keydown", this._keyboardFunc);
-            document.removeEventListener("mousedown", this._mouseDownFunc);
+            this.sandDanceElement.removeEventListener("keydown", this._keyboardFunc);
+            this.sandDanceElement.removeEventListener("mousedown", this._mouseDownFunc);
             this._root.removeEventListener("dblclick", this._dblClickFunc);
 
             if (this.isVisible())
