@@ -15,9 +15,9 @@ module bps
 {
     export class DirectChartHostHelperClass extends ChartHostHelperClass
     {
-        constructor(bpsChartOrIFrameId: string, bpsDomain?: string, baseServerDir?: string, fromDomain?: string)
+        constructor(objectCache: sandDance.ObjectCache, bpsChartOrIFrameId: string, bpsDomain?: string, baseServerDir?: string, fromDomain?: string)
         {
-            super(bpsChartOrIFrameId, bpsDomain, baseServerDir, fromDomain, null, true);
+            super(objectCache, bpsChartOrIFrameId, bpsDomain, baseServerDir, fromDomain, null, true);
 
             //---- create a function to receive msgs from host ----
             var anyWin = <any>window;

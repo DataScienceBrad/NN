@@ -132,7 +132,7 @@ module beachPartyApp
         setRubberBand(rc: ClientRect)
         {
 
-            var scale = sandDance.CommonUtils.instance.getScale();
+            var scale = sandDance.commonUtils.getScale(this.container);
 
             var left: number = rc.left / scale.x,
                 top: number = rc.top / scale.y,

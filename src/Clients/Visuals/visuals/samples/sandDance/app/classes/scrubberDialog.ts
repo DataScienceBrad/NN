@@ -34,9 +34,9 @@ module beachPartyApp
         _currentTabContentElem: HTMLElement;
         _currentTabButtonElem: HTMLElement;
 
-        constructor(container: HTMLElement, origColInfos: bps.ColInfo[], colInfos: bps.ColInfo[])
+        constructor(settings: AppSettingsMgr, container: HTMLElement, origColInfos: bps.ColInfo[], colInfos: bps.ColInfo[])
         {
-            super(container, "scrubberDialog", true, null, "Data Scrubber", null, null);
+            super(settings, container, "scrubberDialog", true, null, "Data Scrubber", null, null);
 
             this._origColInfos = origColInfos;
             this._startingColInfos = colInfos;

@@ -198,6 +198,8 @@ module powerbi.visuals.samples {
 
         private dataView: SandDanceDataView;
 
+        private objectCache: sandDance.ObjectCache;
+
         constructor(constructorOptions?: SandDanceConstructorOptions) {
             if (constructorOptions) {
                 this.margin = constructorOptions.margin || this.margin;
@@ -211,15 +213,18 @@ module powerbi.visuals.samples {
 
             this.setSize(visualsOptions.viewport);
 
-            let rootElement: HTMLElement = this.rootElement.take(1)[0]
-
             this.rootElement.style("margin", shapes.Thickness.toCssString(this.margin));
 
-            this.application = new beachPartyApp.AppClass(this.saveSettings.bind(this), this.loadSettings.bind(this), <HTMLElement> this.rootElement.node());
+            this.objectCache = new sandDance.ObjectCache();
+
+            this.objectCache.set("hostBus", new sandDance.Bus("hostBus"));
+            this.objectCache.set("iframeBus", new sandDance.Bus("iframeBus"));
+
+            this.application = new beachPartyApp.AppClass(this.objectCache, this.saveSettings.bind(this), this.loadSettings.bind(this), <HTMLElement> this.rootElement.node());
             this.application.setViewport(this.viewport.width, this.viewport.height);
             this.application.run();
 
-            this.coreApplication = new beachParty.AppMgrClass(<HTMLElement> this.rootElement.node());
+            this.coreApplication = new beachParty.AppMgrClass(this.objectCache, <HTMLElement> this.rootElement.node());
 
             this.coreApplication.init(
                 SandDance.Canvas3DSelector.class,
@@ -523,8 +528,6 @@ module powerbi.visuals.samples {
 
             objectName = sandDance.SettingsType[type];
 
-            console.log("saveSettings: " + objectName + " data: " + settingInJson);
-
             this.host.persistProperties(<VisualObjectInstancesToPersist> {
                 replace: [{
                     objectName: objectName,
@@ -542,8 +545,6 @@ module powerbi.visuals.samples {
                 !this.dataView.settings) {
                 return {};
             }
-
-            console.log("loadSettings: " + sandDance.SettingsType[type]);
 
             return this.dataView.settings[sandDance.SettingsType[type]];
         }
@@ -578,8 +579,6 @@ module powerbi.visuals.samples {
 
         public converter(dataView: DataView): SandDanceDataView {
             let data: SandDanceData = {};
-
-            // console.log("dataView: " + JSON.stringify(dataView));
 
             if (dataView &&
                 dataView.table &&

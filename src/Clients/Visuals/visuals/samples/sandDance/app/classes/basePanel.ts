@@ -9,6 +9,8 @@ module beachPartyApp
 {
     export class BasePanelClass extends BasePopupClass
     {
+        protected settings: AppSettingsMgr;
+
         _root: HTMLElement;
         protected _imgPin: HTMLImageElement;
         protected _title: HTMLElement;
@@ -32,10 +34,12 @@ module beachPartyApp
         _onResizeMouseUpFunc = null;    // setCapture
         _resizeElem: HTMLElement;
 
-        constructor(container: HTMLElement, name: string, isDialog: boolean, bgColor?: string, title?: string, width?: number, height?: number, resizeable?: boolean,
+        constructor(settings: AppSettingsMgr, container: HTMLElement, name: string, isDialog: boolean, bgColor?: string, title?: string, width?: number, height?: number, resizeable?: boolean,
             tooltip?: string, hideClose?: boolean, addAutoClose?: boolean, addNormalClose?: boolean)
         {
             super(container, name);
+
+            this.settings = settings;
 
             //---- create ROOT ----
             var maxHeight = AppClass.maxPanelHeight;
@@ -173,14 +177,14 @@ module beachPartyApp
 
         applyAppPanelOpacity()
         {
-            var opacity = settings.panelOpacity();
+            var opacity = this.settings.panelOpacity();
             vp.select(this._root).css("opacity", opacity + "");
         }
 
         private getCenter(): { left: number, top: number } {
             var rc = vp.select(this._root).getBounds(false),
                 chart = vp.select(this.container).getBounds(true),
-                scale = sandDance.CommonUtils.instance.getScale();
+                scale = sandDance.commonUtils.getScale(this.container);
 
             return {
                 left: (chart.width / 2 - rc.width / 2) / scale.x,
@@ -343,7 +347,7 @@ module beachPartyApp
                 var width = Math.max(minWidth, rcDown.width + xDiff);
                 var height = Math.max(minHeight, rcDown.height + yDiff);
 
-                var scale = sandDance.CommonUtils.instance.getScale();
+                var scale = sandDance.commonUtils.getScale(this.container);
 
                 width /= scale.x;
                 height /= scale.y;
@@ -402,7 +406,7 @@ module beachPartyApp
                 var y = pt.y - this._ptDown.y;
 
                 let startPosition = this.startPosition || this.getCenter(),
-                    scale = sandDance.CommonUtils.instance.getScale();
+                    scale = sandDance.commonUtils.getScale(this.container);
 
                 x /= scale.x;
                 y /= scale.y;

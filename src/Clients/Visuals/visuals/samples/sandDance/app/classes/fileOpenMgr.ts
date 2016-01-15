@@ -12,6 +12,7 @@ module beachPartyApp
         static instance: FileOpenMgr;
 
         private container: HTMLElement;
+        private settings: AppSettingsMgr;
 
         _bpsHelper: bps.ChartHostHelperClass;
         _fileOpenPanel = <JsonPanelClass>null;
@@ -33,6 +34,7 @@ module beachPartyApp
         private loadSettingsHandler: (type: sandDance.SettingsType) => any;
 
         constructor(
+            settings: AppSettingsMgr,
             container: HTMLElement,
             bpsHelper: bps.ChartHostHelperClass,
             saveSettingsHandler: (settings: any, type: sandDance.SettingsType)  => void,
@@ -40,6 +42,7 @@ module beachPartyApp
         {
             super();
 
+            this.settings = settings;
             this.container = container;
 
             this.saveSettingsHandler = saveSettingsHandler;
@@ -68,7 +71,7 @@ module beachPartyApp
             var left = rc.left;
             var top = rc.bottom;
 
-            this._fileOpenPanel = buildJsonPanel(this.container, "bbData", this, "fileOpen", true, left, top);
+            this._fileOpenPanel = buildJsonPanel(this.settings, this.container, "bbData", this, "fileOpen", true, left, top);
 
             //---- make sure actions don't auto-close (except for "load" button) ----
             this._fileOpenPanel._isPinnedDown = true;
@@ -472,7 +475,7 @@ module beachPartyApp
                 var text = this._loadedFileOpenText;
                 this.uploadData(text, fn, wdParams);
 
-                if (settings._cacheLocalFiles)
+                if (this.settings._cacheLocalFiles)
                 {
                     this.storeDataFileToCache(url, "local", text, wdParams);
                 }

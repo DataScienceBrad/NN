@@ -12,6 +12,7 @@ module beachParty
         static current = <AppMgrClass> null;
 
         private container: HTMLElement;
+        private objectCache: sandDance.ObjectCache;
 
         _appSettings: AppSettingsClass; 
         _canvas3dElem: HTMLCanvasElement;
@@ -38,10 +39,11 @@ module beachParty
         _cmdExecTime = 0;
         _traceMgr: TraceMgrClass;
 
-        constructor(container: HTMLElement)
+        constructor(objectCache: sandDance.ObjectCache, container: HTMLElement)
         {
             super(); 
 
+            this.objectCache = objectCache;
             this.container = container;
 
             AppMgrClass.current = this;
@@ -82,7 +84,7 @@ module beachParty
             //     this.dispatchMsgToCmdMgr(e.data);
             // });
 
-            sandDance.iframeBus.addEventListener("message", (e) =>
+            this.objectCache.get("iframeBus").addEventListener("message", (e) =>
             {
                 this.dispatchMsgToCmdMgr(e.data);
             });
@@ -568,7 +570,7 @@ module beachParty
             }
             else// if (window.parent && window !== window.parent.window)
             {
-                sandDance.hostBus.postMessage(msgStr);
+                this.objectCache.get("hostBus").postMessage(msgStr);
                 //window.postMessage(msgStr, domain);
             }
         }

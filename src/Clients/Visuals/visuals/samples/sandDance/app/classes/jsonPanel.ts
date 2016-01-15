@@ -25,10 +25,10 @@ module beachPartyApp
         _currentTabContentElem: HTMLElement;
         _currentTabButtonElem: HTMLElement;
 
-        constructor(container: HTMLElement, openerIds: string, dataOwner: beachParty.DataChangerClass, name: string, json: any, bgColor?: string,
+        constructor(settings: AppSettingsMgr, container: HTMLElement, openerIds: string, dataOwner: beachParty.DataChangerClass, name: string, json: any, bgColor?: string,
             isCol1Indent = true, hideClose = false, addAutoClose = false, addNormalClose?: boolean)
         {
-            super(container, name, json.isDialog, bgColor, json.title, json.width, json.height, json.resizable, json.tip, hideClose, addAutoClose,
+            super(settings, container, name, json.isDialog, bgColor, json.title, json.width, json.height, json.resizable, json.tip, hideClose, addAutoClose,
                 addNormalClose);
 
             this._dataOwner = dataOwner;
@@ -1399,7 +1399,7 @@ module beachPartyApp
 
     }
 
-    export function buildJsonPanel(container: HTMLElement, openerIds: string, dataOwner: beachParty.DataChangerClass, panelName: string, openPanel: boolean, left?: number,
+    export function buildJsonPanel(settings: AppSettingsMgr, container: HTMLElement, openerIds: string, dataOwner: beachParty.DataChangerClass, panelName: string, openPanel: boolean, left?: number,
         top?: number, right?: number, bottom?: number, toggleOpen = true, isCol1Indent = true, hideClose = false,
         addAutoClose = false, addNormalClose?: boolean, isCenter?: boolean): JsonPanelClass
     {
@@ -1411,7 +1411,7 @@ module beachPartyApp
 
         // var desc = w.panelDescriptions[panelName];
 
-        panel = new JsonPanelClass(container, openerIds, dataOwner, panelName, desc, undefined, isCol1Indent, hideClose, addAutoClose, addNormalClose);
+        panel = new JsonPanelClass(settings, container, openerIds, dataOwner, panelName, desc, undefined, isCol1Indent, hideClose, addAutoClose, addNormalClose);
 
         var rc = vp.dom.getBounds(panel.getRootElem(), true);
 

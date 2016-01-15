@@ -11,12 +11,12 @@ module bps
     {
         _clientAppId: string;
 
-        constructor(iframeId: string, appDomain?: string, baseServerDir?: string, hostDomain?: string)
+        constructor(objectCache: sandDance.ObjectCache, iframeId: string, appDomain?: string, baseServerDir?: string, hostDomain?: string)
         {
             //alert("appHostHelper: iframeId=" + iframeId);
             this._clientAppId = iframeId;
 
-            super(iframeId, appDomain, baseServerDir, hostDomain, "appHost");
+            super(objectCache, iframeId, appDomain, baseServerDir, hostDomain, "appHost");
         }
 
         preprocessMsg(msgBlock)

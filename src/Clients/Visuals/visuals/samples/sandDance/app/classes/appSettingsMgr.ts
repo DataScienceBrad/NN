@@ -144,7 +144,7 @@ module beachPartyApp
 
         saveAppSettings()//TODO: save settings in PowerBI.
         {
-            if (!this._isSavingSettingsDisabled && !settings._persistChangesDisabledFromUrlParams)
+            if (!this._isSavingSettingsDisabled && !this._persistChangesDisabledFromUrlParams)
             {
                 var appSettings = new AppSettings(AppClass.buildId);
 
@@ -1169,7 +1169,7 @@ module beachPartyApp
         {
             if (arguments.length === 0)
             {
-                return settings._chartFrameData.xAxis.drawGridLines;
+                return this._chartFrameData.xAxis.drawGridLines;
             }
 
             this._chartFrameData.xAxis.drawGridLines = value;

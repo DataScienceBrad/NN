@@ -17,6 +17,7 @@ module beachPartyApp
         static insightHeight = 130;
 
         private container: HTMLElement;
+        private settings: AppSettingsMgr;
 
         _session: InsightSession;
         _isShowingInsightsPanel = false;
@@ -41,10 +42,11 @@ module beachPartyApp
         _playbackDuration = 3;      // 3 seconds
         _isLooping = true;             // should playback restart once end is reached
 
-        constructor(container: HTMLElement)
+        constructor(settings: AppSettingsMgr, container: HTMLElement)
         {
             super();
 
+            this.settings = settings;
             this.container = container;
 
             this._session = new InsightSession();
@@ -394,7 +396,7 @@ module beachPartyApp
             //---- make a copy of the specified insight for editing (in case we cancel, this makes it easy to reverse the changes) ----
             this._editInsight = vp.utils.copyMap(insight);
 
-            this._currentPanel = buildJsonPanel(this.container, null, this, "editInsight", true, pt.x, pt.y, undefined, undefined, undefined, false);
+            this._currentPanel = buildJsonPanel(this.settings, this.container, null, this, "editInsight", true, pt.x, pt.y, undefined, undefined, undefined, false);
 
             ////---- initialize TinyMCE rich text area to convert all textAreas into RICH text areas ----
             //tinymce.init({ selector: 'textarea', setupcontent_callback: "myCustomSetupContent" });
@@ -461,7 +463,7 @@ module beachPartyApp
 
             this._editInsight = insight;
 
-            this._currentPanel = buildJsonPanel(this.container, null, this, "addInsight", true, left, top, undefined, undefined, undefined, false);
+            this._currentPanel = buildJsonPanel(this.settings, this.container, null, this, "addInsight", true, left, top, undefined, undefined, undefined, false);
 
             this._currentPanel.registerForChange("onAccept", (e) =>
             {
@@ -620,7 +622,7 @@ module beachPartyApp
         {
             this.editSessionName(name);
 
-            this._currentPanel = buildJsonPanel(this.container, null, this, "editSessionName", true);
+            this._currentPanel = buildJsonPanel(this.settings, this.container, null, this, "editSessionName", true);
 
             this._currentPanel.registerForChange("onAccept", (e) =>
             {
@@ -922,7 +924,7 @@ module beachPartyApp
                     //.css("left", "0px")
                     //.css("top", "0px")
                     .addClass(imageAsUrl)
-                    .css("background", settings._canvasColor)
+                    .css("background", this.settings._canvasColor)
                     .width(InsightMgrClass.insightWidth)
                     .height(InsightMgrClass.insightHeight)
                     .attach("dragstart", function (e)

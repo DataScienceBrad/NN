@@ -13,9 +13,9 @@ module beachPartyApp
 
         _dataTip: DataTipClass;
 
-        constructor(container: HTMLElement, dataTip: DataTipClass)
+        constructor(settings: AppSettingsMgr, container: HTMLElement, dataTip: DataTipClass)
         {
-            super(container, "notesPanel", false, null, "DataTip Properties", null, null, true, "Edit the properties of the dataTip", false);
+            super(settings, container, "notesPanel", false, null, "DataTip Properties", null, null, true, "Edit the properties of the dataTip", false);
 
             this._dataTip = dataTip;
         }

@@ -10,6 +10,7 @@ module beachPartyApp
     export class DataTipClass extends beachParty.DataChangerClass implements IAppControl
     {
         private container: HTMLElement;
+        private settings: AppSettingsMgr;
 
         _root: HTMLDivElement;
         _img: HTMLImageElement;
@@ -24,10 +25,11 @@ module beachPartyApp
         _isRealDrag = false;            // true if datatip has been dragged more than just accidental movement during a click
         _dataTipPanel: DataTipPanelClass;
 
-        constructor(container: HTMLElement, parentElem: HTMLElement, bpsHelper: bps.ChartHostHelperClass)
+        constructor(settings: AppSettingsMgr, container: HTMLElement, parentElem: HTMLElement, bpsHelper: bps.ChartHostHelperClass)
         {
             super();
 
+            this.settings = settings;
             this.container = container;
 
             this._bpsHelper = bpsHelper;
@@ -84,7 +86,7 @@ module beachPartyApp
                 }
                 else if (name === "Properties")
                 {
-                    this._dataTipPanel = new DataTipPanelClass(this.container, this);
+                    this._dataTipPanel = new DataTipPanelClass(this.settings, this.container, this);
 
                     var rc = vp.select(this._img).getBounds(false);
                     this._dataTipPanel.show(rc.right, rc.bottom);

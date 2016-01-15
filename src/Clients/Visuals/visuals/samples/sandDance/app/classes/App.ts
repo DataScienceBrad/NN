@@ -7,18 +7,22 @@
 
 module beachPartyApp
 {
-    export var settings: AppSettingsMgr;
+    // export var settings: AppSettingsMgr;
 
     export class AppClass extends beachParty.DataChangerClass
     {
         static buildId = "45";           // increment this at last moment before running "vibe10.bat"
+
         static instance: AppClass;
+
         static defaultOpacity = .8;
         static maxCategoryBins = 50;
         static defaultNumericBins = 9;
         static maxPanelHeight = .85 * window.innerHeight;
         static maxPanelWidth = .9 * window.innerWidth;
         static nextSnapShotNum = 1;
+
+        private settings: AppSettingsMgr;
 
         public data: any;
 
@@ -31,6 +35,8 @@ module beachPartyApp
         private loadSettingsHandler: (type: sandDance.SettingsType) => any;
 
         private container: HTMLElement;
+
+        private objectCache: sandDance.ObjectCache;
 
         _chartIsLoaded = false;
         _isOrthoCamera = false;
@@ -171,18 +177,28 @@ module beachPartyApp
         //_chartMenuItems: any[] = null;
 
         constructor(
+            objectCache: sandDance.ObjectCache,
             saveSettingsHandler: (settings: any, type: sandDance.SettingsType) => void,
             loadSettingsHandler: (type: sandDance.SettingsType) => any,
             container: HTMLElement)
         {
             super();
 
-            this.container = container;
-
-            this._dataTipMgr = new DataTipMgrClass(this.container);
-
             this.saveSettingsHandler = saveSettingsHandler;
             this.loadSettingsHandler = loadSettingsHandler;
+
+            this.container = container;
+            this.objectCache = objectCache;
+
+            //---- this assumes that our app & BeachParty engine share the same server ----
+            this._bpsHelper = bps.createBpsHelper(this.objectCache, "myChart");
+
+            let settings: AppSettingsMgr = new AppSettingsMgr(this.container, this._bpsHelper, this.saveSettingsHandler, this.loadSettingsHandler);
+
+            this.objectCache.set("settings", settings);
+            this.settings = settings;
+
+            this._dataTipMgr = new DataTipMgrClass(this.settings, this.container);
 
             AppClass.instance = this;
 
@@ -191,7 +207,7 @@ module beachPartyApp
                 //---- show old browser message ----
                 $(".oldBrowserMsg", this.container).css("display", "");
 
-                throw "error - browser now supported";
+                throw new Error("error - browser now supported");
             }
         }
 
@@ -208,6 +224,8 @@ module beachPartyApp
             this.buildBinAdjusters();
 
             this.buildLegends();
+
+            let settings: AppSettingsMgr = this.objectCache.get("settings");
 
             settings._isSavingSettingsDisabled = true;
 
@@ -538,7 +556,7 @@ module beachPartyApp
         pulse3DCircleIfAppropriate()
         {
             //---- if in transform mode, but not showing wheel, pulse the ring to remind user where it is ----
-            if (this._isTransformMode && !settings._showWheelDuringTransformMode)
+            if (this._isTransformMode && !this.objectCache.get("settings")._showWheelDuringTransformMode)
             {
                 this._rotateRing.pulse();
             }
@@ -631,12 +649,7 @@ module beachPartyApp
             //     AppClass.buildId = "pre" + (1 + (+AppClass.buildId));
             // }
 
-            //---- this assumes that our app & BeachParty engine share the same server ----
-            this._bpsHelper = bps.createBpsHelper("myChart");
-
-            settings = new AppSettingsMgr(this.container, this._bpsHelper, this.saveSettingsHandler, this.loadSettingsHandler);
-
-            this._fileOpenMgr = new FileOpenMgr(this.container, this._bpsHelper, this.saveSettingsHandler, this.loadSettingsHandler);
+            this._fileOpenMgr = new FileOpenMgr(this.settings, this.container, this._bpsHelper, this.saveSettingsHandler, this.loadSettingsHandler);
 
             this._undoMgr = new UndoMgrClass();
             this._undoMgr.registerForChange("undoStack", (e) => this.onUndoStackChange());
@@ -694,7 +707,7 @@ module beachPartyApp
 
             vp.utils.setDebugId("client");
 
-            var defaultBinCount = settings.defaultBins();
+            var defaultBinCount = this.settings.defaultBins();
 
             this._sizeMapping = new bps.SizeMappingData(defaultBinCount);
             this._textMapping = new bps.TextMappingData(defaultBinCount);
@@ -706,7 +719,7 @@ module beachPartyApp
             this._yMapping = new bps.MappingData("", defaultBinCount);
             this._zMapping = new bps.MappingData("", 3);            // this._defaultBins);
 
-            this._insightMgr = new InsightMgrClass(this.container);
+            this._insightMgr = new InsightMgrClass(this.settings, this.container);
             this._insightMgr.registerForChange("layout", (e) => this.layoutScreen());
             this._insightMgr.registerForChange("insightLoaded", (e) => this.loadInsight());
             this._insightMgr.registerForChange("currentInsight", (e) => this.onCurrentInsightChanged());
@@ -719,9 +732,9 @@ module beachPartyApp
             this._dateColorMapping = new bps.ColorMappingData("Blues", false, defaultBinCount);
             this._currentColorMapping = this._numColorMapping;
 
-            settings.resetAppSettings();
+            this.settings.resetAppSettings();
 
-            settings.shapeOpacity(AppClass.defaultOpacity);;
+            this.settings.shapeOpacity(AppClass.defaultOpacity);;
 
             //---- enable DRAG and DROP on whole client document ---
             setTimeout((e) =>
@@ -738,7 +751,7 @@ module beachPartyApp
             vp.select(this.container, ".dataTipIcon").addClass("fnIconBarDataTip");
             vp.select(this.container, ".imgDataSlicer").addClass("fnIconBarSlicer");
 
-            this._chartUx = new ChartUxClass(this.container, this._bpsHelper, this._maxToolTipColumns);
+            this._chartUx = new ChartUxClass(this.settings, this.container, this._bpsHelper, this._maxToolTipColumns);
 
             this._facetMgr = new FacetMgrClass(this.container);
 
@@ -805,7 +818,7 @@ module beachPartyApp
 
         setAutualDrawingPrimitive()
         {
-            if (settings._drawingPrimitive === bps.DrawPrimitive.auto)
+            if (this.settings._drawingPrimitive === bps.DrawPrimitive.auto)
             {
                 //---- for now, ignore user-specified drawPrimitive ----
                 if (this.is3DChart(this._prevChartName) || this.is3DChart(this._chartName))
@@ -819,7 +832,7 @@ module beachPartyApp
             }
             else
             {
-                var value = settings._drawingPrimitive;
+                var value = this.settings._drawingPrimitive;
             }
 
             if (value !== this._actualDrawingPrimitive)
@@ -940,7 +953,7 @@ module beachPartyApp
         //---- called from appSettings panel ----
         toggleStats()
         {
-            settings.isShowingChartStatus(!settings._isShowingChartStatus);
+            this.settings.isShowingChartStatus(!this.settings._isShowingChartStatus);
         }
 
         disableBigButton(baseName: string, isDisabled: boolean)
@@ -1479,7 +1492,7 @@ module beachPartyApp
                         var rcChart = vp.select(this.container, ".myChart").getBounds(false);
                         rcPlot = vp.geom.createRect(rcChart.left + rcPlot.left, rcChart.top + rcPlot.top, rcPlot.width, rcPlot.height);
 
-                        this._notesPanel = new NotesPanelClass(this.container, title, notes, insight.notesBounds, rcPlot);
+                        this._notesPanel = new NotesPanelClass(this.settings, this.container, title, notes, insight.notesBounds, rcPlot);
 
                         //---- track panel movements ----
                         this._notesPanel.registerForChange("location", (e) => this.onInsightBoundsChange(insight));
@@ -1506,7 +1519,7 @@ module beachPartyApp
 
         applyDefaultBins()
         {
-            var binCount = settings._defaultBins;
+            var binCount = this.settings._defaultBins;
 
             this.colorSteps(binCount);
             this.facetBins(binCount);
@@ -1516,7 +1529,7 @@ module beachPartyApp
 
         onUseNiceNumbersChanged()
         {
-            var useNice = settings._useNiceNumbers;
+            var useNice = this.settings._useNiceNumbers;
 
             this.onColorMappingChanged(true);
 
@@ -1596,7 +1609,7 @@ module beachPartyApp
             var memObjs = <any>{};
 
             memObjs.app = this;
-            memObjs.appSettingsMgr = settings;
+            memObjs.appSettingsMgr = this.settings;
             memObjs.chartUx = this._chartUx;
             memObjs.fileOpenMgr = FileOpenMgr;
             memObjs.insightMgr = this._insightMgr;
@@ -1721,7 +1734,7 @@ module beachPartyApp
 
             var rc = vp.select(this.container, ".btFeedback").getBounds(false);
 
-            buildJsonPanel(this.container, "btFeedback", this, "feedback", true, undefined, rc.bottom+5,
+            buildJsonPanel(this.settings, this.container, "btFeedback", this, "feedback", true, undefined, rc.bottom+5,
                 rc.right+0, undefined, undefined, undefined, undefined, undefined, true);
         }
 
@@ -1754,7 +1767,7 @@ module beachPartyApp
 
                 vp.utils.debug("postMessageToHost: domain=" + domain + ", msg=" + msgObj.msg);
 
-                sandDance.hostBus.postMessage(msgStr);
+                this.objectCache.get("hostBus").postMessage(msgStr);
                 //window.parent.window.postMessage(msgStr, domain);
             }
         }
@@ -1794,12 +1807,12 @@ module beachPartyApp
                 {
                     var loadedSomething = false;
 
-                    if (settings.rememberLastSession)
+                    if (this.settings.rememberLastSession)
                     {
                         loadedSomething = (this.loadLastSession() != null);
                     }
 
-                    if (!loadedSomething && settings.rememberLastFile)
+                    if (!loadedSomething && this.settings.rememberLastFile)
                     {
                         //---- load start-up file ----
                         this.loadInitialDataSet();
@@ -1849,7 +1862,7 @@ module beachPartyApp
         }
 
         public loadAppSettings() {
-            settings.loadAppSettings();
+            this.settings.loadAppSettings();
         }
 
         loadInsight()
@@ -2014,21 +2027,21 @@ module beachPartyApp
                 }
 
                 //---- OPACITY ----
-                if (preload.shapeOpacity !== settings._shapeOpacity)
+                if (preload.shapeOpacity !== this.settings._shapeOpacity)
                 {
-                    settings.shapeOpacity(preload.shapeOpacity);
+                    this.settings.shapeOpacity(preload.shapeOpacity);
                 }
 
                 //---- IMAGE ----
-                if (preload.shapeImage !== settings._shapeImage)
+                if (preload.shapeImage !== this.settings._shapeImage)
                 {
-                    settings.shapeImage(preload.shapeImage);
+                    this.settings.shapeImage(preload.shapeImage);
                 }
 
                 //---- color ----
-                if (preload.shapeColor !== settings._shapeColor)
+                if (preload.shapeColor !== this.settings._shapeColor)
                 {
-                    settings.shapeColor(preload.shapeColor);
+                    this.settings.shapeColor(preload.shapeColor);
                 }
 
                 //---- client-specific properties ----
@@ -2085,7 +2098,7 @@ module beachPartyApp
             //---- only open if not already open ----
             if (! this._scrubberDialog)
             {
-                this._scrubberDialog = new ScrubberDialogClass(this.container, this._origColInfos, this._colInfos);
+                this._scrubberDialog = new ScrubberDialogClass(this.settings, this.container, this._origColInfos, this._colInfos);
 
                 this._scrubberDialog.registerForChange("ok", (e) =>
                 {
@@ -2366,7 +2379,7 @@ module beachPartyApp
                     {
                         if (value === "false")
                         {
-                            settings._persistChangesDisabledFromUrlParams = true;
+                            this.settings._persistChangesDisabledFromUrlParams = true;
                         }
                     }
                     else if (key === "isbrowsercontrol")
@@ -2698,10 +2711,10 @@ module beachPartyApp
                 this._bpsHelper.resetTransform();
 
                 //---- change to initial chart ----
-                if (settings._initialChartType)
+                if (this.settings._initialChartType)
                 {
-                    var initChart = bps.ChartType[settings._initialChartType];
-                    var initLayout = bps.Layout[settings._initialLayout];
+                    var initChart = bps.ChartType[this.settings._initialChartType];
+                    var initLayout = bps.Layout[this.settings._initialLayout];
 
                     this.changeToChart(initChart, initLayout, Gesture.system);
                 }
@@ -2778,7 +2791,7 @@ module beachPartyApp
 
             AppUtils.setButtonSelectedState(this.container, "wheel", this._isTransformMode, "fnIconBarToggle3dNorm", "fnIconBarToggle3dSelect");
 
-            if (!settings._showWheelDuringTransformMode)
+            if (!this.settings._showWheelDuringTransformMode)
             {
                 //---- use ring animation in place of wheel ----
                 if (this._isTransformMode)
@@ -3027,7 +3040,7 @@ module beachPartyApp
             im.imagePalette = ["filled circle", "filled square", "filled triangle", "circle", "square", "triangle"];
 
             var colInfo = this.getColInfo(im.colName);
-            PaletteHelper.buildImageBreaksFromSettings(im, colInfo, settings._useNiceNumbers);
+            PaletteHelper.buildImageBreaksFromSettings(im, colInfo, this.settings._useNiceNumbers);
 
             this._bpsHelper.setImageMapping(im);
 
@@ -3051,7 +3064,7 @@ module beachPartyApp
             sm.sizePalette = [.25, .5, .75, 1];
 
             var colInfo = this.getColInfo(this._sizeMapping.colName);
-            PaletteHelper.buildSizeBreaksFromSettings(this._sizeMapping, colInfo, settings._useNiceNumbers);
+            PaletteHelper.buildSizeBreaksFromSettings(this._sizeMapping, colInfo, this.settings._useNiceNumbers);
 
             this._bpsHelper.setSizeMapping(sm);
 
@@ -3130,7 +3143,7 @@ module beachPartyApp
 
             if (rebuildPalette || rebindColInfo)
             {
-                PaletteHelper.buildColorBreaks(cm, colInfo, settings._useNiceNumbers);
+                PaletteHelper.buildColorBreaks(cm, colInfo, this.settings._useNiceNumbers);
             }
 
             this._bpsHelper.setColorMapping(cm);
@@ -3256,7 +3269,7 @@ module beachPartyApp
 
         onAppShapeOpacityChanged()
         {
-            this._vsCurrent.shapeOpacity = settings._shapeOpacity;
+            this._vsCurrent.shapeOpacity = this.settings._shapeOpacity;
         }
 
         textOpacity(value?: number)
@@ -3291,12 +3304,12 @@ module beachPartyApp
 
         onAppPlaybackDurationChanged()
         {
-            this._insightMgr.playbackDuration(settings._playbackDuration);
+            this._insightMgr.playbackDuration(this.settings._playbackDuration);
         }
 
         onAppPlaybackLoopngChanged()
         {
-            this._insightMgr.isPlaybackLooping(settings._isPlaybackLooping);
+            this._insightMgr.isPlaybackLooping(this.settings._isPlaybackLooping);
         }
 
         infoMsg(msg: string)
@@ -3369,7 +3382,7 @@ module beachPartyApp
             var left = 300;
             var top = 100;
 
-            buildJsonPanel(this.container, null, this, "errorPanel", true, left, top, undefined, undefined);
+            buildJsonPanel(this.settings, this.container, null, this, "errorPanel", true, left, top, undefined, undefined);
         }
 
         searchCol(value?: string)
@@ -3779,16 +3792,16 @@ module beachPartyApp
             //});
 
             //---- OPACITY adjuster ----
-            this._opacityAdjuster = new NumAdjusterClass(this.container, "opacityAdj", "Opacity", settings._shapeOpacity, 0, 1, "Adjust the opacity of the shapes.  Drag in circle to change.",
+            this._opacityAdjuster = new NumAdjusterClass(this.container, "opacityAdj", "Opacity", this.settings._shapeOpacity, 0, 1, "Adjust the opacity of the shapes.  Drag in circle to change.",
                 AdjusterStyle.right, false, true);
 
-            beachParty.connectModelView(settings, "shapeOpacity", this._opacityAdjuster, "value");
+            beachParty.connectModelView(this.settings, "shapeOpacity", this._opacityAdjuster, "value");
 
             //---- only log (and undo) the value on the dial's mouse up event ----
             this._opacityAdjuster.registerForChange("valueMouseUp", (e) =>
             {
                 this.logAction(Gesture.dial, null, ElementType.dial, Action.adjust, Target.shapeOpacity, true, "value",
-                    settings._shapeOpacity+ "");
+                    this.settings._shapeOpacity+ "");
             });
 
             ////---- TEXT OPACITY adjuster ----
@@ -3905,7 +3918,7 @@ module beachPartyApp
 
         openAppPanel(e)
         {
-            this._appPanel = buildJsonPanel(this.container, "btSettings", settings, "appSettings", true, 0, 0, undefined, undefined, undefined, undefined, undefined, undefined, undefined, true);
+            this._appPanel = buildJsonPanel(this.settings, this.container, "btSettings", this.settings, "appSettings", true, 0, 0, undefined, undefined, undefined, undefined, undefined, undefined, undefined, true);
 
             this._appPanel.registerForChange("close", (e) =>
             {
@@ -3958,7 +3971,7 @@ module beachPartyApp
             // var rc = vp.select("#bbSort").getBounds(true);
             var rc = $(".bbSort", this.container).get(0).getBoundingClientRect();
 
-            this._sortPanel = buildJsonPanel(this.container, "bbSort", this, "sorting", true, rc.left, rc.bottom, undefined, undefined,
+            this._sortPanel = buildJsonPanel(this.settings, this.container, "bbSort", this, "sorting", true, rc.left, rc.bottom, undefined, undefined,
             undefined, undefined, undefined, true);
             
             //---- adjust height of column picker so it doesn't exceed height of panel ----
@@ -4032,7 +4045,7 @@ module beachPartyApp
             this.slicerColName(colName);
             this._slicerInitialValue = value;
 
-            var panel = buildJsonPanel(this.container, null, this, "slicer", true, left, top, undefined, undefined, toggleOpen);
+            var panel = buildJsonPanel(this.settings, this.container, null, this, "slicer", true, left, top, undefined, undefined, toggleOpen);
             this._slicerPanel = panel;
 
             if (panel)
@@ -4201,7 +4214,7 @@ module beachPartyApp
             var left = rc.left;
             var top = rc.bottom;
 
-            var detailsPanel = buildJsonPanel(this.container, null, this, "details", true, left, top, undefined, undefined, undefined, undefined, undefined, undefined, undefined, true);
+            var detailsPanel = buildJsonPanel(this.settings, this.container, null, this, "details", true, left, top, undefined, undefined, undefined, undefined, undefined, undefined, undefined, true);
             detailsPanel.applyAppPanelOpacity();
             this._detailsPanel = detailsPanel;
 
@@ -4261,7 +4274,7 @@ module beachPartyApp
         {
             var tdW = trW.append("td");
 
-            if (!settings._isMenuTextVisible && !settings._isMenuChevronVisible)
+            if (!this.settings._isMenuTextVisible && !this.settings._isMenuChevronVisible)
             {
                 //---- ICON ONLY button ----
                 tdW
@@ -4479,7 +4492,7 @@ module beachPartyApp
                 colItems.push(new MenuItemData(colName, tooltip, imgClass, false));
             }
 
-            if (settings._isColPickerSorted)
+            if (this.settings._isColPickerSorted)
             {
                 colItems.sort(function (a, b) { return (a.text < b.text) ? -1 : ((a.text === b.text) ? 0 : 1); });
             }
@@ -4603,7 +4616,7 @@ module beachPartyApp
             // var rc = vp.select("#bbChart").getBounds(true);
             var rc = $(".bbChart", this.container).get(0).getBoundingClientRect();
 
-            var chartPanel = buildJsonPanel(this.container, "bbChart", settings, "chartSettings", true, rc.left, rc.bottom,
+            var chartPanel = buildJsonPanel(this.settings, this.container, "bbChart", this.settings, "chartSettings", true, rc.left, rc.bottom,
                 undefined, undefined, undefined, undefined, undefined, true);
 
             this._chartPanel = chartPanel;
@@ -4700,7 +4713,7 @@ module beachPartyApp
 
             var buttonNames = bigButtonName + " " + legendButtonName;
 
-            var axisPanel = buildJsonPanel(this.container, buttonNames, this, panelName, true, x, y,
+            var axisPanel = buildJsonPanel(this.settings, this.container, buttonNames, this, panelName, true, x, y,
                 x2, y2, undefined, undefined, undefined, true);
 
             //this._facetPanel = xPanel;
@@ -4729,7 +4742,7 @@ module beachPartyApp
             // var rc = vp.select("#bbFacet").getBounds(true);
             var rc = $(".bbFacet", this.container).get(0).getBoundingClientRect();
 
-            var facetPanel = buildJsonPanel(this.container, "bbFacet", this, "facet", true, rc.left, rc.bottom,
+            var facetPanel = buildJsonPanel(this.settings, this.container, "bbFacet", this, "facet", true, rc.left, rc.bottom,
             undefined, undefined, undefined, undefined, undefined, true);
 
             this._facetPanel = facetPanel;
@@ -4777,7 +4790,7 @@ module beachPartyApp
                 y = rc.bottom;
             }
 
-            var colorPanel = buildJsonPanel(this.container, "bbColor colorLegendTitle", this, "color", true, x, y, x2, y2,
+            var colorPanel = buildJsonPanel(this.settings, this.container, "bbColor colorLegendTitle", this, "color", true, x, y, x2, y2,
                 undefined, undefined, undefined, true);
 
             //---- allow colorPanel to be 80% of window height ----
@@ -5699,7 +5712,7 @@ module beachPartyApp
 
                 if (vs.shapeOpacity)
                 {
-                    settings.shapeOpacity(vs.shapeOpacity);
+                    this.settings.shapeOpacity(vs.shapeOpacity);
                 }
 
                 //if (vs.xBinCount)
@@ -5793,7 +5806,7 @@ module beachPartyApp
             {
                 var rc = $(".bbView", this.container).get(0).getBoundingClientRect();
 
-                var chartPicker = new ChartPickerClass(this.container, this._chartName, (newName: string) =>
+                var chartPicker = new ChartPickerClass(this.settings, this.container, this._chartName, (newName: string) =>
                 {
                     this.changeToChart(newName, null, Gesture.click);
                     this.logAction(Gesture.select, null, ElementType.picklist, Action.adjust, Target.chartType, true, "name", newName);
@@ -5964,7 +5977,7 @@ module beachPartyApp
             //---- ensure this is called the first time we show the Y button / bins ----
             this.manualLayoutForYStuff();  
 
-            settings.on3dViewChanged();
+            this.settings.on3dViewChanged();
         }
 
         isItemSortByColor(value?: boolean)
@@ -6106,9 +6119,9 @@ module beachPartyApp
                 preload.subLayout = this._layoutName;
                 preload.sizeFactor = this._sizeFactor;
                 preload.separationFactor = this._separationFactor;
-                preload.shapeOpacity = settings._shapeOpacity;
-                preload.shapeColor = settings._shapeColor;
-                preload.shapeImage = settings._shapeImage;
+                preload.shapeOpacity = this.settings._shapeOpacity;
+                preload.shapeColor = this.settings._shapeColor;
+                preload.shapeImage = this.settings._shapeImage;
 
                 //---- sorting stuff ----
                 preload.sortCol = this._sortItemCol;

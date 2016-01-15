@@ -15,10 +15,10 @@ module bps
 
         _clientAppId: string;
 
-        constructor(bpsChartOrIFrameId: string, bpsDomain?: string, baseServerDir?: string, fromDomain?: string,
+        constructor(objectCache: sandDance.ObjectCache, bpsChartOrIFrameId: string, bpsDomain?: string, baseServerDir?: string, fromDomain?: string,
             clientAppId?: string, isDivHost?: boolean)
         {
-            super(bpsChartOrIFrameId, bpsDomain, baseServerDir, fromDomain, "chartHost", isDivHost);
+            super(objectCache, bpsChartOrIFrameId, bpsDomain, baseServerDir, fromDomain, "chartHost", isDivHost);
 
             this._clientAppId = clientAppId;
 
@@ -1407,9 +1407,9 @@ module bps
         primaryKey: string;        // optional: primary key of record that this is bound to
     }
 
-    export function createBpsHelper(bpsChartOrIFrameId: string, bpsDomain?: string, baseServerDir?: string, fromDomain?: string, clientAppId?: string)
+    export function createBpsHelper(objectCache: sandDance.ObjectCache, bpsChartOrIFrameId: string, bpsDomain?: string, baseServerDir?: string, fromDomain?: string, clientAppId?: string)
     {
-        var helper = new ChartHostHelperClass(bpsChartOrIFrameId, bpsDomain, baseServerDir, fromDomain, clientAppId);
+        var helper = new ChartHostHelperClass(objectCache, bpsChartOrIFrameId, bpsDomain, baseServerDir, fromDomain, clientAppId);
         return helper;
     }
 

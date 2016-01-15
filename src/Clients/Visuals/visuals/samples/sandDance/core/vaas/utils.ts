@@ -26,41 +26,14 @@
 
 /// <reference path="_references.ts" />
 
-module sandDance { //TODO: optimize this class.
-    export class CommonUtils {
-        private static _instance: CommonUtils;
-
-        public static get instance(): CommonUtils {
-            if (!CommonUtils._instance) {
-                CommonUtils._instance = new CommonUtils();
-            }
-
-            return CommonUtils._instance;
-        }
-
-        constructor() {
-            if (CommonUtils._instance) {
-                return CommonUtils._instance;
-            }
-        }
-
-        private _sandDanceElement: HTMLElement;
-
-        public get sandDanceElement(): HTMLElement {
-            if (!this._sandDanceElement) {
-                this._sandDanceElement = $(".sandDance").get(0);//FIXME: this line contains error and bug!
-            }
-
-            return this._sandDanceElement;
-        }
-
-        public getScale(): { x: number, y: number } {
-            var sandDanceElement = this.sandDanceElement,
-                sandDanceRect = sandDanceElement.getBoundingClientRect();
+module sandDance {
+    export module commonUtils{
+        export function getScale(continer: HTMLElement): { x: number, y: number } {
+            var sandDanceRect = continer.getBoundingClientRect();
 
             return {
-                x: sandDanceRect.width / sandDanceElement.offsetWidth,
-                y: sandDanceRect.height / sandDanceElement.offsetHeight
+                x: sandDanceRect.width / continer.offsetWidth,
+                y: sandDanceRect.height / continer.offsetHeight
             };
         }
     }

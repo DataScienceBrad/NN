@@ -11,9 +11,9 @@ module beachPartyApp
     {
         _notesElem: HTMLElement;
 
-        constructor(container: HTMLElement, title: string, notes: string, bounds: any, rcPlot)
+        constructor(settings: AppSettingsMgr, container: HTMLElement, title: string, notes: string, bounds: any, rcPlot)
         {
-            super(container, "notesPanel", false, null, title, null, null, true, "Notes for this insight", false);
+            super(settings, container, "notesPanel", false, null, title, null, null, true, "Notes for this insight", false);
 
             var rootW = vp.select(this._root)
                 .css("opacity", ".7");

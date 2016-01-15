@@ -18,6 +18,8 @@ module bps
 
     export class BaseHostHelperClass
     {
+        protected objectCache: sandDance.ObjectCache;
+
         _hookers: any = {};
         _iframe: HTMLIFrameElement;
         _chartId: string;
@@ -33,11 +35,12 @@ module bps
         _cmdId = null;
 
         /** bpsDomain should be set to the domain of the BeachParty server (e.g., "vibe10"). */
-        constructor(bpsChartOrIFrameId: string, bpsDomain?: string, baseServerDir?: string, fromDomain?: string, hostId?: string,
+        constructor(objectCache: sandDance.ObjectCache ,bpsChartOrIFrameId: string, bpsDomain?: string, baseServerDir?: string, fromDomain?: string, hostId?: string,
             isDivHost?: boolean)
         {
             //debug("hostHelperBaseClass: this.processChartTag=" + this.processChartTag);
 
+            this.objectCache = objectCache;
             this._chartId = bpsChartOrIFrameId;
             this._batchBuffer = [];
             this._fromDomain = fromDomain;
@@ -49,8 +52,8 @@ module bps
 
             //---- hook messages from vis ----
             // window.addEventListener("message", (e) => { this.onMsgFromVis(e.data); });
-            
-            sandDance.hostBus.addEventListener("message", (e) => { this.onMsgFromVis(e.data); });
+
+            this.objectCache.get("hostBus").addEventListener("message", (e) => { this.onMsgFromVis(e.data); });
         }
 
         public setCmdId(value: string)
@@ -155,8 +158,8 @@ module bps
 
         postVisMsgNow(msgStr: string)
         {
-            
-            sandDance.iframeBus.postMessage(msgStr);
+            this.objectCache.get("iframeBus").postMessage(msgStr);
+            // sandDance.iframeBus.postMessage(msgStr);
             //this._iframe.contentWindow.postMessage(msgStr, this._domain);
         }
 

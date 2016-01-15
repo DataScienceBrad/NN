@@ -11,14 +11,16 @@ module beachPartyApp
     {
         static instance: DataTipMgrClass;
 
+        private settings: AppSettingsMgr;
         private container: HTMLElement;
 
         _dataTips: DataTipClass[] = [];
 
-        constructor(container: HTMLElement)
+        constructor(settings: AppSettingsMgr, container: HTMLElement)
         {
             super();
 
+            this.settings = settings;
             this.container = container;
 
             DataTipMgrClass.instance = this;
@@ -28,7 +30,7 @@ module beachPartyApp
         {
             var rootW = vp.select(this.container, ".dataTipsRoot");
 
-            var dataTip = new DataTipClass(this.container, rootW[0], bps.ChartHostHelperClass.instance);
+            var dataTip = new DataTipClass(this.settings, this.container, rootW[0], bps.ChartHostHelperClass.instance);
             this._dataTips.push(dataTip);
 
             dataTip.setColumnName(colName);

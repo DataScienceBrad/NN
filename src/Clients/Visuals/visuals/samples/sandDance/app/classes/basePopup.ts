@@ -99,7 +99,7 @@ module beachPartyApp
             var yBottom = yTop + myHeight;
             var yMargin = 0;
             var xMargin = 0;
-            let scale = sandDance.CommonUtils.instance.getScale();
+            let scale = sandDance.commonUtils.getScale(this.container);
 
             //---- check for TOP overlap ----
             var topOverlap = (yTop - yMargin);

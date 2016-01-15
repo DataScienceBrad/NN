@@ -10,6 +10,7 @@ module beachPartyApp
     export class ChartUxClass extends beachParty.DataChangerClass
     {
         private container: HTMLElement;
+        private settings: AppSettingsMgr;
 
         private _chartUxElem: HTMLElement;
 
@@ -19,10 +20,11 @@ module beachPartyApp
         private _hoverPrimaryKey;
         private _maxToolTipColumns;
 
-        constructor(container: HTMLElement, bpsHelper: bps.ChartHostHelperClass, maxToolTipColumns: number)
+        constructor(settings: AppSettingsMgr, container: HTMLElement, bpsHelper: bps.ChartHostHelperClass, maxToolTipColumns: number)
         {
             super();
 
+            this.settings = settings;
             this.container = container;
 
             this._bpsHelper = bpsHelper;
@@ -116,14 +118,14 @@ module beachPartyApp
         {
             if (true)       // !this._delayTimer)         // throttle mouse events
             {
-                var hoverEnabled = (settings.hoverEffect() !== "none");
+                var hoverEnabled = (this.settings.hoverEffect() !== "none");
                 if (hoverEnabled && e.buttons !== 1)            // not left button
                 {
                     var mousePos = vp.events.mousePosition(e, this._chartUxElem);
 
                     //---- show tooltips if middle/right mouse button pressed, or if tooltips are enabled ----
-                    var getRecord = (e.buttons !== 0 || settings.isTooltipsEnabled());
-                    var scale = sandDance.CommonUtils.instance.getScale();
+                    var getRecord = (e.buttons !== 0 || this.settings.isTooltipsEnabled());
+                    var scale = sandDance.commonUtils.getScale(this.container);
 
                     this._bpsHelper.applyHover(mousePos.x / scale.x, mousePos.y / scale.y, getRecord, null, (msgBlock) =>
                     {
@@ -180,7 +182,7 @@ module beachPartyApp
             {
                 if (rcBand)
                 {
-                    let scale = sandDance.CommonUtils.instance.getScale();
+                    let scale = sandDance.commonUtils.getScale(this.container);
 
                     //---- adjust rcBand so that it is relative to "myChart" ----
                     var rc = vp.select(this.container, ".myChart").getBounds(false);

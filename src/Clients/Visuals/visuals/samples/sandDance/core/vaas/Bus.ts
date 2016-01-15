@@ -55,7 +55,4 @@ module sandDance {
             this.listeners.push(callback);
         }
     }
-
-    export var hostBus = new Bus("hostBus");
-    export var iframeBus = new Bus("iframeBus");
 }
