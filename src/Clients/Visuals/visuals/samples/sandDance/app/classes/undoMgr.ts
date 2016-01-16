@@ -12,8 +12,6 @@ module beachPartyApp
      */
     export class UndoMgrClass extends beachParty.DataChangerClass
     {
-        static instance: UndoMgrClass;
-
         _stack: UndoEntry[] = [];
         _index = -1;
         _maxUndoLevels = 100;
@@ -22,8 +20,6 @@ module beachPartyApp
         constructor()
         {
             super();
-
-            UndoMgrClass.instance = this;
         }
 
         getCurrentInsight(): bps.InsightData

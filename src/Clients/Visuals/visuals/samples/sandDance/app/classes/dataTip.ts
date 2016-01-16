@@ -9,6 +9,8 @@ module beachPartyApp
 {
     export class DataTipClass extends beachParty.DataChangerClass implements IAppControl
     {
+        private dataTipMgr: DataTipMgrClass;
+        private application: AppClass;
         private container: HTMLElement;
         private settings: AppSettingsMgr;
 
@@ -25,10 +27,12 @@ module beachPartyApp
         _isRealDrag = false;            // true if datatip has been dragged more than just accidental movement during a click
         _dataTipPanel: DataTipPanelClass;
 
-        constructor(settings: AppSettingsMgr, container: HTMLElement, parentElem: HTMLElement, bpsHelper: bps.ChartHostHelperClass)
+        constructor(dataTipMgr: DataTipMgrClass, application: AppClass, settings: AppSettingsMgr, container: HTMLElement, parentElem: HTMLElement, bpsHelper: bps.ChartHostHelperClass)
         {
             super();
 
+            this.dataTipMgr = dataTipMgr;
+            this.application = application;
             this.settings = settings;
             this.container = container;
 
@@ -76,17 +80,17 @@ module beachPartyApp
                     new MenuItemData("Delete", "Delete this data tip"),
                 ];
 
-            var pm = new PopupMenuClass(this.container, null, "pmInsights", items, (e, menu, textIndex, menuIndex) =>
+            var pm = new PopupMenuClass(this.application, this.container, null, "pmInsights", items, (e, menu, textIndex, menuIndex) =>
             {
                 var name = (<MenuItemData> items[menuIndex]).text;
 
                 if (name === "Delete")
                 {
-                    DataTipMgrClass.instance.closeDataTip(this);
+                    this.dataTipMgr.closeDataTip(this);
                 }
                 else if (name === "Properties")
                 {
-                    this._dataTipPanel = new DataTipPanelClass(this.settings, this.container, this);
+                    this._dataTipPanel = new DataTipPanelClass(this.application, this.settings, this.container, this);
 
                     var rc = vp.select(this._img).getBounds(false);
                     this._dataTipPanel.show(rc.right, rc.bottom);
@@ -258,7 +262,7 @@ module beachPartyApp
                 for (var i = 0; i < colValues.length; i++)
                 {
                     var colName = colNames[i];
-                    var colType = AppClass.instance.getColType(colName);
+                    var colType = this.application.getColType(colName);
 
                     var value = colValues[i];
                     var strValue = vp.formatters.formatByType(value, colType);

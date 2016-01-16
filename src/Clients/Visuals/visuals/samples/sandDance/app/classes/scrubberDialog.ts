@@ -34,9 +34,9 @@ module beachPartyApp
         _currentTabContentElem: HTMLElement;
         _currentTabButtonElem: HTMLElement;
 
-        constructor(settings: AppSettingsMgr, container: HTMLElement, origColInfos: bps.ColInfo[], colInfos: bps.ColInfo[])
+        constructor(application: AppClass, settings: AppSettingsMgr, container: HTMLElement, origColInfos: bps.ColInfo[], colInfos: bps.ColInfo[])
         {
-            super(settings, container, "scrubberDialog", true, null, "Data Scrubber", null, null);
+            super(application, settings, container, "scrubberDialog", true, null, "Data Scrubber", null, null);
 
             this._origColInfos = origColInfos;
             this._startingColInfos = colInfos;
@@ -306,7 +306,7 @@ module beachPartyApp
 
             //---- don't use HTML SELECT elements - they don't style well on Windows ----
             var tdW = nextRowW.append("td");
-            var picker = new PickerClass(this.container, tdW[0], null, ["string", "number", "date"], "string", "set how this column's values are recognized", false);
+            var picker = new PickerClass(this.application, this.container, tdW[0], null, ["string", "number", "date"], "string", "set how this column's values are recognized", false);
 
             picker.registerForChange("value", (e) =>
             {
@@ -837,7 +837,7 @@ module beachPartyApp
                 else
                 {
                     //---- request valueMap from engine ----
-                    beachPartyApp.AppClass.instance._bpsHelper.getValueMap(ei.name, ScrubberDialogClass.maxRows, (msgBlock) =>
+                    this.application._bpsHelper.getValueMap(ei.name, ScrubberDialogClass.maxRows, (msgBlock) =>
                     {
                         var valueMap = <bps.ValueMapEntry[]> msgBlock.valueMap;
 

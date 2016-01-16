@@ -33,9 +33,9 @@ module beachParty
 
         _binRelativeIndexes: number[];
 
-        constructor(view: DataViewClass, gl: any, chartState: any, container: HTMLElement)
+        constructor(view: DataViewClass, gl: any, chartState: any, container: HTMLElement, appMgr: AppMgrClass)
         {
-            super("densityCircle", view, gl, chartState, container);
+            super("densityCircle", view, gl, chartState, container, appMgr);
         }
 
         /** Adjust scales as needed for our chart. */

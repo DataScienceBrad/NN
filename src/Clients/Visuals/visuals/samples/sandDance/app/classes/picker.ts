@@ -9,6 +9,7 @@ module beachPartyApp
 {
     export class PickerClass extends beachParty.DataChangerClass 
     {
+        private application: AppClass;
         private container: HTMLElement;
 
         _root: HTMLDivElement;
@@ -20,11 +21,12 @@ module beachPartyApp
         _value: string;     
         _iconWidth: number;
 
-        constructor(container: HTMLElement, parentElem: HTMLElement, prompt: string, values: string[], initialValue: string, tooltip: string,
+        constructor(application: AppClass, container: HTMLElement, parentElem: HTMLElement, prompt: string, values: string[], initialValue: string, tooltip: string,
             capitalizeFirstValue?: boolean, iconWidth?: number)
         {
             super();
 
+            this.application = application;
             this.container = container;
 
             this._parentElem = parentElem;
@@ -174,7 +176,7 @@ module beachPartyApp
 
             if (colItems)
             {
-                picker = new PopupMenuClass(this.container, null, "generalColPicker", colItems, (e, menu, textIndex, menuIndex) =>
+                picker = new PopupMenuClass(this.application, this.container, null, "generalColPicker", colItems, (e, menu, textIndex, menuIndex) =>
                 {
                     var value = colItems[menuIndex];
                     if (value instanceof MenuItemData)

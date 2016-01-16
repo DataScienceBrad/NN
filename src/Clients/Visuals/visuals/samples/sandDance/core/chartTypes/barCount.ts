@@ -35,9 +35,9 @@ module beachParty
         _xMin = 0;                      // start of x space for our drawing (as per x scale)
         _xMax = 0;                      // end of x space for drawing (as per x scale)
 
-        constructor(view: DataViewClass, gl: any, chartState: any, container: HTMLElement)
+        constructor(view: DataViewClass, gl: any, chartState: any, container: HTMLElement, appMgr: AppMgrClass)
         {
-            super("barCountClass", view, gl, chartState, container);
+            super("barCountClass", view, gl, chartState, container, appMgr);
         }
 
         /** Responsiblities: 

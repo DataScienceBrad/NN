@@ -11,6 +11,9 @@ module beachPartyApp
     {
         private container: HTMLElement;
 
+        public undoMgr: UndoMgrClass;
+        private application: AppClass;
+
         _bpsHelper: bps.ChartHostHelperClass;
         _isSavingSettingsDisabled = true;
         _persistChangesDisabledFromUrlParams = false;
@@ -58,9 +61,10 @@ module beachPartyApp
         private saveSettingsHandler: (settings: any, type: sandDance.SettingsType) => void;
         private loadSettingsHandler: (type: sandDance.SettingsType) => any;
 
-        constructor(container: HTMLElement, bpsHelper: bps.ChartHostHelperClass, saveSettingsHandler: (settings: any, type: sandDance.SettingsType) => void, loadSettingsHandler: (type: sandDance.SettingsType) => any) {
+        constructor(application: AppClass, container: HTMLElement, bpsHelper: bps.ChartHostHelperClass, saveSettingsHandler: (settings: any, type: sandDance.SettingsType) => void, loadSettingsHandler: (type: sandDance.SettingsType) => any) {
             super();
 
+            this.application = application;
             this.container = container;
 
             this.saveSettingsHandler = saveSettingsHandler;
@@ -214,7 +218,7 @@ module beachPartyApp
         {
             if (true) //localStorage
             {
-                var preload = UndoMgrClass.instance.getCurrentInsight();
+                var preload = this.undoMgr.getCurrentInsight();
 
                 if (preload)
                 {
@@ -452,7 +456,7 @@ module beachPartyApp
             var cr = (this._shapeColor === "beach blue" || this._shapeColor === "beachblue") ? "#0cf" : this._shapeColor;
             this._bpsHelper.setShapeColor(cr);
 
-            AppClass.instance.onAppShapeColorChanged();
+            this.application.onAppShapeColorChanged();
             this.saveAppSettings();
 
             this.onDataChanged("shapeColor");
@@ -513,7 +517,7 @@ module beachPartyApp
                 this._drawingPrimitive = dpValue;
                 this.saveAppSettings();
 
-                AppClass.instance.setAutualDrawingPrimitive();
+                this.application.setAutualDrawingPrimitive();
 
                 this.onDataChanged("drawingPrimitive");
             }
@@ -698,7 +702,7 @@ module beachPartyApp
         {
             if (arguments.length === 0)
             {
-                var enabled = (this._isTooltipsEnabled && !AppClass.instance._isEngineDrawing);
+                var enabled = (this._isTooltipsEnabled && !this.application._isEngineDrawing);
                 return enabled;
             }
 
@@ -814,7 +818,7 @@ module beachPartyApp
             }
 
             this.onDataChanged("isMenuTextVisible");
-            AppClass.instance.layoutScreen();            // make sure everything lines up after change
+            this.application.layoutScreen();            // make sure everything lines up after change
         }
 
         isMenuIconVisible(value?: boolean)
@@ -837,7 +841,7 @@ module beachPartyApp
             }
 
             this.onDataChanged("isMenuIconVisible");
-            AppClass.instance.layoutScreen();            // make sure everything lines up after change
+            this.application.layoutScreen();            // make sure everything lines up after change
         }
 
         isMenuChevronVisible(value?: boolean)
@@ -903,7 +907,7 @@ module beachPartyApp
 
         on3dViewChanged()
         {
-            var chartName = AppClass.instance._chartName;
+            var chartName = this.application._chartName;
 
             var is3dView = (chartName === "Density" || chartName === "Radial" || chartName === "Violin" ||
                 chartName === "Stacks" || chartName === "Scatter-3D" || chartName === "Scatter");
@@ -1013,7 +1017,7 @@ module beachPartyApp
             this.onDataChanged("useNiceNumbers");
             this.saveAppSettings();
 
-            AppClass.instance.onUseNiceNumbersChanged();
+            this.application.onUseNiceNumbersChanged();
         }
 
         defaultBins(value?: number)
@@ -1027,7 +1031,7 @@ module beachPartyApp
             this.onDataChanged("defaultBins");
             this.saveAppSettings();
 
-            AppClass.instance.applyDefaultBins();
+            this.application.applyDefaultBins();
         }
 
         playbackDuration(value?: number)
@@ -1040,7 +1044,7 @@ module beachPartyApp
             this._playbackDuration = value;
             this.saveAppSettings();
 
-            AppClass.instance.onAppPlaybackDurationChanged();
+            this.application.onAppPlaybackDurationChanged();
 
             this.onDataChanged("playbackDuration");
         }
@@ -1055,7 +1059,7 @@ module beachPartyApp
             this._isPlaybackLooping = value;
             this.saveAppSettings();
 
-            AppClass.instance.onAppPlaybackLoopngChanged();
+            this.application.onAppPlaybackLoopngChanged();
 
             this.onDataChanged("isPlaybackLooping");
         }
@@ -1201,7 +1205,7 @@ module beachPartyApp
 
             this._shapeOpacity = value;
 
-            AppClass.instance.onAppShapeOpacityChanged();
+            this.application.onAppShapeOpacityChanged();
 
             this._bpsHelper.setShapeOpacity(value);
             this.onDataChanged("shapeOpacity");
@@ -1224,7 +1228,7 @@ module beachPartyApp
             this.resetAppSettings();
             this.saveAppSettings();
 
-            AppClass.instance.loadInitialDataSet();
+            this.application.loadInitialDataSet();
         }
 
     }

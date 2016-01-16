@@ -20,6 +20,7 @@ module beachParty
     //------------------------------------
     export class BaseGlVisClass extends DataChangerClass      //implements IDataViewer
     {
+        private appMgr: AppMgrClass;
         private container: HTMLElement;
 
         //---- PROGRAM / SHADER stuff ----
@@ -207,10 +208,11 @@ module beachParty
         _cycleFrameCount = 0;
         _nextBuildId = 0;
 
-        constructor(chartClass: string, view: DataViewClass, gl: any, chartState: ChartState, container: HTMLElement)
+        constructor(chartClass: string, view: DataViewClass, gl: any, chartState: ChartState, container: HTMLElement, appMgr: AppMgrClass)
         {
             super();
 
+            this.appMgr = appMgr;
             this.container = container;
 
             this._chartClass = chartClass;
@@ -398,7 +400,7 @@ module beachParty
             {
                 var chartFrameGroup = this._view.getSvgChartFrameGroup();
 
-                this._chartFrameHelper = new ChartFrameHelperClass(chartFrameGroup, this._dataMgr,
+                this._chartFrameHelper = new ChartFrameHelperClass(this.appMgr, chartFrameGroup, this._dataMgr,
                     this._transformer);
             }
         }

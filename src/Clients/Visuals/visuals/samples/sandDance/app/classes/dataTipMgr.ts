@@ -9,28 +9,28 @@ module beachPartyApp
 {
     export class DataTipMgrClass extends beachParty.DataChangerClass 
     {
-        static instance: DataTipMgrClass;
-
+        private chartHostHelper: bps.ChartHostHelperClass;
+        private application: AppClass;
         private settings: AppSettingsMgr;
         private container: HTMLElement;
 
         _dataTips: DataTipClass[] = [];
 
-        constructor(settings: AppSettingsMgr, container: HTMLElement)
+        constructor(hostHelper: bps.ChartHostHelperClass, application: AppClass, settings: AppSettingsMgr, container: HTMLElement)
         {
             super();
 
+            this.chartHostHelper = hostHelper;
+            this.application = application;
             this.settings = settings;
             this.container = container;
-
-            DataTipMgrClass.instance = this;
         }
 
         addDataTip(colName: string, pt?: any)
         {
             var rootW = vp.select(this.container, ".dataTipsRoot");
 
-            var dataTip = new DataTipClass(this.settings, this.container, rootW[0], bps.ChartHostHelperClass.instance);
+            var dataTip = new DataTipClass(this, this.application, this.settings, this.container, rootW[0], this.chartHostHelper);
             this._dataTips.push(dataTip);
 
             dataTip.setColumnName(colName);
@@ -40,7 +40,7 @@ module beachPartyApp
                 var rc = dataTip.getPlotBounds();
                 var msg = "dataTip: " + vp.geom.rectToString(rc);
 
-                AppClass.instance.quickStats(msg);
+                this.application.quickStats(msg);
             });
 
             if (pt)

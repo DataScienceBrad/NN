@@ -9,6 +9,7 @@ module beachPartyApp
 {
     export class RotateRingClass 
     {
+        private application: AppClass;
         private container: HTMLElement;
 
         _root: HTMLDivElement;
@@ -19,8 +20,9 @@ module beachPartyApp
         _pulseDuration = 0;
         //_rcRotation = null;
 
-        constructor(container: HTMLElement)
+        constructor(application: AppClass, container: HTMLElement)
         {
+            this.application = application;
             this.container = container;
 
             var rootW = vp.select(this.container).append("div")
@@ -38,7 +40,7 @@ module beachPartyApp
 
         getRcPlot()
         {
-            var rcPlot = AppClass.instance.getPlotBounds();
+            var rcPlot = this.application.getPlotBounds();
 
             return rcPlot;
         }
@@ -46,7 +48,7 @@ module beachPartyApp
         private getFinalRotationBounds()
         {
             var rcPlot = this.getRcPlot();
-            var rcRot = AppClass.instance._rcRotateRing;
+            var rcRot = this.application._rcRotateRing;
 
             var rc = vp.geom.createRect(rcPlot.left + rcRot.left, rcPlot.top + rcRot.top, rcRot.width, rcRot.height);
             return rc;

@@ -13,9 +13,9 @@ module beachPartyApp
         _callback = null;
         _currentChart = null;
 
-        constructor(settings: AppSettingsMgr, container: HTMLElement, currentChart: string, callback)
+        constructor(application: AppClass, settings: AppSettingsMgr, container: HTMLElement, currentChart: string, callback)
         {
-            super(settings, container, "bbView", true, null, null, null, null);
+            super(application, settings, container, "bbView", true, null, null, null, null);
 
             this._callback = callback;
             this._currentChart = currentChart;

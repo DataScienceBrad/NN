@@ -13,8 +13,6 @@ module beachPartyApp
     {
         static buildId = "45";           // increment this at last moment before running "vibe10.bat"
 
-        static instance: AppClass;
-
         static defaultOpacity = .8;
         static maxCategoryBins = 50;
         static defaultNumericBins = 9;
@@ -193,14 +191,12 @@ module beachPartyApp
             //---- this assumes that our app & BeachParty engine share the same server ----
             this._bpsHelper = bps.createBpsHelper(this.objectCache, "myChart");
 
-            let settings: AppSettingsMgr = new AppSettingsMgr(this.container, this._bpsHelper, this.saveSettingsHandler, this.loadSettingsHandler);
+            let settings: AppSettingsMgr = new AppSettingsMgr(this, this.container, this._bpsHelper, this.saveSettingsHandler, this.loadSettingsHandler);
 
             this.objectCache.set("settings", settings);
             this.settings = settings;
 
-            this._dataTipMgr = new DataTipMgrClass(this.settings, this.container);
-
-            AppClass.instance = this;
+            this._dataTipMgr = new DataTipMgrClass(this._bpsHelper, this, this.settings, this.container);
 
             if (!this.isBrowserModern())
             {
@@ -649,10 +645,12 @@ module beachPartyApp
             //     AppClass.buildId = "pre" + (1 + (+AppClass.buildId));
             // }
 
-            this._fileOpenMgr = new FileOpenMgr(this.settings, this.container, this._bpsHelper, this.saveSettingsHandler, this.loadSettingsHandler);
+            this._fileOpenMgr = new FileOpenMgr(this, this.settings, this.container, this._bpsHelper, this.saveSettingsHandler, this.loadSettingsHandler);
 
             this._undoMgr = new UndoMgrClass();
             this._undoMgr.registerForChange("undoStack", (e) => this.onUndoStackChange());
+
+            this.settings.undoMgr = this._undoMgr;
 
             this.onUndoStackChange();
 
@@ -684,7 +682,7 @@ module beachPartyApp
             this._machineId = machineId + "";
             this._sessionId = sessionId + "";
 
-            this._rotateRing = new RotateRingClass(this.container);
+            this._rotateRing = new RotateRingClass(this, this.container);
 
             //----- regenerate sessionId/machineId ----
             //delete localStorage["machineId"];       // = undefined;
@@ -719,7 +717,7 @@ module beachPartyApp
             this._yMapping = new bps.MappingData("", defaultBinCount);
             this._zMapping = new bps.MappingData("", 3);            // this._defaultBins);
 
-            this._insightMgr = new InsightMgrClass(this.settings, this.container);
+            this._insightMgr = new InsightMgrClass(this, this.settings, this.container);
             this._insightMgr.registerForChange("layout", (e) => this.layoutScreen());
             this._insightMgr.registerForChange("insightLoaded", (e) => this.loadInsight());
             this._insightMgr.registerForChange("currentInsight", (e) => this.onCurrentInsightChanged());
@@ -751,9 +749,9 @@ module beachPartyApp
             vp.select(this.container, ".dataTipIcon").addClass("fnIconBarDataTip");
             vp.select(this.container, ".imgDataSlicer").addClass("fnIconBarSlicer");
 
-            this._chartUx = new ChartUxClass(this.settings, this.container, this._bpsHelper, this._maxToolTipColumns);
+            this._chartUx = new ChartUxClass(this._dataTipMgr, this, this.settings, this.container, this._bpsHelper, this._maxToolTipColumns);
 
-            this._facetMgr = new FacetMgrClass(this.container);
+            this._facetMgr = new FacetMgrClass(this, this.container);
 
             //---- hook WINDOW keyboard/mouse down ----
             var windowW = vp.select(this.container);
@@ -1492,7 +1490,7 @@ module beachPartyApp
                         var rcChart = vp.select(this.container, ".myChart").getBounds(false);
                         rcPlot = vp.geom.createRect(rcChart.left + rcPlot.left, rcChart.top + rcPlot.top, rcPlot.width, rcPlot.height);
 
-                        this._notesPanel = new NotesPanelClass(this.settings, this.container, title, notes, insight.notesBounds, rcPlot);
+                        this._notesPanel = new NotesPanelClass(this, this.settings, this.container, title, notes, insight.notesBounds, rcPlot);
 
                         //---- track panel movements ----
                         this._notesPanel.registerForChange("location", (e) => this.onInsightBoundsChange(insight));
@@ -1734,7 +1732,7 @@ module beachPartyApp
 
             var rc = vp.select(this.container, ".btFeedback").getBounds(false);
 
-            buildJsonPanel(this.settings, this.container, "btFeedback", this, "feedback", true, undefined, rc.bottom+5,
+            buildJsonPanel(this, this.settings, this.container, "btFeedback", this, "feedback", true, undefined, rc.bottom+5,
                 rc.right+0, undefined, undefined, undefined, undefined, undefined, true);
         }
 
@@ -2098,7 +2096,7 @@ module beachPartyApp
             //---- only open if not already open ----
             if (! this._scrubberDialog)
             {
-                this._scrubberDialog = new ScrubberDialogClass(this.settings, this.container, this._origColInfos, this._colInfos);
+                this._scrubberDialog = new ScrubberDialogClass(this, this.settings, this.container, this._origColInfos, this._colInfos);
 
                 this._scrubberDialog.registerForChange("ok", (e) =>
                 {
@@ -3382,7 +3380,7 @@ module beachPartyApp
             var left = 300;
             var top = 100;
 
-            buildJsonPanel(this.settings, this.container, null, this, "errorPanel", true, left, top, undefined, undefined);
+            buildJsonPanel(this, this.settings, this.container, null, this, "errorPanel", true, left, top, undefined, undefined);
         }
 
         searchCol(value?: string)
@@ -3918,7 +3916,7 @@ module beachPartyApp
 
         openAppPanel(e)
         {
-            this._appPanel = buildJsonPanel(this.settings, this.container, "btSettings", this.settings, "appSettings", true, 0, 0, undefined, undefined, undefined, undefined, undefined, undefined, undefined, true);
+            this._appPanel = buildJsonPanel(this, this.settings, this.container, "btSettings", this.settings, "appSettings", true, 0, 0, undefined, undefined, undefined, undefined, undefined, undefined, undefined, true);
 
             this._appPanel.registerForChange("close", (e) =>
             {
@@ -3971,7 +3969,7 @@ module beachPartyApp
             // var rc = vp.select("#bbSort").getBounds(true);
             var rc = $(".bbSort", this.container).get(0).getBoundingClientRect();
 
-            this._sortPanel = buildJsonPanel(this.settings, this.container, "bbSort", this, "sorting", true, rc.left, rc.bottom, undefined, undefined,
+            this._sortPanel = buildJsonPanel(this, this.settings, this.container, "bbSort", this, "sorting", true, rc.left, rc.bottom, undefined, undefined,
             undefined, undefined, undefined, true);
             
             //---- adjust height of column picker so it doesn't exceed height of panel ----
@@ -4045,7 +4043,7 @@ module beachPartyApp
             this.slicerColName(colName);
             this._slicerInitialValue = value;
 
-            var panel = buildJsonPanel(this.settings, this.container, null, this, "slicer", true, left, top, undefined, undefined, toggleOpen);
+            var panel = buildJsonPanel(this, this.settings, this.container, null, this, "slicer", true, left, top, undefined, undefined, toggleOpen);
             this._slicerPanel = panel;
 
             if (panel)
@@ -4214,7 +4212,7 @@ module beachPartyApp
             var left = rc.left;
             var top = rc.bottom;
 
-            var detailsPanel = buildJsonPanel(this.settings, this.container, null, this, "details", true, left, top, undefined, undefined, undefined, undefined, undefined, undefined, undefined, true);
+            var detailsPanel = buildJsonPanel(this, this.settings, this.container, null, this, "details", true, left, top, undefined, undefined, undefined, undefined, undefined, undefined, undefined, true);
             detailsPanel.applyAppPanelOpacity();
             this._detailsPanel = detailsPanel;
 
@@ -4616,7 +4614,7 @@ module beachPartyApp
             // var rc = vp.select("#bbChart").getBounds(true);
             var rc = $(".bbChart", this.container).get(0).getBoundingClientRect();
 
-            var chartPanel = buildJsonPanel(this.settings, this.container, "bbChart", this.settings, "chartSettings", true, rc.left, rc.bottom,
+            var chartPanel = buildJsonPanel(this, this.settings, this.container, "bbChart", this.settings, "chartSettings", true, rc.left, rc.bottom,
                 undefined, undefined, undefined, undefined, undefined, true);
 
             this._chartPanel = chartPanel;
@@ -4713,7 +4711,7 @@ module beachPartyApp
 
             var buttonNames = bigButtonName + " " + legendButtonName;
 
-            var axisPanel = buildJsonPanel(this.settings, this.container, buttonNames, this, panelName, true, x, y,
+            var axisPanel = buildJsonPanel(this, this.settings, this.container, buttonNames, this, panelName, true, x, y,
                 x2, y2, undefined, undefined, undefined, true);
 
             //this._facetPanel = xPanel;
@@ -4742,7 +4740,7 @@ module beachPartyApp
             // var rc = vp.select("#bbFacet").getBounds(true);
             var rc = $(".bbFacet", this.container).get(0).getBoundingClientRect();
 
-            var facetPanel = buildJsonPanel(this.settings, this.container, "bbFacet", this, "facet", true, rc.left, rc.bottom,
+            var facetPanel = buildJsonPanel(this, this.settings, this.container, "bbFacet", this, "facet", true, rc.left, rc.bottom,
             undefined, undefined, undefined, undefined, undefined, true);
 
             this._facetPanel = facetPanel;
@@ -4790,7 +4788,7 @@ module beachPartyApp
                 y = rc.bottom;
             }
 
-            var colorPanel = buildJsonPanel(this.settings, this.container, "bbColor colorLegendTitle", this, "color", true, x, y, x2, y2,
+            var colorPanel = buildJsonPanel(this, this.settings, this.container, "bbColor colorLegendTitle", this, "color", true, x, y, x2, y2,
                 undefined, undefined, undefined, true);
 
             //---- allow colorPanel to be 80% of window height ----
@@ -5117,7 +5115,7 @@ module beachPartyApp
 
             if (colItems)
             {
-                pm = new PopupMenuClass(this.container, openerIds, "generalColPicker", colItems, (e, menu, textIndex, menuIndex) =>
+                pm = new PopupMenuClass(this, this.container, openerIds, "generalColPicker", colItems, (e, menu, textIndex, menuIndex) =>
                 {
                     var mid = <MenuItemData>colItems[menuIndex];
                     callback(mid, colItems);
@@ -5806,7 +5804,7 @@ module beachPartyApp
             {
                 var rc = $(".bbView", this.container).get(0).getBoundingClientRect();
 
-                var chartPicker = new ChartPickerClass(this.settings, this.container, this._chartName, (newName: string) =>
+                var chartPicker = new ChartPickerClass(this, this.settings, this.container, this._chartName, (newName: string) =>
                 {
                     this.changeToChart(newName, null, Gesture.click);
                     this.logAction(Gesture.select, null, ElementType.picklist, Action.adjust, Target.chartType, true, "name", newName);
@@ -5852,7 +5850,7 @@ module beachPartyApp
 
             if (layouts)
             {
-                var pm = new PopupMenuClass(this.container, null, "pmLayout", layouts, (e, menu, textIndex, menuIndex) =>
+                var pm = new PopupMenuClass(this, this.container, null, "pmLayout", layouts, (e, menu, textIndex, menuIndex) =>
                 {
                     var layout = layouts[menuIndex];
                     this.changeToLayout(layout, true);

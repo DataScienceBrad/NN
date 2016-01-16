@@ -10,6 +10,7 @@ module beachPartyApp
     export class SlicerControlClass extends beachParty.DataChangerClass implements IAppControl
     {
         private container: HTMLElement;
+        private application: AppClass;
 
         _root: HTMLDivElement;
         //_colPickerName: HTMLElement;
@@ -36,10 +37,11 @@ module beachPartyApp
         _updateRowAfterBuild = false;
         _tagDelimiter = bps.TagDelimiter.none;
 
-        constructor(container: HTMLElement, panel?: JsonPanelClass)
+        constructor(application: AppClass, container: HTMLElement, panel?: JsonPanelClass)
         {
             super();
 
+            this.application = application;
             this.container = container;
 
             this._panel = panel;
@@ -112,8 +114,8 @@ module beachPartyApp
                 .css("top", "-4px");
 
             //---- add column picker ----
-            var colPickerValues = AppClass.instance.getMappingCols(false);
-            var colPicker = new PickerClass(this.container, barW[0], null, colPickerValues, "None", "Select a column for populating data slicer bars", true,
+            var colPickerValues = this.application.getMappingCols(false);
+            var colPicker = new PickerClass(this.application, this.container, barW[0], null, colPickerValues, "None", "Select a column for populating data slicer bars", true,
                 20);
 
             this._colPicker = colPicker;
@@ -127,7 +129,7 @@ module beachPartyApp
 
             //---- add TAG DELIMITER picker ----
             var tdValues = PickerClass.buildStringsFromEnum(bps.TagDelimiter);
-            var tdPicker = new PickerClass(this.container, barW[0], "Tag:", tdValues, "None", "For TAG columns, specify the tag delimiter", true);
+            var tdPicker = new PickerClass(this.application, this.container, barW[0], "Tag:", tdValues, "None", "For TAG columns, specify the tag delimiter", true);
 
             this._delimiterPicker = tdPicker;
             vp.select(tdPicker.getRoot()).css("float", "right");
@@ -142,7 +144,7 @@ module beachPartyApp
 
         refreshColPickList()
         {
-            var colPickerValues = AppClass.instance.getMappingCols(false);
+            var colPickerValues = this.application.getMappingCols(false);
             this._colPicker.values(colPickerValues);
         }
 
@@ -396,7 +398,7 @@ module beachPartyApp
                         rowW.css("background", "none");
                     }
 
-                    var displayName = (binName === "") ? AppClass.instance._blankValueStr : binName;
+                    var displayName = (binName === "") ? this.application._blankValueStr : binName;
 
                     //---- bin NAME td ----
                     rowW.append("td")
@@ -461,7 +463,7 @@ module beachPartyApp
 
     export function createSlicer(panel?: JsonPanelClass)
     {
-        return new SlicerControlClass(this.container, panel);
+        return new SlicerControlClass(this.appication, this.container, panel);
     }
 
 }

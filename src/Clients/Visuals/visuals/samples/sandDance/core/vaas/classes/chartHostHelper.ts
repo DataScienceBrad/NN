@@ -9,8 +9,6 @@ module bps
 {
     export class ChartHostHelperClass extends BaseHostHelperClass
     {
-        static instance: ChartHostHelperClass;
-
         private data: any;
 
         _clientAppId: string;
@@ -21,8 +19,6 @@ module bps
             super(objectCache, bpsChartOrIFrameId, bpsDomain, baseServerDir, fromDomain, "chartHost", isDivHost);
 
             this._clientAppId = clientAppId;
-
-            ChartHostHelperClass.instance = this;
         }
 
         preprocessMsg(msgBlock)

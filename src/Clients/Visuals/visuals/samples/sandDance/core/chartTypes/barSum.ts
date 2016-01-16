@@ -35,9 +35,9 @@ module beachParty
         _xMin = 0;
         _xMax = 0;
 
-        constructor(view: DataViewClass, gl: any, chartState: any, container: HTMLElement)
+        constructor(view: DataViewClass, gl: any, chartState: any, container: HTMLElement, appMgr: AppMgrClass)
         {
-            super("barSumClass", view, gl, chartState, container);
+            super("barSumClass", view, gl, chartState, container, appMgr);
         }
 
         /** Two responsiblities: 1. compute max count for any bin, over all facets.  2. adjust scales as needed for our chart. */

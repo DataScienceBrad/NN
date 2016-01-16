@@ -9,6 +9,8 @@ module beachPartyApp
 {
     export class ChartUxClass extends beachParty.DataChangerClass
     {
+        private dataTipMgr: DataTipMgrClass;
+        private application: AppClass;
         private container: HTMLElement;
         private settings: AppSettingsMgr;
 
@@ -20,10 +22,12 @@ module beachPartyApp
         private _hoverPrimaryKey;
         private _maxToolTipColumns;
 
-        constructor(settings: AppSettingsMgr, container: HTMLElement, bpsHelper: bps.ChartHostHelperClass, maxToolTipColumns: number)
+        constructor(dataTipMgr: DataTipMgrClass, application: AppClass, settings: AppSettingsMgr, container: HTMLElement, bpsHelper: bps.ChartHostHelperClass, maxToolTipColumns: number)
         {
             super();
 
+            this.dataTipMgr = dataTipMgr;
+            this.application = application;
             this.settings = settings;
             this.container = container;
 
@@ -91,13 +95,13 @@ module beachPartyApp
 
                 if (primaryKey)
                 {
-                    var dataTip = DataTipMgrClass.instance.getDataTip(primaryKey);
+                    var dataTip = this.dataTipMgr.getDataTip(primaryKey);
                     vp.utils.debug("chartUx: onMouseMove callback: dataTip=" + dataTip);
 
                     if (dataTip)
                     {
                         //---- REMOVE dataTip ----
-                        DataTipMgrClass.instance.closeDataTip(dataTip);
+                        this.dataTipMgr.closeDataTip(dataTip);
                     }
                     else
                     {
@@ -105,7 +109,7 @@ module beachPartyApp
                         var colName = vp.select(this.container, ".searchCol").text();
                         var pt = vp.events.mousePosition(e);
 
-                        DataTipMgrClass.instance.addDataTip(colName, pt);
+                        this.dataTipMgr.addDataTip(colName, pt);
 
                         vp.events.cancelEventBubble(e);
                         vp.events.cancelEventDefault(e);
@@ -197,7 +201,7 @@ module beachPartyApp
                     sd.legendSource = "rect drag";
                     sd.rectSelect = rcBandAdj;
 
-                    AppClass.instance.setSelectionDesc(sd);
+                    this.application.setSelectionDesc(sd);
                     this._bpsHelper.rectSelect(rcBandAdj);
                 }
             });
@@ -232,7 +236,7 @@ module beachPartyApp
                     {
                         var key = keys[i];
                         var value = record[key];
-                        var colType = AppClass.instance.getColType(key);
+                        var colType = this.application.getColType(key);
 
                         value = vp.formatters.formatByType(value, colType);
 

@@ -485,37 +485,37 @@ module beachParty
                 {
                     if (usePartyGen)
                     {
-                        chart = new PartyGenPlotClass(this, this._gl, chartState, "FlatCircle", this.container);
+                        chart = new PartyGenPlotClass(this, this._gl, chartState, "FlatCircle", this.container, this._appMgr);
                     }
                     else
                     {
-                        chart = new FlatCircle(this, this._gl, chartState, this.container);
+                        chart = new FlatCircle(this, this._gl, chartState, this.container, this._appMgr);
                     }
                 }
                 else if (layout === "Grid")
                 {
                     if (usePartyGen)
                     {
-                        chart = new PartyGenPlotClass(this, this._gl, chartState, "FlatGrid", this.container);
+                        chart = new PartyGenPlotClass(this, this._gl, chartState, "FlatGrid", this.container, this._appMgr);
                     }
                     else
                     {
-                        chart = new FlatGrid(this, this._gl, chartState, this.container);
+                        chart = new FlatGrid(this, this._gl, chartState, this.container, this._appMgr);
                     }
                 }
                 else if (layout === "Poisson")
                 {
-                    chart = new PartyGenPlotClass(this, this._gl, chartState, "FlatPoisson", this.container);
+                    chart = new PartyGenPlotClass(this, this._gl, chartState, "FlatPoisson", this.container, this._appMgr);
                 }
                 else 
                 {
                     if (usePartyGen)
                     {
-                        chart = new PartyGenPlotClass(this, this._gl, chartState, "FlatRandom", this.container);
+                        chart = new PartyGenPlotClass(this, this._gl, chartState, "FlatRandom", this.container, this._appMgr);
                     }
                     else
                     {
-                        chart = new FlatRandom(this, this._gl, chartState, this.container);
+                        chart = new FlatRandom(this, this._gl, chartState, this.container, this._appMgr);
                     }
                 }
             }
@@ -523,7 +523,7 @@ module beachParty
             {
                 if (usePartyGen)
                 {
-                    chart = new PartyGenPlotClass(this, this._gl, chartState, "Scatter", this.container);
+                    chart = new PartyGenPlotClass(this, this._gl, chartState, "Scatter", this.container, this._appMgr);
                 }
                 else
                 {
@@ -537,43 +537,43 @@ module beachParty
                     }
                     else
                     {
-                        chart = new ScatterPlotClass(this, this._gl, chartState, this.container);
+                        chart = new ScatterPlotClass(this, this._gl, chartState, this.container, this._appMgr);
                     }
                 }
 
             }
             else if (value === "Line")
             {
-                chart = new LinePlotClass(this, this._gl, chartState, this.container);
+                chart = new LinePlotClass(this, this._gl, chartState, this.container, this._appMgr);
             }
             else if (value === "Radial")
             {
-                chart = new RadialClass(this, this._gl, chartState, this.container);
+                chart = new RadialClass(this, this._gl, chartState, this.container, this._appMgr);
             }
             else if (value === "Density")
             {
                 if (layout === "Circle") 
                 {
-                    chart = new DensityCircle(this, this._gl, chartState, this.container);
+                    chart = new DensityCircle(this, this._gl, chartState, this.container, this._appMgr);
                 }
                 else if (layout === "Grid") 
                 {
-                    chart = new DensityGrid(this, this._gl, chartState, this.container);
+                    chart = new DensityGrid(this, this._gl, chartState, this.container, this._appMgr);
                 }
                 else 
                 {
-                    chart = new DensityRandom(this, this._gl, chartState, this.container);
+                    chart = new DensityRandom(this, this._gl, chartState, this.container, this._appMgr);
                 }
             }
             else if (value === "Violin")
             {
-                chart = new ViolinClass(this, this._gl, chartState, this.container);
+                chart = new ViolinClass(this, this._gl, chartState, this.container, this._appMgr) ;
             }
             else if (value === "Bar")
             {
                 if (layout === "Sum")
                 {
-                    chart = new BarSumClass(this, this._gl, chartState, this.container);
+                    chart = new BarSumClass(this, this._gl, chartState, this.container, this._appMgr);
                 }
                 else        // Random or Grid
                 {
@@ -581,16 +581,16 @@ module beachParty
                     {
                         if (layout === "Random")
                         {
-                            chart = new PartyGenPlotClass(this, this._gl, chartState, "BarRandom", this.container);
+                            chart = new PartyGenPlotClass(this, this._gl, chartState, "BarRandom", this.container, this._appMgr);
                         }
                         else 
                         {
-                            chart = new PartyGenPlotClass(this, this._gl, chartState, "BarGrid", this.container);
+                            chart = new PartyGenPlotClass(this, this._gl, chartState, "BarGrid", this.container, this._appMgr);
                         }
                     }
                     else
                     {
-                        chart = new BarCountClass(this, this._gl, chartState, this.container);
+                        chart = new BarCountClass(this, this._gl, chartState, this.container, this._appMgr);
                     }
                 }
             }
@@ -598,7 +598,7 @@ module beachParty
             {
                 if (layout === "Sum")
                 {
-                    chart = new ColumnSumClass(this, this._gl, chartState, this.container);
+                    chart = new ColumnSumClass(this, this._gl, chartState, this.container, this._appMgr);
                 }
                 else        // Random or Grid
                 {
@@ -606,30 +606,30 @@ module beachParty
                     {
                         if (layout === "Random")
                         {
-                            chart = new PartyGenPlotClass(this, this._gl, chartState, "ColumnRandom", this.container);
+                            chart = new PartyGenPlotClass(this, this._gl, chartState, "ColumnRandom", this.container, this._appMgr);
                         }
                         else 
                         {
-                            chart = new PartyGenPlotClass(this, this._gl, chartState, "ColumnGrid", this.container);
+                            chart = new PartyGenPlotClass(this, this._gl, chartState, "ColumnGrid", this.container, this._appMgr);
                         }
                     }
                     else
                     {
-                        chart = new ColumnCountClass(this, this._gl, chartState, this.container);
+                        chart = new ColumnCountClass(this, this._gl, chartState, this.container, this._appMgr);
                     }
                 }
             }
             else if (value === "Scatter-3D")
             {
-                chart = new ScatterPlot3dClass(this, this._gl, chartState, this.container);
+                chart = new ScatterPlot3dClass(this, this._gl, chartState, this.container, this._appMgr);
             }
             else if (value === "Stacks") 
             {
-                chart = new StacksBinClass(this, this._gl, chartState, this.container);
+                chart = new StacksBinClass(this, this._gl, chartState, this.container, this._appMgr);
             }
             else if (value === "Squarify") 
             {
-                chart = new PartyGenPlotClass(this, this._gl, chartState, "FlatSquarify", this.container);
+                chart = new PartyGenPlotClass(this, this._gl, chartState, "FlatSquarify", this.container, this._appMgr);
             }
             else
             {

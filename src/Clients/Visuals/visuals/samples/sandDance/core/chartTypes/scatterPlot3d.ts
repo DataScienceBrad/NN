@@ -11,9 +11,9 @@ module beachParty
     {
         _maxShapeSize = 0;
 
-        constructor(view: DataViewClass, gl: any, chartState: any, container: HTMLElement)
+        constructor(view: DataViewClass, gl: any, chartState: any, container: HTMLElement, appMgr: AppMgrClass)
         {
-            super("scatterPlot3dClass", view, gl, chartState, container);
+            super("scatterPlot3dClass", view, gl, chartState, container, appMgr);
         }
 
         preLayoutLoop(dc: DrawContext)

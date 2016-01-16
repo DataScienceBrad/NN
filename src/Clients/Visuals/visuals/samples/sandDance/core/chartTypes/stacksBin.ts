@@ -41,9 +41,9 @@ module beachParty
         _hBetween = 0;
         _vBetween = 0;
 
-        constructor(view: DataViewClass, gl: any, chartState: any, container: HTMLElement)
+        constructor(view: DataViewClass, gl: any, chartState: any, container: HTMLElement, appMgr: AppMgrClass)
         {
-            super("stacksBinClass", view, gl, chartState, container);
+            super("stacksBinClass", view, gl, chartState, container, appMgr);
 
             //---- initially rotate about X axis 45 degrees for perspective view ----
             this._view.getTransformMgr().rotateMatrixX(Math.PI / 4.0, false, false);

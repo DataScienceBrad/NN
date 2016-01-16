@@ -30,9 +30,9 @@ module beachParty
         _hBetween = 0;
         _vBetween = 0;
 
-        constructor(view: DataViewClass, gl: any, chartState: any, container: HTMLElement)
+        constructor(view: DataViewClass, gl: any, chartState: any, container: HTMLElement, appMgr: AppMgrClass)
         {
-            super("densityRandom", view, gl, chartState, container);
+            super("densityRandom", view, gl, chartState, container, appMgr);
         }
 
         /** Adjust scales as needed for our chart. */

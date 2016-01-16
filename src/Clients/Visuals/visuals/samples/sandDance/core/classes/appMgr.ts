@@ -9,7 +9,7 @@ module beachParty
 {
     export class AppMgrClass extends DataChangerClass
     {
-        static current = <AppMgrClass> null;
+        // static current = <AppMgrClass> null;
 
         private container: HTMLElement;
         private objectCache: sandDance.ObjectCache;
@@ -46,7 +46,7 @@ module beachParty
             this.objectCache = objectCache;
             this.container = container;
 
-            AppMgrClass.current = this;
+            // AppMgrClass.current = this;
         }
 
         init(canvas3dId: string, canvas2dId: string, svgId: string, fileInfoId: string, width: number, height: number,
@@ -95,7 +95,7 @@ module beachParty
             var moveStatsElem: HTMLElement = $("." + moveStatsId, this.container).get(0);
             var drawStatsElem: HTMLElement = $("." + drawStatsId, this.container).get(0);
 
-            var preloadMgr = new PreloadMgrClass();
+            var preloadMgr = new PreloadMgrClass(this);
             this._preloadMgr = preloadMgr;
 
             //---- use correct dataMgr ----

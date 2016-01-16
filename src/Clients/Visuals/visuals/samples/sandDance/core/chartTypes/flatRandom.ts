@@ -15,9 +15,9 @@ module beachParty
         _nextRandIndex = 0;
         _itemSize = 0;
 
-        constructor(view: DataViewClass, gl: any, chartState: any, container: HTMLElement)
+        constructor(view: DataViewClass, gl: any, chartState: any, container: HTMLElement, appMgr: AppMgrClass)
         {
-            super("flatRandom", view, gl, chartState, container);
+            super("flatRandom", view, gl, chartState, container, appMgr);
 
             this._hideAxes = true;
         }

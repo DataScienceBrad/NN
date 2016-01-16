@@ -16,6 +16,7 @@ module beachPartyApp
         static insightWidth = 200;
         static insightHeight = 130;
 
+        private application: AppClass;
         private container: HTMLElement;
         private settings: AppSettingsMgr;
 
@@ -42,10 +43,11 @@ module beachPartyApp
         _playbackDuration = 3;      // 3 seconds
         _isLooping = true;             // should playback restart once end is reached
 
-        constructor(settings: AppSettingsMgr, container: HTMLElement)
+        constructor(application: AppClass, settings: AppSettingsMgr, container: HTMLElement)
         {
             super();
 
+            this.application = application;
             this.settings = settings;
             this.container = container;
 
@@ -71,7 +73,7 @@ module beachPartyApp
             }
             else
             {
-                picker = AppClass.instance.createEnumPicker(enumType, callback);
+                picker = this.application.createEnumPicker(enumType, callback);
             }
 
             return picker;
@@ -256,7 +258,7 @@ module beachPartyApp
             //---- invoke the INSIGHTS CONTEXT MENU ----
             var menuItems = this.getInsightsMenuItems();
 
-            var pm = new PopupMenuClass(this.container, null, "pmInsights", menuItems, (e, menu, textIndex, menuIndex) =>
+            var pm = new PopupMenuClass(this.application, this.container, null, "pmInsights", menuItems, (e, menu, textIndex, menuIndex) =>
             {
                 var name = (<MenuItemData>menuItems[menuIndex]).text;
 
@@ -349,7 +351,7 @@ module beachPartyApp
             //---- invoke the INSIGHTS CONTEXT MENU ----
             var menuItems = this.getInsightEntryMenuItems();
 
-            var pm = new PopupMenuClass(this.container, null, "pmEntryInsights", menuItems, (e, menu, textIndex, menuIndex) =>
+            var pm = new PopupMenuClass(this.application, this.container, null, "pmEntryInsights", menuItems, (e, menu, textIndex, menuIndex) =>
             {
                 var name = (<MenuItemData>menuItems[menuIndex]).text;
 
@@ -396,7 +398,7 @@ module beachPartyApp
             //---- make a copy of the specified insight for editing (in case we cancel, this makes it easy to reverse the changes) ----
             this._editInsight = vp.utils.copyMap(insight);
 
-            this._currentPanel = buildJsonPanel(this.settings, this.container, null, this, "editInsight", true, pt.x, pt.y, undefined, undefined, undefined, false);
+            this._currentPanel = buildJsonPanel(this.application, this.settings, this.container, null, this, "editInsight", true, pt.x, pt.y, undefined, undefined, undefined, false);
 
             ////---- initialize TinyMCE rich text area to convert all textAreas into RICH text areas ----
             //tinymce.init({ selector: 'textarea', setupcontent_callback: "myCustomSetupContent" });
@@ -428,7 +430,7 @@ module beachPartyApp
         {
             var sessionIndex = this._session.insights.indexOf(insight);
 
-            AppClass.instance.createInsight(true, true, (captInsight: bps.InsightData) =>
+            this.application.createInsight(true, true, (captInsight: bps.InsightData) =>
             {
                 //---- transfer user properties from "insight" ----
                 captInsight.name = insight.name;
@@ -463,7 +465,7 @@ module beachPartyApp
 
             this._editInsight = insight;
 
-            this._currentPanel = buildJsonPanel(this.settings, this.container, null, this, "addInsight", true, left, top, undefined, undefined, undefined, false);
+            this._currentPanel = buildJsonPanel(this.application, this.settings, this.container, null, this, "addInsight", true, left, top, undefined, undefined, undefined, false);
 
             this._currentPanel.registerForChange("onAccept", (e) =>
             {
@@ -571,10 +573,10 @@ module beachPartyApp
         loadQuickTest()
         {
             //---- read the file from server ---
-            var url = beachParty.getMyPath() + "/tests/QuickTest.bpSession";
-            var text = <string>beachParty.FileAccess.readFile(url, beachParty.fileFormat.text);
-
-            this.loadSessionFromText(text, "QuickTest");
+//             var url = beachParty.getMyPath() + "/tests/QuickTest.bpSession";
+//             var text = <string>beachParty.FileAccess.readFile(url, beachParty.fileFormat.text);
+// 
+//             this.loadSessionFromText(text, "QuickTest");
         }
 
         saveSession()
@@ -622,7 +624,7 @@ module beachPartyApp
         {
             this.editSessionName(name);
 
-            this._currentPanel = buildJsonPanel(this.settings, this.container, null, this, "editSessionName", true);
+            this._currentPanel = buildJsonPanel(this.application, this.settings, this.container, null, this, "editSessionName", true);
 
             this._currentPanel.registerForChange("onAccept", (e) =>
             {
@@ -982,7 +984,7 @@ module beachPartyApp
             menuItems.push(new MenuItemData("Selection", "Change this into a selection loading insight", "fnInsightSelection"));  
             menuItems.push(new MenuItemData("Filter", "Change this into a filter loading insight", "fnInsightFilter"));       
 
-            var picker = AppClass.instance.createGeneralPicker(null, "loadActionPicker", menuItems, callback, undefined, 28);
+            var picker = this.application.createGeneralPicker(null, "loadActionPicker", menuItems, callback, undefined, 28);
             return picker;
         }
 

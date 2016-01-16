@@ -32,9 +32,9 @@ module beachParty
 
         _leafRcArray: CellData[];
 
-        constructor(view: DataViewClass, gl: any, chartState: any, chartType: string, container: HTMLElement)
+        constructor(view: DataViewClass, gl: any, chartState: any, chartType: string, container: HTMLElement, appMgr: AppMgrClass)
         {
-            super("partyGenPlotClass", view, gl, chartState, container);
+            super("partyGenPlotClass", view, gl, chartState, container, appMgr);
 
             this._chartType = chartType;
 
@@ -322,7 +322,7 @@ module beachParty
             //    var sorted = false;
             //}
 
-            if (!filter[i])
+            if (filter && !filter[i])
             {
                 //---- IN FILTER - give it the next rcArray ----
                 var index = this._nextInFilterIndex++;

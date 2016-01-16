@@ -13,9 +13,9 @@ module beachParty
         _cy = 0;
         _maxShapeSize = 1;
 
-        constructor(view: DataViewClass, gl: any, chartState: any, container: HTMLElement)
+        constructor(view: DataViewClass, gl: any, chartState: any, container: HTMLElement, appMgr: AppMgrClass)
         {
-            super("sandRadial", view, gl, chartState, container);
+            super("sandRadial", view, gl, chartState, container, appMgr);
 
             this._hideAxes = true;
         }

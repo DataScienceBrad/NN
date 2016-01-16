@@ -11,6 +11,7 @@ module beachPartyApp
     {
         static instance: FileOpenMgr;
 
+        private application: AppClass;
         private container: HTMLElement;
         private settings: AppSettingsMgr;
 
@@ -34,6 +35,7 @@ module beachPartyApp
         private loadSettingsHandler: (type: sandDance.SettingsType) => any;
 
         constructor(
+            application: AppClass,
             settings: AppSettingsMgr,
             container: HTMLElement,
             bpsHelper: bps.ChartHostHelperClass,
@@ -42,6 +44,7 @@ module beachPartyApp
         {
             super();
 
+            this.application = application;
             this.settings = settings;
             this.container = container;
 
@@ -71,7 +74,7 @@ module beachPartyApp
             var left = rc.left;
             var top = rc.bottom;
 
-            this._fileOpenPanel = buildJsonPanel(this.settings, this.container, "bbData", this, "fileOpen", true, left, top);
+            this._fileOpenPanel = buildJsonPanel(this.application, this.settings, this.container, "bbData", this, "fileOpen", true, left, top);
 
             //---- make sure actions don't auto-close (except for "load" button) ----
             this._fileOpenPanel._isPinnedDown = true;
@@ -79,7 +82,7 @@ module beachPartyApp
             var elem = this._fileOpenPanel.getRootElem();
 
             //---- hide SQL for the client edition ----
-            if (AppClass.instance._edition === "client")
+            if (this.application._edition === "client")
             {
                 vp.select(elem, ".tab3").css("display", "none");
             }
@@ -158,7 +161,7 @@ module beachPartyApp
                 }
                 else
                 {
-                    AppClass.instance._insightMgr.processDroppedText(text);
+                    this.application._insightMgr.processDroppedText(text);
                 }
             }
         }
@@ -275,7 +278,7 @@ module beachPartyApp
             //this._fileOpenUrl = "";
             this._fileOpenSource = null;
 
-            AppClass.instance.logAction(Gesture.click, e.target.id, ElementType.button, Action.open, Target.filePanel, false);
+            this.application.logAction(Gesture.click, e.target.id, ElementType.button, Action.open, Target.filePanel, false);
 
             // this.openFileOpenPanel();
         }
@@ -438,7 +441,7 @@ module beachPartyApp
             }
             else
             {
-                if (!AppClass.instance.isKnownFile(filename))
+                if (!this.application.isKnownFile(filename))
                 {
                     //filename = "Titanic";       // default known file name
                     throw "Cannot open file: " + filename;
@@ -646,7 +649,7 @@ module beachPartyApp
                 {
                     if (fromUI)
                     {
-                        AppClass.instance.logAction(Gesture.select, null, ElementType.picklist, Action.load, Target.data,
+                       this.application.logAction(Gesture.select, null, ElementType.picklist, Action.load, Target.data,
                             true, "fileName", name, "isKnown", "true");
                     }
 
@@ -663,7 +666,7 @@ module beachPartyApp
                 {
                     if (fromUI)
                     {
-                        AppClass.instance.logAction(Gesture.select, null, ElementType.picklist, Action.load, Target.data,
+                        this.application.logAction(Gesture.select, null, ElementType.picklist, Action.load, Target.data,
                             true, "fileName", name, "isKnown", "true");
                     }
 

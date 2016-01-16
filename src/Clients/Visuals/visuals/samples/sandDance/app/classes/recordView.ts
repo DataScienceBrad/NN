@@ -9,6 +9,8 @@ module beachPartyApp
 {
     export class RecordViewClass extends beachParty.DataChangerClass implements IAppControl
     {
+        private application: AppClass;
+
         _root: HTMLDivElement;
         _recordText: HTMLElement;
         _listElem: HTMLElement;
@@ -27,9 +29,11 @@ module beachPartyApp
         _lastPercent = {};
         //_rebuildTimer = null;
 
-        constructor(panel: JsonPanelClass)
+        constructor(application: AppClass, panel: JsonPanelClass)
         {
             super();
+
+            this.application = application;
 
             this._panel = panel;
             var root = document.createElement("div");
@@ -265,7 +269,7 @@ module beachPartyApp
                 this._selectedValue = vp.select(valueElem).text();
                 //this.onDataChanged("selectedValue");
 
-                AppClass.instance.doSearch("Details", this._selectedColName, this._selectedValue, null, bps.TextSearchType.exactMatch);
+                this.application.doSearch("Details", this._selectedColName, this._selectedValue, null, bps.TextSearchType.exactMatch);
             }
         }
 
@@ -359,7 +363,7 @@ module beachPartyApp
 
         openNumSpreader(rowParent, numSpreadParent)
         {
-            var bpsHelper = AppClass.instance._bpsHelper;
+            var bpsHelper = this.application._bpsHelper;
             var value = rowParent.valueElem.textContent;
 
             var initialPercent = this._lastPercent[this._selectedColName];
@@ -373,7 +377,7 @@ module beachPartyApp
                 (colName: string, minValue, maxValue, searchType, percent) =>
                 {
                     //this._isSearchFromNumSpreader = true;
-                    AppClass.instance.doSearch("Details", colName, minValue, maxValue, searchType);
+                    this.application.doSearch("Details", colName, minValue, maxValue, searchType);
                     //this._isSearchFromNumSpreader = false;
 
                     this._lastPercent[this._selectedColName] = percent;
@@ -514,8 +518,8 @@ module beachPartyApp
 
     }
 
-    export function createRecordView(panel: JsonPanelClass)
+    export function createRecordView(application: AppClass, panel: JsonPanelClass)
     {
-        return new RecordViewClass(panel);
+        return new RecordViewClass(application, panel);
     }
 }

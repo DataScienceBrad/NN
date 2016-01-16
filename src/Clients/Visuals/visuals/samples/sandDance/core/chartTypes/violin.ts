@@ -34,9 +34,9 @@ module beachParty
 
         //_chartOptions = new sandDensityOptions(5, 5, "Circle");
 
-        constructor(view: DataViewClass, gl: any, chartState: any, container: HTMLElement)
+        constructor(view: DataViewClass, gl: any, chartState: any, container: HTMLElement, appMgr: AppMgrClass)
         {
-            super("sandViolin", view, gl, chartState, container);
+            super("sandViolin", view, gl, chartState, container, appMgr);
         }
 
         /** Adjust scales as needed for our chart. */

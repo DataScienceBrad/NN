@@ -16,6 +16,7 @@ module beachPartyApp
 
     export class BasePopupClass extends beachParty.DataChangerClass implements IAppControl
     {
+        protected application: AppClass;
         protected container: HTMLElement;
 
         private _bigBarElement;
@@ -43,10 +44,11 @@ module beachPartyApp
         _popupId: number;
         _hasTitle = false;
 
-        constructor(container: HTMLElement, openerIds: string, ownerElem?: HTMLElement)
+        constructor(application: AppClass, container: HTMLElement, openerIds: string, ownerElem?: HTMLElement)
         {
             super();
 
+            this.application = application;
             this.container = container;
 
             this._openerIds = openerIds;
@@ -316,7 +318,7 @@ module beachPartyApp
         {
             this.remove();
 
-            AppClass.instance.logAction(Gesture.click, null, ElementType.button, Action.close, Target.unknownPanel, true);
+            this.application.logAction(Gesture.click, null, ElementType.button, Action.close, Target.unknownPanel, true);
 
             //---- set our button to NOT "selected" state ----
             this.setOpenerSelected(false);

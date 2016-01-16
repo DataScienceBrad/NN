@@ -9,14 +9,16 @@ module beachPartyApp
 {
     export class FacetMgrClass extends beachParty.DataChangerClass 
     {
+        private application: AppClass;
         private container: HTMLElement;
 
         _facetLayouts: bps.FacetLayoutInfo[];
 
-        constructor(container: HTMLElement)
+        constructor(application: AppClass, container: HTMLElement)
         {
             super();
 
+            this.application = application;
             this.container = container;
         }
 
@@ -55,7 +57,7 @@ module beachPartyApp
                             var elem = e.target;
                             var sp = <bps.SearchParams>elem.searchParams;
 
-                            AppClass.instance.doSearch("Facet", sp.colName, sp.minValue, sp.maxValue, sp.searchType);
+                            this.application.doSearch("Facet", sp.colName, sp.minValue, sp.maxValue, sp.searchType);
                         });
 
                     labelW[0].searchParams = fl.searchParams;

@@ -18,9 +18,9 @@ module beachParty
         _maxShapeSize = 1;
         _itemSize = 0;
 
-        constructor(view: DataViewClass, gl: any, chartState: any, container: HTMLElement)
+        constructor(view: DataViewClass, gl: any, chartState: any, container: HTMLElement, appMgr: AppMgrClass)
         {
-            super("flatGrid", view, gl, chartState, container);
+            super("flatGrid", view, gl, chartState, container, appMgr);
 
             this._hideAxes = true;
         }

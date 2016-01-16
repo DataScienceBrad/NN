@@ -11,10 +11,10 @@ module beachPartyApp
     {
         public context = null;
 
-        constructor(container: HTMLElement, openerIds: string, id: string, names: any[], callback, hideAfterCallback = false, limitHeight = true, verticalMargin = 0,
+        constructor(application: AppClass, container: HTMLElement, openerIds: string, id: string, names: any[], callback, hideAfterCallback = false, limitHeight = true, verticalMargin = 0,
             iconWidth?: number, ownerElem?: HTMLElement, internalOwnerElement: HTMLElement = ownerElem)
         {
-            super(container, openerIds, ownerElem);
+            super(application, container, openerIds, ownerElem);
 
             var maxPanelHeight = AppClass.maxPanelHeight;
 

@@ -25,10 +25,10 @@ module beachPartyApp
         _currentTabContentElem: HTMLElement;
         _currentTabButtonElem: HTMLElement;
 
-        constructor(settings: AppSettingsMgr, container: HTMLElement, openerIds: string, dataOwner: beachParty.DataChangerClass, name: string, json: any, bgColor?: string,
+        constructor(application: AppClass, settings: AppSettingsMgr, container: HTMLElement, openerIds: string, dataOwner: beachParty.DataChangerClass, name: string, json: any, bgColor?: string,
             isCol1Indent = true, hideClose = false, addAutoClose = false, addNormalClose?: boolean)
         {
-            super(settings, container, name, json.isDialog, bgColor, json.title, json.width, json.height, json.resizable, json.tip, hideClose, addAutoClose,
+            super(application, settings, container, name, json.isDialog, bgColor, json.title, json.width, json.height, json.resizable, json.tip, hideClose, addAutoClose,
                 addNormalClose);
 
             this._dataOwner = dataOwner;
@@ -264,7 +264,7 @@ module beachPartyApp
             if (!thisObj[memberName])
             {
                 //---- if member not found in dataOwner, fallback to appClass ----
-                thisObj = AppClass.instance;
+                thisObj = this.application;
             }
 
             return thisObj;
@@ -1230,7 +1230,7 @@ module beachPartyApp
 
         callPanelCreator(creatorMethod: string, p1, p2?, p3?, p4?, p5?)
         {
-            return AppClass.instance[creatorMethod](p1, p2, p3, p4, p5);
+            return this.application[creatorMethod](p1, p2, p3, p4, p5);
         }
 
         openPicker(picker: beachPartyApp.PopupMenuClass, chevronW)
@@ -1399,7 +1399,7 @@ module beachPartyApp
 
     }
 
-    export function buildJsonPanel(settings: AppSettingsMgr, container: HTMLElement, openerIds: string, dataOwner: beachParty.DataChangerClass, panelName: string, openPanel: boolean, left?: number,
+    export function buildJsonPanel(application: AppClass, settings: AppSettingsMgr, container: HTMLElement, openerIds: string, dataOwner: beachParty.DataChangerClass, panelName: string, openPanel: boolean, left?: number,
         top?: number, right?: number, bottom?: number, toggleOpen = true, isCol1Indent = true, hideClose = false,
         addAutoClose = false, addNormalClose?: boolean, isCenter?: boolean): JsonPanelClass
     {
@@ -1411,7 +1411,7 @@ module beachPartyApp
 
         // var desc = w.panelDescriptions[panelName];
 
-        panel = new JsonPanelClass(settings, container, openerIds, dataOwner, panelName, desc, undefined, isCol1Indent, hideClose, addAutoClose, addNormalClose);
+        panel = new JsonPanelClass(application, settings, container, openerIds, dataOwner, panelName, desc, undefined, isCol1Indent, hideClose, addAutoClose, addNormalClose);
 
         var rc = vp.dom.getBounds(panel.getRootElem(), true);
 

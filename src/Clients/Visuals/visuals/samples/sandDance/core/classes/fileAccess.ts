@@ -3083,12 +3083,12 @@ module beachParty
 
     export function getMyPath()
     {
-        if (AppMgrClass.current && AppMgrClass.current._beachPartyDir)
-        {
-            var path = <string>AppMgrClass.current._beachPartyDir + "/Apps";
-        }
-        else
-        {
+        // if (AppMgrClass.current && AppMgrClass.current._beachPartyDir)
+        // {
+        //     var path = <string>AppMgrClass.current._beachPartyDir + "/Apps";
+        // }
+        // else
+        // {
             var path = window.location.href;
 
             //---- remove any params ----
@@ -3104,7 +3104,7 @@ module beachParty
             {
                 path = path.substr(0, index);
             }
-        }
+        // }
 
         return path;
     }
@@ -3176,14 +3176,14 @@ module beachParty
         //---- for dev machine (http://localhost/bpServer) but gets somewhat tricky when we are deployed ----
         //---- and the bpServer we want is something like:  http://vibe10/SandCastle/build3/bpServer.  ----
 
-        if (AppMgrClass.current && AppMgrClass.current._beachPartyDir)
-        {
-            var path = <string>AppMgrClass.current._beachPartyDir;
-        }
-        else
-        {
+        // if (AppMgrClass.current && AppMgrClass.current._beachPartyDir)
+        // {
+        //     var path = <string>AppMgrClass.current._beachPartyDir;
+        // }
+        // else
+        // {
             var path = pathHelper("beachPartyApp");
-        } 
+        // } 
 
         return path; 
     }

@@ -34,10 +34,10 @@ module beachPartyApp
         _onResizeMouseUpFunc = null;    // setCapture
         _resizeElem: HTMLElement;
 
-        constructor(settings: AppSettingsMgr, container: HTMLElement, name: string, isDialog: boolean, bgColor?: string, title?: string, width?: number, height?: number, resizeable?: boolean,
+        constructor(application: AppClass, settings: AppSettingsMgr, container: HTMLElement, name: string, isDialog: boolean, bgColor?: string, title?: string, width?: number, height?: number, resizeable?: boolean,
             tooltip?: string, hideClose?: boolean, addAutoClose?: boolean, addNormalClose?: boolean)
         {
-            super(container, name);
+            super(application, container, name);
 
             this.settings = settings;
 

@@ -11,6 +11,7 @@ module beachParty
     {
          _root: SVGGElement;
 
+        private appMgr: AppMgrClass;
         _chartFrame: vp.chartFrame.chartFrameEx;
         _chartFrameData: bps.ChartFrameData;
         _dataMgr: DataMgrClass;
@@ -19,10 +20,11 @@ module beachParty
         _xTickBoxElements: HTMLElement[];
         _yTickBoxElements: HTMLElement[];
 
-        constructor(parent: SVGGElement, dataMgr: DataMgrClass, transformer: TransformerClass)
+        constructor(appMgr: AppMgrClass, parent: SVGGElement, dataMgr: DataMgrClass, transformer: TransformerClass)
         {
             super();
 
+            this.appMgr = appMgr;
             var rootW = vp.select(parent).append("g");
             this._root = rootW[0];
 
@@ -502,7 +504,7 @@ module beachParty
 
             this._dataMgr.searchColValue(sp);
 
-            AppMgrClass.current.onClickSelection(sp.buttonType, axisName, sp );
+            this.appMgr.onClickSelection(sp.buttonType, axisName, sp );
         }
     }
 }

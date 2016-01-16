@@ -335,9 +335,12 @@ module beachParty
                 for (var i = 0; i < nvFacetBuckets.length; i++)
                 {
                     var nv = <NamedVectors>nvFacetBuckets[i];
-                    var count = nv.layoutFilter.count(0);
+                    
+                    if (nv && nv.layoutFilter && nv.layoutFilter.count) {
+                        var count = nv.layoutFilter.count(0);
 
-                    maxCount = Math.max(maxCount, count);
+                        maxCount = Math.max(maxCount, count);
+                    }
                 }
 
                 //maxCount = Math.floor(maxCount / nvFacetBuckets.length);        // Math.sqrt(nvFacetBuckets.length);      // asthetic adjustment
