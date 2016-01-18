@@ -537,6 +537,10 @@ module beachPartyApp
             });
         }
 
+        public setSelection(vector: any[]): void {
+            this._bpsHelper.setSelection(vector, bps.VectorType.primaryKeyList);
+        }
+
         public update(width: number, height: number): void {
             this.setViewport(width, height);
 

@@ -30,6 +30,7 @@
 //--------- SandDance End.
 
 module powerbi.visuals.samples {
+    import SelectionManager = utility.SelectionManager;
     import ClassAndSelector = jsCommon.CssConstants.ClassAndSelector;
     import createClassAndSelector = jsCommon.CssConstants.createClassAndSelector;
 
@@ -40,6 +41,7 @@ module powerbi.visuals.samples {
     export interface SandDanceDataView {
         settings: SandDanceSettings;
         data: SandDanceData;
+        highlights: any[];
     }
 
     export interface SandDanceConstructorOptions {
@@ -130,7 +132,7 @@ module powerbi.visuals.samples {
                 table: {
                     rows: {
                         for: { in: 'Values' },
-                        dataReductionAlgorithm: { window: { count: 500 } }
+                        dataReductionAlgorithm: { window: { count: 50000 } }
                     },
                     rowCount: { preferred: { min: 1 } }
                 }
@@ -169,7 +171,9 @@ module powerbi.visuals.samples {
                         }
                     }
                 }
-            }
+            },
+            supportsHighlight: true,
+            suppressDefaultTitle: true
         };
 
         private margin: IMargin = {
@@ -220,7 +224,12 @@ module powerbi.visuals.samples {
             this.objectCache.set("hostBus", new sandDance.Bus("hostBus"));
             this.objectCache.set("iframeBus", new sandDance.Bus("iframeBus"));
 
-            this.application = new beachPartyApp.AppClass(this.objectCache, this.saveSettings.bind(this), this.loadSettings.bind(this), <HTMLElement> this.rootElement.node());
+            this.application = new beachPartyApp.AppClass(
+                this.objectCache,
+                this.saveSettings.bind(this),
+                this.loadSettings.bind(this),
+                <HTMLElement> this.rootElement.node());
+
             this.application.setViewport(this.viewport.width, this.viewport.height);
             this.application.run();
 
@@ -567,6 +576,10 @@ module powerbi.visuals.samples {
                 this.application.updateDataView(dataView.data);
             }
 
+            if (this.dataView && JSON.stringify(this.dataView.highlights) !== JSON.stringify(dataView.highlights)) {
+                this.application.setSelection(dataView.highlights);
+            }
+
             if (!this.dataView) {
                 this.dataView = dataView;
 
@@ -594,8 +607,29 @@ module powerbi.visuals.samples {
 
             return {
                 settings: this.parseSettings(dataView),
-                data: data
+                data: data,
+                highlights: this.parseHighlights(dataView)
             };
+        }
+
+        private parseHighlights(dataView: DataView): any[] {
+            let highlights: any[] = [];
+
+            if (!dataView ||
+                !dataView.categorical ||
+                !dataView.categorical.values ||
+                !dataView.categorical.values[0] ||
+                !dataView.categorical.values[0].highlights) {
+                return highlights;
+            }
+
+            dataView.categorical.values[0].highlights.forEach((highlight: any, index: number) => {
+                if (highlight) {
+                    highlights.push(index);
+                }
+            });
+
+            return highlights;
         }
 
         private parseSettings(dataView: DataView): SandDanceSettings {

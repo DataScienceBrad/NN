@@ -605,6 +605,7 @@ module beachParty
             //---- build colInfos, based on SCRUBBED set of columns ----
             this._colInfos = this.buildColInfos(postDf);
 
+            this.onDataChanged("selection");
             this.onDataChanged("dataFrame");
             //this.onDataChanged("filtered");
             this.onDataChanged("colMappings");
