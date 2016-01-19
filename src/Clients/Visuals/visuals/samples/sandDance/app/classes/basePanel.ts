@@ -149,10 +149,10 @@ module beachPartyApp
                 this.createTitle(rootW, title, tooltip, hideClose);
             }
 
-            if (resizeable)
-            {
-                this.createResizer(rootW);
-            }
+            // if (resizeable)
+            // {
+            //     this.createResizer(rootW);
+            // }
         }
 
         onUserAction()

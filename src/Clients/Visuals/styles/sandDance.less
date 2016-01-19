@@ -710,6 +710,7 @@
         background: rgb(56, 56, 56);
         z-index: 1005;
         overflow: auto;
+        -ms-overflow-style: auto;
     }
 
     .popupPanel {
@@ -723,6 +724,7 @@
     .menuItemHolder {
         overflow-y: auto;
         overflow-x: hidden;
+        -ms-overflow-style: auto;
         border: 1px solid none;
         max-height: 180px !important;
     }
@@ -734,7 +736,8 @@
         display: inline-block;
         background: black;
         z-index: 1005;
-        overflow: auto;
+        // overflow: auto;
+        -ms-overflow-style: auto;
     }
 
     .panelSeparator {
@@ -756,11 +759,13 @@
     }
 
     .panelContent {
-        padding: 12px 6px 0;
+        padding: 12px 6px 6px 6px;
         display: block;
         // overflow: auto;
         max-height: 172px;
         min-width: 130px;
+        overflow: auto;
+        -ms-overflow-style: auto;
     }
 
     .panelLink:link {
@@ -1010,6 +1015,8 @@
     .listBox {
         border: 1px solid #555;
         max-height: 100px !important;
+        -ms-overflow-style: auto;
+        min-width: 130px;
     }
 
     .tabButtonContainer {
@@ -2064,5 +2071,20 @@
     .playIconButton,
     .facetBins {
         .display-none();
+    }
+
+    .valuesContent {
+        -ms-overflow-style: auto;
+    }
+
+    .slicerPanel .panelRow,
+    .slicerPanel .panelColumn,
+    .detailsPanel .panelRow,
+    .detailsPanel .panelColumn {
+        display: block;
+    }
+
+    .slicerPanel .histogramHolder {
+        height: 100px !important;
     }
 }
