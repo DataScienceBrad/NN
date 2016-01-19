@@ -1715,7 +1715,7 @@ module beachPartyApp
 
         getPlotBounds()
         {
-            return this._rcPlot;
+            return this._rcPlot || vp.geom.createRect(0, 0, 0, 0);
         }
 
         quickStats(msg: string)

@@ -42,6 +42,10 @@ module beachPartyApp
         {
             var rcPlot = this.application.getPlotBounds();
 
+            if (!rcPlot) {
+                return vp.geom.createRect(0, 0, 0, 0);
+            }
+
             return rcPlot;
         }
 
@@ -50,8 +54,11 @@ module beachPartyApp
             var rcPlot = this.getRcPlot();
             var rcRot = this.application._rcRotateRing;
 
-            var rc = vp.geom.createRect(rcPlot.left + rcRot.left, rcPlot.top + rcRot.top, rcRot.width, rcRot.height);
-            return rc;
+            if (rcPlot && rcRot) {
+                return vp.geom.createRect(rcPlot.left + rcRot.left, rcPlot.top + rcRot.top, rcRot.width, rcRot.height);
+            }
+
+            return vp.geom.createRect(0, 0, 0, 0);
         }
 
         enter()
