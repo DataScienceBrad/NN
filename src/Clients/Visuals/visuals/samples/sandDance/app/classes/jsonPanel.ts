@@ -497,7 +497,7 @@ module beachPartyApp
                     controlCreateFunc = controlCreateFunc[part];
                 }
 
-                control = controlCreateFunc(this);
+                control = controlCreateFunc(this, this.application, this.container);
                 var dataName = row.dataName;
                 var thisObj = this.getDataOwner(dataName);
 

@@ -518,7 +518,7 @@ module beachPartyApp
 
     }
 
-    export function createRecordView(application: AppClass, panel: JsonPanelClass)
+    export function createRecordView(panel: JsonPanelClass, application: AppClass)
     {
         return new RecordViewClass(application, panel);
     }

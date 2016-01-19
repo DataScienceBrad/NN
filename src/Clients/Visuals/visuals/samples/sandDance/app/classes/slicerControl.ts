@@ -461,9 +461,8 @@ module beachPartyApp
         }
     }
 
-    export function createSlicer(panel?: JsonPanelClass)
+    export function createSlicer(panel: JsonPanelClass, application: AppClass, container: HTMLElement)
     {
-        return new SlicerControlClass(this.appication, this.container, panel);
+        return new SlicerControlClass(application, container, panel);
     }
-
 }
