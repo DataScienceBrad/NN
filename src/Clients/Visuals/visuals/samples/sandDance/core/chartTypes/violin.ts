@@ -87,7 +87,7 @@ module beachParty
             //---- determine each item's position ("itemIndex") within its bin ----
             //---- for this part, we need to process the items in their sorted order ----
 
-            var filter = dc.layoutFilterVector;
+            var filter = dc.layoutFilterVector || [];
 
             var allAssignX = resultX.assignments;
             var allAssignY = resultY.assignments;
@@ -120,13 +120,13 @@ module beachParty
                         {
                             lastFacetIndex = facetIndex;
                         }
-                        else
-                        {
-                            if (facetIndex !== lastFacetIndex)
-                            {
-                                vp.utils.debug("----> ERROR: facetIndex changed");
-                            }
-                        }
+                        // else
+                        // {
+                        //     if (facetIndex !== lastFacetIndex)
+                        //     {
+                        //         vp.utils.debug("----> ERROR: facetIndex changed");
+                        //     }
+                        // }
                     }
 
                     //---- update bin COUNTS ----

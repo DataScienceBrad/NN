@@ -114,7 +114,7 @@ module beachParty
             //---- determine each item's position ("itemIndex") within its bin ----
             //---- for this part, we need to process the items in their sorted order ----
 
-            var filter = dc.layoutFilterVector;
+            var filter = dc.layoutFilterVector || [];
 
             var binAssignments = resultY.assignments;
 

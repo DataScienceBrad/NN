@@ -101,7 +101,7 @@ module beachParty
             var binWidthCount = this._view.zMapping().binCount;
             var binHeightCount = this._view.zMapping().binCount;
 
-            var filter = dc.layoutFilterVector;
+            var filter = dc.layoutFilterVector || [];
 
             var allAssignX = resultX.assignments;
             var allAssignY = resultY.assignments;
