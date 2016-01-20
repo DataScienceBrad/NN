@@ -60,8 +60,8 @@ module beachPartyApp
             var holderHeight = Math.min(maxPanelHeight - verticalMargin, holderW.height());
 
             holderW
-                .css("margin-top", verticalMargin + "px")
-                .css("margin-bottom", verticalMargin + "px")
+                .css("padding-top", verticalMargin + "px")
+                .css("padding-bottom", verticalMargin + "px")
                 .css("height", holderHeight + "px");
         }
 

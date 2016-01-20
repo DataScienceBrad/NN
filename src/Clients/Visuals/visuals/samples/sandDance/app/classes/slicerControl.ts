@@ -113,9 +113,13 @@ module beachPartyApp
                 .css("position", "relative")
                 .css("top", "-4px");
 
+            var leftButtonContainer = barW
+                .append("div")
+                .addClass("leftButtonContainer");
+
             //---- add column picker ----
             var colPickerValues = this.application.getMappingCols(false);
-            var colPicker = new PickerClass(this.application, this.container, barW[0], null, colPickerValues, "None", "Select a column for populating data slicer bars", true,
+            var colPicker = new PickerClass(this.application, this.container, leftButtonContainer[0], null, colPickerValues, "None", "Select a column for populating data slicer bars", true,
                 20);
 
             this._colPicker = colPicker;
@@ -127,12 +131,16 @@ module beachPartyApp
                 this.colName(itemText);
             });
 
+            var rightButtonContainer = barW
+                .append("div")
+                .addClass("rightButtonContainer");
+
             //---- add TAG DELIMITER picker ----
             var tdValues = PickerClass.buildStringsFromEnum(bps.TagDelimiter);
-            var tdPicker = new PickerClass(this.application, this.container, barW[0], "Tag:", tdValues, "None", "For TAG columns, specify the tag delimiter", true);
+            var tdPicker = new PickerClass(this.application, this.container, rightButtonContainer[0], "Tag:", tdValues, "None", "For TAG columns, specify the tag delimiter", true);
 
             this._delimiterPicker = tdPicker;
-            vp.select(tdPicker.getRoot()).css("float", "right");
+            // vp.select(tdPicker.getRoot()).css("float", "right");
 
             tdPicker.registerForChange("value", (e) =>
             {

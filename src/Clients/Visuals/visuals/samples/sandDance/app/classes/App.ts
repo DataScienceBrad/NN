@@ -901,6 +901,7 @@ module beachPartyApp
             this.createIconTextPair(trW, "onResetClick", "reset", "Reset the filter and selection", "fnIconBarReset", "Reset");
             this.createSpacer(trW);
 
+            this.createIconTextPair(trW, "onSlicerClick", "dataSlicer", "Open the data slicer panel", "fnIconBarSlicer", "Slicer", false, true);
             this.createIconTextPair(trW, "onDetailsClick", "details", "Show details of the selected items", "fnIconBarDetails", "Details", false, true);
 
             // Snapshot doesn't work because we don't have support in current browsers. It supports only IE.
@@ -4034,20 +4035,23 @@ module beachPartyApp
 
         openSlicerPanel(e)
         {
-            var colName = vp.select(this.container, ".searchCol").text();
+            // var colName = vp.select(this.container, ".searchCol").text();
+            var colName = this._colInfos && this._colInfos[0]
+                ? this._colInfos[0].name
+                : "";
 
             this.openSlicerCore(colName);
         }
 
         openSlicerCore(colName: string, value?: string, toggleOpen = true)
         {
-            var rc = vp.select(this.container, ".selectedCountText").getBounds(false);
-            var left = rc.left;
-            var top = rc.bottom;
+            // var rc = vp.select(this.container, ".selectedCountText").getBounds(false);
+            // var left = rc.left;
+            // var top = rc.bottom;
             this.slicerColName(colName);
             this._slicerInitialValue = value;
 
-            var panel = buildJsonPanel(this, this.settings, this.container, null, this, "slicer", true, left, top, undefined, undefined, toggleOpen);
+            var panel = buildJsonPanel(this, this.settings, this.container, null, this, "slicer", true, 0, 0, undefined, undefined, toggleOpen, undefined, undefined, undefined, undefined, true);
             this._slicerPanel = panel;
 
             if (panel)

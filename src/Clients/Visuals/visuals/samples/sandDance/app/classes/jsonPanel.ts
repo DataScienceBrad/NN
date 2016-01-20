@@ -388,6 +388,8 @@ module beachPartyApp
 
             }
 
+            tdW.addClass("panelColumn");
+
             if (row.emptyRow)
             {
                 tdW.append("div")

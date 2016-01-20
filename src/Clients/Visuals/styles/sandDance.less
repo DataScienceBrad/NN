@@ -727,6 +727,7 @@
         -ms-overflow-style: auto;
         border: 1px solid none;
         max-height: 180px !important;
+        max-width: 150px !important;
     }
 
     .floatingPanel {
@@ -2073,7 +2074,10 @@
         .display-none();
     }
 
-    .valuesContent {
+    .valuesContent,
+    .histogramHolder,
+    .colorList,
+    .rightPanel {
         -ms-overflow-style: auto;
     }
 
@@ -2086,5 +2090,21 @@
 
     .slicerPanel .histogramHolder {
         height: 100px !important;
+    }
+
+    .leftButtonContainer {
+        float: left;
+    }
+
+    .rightButtonContainer {
+        float: right;
+    }
+
+    .slicerControlBar {
+        height: 30px;
+    }
+
+    .rightButtonContainer .generalColPicker {
+        right: 0;
     }
 }
