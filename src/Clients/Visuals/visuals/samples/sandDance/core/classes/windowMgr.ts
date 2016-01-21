@@ -27,7 +27,7 @@ module beachParty
         private _transformMgr: TransformMgrClass; 
         private _isMouseDown = false;
         private _hammertime = null;
-        private _showWheelDuringTransformMode = true;
+        private _showWheelDuringTransformMode = false;
 
         //---- event handling ----
         _isTouchEnabled = true;
@@ -196,7 +196,7 @@ module beachParty
             }
 
             this._areTransformsEnabled = value;
-            this._transformWheel.isActive(value/* && this._showWheelDuringTransformMode*/);
+            this._transformWheel.isActive(value && this._showWheelDuringTransformMode);
 
             if (this._hammertime)
             {
@@ -584,6 +584,8 @@ module beachParty
                 //---- this is PLOT relative ----
                 var rcRotation = this.getRotationBounds();
 
+                var scale = sandDance.commonUtils.getScale(this.container);
+
                 //var ptAdjust = { x: pt.x - rcPlot.left, y: pt.y - rcPlot.top };
 
                 vp.utils.debug("plot relative pt: " + pt.x + ", " + pt.y);
@@ -592,8 +594,8 @@ module beachParty
                 var radius = rcRotation.width / 2;
                 var xMiddle = rcRotation.left + radius;
                 var yMiddle = rcRotation.top + radius;
-                var xDist = pt.x - xMiddle;
-                var yDist = pt.y - yMiddle;
+                var xDist = pt.x / scale.x - xMiddle;
+                var yDist = pt.y / scale.y - yMiddle;
 
                 if (Math.sqrt(xDist * xDist + yDist * yDist) <= radius)
                 {
@@ -879,7 +881,7 @@ module beachParty
 
             if (this._areTransformsEnabled) 
             {
-                this._transformWheel.show(this._showWheelDuringTransformMode || true);
+                this._transformWheel.show(this._showWheelDuringTransformMode/* || true*/);
 
                 //---- one-use wheel ----
                 //this.areTransformsEnabled(false);

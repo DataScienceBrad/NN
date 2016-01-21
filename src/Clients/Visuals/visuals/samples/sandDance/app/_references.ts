@@ -48,8 +48,6 @@
 
 /// <reference path="classes/dataTipMgr.ts" />
 
-/// <reference path="classes/rotateRing.ts" />
-
 /// <reference path="classes/rubberbandSelector.ts" />
 
 /// <reference path="classes/chartUx.ts" />

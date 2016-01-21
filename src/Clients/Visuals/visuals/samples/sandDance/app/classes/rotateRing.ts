@@ -13,7 +13,7 @@ module beachPartyApp
         private container: HTMLElement;
 
         _root: HTMLDivElement;
-        _fullOpacity = "0";//"1"
+        _fullOpacity = "1";//"1"
         //_radius = 0;               // size of 3D transform center
         _pulseInterval = 5000;
         _pulseTimer = null;
@@ -25,7 +25,7 @@ module beachPartyApp
             this.application = application;
             this.container = container;
 
-            var rootW = vp.select(this.container).append("div")
+            var rootW = vp.select(this.container, ".myChart").append("div")
                 .addClass("rotateRing")
                 .css("position", "absolute")
                 .css("opacity", "0");
