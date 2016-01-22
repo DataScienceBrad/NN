@@ -24,7 +24,7 @@ module beachPartyApp
 //             button.click();
         }
 
-        private static loadFileStageTwo(button: any, callback)
+        protected static loadFileStageTwo(button: any, callback)
         {
             var fileToLoad = button.files[0];
 

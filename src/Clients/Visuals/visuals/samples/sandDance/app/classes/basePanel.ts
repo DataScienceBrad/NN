@@ -42,8 +42,8 @@ module beachPartyApp
             this.settings = settings;
 
             //---- create ROOT ----
-            var maxHeight = AppClass.maxPanelHeight;
-            var maxWidth = AppClass.maxPanelWidth;
+            // var maxHeight = AppClass.maxPanelHeight;
+            // var maxWidth = AppClass.maxPanelWidth;
 
             var rootW = vp.select(container).append("div")
                 .addClass(name + "Panel");

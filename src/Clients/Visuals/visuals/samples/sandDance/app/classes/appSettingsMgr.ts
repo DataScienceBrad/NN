@@ -48,7 +48,7 @@ module beachPartyApp
         _rememberLastFile = true;
         _rememberLastSession = true;
         _initFilename: string;
-        _initialChartType = bps.ChartType.Scatter;
+        _initialChartType = bps.ChartType.Column;
         _initialLayout = bps.Layout.Random;
         _isShowingChartStatus = false;
         _isShowingLastCycleStats = false;

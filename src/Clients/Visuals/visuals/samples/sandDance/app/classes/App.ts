@@ -39,7 +39,7 @@ module beachPartyApp
         _chartIsLoaded = false;
         _isOrthoCamera = false;
         _useFacets = false;
-        _chartName = "Flat";
+        _chartName = "Column";//"Flat";
         _layoutName = "Random";
         _bpsHelper: bps.ChartHostHelperClass;
         _sizeFactor = 1;
@@ -533,8 +533,26 @@ module beachPartyApp
             this.data = data;
 
             this._bpsHelper.updateDataView(data, null, () => {
+                this.setDefaultChartType();
+
                 console.log("updateDataView: " + new Date());
             });
+        }
+
+        private setDefaultChartType(): void {
+            if (!this._prevChartName && this._colInfos && this._colInfos[0]) {
+                this.changeToChart(this._chartName, null, Gesture.system);
+
+                this.changeXMapping(this.getColumnNameById(0));
+                this.changeYMapping(this.getColumnNameById(1));
+                this.changeZMapping(this.getColumnNameById(2));
+            }
+        }
+
+        private getColumnNameById(id: number): string {
+            return this._colInfos[id] && this._colInfos[id].name
+                ? this._colInfos[id].name
+                : this._colInfos[0].name;
         }
 
         public setSelection(vector: any[]): void {

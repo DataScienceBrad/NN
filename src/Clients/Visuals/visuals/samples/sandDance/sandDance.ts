@@ -30,7 +30,6 @@
 //--------- SandDance End.
 
 module powerbi.visuals.samples {
-    import SelectionManager = utility.SelectionManager;
     import ClassAndSelector = jsCommon.CssConstants.ClassAndSelector;
     import createClassAndSelector = jsCommon.CssConstants.createClassAndSelector;
 
