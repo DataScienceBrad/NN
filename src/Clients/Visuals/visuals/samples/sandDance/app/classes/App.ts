@@ -20,9 +20,14 @@ module beachPartyApp
         static maxPanelWidth = .9 * window.innerWidth;
         static nextSnapShotNum = 1;
 
+        private isFullscreen: boolean = false;
+
         private settings: AppSettingsMgr;
 
         public data: any;
+
+        private previousWidth: number;
+        private previousHeight: number;
 
         public width: number;
         public height: number;
@@ -560,6 +565,10 @@ module beachPartyApp
         }
 
         public update(width: number, height: number): void {
+            if (this.isFullscreen) {
+                return;
+            }
+
             this.setViewport(width, height);
 
             this.layoutScreen(width, height);
@@ -921,6 +930,13 @@ module beachPartyApp
 
             this.createIconTextPair(trW, "onSlicerClick", "dataSlicer", "Open the data slicer panel", "fnIconBarSlicer", "Slicer", false, true);
             this.createIconTextPair(trW, "onDetailsClick", "details", "Show details of the selected items", "fnIconBarDetails", "Details", false, true);
+
+            if (sandDance.commonUtils.isFullscreenEnabled()) {
+                this.createSpacer(trW);
+                this.createIconTextPair(trW, "onFullscreenClick", "fullscreenButton", "Fullscreen", "fullscreenWhite", "Fullscreen", false, true);
+
+                this.addFullscreenEvents();
+            }
 
             // Snapshot doesn't work because we don't have support in current browsers. It supports only IE.
             // this.createIconTextPair(trW, "onSnapshotClick", "snapshot", "Download snapshot of page", "fnIconBarSnapshot", "Snapshot");
@@ -2132,6 +2148,59 @@ module beachPartyApp
                     this._scrubberDialog = null;
                 });
             }
+        }
+
+        private addFullscreenEvents(): void {
+            document.addEventListener("fullscreenchange", () => {
+                console.warn("fullscreenchange");
+                
+                this.updateFullscreen();
+            });
+
+            document.addEventListener("webkitfullscreenchange", () => {
+                console.warn("webkitfullscreenchange");
+                this.updateFullscreen();
+            });
+
+            document.addEventListener("mozfullscreenchange", () => {
+                console.warn("mozfullscreenchange");
+                this.updateFullscreen();
+            });
+
+            document.addEventListener("MSFullscreenChange", () => {
+                console.warn("MSFullscreenChange");
+                this.updateFullscreen();
+            });
+        }
+
+        private onFullscreenClick(e): void {
+            sandDance.commonUtils.toggleFullScreen(this.container);
+        }
+
+        private updateFullscreen(): void {
+            let isFullscreenActive: boolean = 
+                sandDance.commonUtils.isFullscreenActive() &&
+                sandDance.commonUtils.getFullscreenElement() === this.container;
+
+            if (isFullscreenActive) {
+                this.previousWidth = this.width;
+                this.previousHeight = this.height;
+
+                this.update(window.screen.width, window.screen.height);
+
+                this.isFullscreen = true;
+            } else {
+                this.isFullscreen = false;
+
+                this.update(this.previousWidth, this.previousHeight);
+            }
+
+            AppUtils.setButtonSelectedState(
+                this.container,
+                "fullscreenButton",
+                isFullscreenActive,
+                "fullscreenWhite",
+                "fullscreenBlack");
         }
 
         closeScrubberDialog()

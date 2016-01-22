@@ -36,5 +36,60 @@ module sandDance {
                 y: sandDanceRect.height / continer.offsetHeight
             };
         }
+
+        export function isFullscreenEnabled(): boolean {
+            return document.fullscreenEnabled ||
+                (<any> document).msFullscreenEnabled ||
+                (<any> document).mozFullScreenEnabled ||
+                document.webkitFullscreenEnabled;
+
+        }
+
+        export function getFullscreenElement(): Element {
+            return document.fullscreenElement ||
+                (<any> document).msFullscreenElement ||
+                (<any> document).mozFullScreenElement ||
+                document.webkitFullscreenElement;
+        }
+
+        export function isFullscreenActive(): boolean {
+            return !!getFullscreenElement();
+        }
+
+        export function toggleFullScreen(element: HTMLElement) {
+            if (isFullscreenActive()) {
+                exitFullscreen();
+            } else {
+                requestFullscreen(element);
+            }
+        }
+
+        export function requestFullscreen(element: HTMLElement): void {
+            if (!element) {
+                return;
+            }
+
+            if (element.requestFullscreen) {
+                element.requestFullscreen();
+            } else if ((<any> element).msRequestFullscreen) {
+                (<any> element).msRequestFullscreen();
+            } else if ((<any> element).mozRequestFullScreen) {
+                (<any> element).mozRequestFullScreen();
+            } else if (element.webkitRequestFullscreen) {
+                element.webkitRequestFullscreen();
+            }
+        }
+
+        export function exitFullscreen(): void {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if ((<any> document).msExitFullscreen) {
+                (<any> document).msExitFullscreen();
+            } else if ((<any> document).mozCancelFullScreen) {
+                (<any> document).mozCancelFullScreen();
+            } else if (document.webkitExitFullscreen) {
+                document.webkitExitFullscreen();
+            }
+        }
     }
 }

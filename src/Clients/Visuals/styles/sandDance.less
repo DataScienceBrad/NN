@@ -1,3 +1,24 @@
+.fullscreen {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.sandDance:fullscreen {
+    .fullscreen();
+}
+
+.sandDance:-webkit-full-screen {
+    .fullscreen();
+}
+
+.sandDance:-moz-full-screen {
+    .fullscreen();
+}
+
+.sandDance:-ms-fullscreen {
+    .fullscreen();
+}
+
 .sandDance {
     background: black;
     font-family: Tahoma, Verdana, Geneva, sans-serif;
@@ -2046,6 +2067,14 @@
 
     .nextPng {
         background-image: data-uri("../images/sandDance/next.png");
+    }
+
+    .fullscreenWhite {
+        background-image: data-uri("../images/sandDance/fullscreen_white.png");
+    }
+
+    .fullscreenBlack {
+        background-image: data-uri("../images/sandDance/fullscreen_black.png");
     }
 
     .prevPng,
