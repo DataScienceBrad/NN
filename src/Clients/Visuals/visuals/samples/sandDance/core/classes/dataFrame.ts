@@ -122,10 +122,11 @@ module beachParty
             {
                 //---- must build one from values in column ----
                 var vector = this.getVector(colName, false);
-                
+
+                vm = [];
+
                 if (vector && vector.groupBy) {
                     var groups = vector.groupBy();
-                    vm = [];
 
                     for (var i = 0; i < groups.length; i++)
                     {
