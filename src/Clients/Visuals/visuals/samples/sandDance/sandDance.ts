@@ -33,6 +33,28 @@ module powerbi.visuals.samples {
     import ClassAndSelector = jsCommon.CssConstants.ClassAndSelector;
     import createClassAndSelector = jsCommon.CssConstants.createClassAndSelector;
 
+    module chartType {
+        export const types: string[] = [
+            "Scatter",
+            "Column",
+            "Bar",
+            "Flat",
+            "Squarify",
+            "Density",
+            "Violin",
+            "Radial",
+            "Scatter-3D",
+            "Stacks"
+        ];
+
+        export const type: IEnumType = createEnumType(types.map((type: string) => {
+            return {
+                value: type,
+                displayName: type
+            };
+        }));
+    } 
+
     export interface SandDanceData {
         [columnName: string]: any[];
     }
@@ -51,14 +73,32 @@ module powerbi.visuals.samples {
         application: any;
         session: any;
         preloads: any;
+        chartType: string;
     }
 
     interface PanelTable {
         ids: string[];
     }
 
+    interface SandDanceProperty {
+        [propertyName: string]: DataViewObjectPropertyIdentifier;
+    }
+
+    interface SandDanceProperties {
+        [objectName: string]: SandDanceProperty;
+    }
+
     export class SandDance implements IVisual {
         private static ClassName: string = "sandDance";
+
+        private static Properties: SandDanceProperties = {
+            settings: {
+                chartType: {
+                    objectName: "settings",
+                    propertyName: "chartType"
+                }
+            }
+        };
 
         private static FileInfoSelector: ClassAndSelector = createClassAndSelector("fileInfo");
 
@@ -169,6 +209,15 @@ module powerbi.visuals.samples {
                             type: { text: true }
                         }
                     }
+                },
+                settings: {
+                    displayName: "Settings",
+                    properties: {
+                        chartType: {
+                            displayName: "Chart Type",
+                            type: { enumeration: chartType.type }
+                        }
+                    }
                 }
             },
             supportsHighlight: true,
@@ -227,6 +276,7 @@ module powerbi.visuals.samples {
                 this.objectCache,
                 this.saveSettings.bind(this),
                 this.loadSettings.bind(this),
+                this.changeChartType.bind(this),
                 <HTMLElement> this.rootElement.node());
 
             this.application.setViewport(this.viewport.width, this.viewport.height);
@@ -557,6 +607,19 @@ module powerbi.visuals.samples {
             return this.dataView.settings[sandDance.SettingsType[type]];
         }
 
+        private changeChartType(chartType: string): void {
+            this.host.persistProperties(<VisualObjectInstancesToPersist> {
+                merge: [{
+                    objectName: "settings",
+                    displayName: "settings",
+                    selector: null,
+                    properties: {
+                        chartType: chartType
+                    }
+                }]
+            });
+        }
+
         public update(visualUpdateOptions: VisualUpdateOptions): void {
             if (!visualUpdateOptions ||
                 !visualUpdateOptions.dataViews ||
@@ -577,6 +640,10 @@ module powerbi.visuals.samples {
 
             if (this.dataView && JSON.stringify(this.dataView.highlights) !== JSON.stringify(dataView.highlights)) {
                 this.application.setSelection(dataView.highlights);
+            }
+
+            if (this.dataView) {
+                this.application.changeChartType(dataView.settings.chartType);
             }
 
             if (!this.dataView) {
@@ -638,7 +705,8 @@ module powerbi.visuals.samples {
                 return {
                     application: {},
                     session: {},
-                    preloads: {}
+                    preloads: {},
+                    chartType: chartType[1]
                 };
             }
 
@@ -661,6 +729,11 @@ module powerbi.visuals.samples {
 
                 settings[settingsName] = currentSettings;
             });
+
+            settings.chartType = DataViewObjects.getValue<string>(
+                objects,
+                SandDance.Properties["settings"]["chartType"],
+                chartType.types[1]);
 
             return settings;
         }
@@ -702,6 +775,22 @@ module powerbi.visuals.samples {
 
         public enumerateObjectInstances(options: EnumerateVisualObjectInstancesOptions): VisualObjectInstanceEnumeration  {
             let enumeration = new ObjectEnumerationBuilder();
+
+            switch (options.objectName) {
+                case "settings": {
+                    let settings: VisualObjectInstance = {
+                        objectName: "settings",
+                        displayName: "settings",
+                        selector: null,
+                        properties: {
+                            chartType: this.dataView.settings.chartType
+                        }
+                    };
+
+                    enumeration.pushInstance(settings);
+                    break;
+                }
+            }
 
             return enumeration.complete();
         }

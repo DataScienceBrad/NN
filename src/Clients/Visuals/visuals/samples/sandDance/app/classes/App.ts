@@ -36,6 +36,7 @@ module beachPartyApp
 
         private saveSettingsHandler: (settings: any, type: sandDance.SettingsType)  => void;
         private loadSettingsHandler: (type: sandDance.SettingsType) => any;
+        private onChangeChartType: (chartType: string) => void;
 
         private container: HTMLElement;
 
@@ -183,12 +184,15 @@ module beachPartyApp
             objectCache: sandDance.ObjectCache,
             saveSettingsHandler: (settings: any, type: sandDance.SettingsType) => void,
             loadSettingsHandler: (type: sandDance.SettingsType) => any,
+            onChangeChartType: (chartType: string) => void,
             container: HTMLElement)
         {
             super();
 
             this.saveSettingsHandler = saveSettingsHandler;
             this.loadSettingsHandler = loadSettingsHandler;
+
+            this.onChangeChartType = onChangeChartType;
 
             this.container = container;
             this.objectCache = objectCache;
@@ -2173,7 +2177,7 @@ module beachPartyApp
             });
         }
 
-        private onFullscreenClick(e): void {
+        onFullscreenClick(e): void {
             sandDance.commonUtils.toggleFullScreen(this.container);
         }
 
@@ -6099,7 +6103,15 @@ module beachPartyApp
             return (chartName === "Scatter-3D" || chartName === "Stacks");
         }
 
-        changeToChart(name: string, layout: string, gesture: Gesture)
+        public changeChartType(name: string): void {
+            if (this._chartName === name) {
+                return;
+            }
+
+            this.changeToChart(name, null, Gesture.click);
+        }
+
+        changeToChart(name: string, layout: string, gesture: Gesture = Gesture.system)
         {
             var oldChartName = this._chartName;
             var newChartName = name;       
@@ -6147,6 +6159,7 @@ module beachPartyApp
 
             vp.select(this.container, ".bbLine").css("display", isLineEnabled ? "" : "none");
 
+            this.onChangeChartType(name);
             this.onChartChanged(layout);
         }
 
