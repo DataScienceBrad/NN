@@ -113,6 +113,6 @@ There are many ways in which you can contribute to Power BI visuals:
 
 ### Copyrights
 
-Copyright (c) 2015 Microsoft
+Copyright (c) 2015 Microsoft and MAQ Software
 
 See the [LICENSE](/LICENSE) file for license rights and limitations (MIT).
