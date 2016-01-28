@@ -1,5 +1,5 @@
 ## Contribution Guidelines
-This project is used by MAQ Software Engineering team to build Custom visualizations that ship to Power BI Visual [Power BI Visuals](http://powerbi.com/visuals).  
+This project is used by MAQ Software Engineering team to build Custom visualizations that ship to [Power BI Visuals](http://powerbi.com/visuals).  
 
 ####Third party libraries
 External libraries of the PowerBI-Visuals project are located in folders:
