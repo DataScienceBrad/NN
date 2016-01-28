@@ -52,7 +52,7 @@ npm install  # This command will install all necessary modules
 
 ### Running PlayGround from Visual Studio
 
-Make sure you first follow the [Prerequisites](https://github.com/Microsoft/PowerBI-visuals#prerequisites) & [Onetime Setup](https://github.com/Microsoft/PowerBI-visuals#one-time-setup)
+Make sure you first follow the [Prerequisites](https://github.com/maqsoftware/PowerBI-visuals#prerequisites) & [Onetime Setup](https://github.com/maqsoftware/PowerBI-visuals#one-time-setup)
 
 To run sample app:
 
@@ -66,7 +66,7 @@ To run sample app:
  
 ### Running PlayGround without Visual Studio
  
-Make sure you first follow the [Prerequisites](https://github.com/Microsoft/PowerBI-visuals#prerequisites) & [Onetime Setup](https://github.com/Microsoft/PowerBI-visuals#one-time-setup)
+Make sure you first follow the [Prerequisites](https://github.com/maqsoftware/PowerBI-visuals#prerequisites) & [Onetime Setup](https://github.com/maqsoftware/PowerBI-visuals#one-time-setup)
  
 To run sample app:
 
@@ -97,7 +97,7 @@ On Windows PhantomJS is installed automatically as part of `gulp test` command.
 ## How to Engage, Contribute and Provide Feedback
 
 There are many ways in which you can contribute to Power BI visuals:
-* You can contribute fixes and new visuals to this repo, read the [contribution guidelines](https://github.com/Microsoft/PowerBI-visuals/blob/master/CONTRIBUTING.md).
+* You can contribute fixes and new visuals to this repo, read the [contribution guidelines](https://github.com/maqsoftware/PowerBI-visuals/blob/master/CONTRIBUTING.md).
 * Submit bugs by opening a GitHub Issue [here](https://github.com/Microsoft/PowerBI-visuals/issues).
 * Contribute to discussions on [StackOverflow](http://stackoverflow.com/questions/tagged/powerbidev).
 * Follow the [Power BI Developer](http://blogs.msdn.com/powerbidev) blog for updates.
