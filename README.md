@@ -98,10 +98,7 @@ On Windows PhantomJS is installed automatically as part of `gulp test` command.
 
 There are many ways in which you can contribute to Power BI visuals:
 * You can contribute fixes and new visuals to this repo, read the [contribution guidelines](https://github.com/maqsoftware/PowerBI-visuals/blob/master/CONTRIBUTING.md).
-* Submit bugs by opening a GitHub Issue [here](https://github.com/Microsoft/PowerBI-visuals/issues).
-* Contribute to discussions on [StackOverflow](http://stackoverflow.com/questions/tagged/powerbidev).
-* Follow the [Power BI Developer](http://blogs.msdn.com/powerbidev) blog for updates.
-* Follow Power BI on Twitter [@mspowerbi](http://twitter.com/mspowerbi).
+* Submit bugs by opening a GitHub Issue [here](https://github.com/maqsoftware/PowerBI-visuals/issues).
 
 ## Documentation
 
