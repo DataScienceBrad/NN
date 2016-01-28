@@ -201,5 +201,6 @@
 /// <reference path="styles/visualStyles.ts"/>
 /// <reference path="visuals/donutChart.ts"/>
 /// <reference path="visuals/scriptVisual.ts"/>
+/// <reference path="visuals/circulargauge.ts" />
 
 /// <reference path="plugins.ts"/>

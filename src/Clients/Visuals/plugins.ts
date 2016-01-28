@@ -310,4 +310,10 @@ module powerbi.visuals.plugins {
         capabilities: capabilities.kpi,
         create: () => new KPIStatusWithHistory()
     };
+
+    export var circularGauge: IVisualPlugin = {
+    name: 'circularGauge',
+    capabilities: powerbi.visuals.circularGauge.capabilities,
+    create: () => new powerbi.visuals.circularGauge()
+    };
 }
