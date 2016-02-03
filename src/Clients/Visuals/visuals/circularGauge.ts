@@ -1,42 +1,12 @@
-﻿/*
- *  Power BI Visualizations
- *
- *  Copyright (c) Microsoft Corporation
- *  All rights reserved. 
- *  MIT License
- *
- *  Permission is hereby granted, free of charge, to any person obtaining a copy
- *  of this software and associated documentation files (the ""Software""), to deal
- *  in the Software without restriction, including without limitation the rights
- *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- *  copies of the Software, and to permit persons to whom the Software is
- *  furnished to do so, subject to the following conditions:
- *   
- *  The above copyright notice and this permission notice shall be included in 
- *  all copies or substantial portions of the Software.
- *   
- *  THE SOFTWARE IS PROVIDED *AS IS*, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
- *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
- *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
- *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
- *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- *  THE SOFTWARE.
- */
-
-/* Please make sure that this path is correct */
-/// <reference path="../_references.ts"/>
-
-module powerbi.visuals {
-    //Model
-    
+﻿module powerbi.visuals {
+    //Model	    
     export interface ProgressIndicatorValues {
         actual: number;
         target: number;
+        ringWidth: number;
         actualColor: string;
         targetColor: string;
         isPie: boolean;
-        enableCustomFont: boolean;
         toolTipInfo: TooltipDataItem[];
     }
         
@@ -48,15 +18,13 @@ module powerbi.visuals {
         },
         custom: {
             show: { objectName: 'custom', propertyName: 'show' },
+            ringWidth: { objectName: 'custom', propertyName: 'ringWidth' }
         },
         labels: {
             color: { objectName: 'labels', propertyName: 'color' },
             labelPrecision: { objectName: 'labels', propertyName: 'labelPrecision' },
+            fontSize: { objectName: 'labels', propertyName: 'fontSize' },
         },
-        customFontSize: {
-            show: { objectName: 'customFontSize', propertyName: 'show' },
-            fontSize: { objectName: 'customFontSize', propertyName: 'fontSize' },
-        }
     };
     
     //Visual
@@ -86,7 +54,7 @@ module powerbi.visuals {
             var defaultLabelPrecision = 0;
             var defaultLabelColor = "#777777";
             if (show === void 0) { show = false; }
-            var fontSize = 20;
+            var fontSize = 9;
 
             return {
                 show: show,
@@ -98,12 +66,12 @@ module powerbi.visuals {
 
         public static getDefaultData(): ProgressIndicatorValues {
             return {
-                actual: 40,
+                actual: 0,
                 target: 100,
-                actualColor: 'grey',
-                targetColor: 'green',
-                isPie: false,
-                enableCustomFont: false,
+                ringWidth: 20,
+                actualColor: '#374649',
+                targetColor: '#01B8AA',
+                isPie: true,
                 toolTipInfo: [],
             };
         }   	              	
@@ -119,6 +87,8 @@ module powerbi.visuals {
             this.groupInner = this.container.append('g');
             this.groupInner.append('path').attr('id', 'a1234');
            	this.groupInner.append('text');
+            this.groupInner.append('line').attr('id', 'line1');
+            this.groupInner.append('line').attr('id', 'line2');
             this.group1 = this.container.append('g');
             this.group1.append('text');
         }
@@ -126,13 +96,10 @@ module powerbi.visuals {
         //Convert the dataview into its view model
         //All the variable will be populated with the value we have passed
         public static converter(dataView: DataView): ProgressIndicatorValues {
-
             var data: ProgressIndicatorValues = circularGauge.getDefaultData();
-
             var values = dataView.categorical.values;
 
             if (dataView.categorical) {
-
                 if (dataView.metadata && dataView.table.rows[0].length == 2) {
                     if (dataView.metadata.columns[0].roles['ActualValue']) {
                         data.actual = dataView.table.rows[0][0];
@@ -144,25 +111,21 @@ module powerbi.visuals {
                     }
                 }
             }
-
             return data;//Data object we are returning here to the update function
         }	
 
         //Drawing the visual	   
         public update(options: VisualUpdateOptions) {
             var dataView = this.dataView = options.dataViews[0];
-            var data2 = this.data = circularGauge.converter(dataView); //calling Converter function			
-            
+            var data2 = this.data = circularGauge.converter(dataView); //calling Converter function			            
             var data = data2.actual;
             var max = data2.target;
             var viewport = options.viewport;
             var height = viewport.height;
             var width = viewport.width;
 
-
             this.cardFormatSetting = this.getDefaultFormatSettings();
             var labelSettings = null;
-
             var objects = this.dataView.metadata.objects;
             if (objects) {
                 labelSettings = this.cardFormatSetting.labelSettings;
@@ -177,21 +140,15 @@ module powerbi.visuals {
                 this.data.actualColor = DataViewObjects.getFillColor(objects, progressIndicatorProps.general.ActualFillColor, this.data.actualColor);
                 this.data.targetColor = DataViewObjects.getFillColor(objects, progressIndicatorProps.general.ComparisonFillColor, this.data.targetColor);
                 this.data.isPie = DataViewObjects.getValue(objects, progressIndicatorProps.custom.show, this.data.isPie);
-                this.cardFormatSetting.labelSettings.fontSize = DataViewObjects.getValue(objects, progressIndicatorProps.customFontSize.fontSize, this.cardFormatSetting.labelSettings.fontSize);
-                this.data.enableCustomFont = DataViewObjects.getValue(objects, progressIndicatorProps.customFontSize.show, false);
-            }                       
-            
-            //this.data.enableCustomFont = true;
-            console.log(this.data.enableCustomFont);
+                this.data.ringWidth = DataViewObjects.getValue(objects, progressIndicatorProps.custom.ringWidth, this.data.ringWidth);
+                this.cardFormatSetting.labelSettings.fontSize = DataViewObjects.getValue(objects, progressIndicatorProps.labels.fontSize, labelSettings.fontSize);
+            }
+
             var percentCompleted = (data / max);
-
-            var outerRadius = ((width / 2) < (height / 2)) ? (width / 2) : (height / 2);
-            outerRadius = outerRadius - 10;
-
             percentCompleted = (percentCompleted > 1) ? 1 : ((percentCompleted < 0) ? 0 : percentCompleted);
             this.cardFormatSetting.labelSettings.precision = this.cardFormatSetting.labelSettings.precision < 4 ? this.cardFormatSetting.labelSettings.precision : 4;
             var percentage = (percentCompleted * 100).toFixed(this.cardFormatSetting.labelSettings.precision);
-            var fontSize = (this.data.enableCustomFont) ? this.cardFormatSetting.labelSettings.fontSize : (outerRadius / 6);
+            var fontSize = this.cardFormatSetting.labelSettings.fontSize;
 
             var textProperties: powerbi.TextProperties = {
                 text: percentage + '%',
@@ -201,68 +158,45 @@ module powerbi.visuals {
             var textWidth = powerbi.TextMeasurementService.measureSvgTextWidth(textProperties);
             var textHeight = powerbi.TextMeasurementService.measureSvgTextHeight(textProperties);
 
-
             this.svg.attr('width', width)
                 .attr('height', height);
 
-            outerRadius = ((((width / 2) - (textWidth / 2)) < ((height / 2) - (textHeight / 2)) ? ((width / 2) - (textWidth / 2)) : ((height / 2) - (textHeight / 2))));
-            outerRadius = outerRadius - 30;
-            var innerRadius = (outerRadius * 0.9);
+            var outerRadius = ((((width / 2) - (textWidth + 17)) < ((height / 2) - (textHeight)) ? ((width / 2) - (textWidth + 17)) : ((height / 2) - (textHeight))));
+            outerRadius = outerRadius - (outerRadius * 0.1);
+            var innerRadius;
 
-            console.log(outerRadius);
             if (this.data.isPie) {
+                this.data.ringWidth = this.data.ringWidth < 15 ? 15 : this.data.ringWidth;
+                if (this.data.ringWidth > outerRadius - 15) {
+                    innerRadius = 15;
+                } else {
+                    innerRadius = outerRadius - this.data.ringWidth;
+                }
+            } else {
                 innerRadius = 0;
             }
 
-            console.log('started');
-            console.log(height);
-            console.log(width);
-            console.log(textHeight);
-            console.log(textWidth);
-            console.log(outerRadius);
+            if (outerRadius > 0) {
+                var arc = d3.svg.arc()
+                    .innerRadius(innerRadius)
+                    .outerRadius(outerRadius)
+                    .startAngle(0)
+                    .endAngle(2 * Math.PI);
 
-            var arc = d3.svg.arc()
-                .innerRadius(innerRadius)
-                .outerRadius(outerRadius)
-                .startAngle(0)
-                .endAngle(2 * Math.PI);
+                var arc1 = d3.svg.arc()
+                    .innerRadius(innerRadius)
+                    .outerRadius(outerRadius)
+                    .startAngle(0)
+                    .endAngle(2 * Math.PI * percentCompleted);
 
-            var arc1 = d3.svg.arc()
-                .innerRadius(innerRadius)
-                .outerRadius(outerRadius)
-                .startAngle(0)
-                .endAngle(2 * Math.PI * percentCompleted);
+                this.group.select('#a123')
+                    .attr('d', arc)
+                    .attr('fill', this.data.actualColor);
 
+                this.groupInner.select('#a1234')
+                    .attr('d', arc1)
+                    .attr('fill', this.data.targetColor);
 
-            this.group.attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')');
-            this.groupInner.attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')');
-
-            this.group.select('#a123')
-                .attr('d', arc)
-                .attr('fill', this.data.actualColor);
-
-            this.groupInner.select('#a1234')
-                .attr('d', arc1)
-                .attr('fill', this.data.targetColor);
-
-
-            if (this.data.enableCustomFont) {
-                this.group1
-                    .attr('transform', 'translate(' + width / 2 + ',' + ((height / 2) + (fontSize / 2)) + ')');
-            } else {
-                this.group1
-                    .attr('transform', 'translate(' + width / 2 + ',' + ((height / 2) + 3) + ')');
-            }
-
-            if (!this.data.isPie || (data == max) || data == 0) {
-                this.group1.select("text")
-                    .attr('text-anchor', 'middle')
-                    .attr('font-size', fontSize + 'pt')
-                    .text(percentage + "%")
-                    .attr('fill', this.cardFormatSetting.labelSettings.labelColor);
-                this.groupInner.select("text")
-                    .text('');
-            } else {
                 var c = arc1.centroid(2 * Math.PI),
                     x = c[0],
                     y = c[1],
@@ -271,13 +205,13 @@ module powerbi.visuals {
 
                 var y1;
                 if (percentCompleted > 0.5)
-                    y1 = (((y / h) * outerRadius) + textHeight);
+                    y1 = (((y / h) * outerRadius * 1.1) + (textHeight / 3));
                 else
-                    y1 = ((y / h) * outerRadius);
+                    y1 = ((y / h) * outerRadius * 1.1) + (textHeight / 3);
 
                 this.groupInner
                     .select("text")
-                    .attr('x', ((x / h) * outerRadius))
+                    .attr('x', ((x / h) * outerRadius * 1.1) + 17)
                     .attr('y', y1)
                     .attr("text-anchor", "start")
                     .attr('font-size', fontSize + 'pt')
@@ -285,7 +219,23 @@ module powerbi.visuals {
                     .attr('fill', this.cardFormatSetting.labelSettings.labelColor);
                 this.group1.select("text")
                     .text('');
+
+                this.groupInner.select("line#line1")
+                    .attr("x1", (x / h) * outerRadius * 1.02)
+                    .attr("y1", (y / h) * outerRadius * 1.02)
+                    .attr("x2", ((x / h) * outerRadius * 1.1))
+                    .attr("y2", (y / h) * outerRadius * 1.1)
+                    .attr('style', "stroke:#DDDDDD;stroke-width:2");
+
+                this.groupInner.select("line#line2")
+                    .attr("x1", (x / h) * outerRadius * 1.1)
+                    .attr("y1", (y / h) * outerRadius * 1.1)
+                    .attr("x2", ((x / h) * outerRadius * 1.1) + 15)
+                    .attr("y2", (y / h) * outerRadius * 1.1)
+                    .attr('style', "stroke:#DDDDDD;stroke-width:2");
             }
+            this.group.attr('transform', 'translate(' + ((width / 2)) + ',' + ((height / 2)) + ')');
+           	this.groupInner.attr('transform', 'translate(' + ((width / 2)) + ',' + ((height / 2)) + ')');
 
             this.data.toolTipInfo[1] = {
                 displayName: 'Actual',
@@ -301,10 +251,6 @@ module powerbi.visuals {
             }
             TooltipManager.addTooltip(this.container, (tooltipEvent: TooltipEvent) => this.data.toolTipInfo, false);//Adding visual tips            	
         }       
-
-        //Free up resources variable which we have declared initially for just better performance
-        // TODO
-       
        
         // Make visual properties available in the property pane in Power BI
         // values which we can customized from property pane in Power BI                
@@ -336,18 +282,7 @@ module powerbi.visuals {
                         selector: null,
                         properties: {
                             show: this.data.isPie,
-
-                        }
-                    });
-                    break;
-                case 'customFontSize':
-                    enumeration.pushInstance({
-                        objectName: 'customFontSize',
-                        displayName: 'Custom Font',
-                        selector: null,
-                        properties: {
-                            show: this.data.enableCustomFont,
-                            fontSize: this.cardFormatSetting.labelSettings.fontSize,
+                            ringWidth: this.data.ringWidth
                         }
                     });
                     break;
@@ -357,8 +292,8 @@ module powerbi.visuals {
                         enumeration: enumeration,
                         dataLabelsSettings: formatSettings.labelSettings,
                         show: true,
-                        precision: true,                        
-                        //enableCustomFontSize : true,
+                        precision: true,
+                        fontSize: true,
                     };
                     dataLabelUtils.enumerateDataLabels(labelSettingOptions);
                     break;
@@ -401,20 +336,11 @@ module powerbi.visuals {
                         show: {
                             displayName: data.createDisplayNameGetter('Visual_Show'),
                             type: { bool: true }
-                        }
-                    }
-                },
-                customFontSize: {
-                    displayName: "Custom Font",
-                    properties: {
-                        show: {
-                            displayName: data.createDisplayNameGetter('Visual_Show'),
-                            type: { bool: true }
                         },
-                        fontSize: {
-                            displayName: data.createDisplayNameGetter('Visual_TextSize'),
+                        ringWidth: {
+                            displayName: 'Ring Width',
                             type: { formatting: { fontSize: true } }
-                        },
+                        }
                     }
                 },
                 labels: {
@@ -428,8 +354,12 @@ module powerbi.visuals {
                             displayName: powerbi.data.createDisplayNameGetter('Visual_Precision'),
                             type: { numeric: true }
                         },
-
+                        fontSize: {
+                            displayName: data.createDisplayNameGetter('Visual_TextSize'),
+                            type: { formatting: { fontSize: true } }
+                        },
                     },
+
                 }
             },
             dataViewMappings: [{
