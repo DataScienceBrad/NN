@@ -69,7 +69,10 @@ module powerbi.visuals.sampleDataViews {
                         displayName: 'Sales Amount (2014)',
                         isMeasure: true,
                         format: "$0,000.00",
-                        queryName: 'sales1',
+                        queryName: 'sales1', roles: {
+                            primaryMeasure: true,
+
+                        },
                         type: powerbi.ValueType.fromDescriptor({ numeric: true }),
                         objects: { dataPoint: { fill: { solid: { color: 'purple' } } } },
                     },
@@ -77,7 +80,10 @@ module powerbi.visuals.sampleDataViews {
                         displayName: 'Sales Amount (2015)',
                         isMeasure: true,
                         format: "$0,000.00",
-                        queryName: 'sales2',
+                        queryName: 'sales2', roles: {
+                            secondaryMeasure: true,
+
+                        },
                         type: powerbi.ValueType.fromDescriptor({ numeric: true })
                     }
                 ]
