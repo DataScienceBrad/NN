@@ -194,14 +194,14 @@
                     return viewModel;
                 }
                 for (var iLoop = 0; iLoop < dataView.categorical.values.length; iLoop++) {
-                   if (dataView.categorical.values[iLoop].source.roles && dataView.categorical.values[iLoop].source.roles.hasOwnProperty('primaryMeasure')) {
-                       targetvalueIndex = iLoop;
-                       viewModel[0].primaryColumn = dataView.categorical.values[iLoop].source.displayName;
-                   }
-                   else if (dataView.categorical.values[iLoop].source.roles && dataView.categorical.values[iLoop].source.roles.hasOwnProperty('secondaryMeasure')) {
-                       yvalueIndex = iLoop;
-                       viewModel[0].secondaryColumn = dataView.categorical.values[iLoop].source.displayName;
-                   }
+                    if (dataView.categorical.values[iLoop].source.roles && dataView.categorical.values[iLoop].source.roles.hasOwnProperty('primaryMeasure')) {
+                        targetvalueIndex = iLoop;
+                        viewModel[0].primaryColumn = dataView.categorical.values[iLoop].source.displayName;
+                    }
+                    else if (dataView.categorical.values[iLoop].source.roles && dataView.categorical.values[iLoop].source.roles.hasOwnProperty('secondaryMeasure')) {
+                        yvalueIndex = iLoop;
+                        viewModel[0].secondaryColumn = dataView.categorical.values[iLoop].source.displayName;
+                    }
                 }
                 if (targetvalueIndex !== undefined) {
                     var categorical = dataView.categorical;
@@ -405,7 +405,7 @@
             this.durationAnimations = getAnimationDuration(
                 this.animator,
                 options.suppressAnimations);
-            defaultText = this.root.select('.defaultText');
+            defaultText = this.root.select('.hf_defaultText');
             var dataViewMetadata = dataView.metadata;
             if (dataViewMetadata) {
                 var objects: DataViewObjects = dataViewMetadata.objects;
@@ -437,13 +437,13 @@
             if (parentHeight >= 120)
                 visualHeight = parentHeight - 120;
             else {
-				if(parentHeight > 100){
-					visualHeight = parentHeight-100;
-				}
-				else{
-					visualHeight = 100-parentHeight;
-				}
-			}
+                if (parentHeight > 100) {
+                    visualHeight = parentHeight - 100;
+                }
+                else {
+                    visualHeight = 100 - parentHeight;
+                }
+            }
 			
             //find max y value
             for (var iLoop = 0; iLoop < this.viewModel.categories.length; iLoop++) {
@@ -479,14 +479,14 @@
             }
             titlemargin = titleHeight;
             if (titleHeight !== 0) {
-                this.root.append('div').style({ 'margin-bottom': titlemargin + 'px', 'height': titleHeight + 'px', 'width': '100%' }).classed('Title_Div', true);
-                this.root.select('.Title_Div').append('div').style({ 'width': '100%' }).classed('Title_Div_Text', true);
-                this.root.select('.Title_Div_Text').classed('title', true).style({ 'display': 'inline-block' });
-                this.root.select('.Title_Div_Text').classed('title', true).style({ 'display': 'inline-block' });
+                this.root.append('div').style({ 'margin-bottom': titlemargin + 'px', 'height': titleHeight + 'px', 'width': '100%' }).classed('hf_Title_Div', true);
+                this.root.select('.hf_Title_Div').append('div').style({ 'width': '100%' }).classed('hf_Title_Div_Text', true);
+                this.root.select('.hf_Title_Div_Text').classed('hf_title', true).style({ 'display': 'inline-block' });
+                this.root.select('.hf_Title_Div_Text').classed('hf_title', true).style({ 'display': 'inline-block' });
             }
-            this.root.append('div').style({ 'width': parentWidth + 'px', 'height': height + 'px' }).classed('parentdiv', true);
-            element = this.root.select('.parentdiv').append('div').classed('svg parentElement', true);
-            parentDiv = this.root.select('.parentdiv');
+            this.root.append('div').style({ 'width': parentWidth + 'px', 'height': height + 'px' }).classed('hf_parentdiv', true);
+            element = this.root.select('.hf_parentdiv').append('div').classed('hf_svg hf_parentElement', true);
+            parentDiv = this.root.select('.hf_parentdiv');
             showDefaultText = 1;
             if (dataView && dataView.categorical && dataView.categorical.values) {
                 for (var i = 0; i < dataView.categorical.values.length; i++) {
@@ -496,7 +496,7 @@
                 }
             }
             if (!dataView.categorical.categories || 1 === showDefaultText) {
-               parentDiv.html("Please select 'Series' and 'Primary Measure' values").classed('defaultText', true).style({ 'top': height / 2.5 + 'px' });
+                parentDiv.html("Please select 'Series' and 'Primary Measure' values").classed('hf_defaultText', true).style({ 'top': height / 2.5 + 'px' });
             }
             // if (this.getLabelFill(this.dataView)) {
             //     color = this.getLabelFill(this.dataView).solid.color;
@@ -516,50 +516,50 @@
             }
             if (titleHeight !== 0) {
                 if (!titleText) {
-                    this.root.select('.Title_Div_Text').html('<div class = "Title_Div_Text_Span" style = "max-width: 80%; display: inline-block;visibility:hidden">' + "." + '</div>'
-                        + '<span class = "infoImage icon" title =' + tooltiptext + ' style = "width: 2%; display: inline-block; position: absolute">&nbsp(&#063;)</span>');
+                    this.root.select('.hf_Title_Div_Text').html('<div class = "hf_Title_Div_Text_Span" style = "max-width: 80%; display: inline-block;visibility:hidden">' + "." + '</div>'
+                        + '<span class = "hf_infoImage hf_icon" title =' + tooltiptext + ' style = "width: 2%; display: inline-block; position: absolute">&nbsp(&#063;)</span>');
     
                     // this.root.select('.Title_Div_Text_Span').style({'visibility':'none'});
                 }
                 else {
-                    this.root.select('.Title_Div_Text').html('<div class = "Title_Div_Text_Span" style = "max-width: 80%; display: inline-block">' + titleText + '</div>'
-                        + '<span class = "infoImage icon" title =' + tooltiptext + ' style = "width: 2%; display: inline-block; position: absolute">&nbsp(&#063;)</span>');
+                    this.root.select('.hf_Title_Div_Text').html('<div class = "hf_Title_Div_Text_Span" style = "max-width: 80%; display: inline-block">' + titleText + '</div>'
+                        + '<span class = "hf_infoImage hf_icon" title =' + tooltiptext + ' style = "width: 2%; display: inline-block; position: absolute">&nbsp(&#063;)</span>');
                 }
                 if (!tooltiptext) {
-                    this.root.select('.infoImage').style({ 'display': 'none' });
+                    this.root.select('.hf_infoImage').style({ 'display': 'none' });
                 }
                 else {
-                    this.root.select('.infoImage').attr('title', tooltiptext);
+                    this.root.select('.hf_infoImage').attr('title', tooltiptext);
                 }
                 if (titlecolor) {
-                    this.root.select('.Title_Div').style({ 'color': titlecolor, 'font-size': titlefontsize + 'pt' });
+                    this.root.select('.hf_Title_Div').style({ 'color': titlecolor, 'font-size': titlefontsize + 'pt' });
                 } else {
-                    this.root.select('.Title_Div').style({ 'color': '#333333', 'font-size': titlefontsize + 'pt' });
+                    this.root.select('.hf_Title_Div').style({ 'color': '#333333', 'font-size': titlefontsize + 'pt' });
                 }
                 if (titlebgcolor) {
-                    this.root.select('.Title_Div').style({ 'background-color': titlebgcolor });
-                    this.root.select('.Title_Div_Text').style({ 'background-color': titlebgcolor });
-                    this.root.select('.infoImage').style({ 'background-color': titlebgcolor });
+                    this.root.select('.hf_Title_Div').style({ 'background-color': titlebgcolor });
+                    this.root.select('.hf_Title_Div_Text').style({ 'background-color': titlebgcolor });
+                    this.root.select('.hf_infoImage').style({ 'background-color': titlebgcolor });
                 } else {
-                    this.root.select('.Title_Div').style({ 'background-color': 'none' });
+                    this.root.select('.hf_Title_Div').style({ 'background-color': 'none' });
                 }
                 if (FunnelTitleOnOffStatus) {
-                    this.root.select('.Title_Div').classed('show_inline', true);
+                    this.root.select('.hf_Title_Div').classed('hf_show_inline', true);
                 } else {
-                    this.root.select('.Title_Div').classed('hide', true);
+                    this.root.select('.hf_Title_Div').classed('hf_hide', true);
                 }
             }
             element.style({ 'vertical-align': 'top', 'width': (parentWidth - width) / (1.8 * catLength) + 'px' });
-            element.append('div').style({ 'color': color, 'width': (parentWidth - width) / (1.8 * catLength) + 'px', 'font-size': fontsize + 'px', 'visibility': 'hidden' }).classed('legend_item', true).text('s');
+            element.append('div').style({ 'color': color, 'width': (parentWidth - width) / (1.8 * catLength) + 'px', 'font-size': fontsize + 'px', 'visibility': 'hidden' }).classed('hf_legend_item', true).text('s');
             var length = ((parseInt(fontsize.toString(), 10) * (this.viewModel.primaryColumn.length)) / ((parentWidth - width) / (1.8 * catLength))) * 100;
             if ((((parentWidth - width) / (1.8 * catLength)) < 60) || (height < 100)) {
                 element.append('div').style({ 'overflow': 'hidden', 'position': 'absolute', 'font-size': fontsize + 'px', 'color': color, 'width': (parentWidth - width) / (1.8 * catLength) + 'px', 'padding-right': '10px', 'margin-left': '0', 'word-break': 'keep-all' }).attr
-                    ({ 'title': this.viewModel.primaryColumn }).text(this.trimString(this.viewModel.primaryColumn, ((parentWidth - width) / (1.8 * catLength)) / parseInt(fontsize.toString(), 10))).classed('primary_measure', true);
+                    ({ 'title': this.viewModel.primaryColumn }).text(this.trimString(this.viewModel.primaryColumn, ((parentWidth - width) / (1.8 * catLength)) / parseInt(fontsize.toString(), 10))).classed('hf_primary_measure', true);
             }
             else {
                 element.append('div').style({
                     'overflow': 'hidden', 'color': color, 'font-size': fontsize + 'px', 'position': 'absolute', 'width': (parentWidth - width) / (1.8 * catLength) + 'px', 'padding-right': '10px', 'word-break': 'keep-all'
-                }).classed('primary_measure', true).attr({ 'title': this.viewModel.primaryColumn }).text(this.viewModel.primaryColumn);
+                }).classed('hf_primary_measure', true).attr({ 'title': this.viewModel.primaryColumn }).text(this.viewModel.primaryColumn);
             }
             if (catLength > 0) {
                 element
@@ -571,25 +571,25 @@
                     });
             }
             if (this.viewModel.secondaryColumn !== '') {
-                element.append('div').style({ 'color': color, 'width': (parentWidth - width) / (1.8 * catLength) + 'px', 'font-size': fontsize + 'px', 'visibility': 'hidden' }).classed('legend_item', true).text('s');
+                element.append('div').style({ 'color': color, 'width': (parentWidth - width) / (1.8 * catLength) + 'px', 'font-size': fontsize + 'px', 'visibility': 'hidden' }).classed('hf_legend_item', true).text('s');
                 //check whether text fits or append ellipses
                 var length = ((parseInt(fontsize.toString(), 10) * (this.viewModel.secondaryColumn.length)) / ((parentWidth - width) / (1.8 * catLength))) * 100;
                 if ((((parentWidth - width) / (1.8 * catLength)) < 60) || (height < 100)) {
                     element.append('div').style({ 'overflow': 'hidden', 'position': 'absolute', 'font-size': fontsize + 'px', 'color': color, 'width': (parentWidth - width) / (1.8 * catLength) + 'px', 'padding-right': '10px', 'margin-top': '5px', 'margin-left': '0', 'word-break': 'keep-all', 'white-space': 'normal' }).attr
-                        ({ 'title': this.viewModel.secondaryColumn }).text(this.trimString(this.viewModel.secondaryColumn, ((parentWidth - width) / (1.8 * catLength)) / parseInt(fontsize.toString(), 10))).classed('yaxis2', true);
+                        ({ 'title': this.viewModel.secondaryColumn }).text(this.trimString(this.viewModel.secondaryColumn, ((parentWidth - width) / (1.8 * catLength)) / parseInt(fontsize.toString(), 10))).classed('hf_yaxis2', true);
                 }
                 else {
                     element.append('div').style({ 'overflow': 'hidden', 'position': 'absolute', 'font-size': fontsize + 'px', 'color': color, 'width': (parentWidth - width) / (1.8 * catLength) + 'px', 'padding-right': '10px', 'margin-left': '0', 'margin-top': '5px', 'word-break': 'keep-all', 'white-space': 'normal' }).attr
-                        ({ 'title': this.viewModel.secondaryColumn }).text(this.viewModel.secondaryColumn).classed('yaxis2', true);
+                        ({ 'title': this.viewModel.secondaryColumn }).text(this.viewModel.secondaryColumn).classed('hf_yaxis2', true);
                 }
             }
             for (var i = 0; i < (2 * catLength - 1); i++) {
-                element = this.root.select('.parentdiv').append('div').style({ 'height': height + 'px' }).classed('svg parentElement', true);
+                element = this.root.select('.hf_parentdiv').append('div').style({ 'height': height + 'px' }).classed('hf_svg hf_parentElement', true);
                 if (i % 2 === 0) {
-                    classname = 'odd' + i;
-                    element.append('div').style({ 'color': color, 'font-size': fontsize + 'px', 'width': width - (0.08 * width) + 'px' }).classed('legend_item' + i + ' xAxisLabels',
-                        true).classed('legend', true);
-                    element.append('div').style({ 'color': color, 'font-size': fontsize + 'px', 'width': width }).classed('legend_value1' + i, true).classed('legend', true);
+                    classname = 'hf_odd' + i;
+                    element.append('div').style({ 'color': color, 'font-size': fontsize + 'px', 'width': width - (0.08 * width) + 'px' }).classed('hf_legend_item' + i + ' hf_xAxisLabels',
+                        true).classed('hf_legend', true);
+                    element.append('div').style({ 'color': color, 'font-size': fontsize + 'px', 'width': width }).classed('hf_legend_value1' + i, true).classed('hf_legend', true);
                     element
                         .append('svg')
                         .attr({
@@ -606,10 +606,10 @@
                             width: width
                         });
                     if (this.viewModel.secondaryColumn)
-                        element.append('div').style({ 'color': color, 'width': width }).classed('legend_value2' + i, true).style({ 'font-size': fontsize + 'px' }).classed('yaxis2', true);
+                        element.append('div').style({ 'color': color, 'width': width }).classed('hf_legend_value2' + i, true).style({ 'font-size': fontsize + 'px' }).classed('hf_yaxis2', true);
                 }
                 else {
-                    classname = 'even' + i;
+                    classname = 'hf_even' + i;
                     element
                         .append('svg')
                         .attr({
@@ -640,7 +640,7 @@
                         percentageVal.push(0);
                     }
                 }
-                legendvalue = this.root.select('.legend_item' + legendpos);
+                legendvalue = this.root.select('.hf_legend_item' + legendpos);
                 if (this.viewModel.categories[i].value !== null) {
                     title = dataPoints[i].toolTipInfo[0].value;
                     legendvalue.attr({ 'title': title }).text(title);
@@ -659,16 +659,16 @@
                     else
                         displayValue = sKMBValueY1Axis;
                     if (title[title.length - 1] !== '%') {
-                        this.root.select('.legend_value1' + legendpos).attr({ 'title': title }).text(this.trimString(displayValue, width / 10));
+                        this.root.select('.hf_legend_value1' + legendpos).attr({ 'title': title }).text(this.trimString(displayValue, width / 10));
                     }
                     else {
-                        this.root.select('.legend_value1' + legendpos).attr({ 'title': title }).text(this.trimString(title, width / 10));
+                        this.root.select('.hf_legend_value1' + legendpos).attr({ 'title': title }).text(this.trimString(title, width / 10));
                     }
                 }
                 else {
                     displayValue = "(Blank)";
                     title = "(Blank)";
-                    this.root.select('.legend_value1' + legendpos).attr({ 'title': title }).text(this.trimString(title, width / 10));
+                    this.root.select('.hf_legend_value1' + legendpos).attr({ 'title': title }).text(this.trimString(title, width / 10));
                 }
                 if (this.viewModel.values[i].values.length > 1) {
                     if (this.viewModel.values[i].values[1] !== null) {
@@ -694,23 +694,23 @@
                                 displayValue = sKMBValueY2Axis;
                         }
                         if (title[title.length - 1] !== '%') {
-                            this.root.select('.legend_value2' + legendpos).attr({ 'title': title }).text(this.trimString(displayValue, width / 10));
+                            this.root.select('.hf_legend_value2' + legendpos).attr({ 'title': title }).text(this.trimString(displayValue, width / 10));
                         }
                         else {
-                            this.root.select('.legend_value2' + legendpos).attr({ 'title': title }).text(this.trimString(title, width / 10));
+                            this.root.select('.hf_legend_value2' + legendpos).attr({ 'title': title }).text(this.trimString(title, width / 10));
                         }
                     }
                     else {
                         displayValue = "(Blank)";
                         title = "(Blank)";
-                        this.root.select('.legend_value2' + legendpos).attr({ 'title': title }).text(this.trimString(title, width / 10));
+                        this.root.select('.hf_legend_value2' + legendpos).attr({ 'title': title }).text(this.trimString(title, width / 10));
                     }
                 }
                 legendpos += 2;
             }
             for (var i = 0; i < (2 * catLength - 1); i++) {
                 if (i % 2 === 0) {
-                    classname = 'odd' + i;
+                    classname = 'hf_odd' + i;
                     oddsvg = this.root.select('.' + classname);
                     if (percentageVal[index] !== 0 && percentageVal[index] !== -1) {
                         percentageVal[index] = parseFloat(percentageVal[index]);//+5
@@ -726,7 +726,7 @@
                                 y: y,
                                 height: areafillheight[index],
                                 width: width
-                            }).classed('datapoint dataColor', true);
+                            }).classed('hf_datapoint hf_dataColor', true);
                     }
                     else {
                         if (percentageVal[index] === 0) {
@@ -736,10 +736,10 @@
                                     y: 0,
                                     height: height,
                                     width: width
-                                }).classed('datapoint dataColor', true);
+                                }).classed('hf_datapoint hf_dataColor', true);
                         }
                         else if (percentageVal[index] === -1) {
-                            oddsvg.append('rect').classed('datapoint dataColor', true);
+                            oddsvg.append('rect').classed('hf_datapoint hf_dataColor', true);
                         }
                         areafillheight.push(0);
                     }
@@ -748,7 +748,7 @@
             }
             for (var i = 0; i < percentageVal.length; i++) {
                 var polygonColor = this.ColorLuminance(this.viewModel.categories[i].color);
-                classname = '.even' + val;
+                classname = '.hf_even' + val;
                 evensvg = this.root.select(classname);
                 if (percentageVal[i] === 0 && percentageVal[i + 1] === 0) {
                     evensvg.append('rect')
@@ -788,8 +788,8 @@
                 val += 2;
             }
             // this.root.selectAll('.fillcolor').style('fill', (d, i) => this.colors.getColorByIndex(i + 1).value);
-            this.root.selectAll('.dataColor').style('fill', (d, i) => this.viewModel.categories[i].color);
-            selection = this.root.selectAll('.datapoint').data(dataPoints, (d, idx) => (dataPoints[idx] === 0) ? idx : (idx + 1));
+            this.root.selectAll('.hf_dataColor').style('fill', (d, i) => this.viewModel.categories[i].color);
+            selection = this.root.selectAll('.hf_datapoint').data(dataPoints, (d, idx) => (dataPoints[idx] === 0) ? idx : (idx + 1));
             TooltipManager.addTooltip(selection, (tooltipEvent: TooltipEvent) => tooltipEvent.data.toolTipInfo);
             this.setSelectHandler(selection);
         }
@@ -1182,7 +1182,7 @@
                     if (isNaN(parseInt(title[iLoop], 10))) {
                         specialarray[index] = title[iLoop];
                         index++;
-                    }    
+                    }
                     else break;
                 }
                 for (var iLoop = specialarray.length - 1; iLoop >= 0; iLoop--) {
