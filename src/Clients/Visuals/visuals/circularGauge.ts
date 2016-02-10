@@ -8,6 +8,8 @@
         targetColor: string;
         isPie: boolean;
         toolTipInfo: TooltipDataItem[];
+        actualFormat: string;
+        targetFormat: string;
     }
         
     //object variable which we used in customized color and text through UI options
@@ -73,6 +75,8 @@
                 targetColor: '#01B8AA',
                 isPie: true,
                 toolTipInfo: [],
+                actualFormat: '',
+                targetFormat: '',
             };
         }   	              	
 
@@ -97,17 +101,31 @@
         //All the variable will be populated with the value we have passed
         public static converter(dataView: DataView): ProgressIndicatorValues {
             var data: ProgressIndicatorValues = circularGauge.getDefaultData();
-            var values = dataView.categorical.values;
 
-            if (dataView.categorical) {
+            if (dataView && dataView.categorical) {
                 if (dataView.metadata && dataView.table.rows[0].length == 2) {
                     if (dataView.metadata.columns[0].roles['ActualValue']) {
                         data.actual = dataView.table.rows[0][0];
                         data.target = dataView.table.rows[0][1];
+                        data.actualFormat = ((dataView.metadata.columns[0].format === '\\$#,0;(\\$#,0);\\$#,0') ? '$' : '');
+                        data.targetFormat = ((dataView.metadata.columns[1].format === '\\$#,0;(\\$#,0);\\$#,0') ? '$' : '');
                     }
                     else {
                         data.actual = dataView.table.rows[0][1];
                         data.target = dataView.table.rows[0][0];
+                        data.actualFormat = ((dataView.metadata.columns[1].format === '\\$#,0;(\\$#,0);\\$#,0') ? '$' : '');
+                        data.targetFormat = ((dataView.metadata.columns[0].format === '\\$#,0;(\\$#,0);\\$#,0') ? '$' : '');
+                    }
+                } else if (dataView.metadata && dataView.table.rows[0].length == 1) {
+                    if (dataView.metadata.columns[0].roles['ActualValue']) {
+                        data.actual = dataView.table.rows[0][0];
+                        data.target = data.actual;
+                        data.actualFormat = ((dataView.metadata.columns[0].format === '\\$#,0;(\\$#,0);\\$#,0') ? '$' : '');
+                    }
+                    else {
+                        data.actual = 0;
+                        data.target = dataView.table.rows[0][0];
+                        data.targetFormat = ((dataView.metadata.columns[0].format === '\\$#,0;(\\$#,0);\\$#,0') ? '$' : '');
                     }
                 }
             }
@@ -126,7 +144,7 @@
 
             this.cardFormatSetting = this.getDefaultFormatSettings();
             var labelSettings = null;
-            var objects = this.dataView.metadata.objects;
+            var objects = this.dataView && this.dataView.metadata.objects;
             if (objects) {
                 labelSettings = this.cardFormatSetting.labelSettings;
 
@@ -176,7 +194,7 @@
                 innerRadius = 0;
             }
 
-            if (outerRadius > 0) {
+            if (outerRadius >= 1) {
                 var arc = d3.svg.arc()
                     .innerRadius(innerRadius)
                     .outerRadius(outerRadius)
@@ -233,25 +251,29 @@
                     .attr("x2", ((x / h) * outerRadius * 1.1) + 15)
                     .attr("y2", (y / h) * outerRadius * 1.1)
                     .attr('style', "stroke:#DDDDDD;stroke-width:2");
-            }
-            this.group.attr('transform', 'translate(' + ((width / 2)) + ',' + ((height / 2)) + ')');
-           	this.groupInner.attr('transform', 'translate(' + ((width / 2)) + ',' + ((height / 2)) + ')');
 
-            this.data.toolTipInfo[1] = {
-                displayName: 'Actual',
-                value: this.data.actual + ''
+                this.group.attr('transform', 'translate(' + ((width / 2)) + ',' + ((height / 2)) + ')');
+                this.groupInner.attr('transform', 'translate(' + ((width / 2)) + ',' + ((height / 2)) + ')');
+
+                this.data.toolTipInfo[1] = {
+                    displayName: 'Actual',
+                    value: this.data.actualFormat + circularGauge.numberWithCommas(this.data.actual + '')
+                }
+                this.data.toolTipInfo[0] = {
+                    displayName: 'Target',
+                    value: this.data.targetFormat + circularGauge.numberWithCommas(this.data.target + '')
+                }
+                this.data.toolTipInfo[2] = {
+                    displayName: 'Percentage Remaining',
+                    value: (100 - parseFloat(percentage)) + '%'
+                }
+                TooltipManager.addTooltip(this.container, (tooltipEvent: TooltipEvent) => this.data.toolTipInfo, false);//Adding visual tips
             }
-            this.data.toolTipInfo[0] = {
-                displayName: 'Target',
-                value: this.data.target + ''
-            }
-            this.data.toolTipInfo[2] = {
-                displayName: 'Percentage Remaining',
-                value: (100 - parseFloat(percentage)) + '%'
-            }
-            TooltipManager.addTooltip(this.container, (tooltipEvent: TooltipEvent) => this.data.toolTipInfo, false);//Adding visual tips            	
-        }       
-       
+        }
+
+        public static numberWithCommas(x): string {
+            return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        }
         // Make visual properties available in the property pane in Power BI
         // values which we can customized from property pane in Power BI                
         public enumerateObjectInstances(options: EnumerateVisualObjectInstancesOptions): VisualObjectInstanceEnumeration {
@@ -321,11 +343,11 @@
                     displayName: data.createDisplayNameGetter('Visual_General'),
                     properties: {
                         ActualFillColor: {
-                            displayName: 'Main Color',
+                            displayName: 'Target Color',
                             type: { fill: { solid: { color: true } } }
                         },
                         ComparisonFillColor: {
-                            displayName: 'Comparison Color',
+                            displayName: 'Value Color',
                             type: { fill: { solid: { color: true } } }
                         },
                     },
