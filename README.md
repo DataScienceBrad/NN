@@ -1,8 +1,19 @@
-# Microsoft Power BI visuals
-[![Build status](https://ci.appveyor.com/api/projects/status/77d940234217vpap/branch/master?svg=true)](https://ci.appveyor.com/project/powerbi-gitbot/powerbi-visuals)
-[![Build Status](https://travis-ci.org/Microsoft/PowerBI-visuals.svg?branch=master)](https://travis-ci.org/Microsoft/PowerBI-visuals)
+# Microsoft Power BI visuals plus custom visuals by MAQ Software
 
-The Microsoft Power BI visuals project provides high quality data visualizations that you can use to extend [Power BI](https://powerbi.microsoft.com/).  The project contains over 20 visualization types, the framework to run them, and the testing infrastructure that enables you to build high quality visualizations.  The framework provides all the interfaces you need to integrate fully with Power BI's selection, filtering, and other UI experiences.  The code is written in [TypeScript](http://www.typescriptlang.org/) so it's easier to build and debug. Everything compiles down to JavaScript and runs in modern web browsers.  The visuals are built using [D3](http://d3js.org/) but you can use your favorite technology like [WebGL](https://en.wikipedia.org/wiki/WebGL), [Canvas](https://en.wikipedia.org/wiki/Canvas_element), or [SVG](https://en.wikipedia.org/wiki/Scalable_Vector_Graphics). This gives you everything you need to build custom visualizations for Power BI.
+The Microsoft Power BI visuals project provides high quality data visualizations that you can use to extend [Power BI](https://powerbi.microsoft.com/).  The project contains over 20 visualization types plus custom visuals by MAQ Software, the framework to run them, and the testing infrastructure that enables you to build high quality visualizations.  The framework provides all the interfaces you need to integrate fully with Power BI's selection, filtering, and other UI experiences.  The code is written in [TypeScript](http://www.typescriptlang.org/) so it's easier to build and debug. Everything compiles down to JavaScript and runs in modern web browsers.  The visuals are built using [D3](http://d3js.org/) but you can use your favorite technology like [WebGL](https://en.wikipedia.org/wiki/WebGL), [Canvas](https://en.wikipedia.org/wiki/Canvas_element), or [SVG](https://en.wikipedia.org/wiki/Scalable_Vector_Graphics). This gives you everything you need to build custom visualizations for Power BI.
+
+#Custom Visuals
+
+###[Circular Gauge](https://github.com/maqsoftware/PowerBI-visuals/blob/master/src/Clients/Visuals/visuals/circularGauge.ts)
+Illustrate headway toward goals in either a pie or a donut chart format. One color illustrates actual progress and the other displays the target. The percentage shown tracks progress. Text size and ring size are customizable.
+![Circular Gauge](src/Clients/Visuals/visuals/Images/Circular Gauge/CircularGauge_Screenshot_410_424.png) 
+
+#####Coming soon
+We are working on adding an option to show legends and the value in the visual itself. Currently this info can be seen in the tooltip 
+
+###[Linear Gauge](https://github.com/maqsoftware/PowerBI-visuals/blob/master/src/Clients/Visuals/visuals/linearGauge.ts)
+Create at-a-glance visualization to compare your progress against identified goals and warning zones. By allowing you to include multiple data points, the component provides the ability to illustrate trend details, such as monthly or year-to-date completion rates. The pointer notes targets and the colored bar shows the current progress toward those goals.
+![Linear Gauge](src/Clients/Visuals/visuals/Images/Linear Gauge/LinearGauge_Screenshot_410_424.png)
 
 ## What is included
 
@@ -44,7 +55,7 @@ npm install  # This command will install all necessary modules
 
 ### Running PlayGround from Visual Studio
 
-Make sure you first follow the [Prerequisites](https://github.com/Microsoft/PowerBI-visuals#prerequisites) & [Onetime Setup](https://github.com/Microsoft/PowerBI-visuals#one-time-setup)
+Make sure you first follow the [Prerequisites](https://github.com/maqsoftware/PowerBI-visuals#prerequisites) & [Onetime Setup](https://github.com/maqsoftware/PowerBI-visuals#one-time-setup)
 
 To run sample app:
 
@@ -58,7 +69,7 @@ To run sample app:
  
 ### Running PlayGround without Visual Studio
  
-Make sure you first follow the [Prerequisites](https://github.com/Microsoft/PowerBI-visuals#prerequisites) & [Onetime Setup](https://github.com/Microsoft/PowerBI-visuals#one-time-setup)
+Make sure you first follow the [Prerequisites](https://github.com/maqsoftware/PowerBI-visuals#prerequisites) & [Onetime Setup](https://github.com/maqsoftware/PowerBI-visuals#one-time-setup)
  
 To run sample app:
 
@@ -89,11 +100,8 @@ On Windows PhantomJS is installed automatically as part of `gulp test` command.
 ## How to Engage, Contribute and Provide Feedback
 
 There are many ways in which you can contribute to Power BI visuals:
-* You can contribute fixes and new visuals to this repo, read the [contribution guidelines](https://github.com/Microsoft/PowerBI-visuals/blob/master/CONTRIBUTING.md).
-* Submit bugs by opening a GitHub Issue [here](https://github.com/Microsoft/PowerBI-visuals/issues).
-* Contribute to discussions on [StackOverflow](http://stackoverflow.com/questions/tagged/powerbidev).
-* Follow the [Power BI Developer](http://blogs.msdn.com/powerbidev) blog for updates.
-* Follow Power BI on Twitter [@mspowerbi](http://twitter.com/mspowerbi).
+* You can contribute fixes and new visuals to this repo, read the [contribution guidelines](https://github.com/maqsoftware/PowerBI-visuals/blob/master/CONTRIBUTING.md).
+* Submit bugs by opening a GitHub Issue [here](https://github.com/maqsoftware/PowerBI-visuals/issues).
 
 ## Documentation
 
@@ -105,6 +113,6 @@ There are many ways in which you can contribute to Power BI visuals:
 
 ### Copyrights
 
-Copyright (c) 2015 Microsoft
+Copyright (c) 2015 Microsoft and MAQ Software
 
 See the [LICENSE](/LICENSE) file for license rights and limitations (MIT).

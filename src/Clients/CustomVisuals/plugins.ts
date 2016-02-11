@@ -145,4 +145,9 @@ module powerbi.visuals.plugins {
         customizeQuery: ColumnChart.customizeQuery,
         getSortableRoles: (visualSortableOptions?: VisualSortableOptions) => ColumnChart.getSortableRoles(visualSortableOptions),
     };
+     export var HorizontalFunnel: IVisualPlugin = {
+         name: 'HorizontalFunnel',
+         capabilities: powerbi.visuals.HorizontalFunnel.capabilities,
+         create: () => new powerbi.visuals.HorizontalFunnel()
+     };
 }
