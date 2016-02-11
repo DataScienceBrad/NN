@@ -102,8 +102,8 @@
         public static converter(dataView: DataView): ProgressIndicatorValues {
             var data: ProgressIndicatorValues = circularGauge.getDefaultData();
 
-            if (dataView && dataView.categorical) {
-                if (dataView.metadata && dataView.table.rows[0].length == 2) {
+            if (dataView) {
+                if (dataView.table && dataView.metadata && dataView.table.rows[0].length == 2) {
                     if (dataView.metadata.columns[0].roles['ActualValue']) {
                         data.actual = dataView.table.rows[0][0];
                         data.target = dataView.table.rows[0][1];
@@ -144,7 +144,10 @@
 
             this.cardFormatSetting = this.getDefaultFormatSettings();
             var labelSettings = null;
-            var objects = this.dataView && this.dataView.metadata.objects;
+            var objects = null;
+            if (this.dataView && this.dataView.metadata) {
+                objects = this.dataView.metadata.objects;
+            }
             if (objects) {
                 labelSettings = this.cardFormatSetting.labelSettings;
 
@@ -353,7 +356,7 @@
                     },
                 },
                 custom: {
-                    displayName: "Pie Chart",
+                    displayName: "Donut Chart",
                     properties: {
                         show: {
                             displayName: data.createDisplayNameGetter('Visual_Show'),
