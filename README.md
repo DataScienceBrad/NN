@@ -6,7 +6,10 @@ The Microsoft Power BI visuals project provides high quality data visualizations
 
 ###[Circular Gauge](https://github.com/maqsoftware/PowerBI-visuals/blob/master/src/Clients/Visuals/visuals/circularGauge.ts)
 Illustrate headway toward goals in either a pie or a donut chart format. One color illustrates actual progress and the other displays the target. The percentage shown tracks progress. Text size and ring size are customizable.
-![Circular Gauge](src/Clients/Visuals/visuals/Images/Circular Gauge/1_19_2016_PowerBI_ProgressIndicator_424X410.png) 
+![Circular Gauge](src/Clients/Visuals/visuals/Images/Circular Gauge/CircularGauge_Screenshot_410_424.png) 
+
+#####Coming soon
+We are working on adding an option to show legends and the value in the visual itself. Currently this info can be seen in the tooltip 
 
 ###[Linear Gauge](https://github.com/maqsoftware/PowerBI-visuals/blob/master/src/Clients/Visuals/visuals/linearGauge.ts)
 Create at-a-glance visualization to compare your progress against identified goals and warning zones. By allowing you to include multiple data points, the component provides the ability to illustrate trend details, such as monthly or year-to-date completion rates. The pointer notes targets and the colored bar shows the current progress toward those goals.
