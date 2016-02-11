@@ -1,17 +1,5 @@
 ## Contribution Guidelines
-This project is used by the Power BI Engineering team to build visualizations that ship with Power BI products and services.  By contributing, you can have your code ship within a Microsoft product.  For example, if you contribute a new visual, we could ship it to all Power BI users.  We’re looking forward to helping you get your contributions into the repository.
-
-
-Since it’s our production code, we have code guidelines that must be met for changes to be accepted.  The contribution guidelines are listed below.  Let us know if you have questions on the guidelines, we’re here to help.  One thing we encourage is that you fork the repo if you’re planning to do substantial work. This lets you move forward at the pace you want and when it comes time to submit a pull request, we’ll be able to refer to the fully working set of end to end code.
-
-
-Before you start working on a feature, substantial code contribution, or interface change, please discuss it with the team to ensure it is an appropriate addition to the core product. In some situations, we may decline the changes if they would conflict with other inflight development efforts or really should be deferred until we can refactor pieces of the code base to ensure the features work in the long term. 
-
-
-For bug fixes, simply create an issue through GitHub to notify the team and chat about the design of the fix.
-
-
-In order to speed up the process of accepting your contributions, you should try to make your pull request (PR) as small as possible, avoid any unnecessary deltas like whitespace formatting, and be sure to keep your change close to master to avoid merge conflicts.
+This project is used by MAQ Software Engineering team to build Custom visualizations that ship to [Power BI Visuals](http://powerbi.com/visuals).  
 
 ####Third party libraries
 External libraries of the PowerBI-Visuals project are located in folders:
@@ -39,6 +27,8 @@ Pull Requests need to adhere to the checklist below. The Power BI team may ask y
 ##### New Visual Development
 
   Please follow our minimum requirements for implementing a new visual. See the wiki [here](https://github.com/Microsoft/PowerBI-visuals/wiki/Minimum-requirements-for-implementing-a-new-visual). 
+
+Make sure Readme.md file is updated with the latest information of the new visual. All images related to the visuals should go under Images folder [here](/src/Clients/Visuals/visuals/Images/) 
 
 ##### Security and privacy review requirements
  
@@ -74,4 +64,4 @@ Wow you made it to the bottom! We’re looking forward to seeing what amazing co
 
 Thanks!
 
--The Power BI Team
+-MAQ Software Team
