@@ -181,7 +181,6 @@
         -ms-flex: 1 1 0px;
         -webkit-flex: 1 1 0px;
         display: inline-block;
-
         .trimmedTextWithEllipsis
     }
 
@@ -1845,3 +1844,75 @@ div.ql-toolbar {
         text-anchor: middle;
     }
 }
+
+/*Styles for brick chart start*/
+.brickchart_topContainer .svg {
+    width: 213px;
+    height: 213px;
+}
+
+.brickchart_topContainer svg > rect {
+    width: 21px;
+    height: 21px;
+}
+
+.brickchart_topContainer .legend.highlight, .brickchart_topContainer svg > rect.highlight {
+    opacity: 0.4;
+}
+
+.brickchart_topContainer {
+    text-align: center;
+    line-height: normal;
+    margin-top: 5px;
+}
+
+.brickchart_topContainer .legends {
+    display: block;
+    text-align: left;
+}
+
+.brickchart_topContainer .legends .title {
+    margin-left: 0;
+}
+
+.brickchart_topContainer .legend {
+    display: inline-block;
+    margin-left: 2px;
+    width: auto;
+    border: none;
+    height: auto;
+    position: relative;
+    font-family: wf_segoe-ui_Semibold;
+    fill: rgb(102,102,102);
+}
+
+.brickchart_topContainer .text {
+    display: inline-block;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.brickchart_topContainer .category {
+    border-width: 1px;
+    height: 8px;
+    width: 8px;
+    display: inline-block;
+    position: absolute;
+    top: 50%;
+    margin-top: -2px;
+}
+
+.brickchart_topContainer .matrix {
+    position: relative;
+    display: inline-block;
+    margin-top: 0;
+    margin-bottom: 0;
+    width: 213px;
+    height: 213px;
+    transform-origin: 50% 0 0;
+}
+
+.brickchart_topContainer .legends .title {
+    display: inline-block;
+}
+/*Styles for brick chart end*/

@@ -316,4 +316,10 @@ module powerbi.visuals.plugins {
     capabilities: powerbi.visuals.circularGauge.capabilities,
     create: () => new powerbi.visuals.circularGauge()
     };
+
+    export var brickChart: IVisualPlugin = {
+        name: 'brickChart',
+        capabilities: powerbi.visuals.BrickChart.capabilities,
+        create: () => new powerbi.visuals.BrickChart()
+    };
 }
