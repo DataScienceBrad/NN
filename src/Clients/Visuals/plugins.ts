@@ -322,4 +322,10 @@ module powerbi.visuals.plugins {
         capabilities: powerbi.visuals.BrickChart.capabilities,
         create: () => new powerbi.visuals.BrickChart()
     };
+
+    export var brickChart: IVisualPlugin = {
+        name: 'linearGauge',
+        capabilities: powerbi.visuals.LinearGauge.capabilities,
+        create: () => new powerbi.visuals.LinearGauge()
+    };
 }

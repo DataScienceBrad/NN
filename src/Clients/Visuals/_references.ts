@@ -203,5 +203,6 @@
 /// <reference path="visuals/scriptVisual.ts"/>
 /// <reference path="visuals/circulargauge.ts" />
 /// <reference path="visuals/brickchart.ts" />
+/// <reference path="visuals/lineargauge.ts" />
 
 /// <reference path="plugins.ts"/>
