@@ -50,5 +50,6 @@
 /// <reference path="visuals/forceGraph/forceGraph.ts" />
 /// <reference path="visuals/mekkoChart/mekkoChart.ts" />
 /// <reference path="visuals/horizontalfunnel/horizontalfunnel.ts" />
+/// <reference path="visuals/donutchart(gmo)/donutchart(gmo).ts" />
 
 /// <reference path="plugins.ts" />
