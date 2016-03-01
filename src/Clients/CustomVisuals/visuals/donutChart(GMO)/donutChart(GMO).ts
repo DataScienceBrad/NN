@@ -668,7 +668,7 @@ module powerbi.visuals {
                     }
 
                     this.legendDataPoints.push({
-                        label: categoryLabel,
+                        label: categoryLabel + ' ' + dataPoints[0].measureValue.value,
                         color: color,
                         icon: LegendIcon.Box,
                         identity: legendIdentity,
@@ -716,7 +716,7 @@ module powerbi.visuals {
                     dataPoints.push(dataPoint);
 
                     this.legendDataPoints.push({
-                        label: dataPoint.label,
+                        label: dataPoint.label + ' ' + dataPoint.measureValue.value,
                         color: dataPoint.color,
                         icon: LegendIcon.Box,
                         identity: dataPoint.identity,
@@ -1166,7 +1166,7 @@ module powerbi.visuals {
                     }
                 }
 
-                this.data = DonutChart.converter(dataViews[0], this.colors, defaultDataPointColor, this.currentViewport, this.disableGeometricCulling, this.interactivityService);
+                this.data = DonutChartGMO.converter(dataViews[0], this.colors, defaultDataPointColor, this.currentViewport, this.disableGeometricCulling, this.interactivityService);
                 this.data.showAllDataPoints = showAllDataPoints;
                 this.data.defaultDataPointColor = defaultDataPointColor;
                 if (!(this.options.interactivity && this.options.interactivity.isInteractiveLegend))
@@ -1295,7 +1295,7 @@ module powerbi.visuals {
 
             var legendObjectProperties: DataViewObjects = { legend: data.legendObjectProperties };
 
-            var show = DataViewObjects.getValue(legendObjectProperties, donutChartProps.legend.show, this.legend.isVisible());
+            //var show = DataViewObjects.getValue(legendObjectProperties, donutChartProps.legend.show, this.legend.isVisible());
             var showTitle = DataViewObjects.getValue(legendObjectProperties, donutChartProps.legend.showTitle, true);
             var titvarext = DataViewObjects.getValue(legendObjectProperties, donutChartProps.legend.titleText, this.data.legendData.title);
             var labelColor = DataViewObject.getValue(legendObjectProperties, legendProps.labelColor, this.data.legendData.labelColor);
@@ -1305,7 +1305,7 @@ module powerbi.visuals {
                 selector: null,
                 objectName: 'legend',
                 properties: {
-                    show: show,
+                    show: true,
                     position: LegendPosition[this.legend.getOrientation()],
                     showTitle: showTitle,
                     titvarext: titvarext,
@@ -1482,7 +1482,7 @@ module powerbi.visuals {
                     shapes = DonutChart.drawDefaultShapes(this.svg, data, layout, this.colors, this.radius, this.interactivityService && this.interactivityService.hasSelection(), this.sliceWidthRatio, this.data.defaultDataPointColor);
                     highlightShapes = DonutChart.drawDefaultHighlightShapes(this.svg, data, layout, this.colors, this.radius, this.sliceWidthRatio);
                     NewDataLabelUtils.drawDefaultLabels(this.labelGraphicsContext, labels, false, true);
-                    NewDataLabelUtils.drawLabelLeaderLines(this.labelGraphicsContext, labels);
+                    this.drawLabelLeaderLines(this.labelGraphicsContext, labels);
                 }
 
                 this.assignInteractions(shapes, highlightShapes, data);
@@ -1498,7 +1498,30 @@ module powerbi.visuals {
 
             SVGUtil.flushAllD3TransitionsIfNeeded(this.options);
         }
+        private drawLabelLeaderLines(context: D3.Selection, filteredDataLabels: Label[], key?: (data: any, index?: number) => any, leaderLineColor?: string) {
+            if (context.select("linesGraphicsContext").empty())
+                context.append('g').classed("linesGraphicsContext", true);
 
+            var lines = context.select("linesGraphicsContext").selectAll('polyline')
+                .data(filteredDataLabels, key);
+
+            lines.enter()
+                .append('polyline')
+                .classed("lines", true);
+
+            lines
+                .attr('points', (d: Label) => {
+                    return d.leaderLinePoints;
+                }).
+                style({
+                    'stroke': (d: Label) => leaderLineColor ? leaderLineColor : d.fill,
+                    'stroke-width': DonutLabelUtils.LineStrokeWidth,
+                });
+
+            lines
+                .exit()
+                .remove();
+        }
         private createLabels(): Label[] {
             var labelLayout = new DonutLabelLayout({
                 maximumOffset: NewDataLabelUtils.maxLabelOffset,
@@ -1545,7 +1568,7 @@ module powerbi.visuals {
             var labelSettings = this.data.dataLabelsSettings;
             var measureFormatter = measureFormatterCache.getOrCreate(d.data.labelFormatString, labelSettings, alternativeScale);
 
-            var position = labelX < 0 ? NewPointLabelPosition.Left : NewPointLabelPosition.Right;
+            var position = labelX < 0 ? 4 : 8; //NewPointLabelPosition.Left : NewPointLabelPosition.Right;
             var pointPosition: LabelParentPoint = {
                 point: {
                     x: labelX,
@@ -1600,7 +1623,7 @@ module powerbi.visuals {
                 identity: d.data.identity,
                 parentShape: pointPosition,
                 insideFill: NewDataLabelUtils.defaultInsideLabelColor,
-                parentType: LabelDataPointParentType.Point,
+                parentType: 0, //LabelDataPointParentType.Point,
                 alternativeScale: alternativeScale,
                 donutArcDescriptor: d,
                 angle: (d.startAngle + d.endAngle) / 2 - (Math.PI / 2),
@@ -1692,7 +1715,7 @@ module powerbi.visuals {
                     //allowDrilldown: this.allowDrilldown,
                     //visual: this,
                     hasHighlights: data.hasHighlights,
-                    svg: this.svg,
+                    svg: this.svg
                 };
 
                 this.interactivityService.bind(dataPoints, this.behavior, behaviorOptions);
@@ -1918,7 +1941,7 @@ module powerbi.visuals {
                     labels = this.createLabels();
                 }
                 NewDataLabelUtils.drawDefaultLabels(this.labelGraphicsContext, labels, false, true);
-                NewDataLabelUtils.drawLabelLeaderLines(this.labelGraphicsContext, labels);
+                this.drawLabelLeaderLines(this.labelGraphicsContext, labels);
             }
             var highlightSlices = undefined;
             if (data.hasHighlights) {
