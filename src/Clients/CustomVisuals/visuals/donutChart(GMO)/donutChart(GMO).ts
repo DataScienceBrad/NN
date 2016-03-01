@@ -1,4 +1,5 @@
-﻿module powerbi.visuals {
+﻿/// <reference path="../../_references.ts"/>
+module powerbi.visuals {
     import ClassAndSelector = jsCommon.CssConstants.ClassAndSelector;
     import createClassAndSelector = jsCommon.CssConstants.createClassAndSelector;
     import PixelConverter = jsCommon.PixelConverter;
@@ -6,12 +7,11 @@
     import DonutConstructorOptions = powerbi.visuals.DonutConstructorOptions;
     import DonutArcDescriptor = powerbi.visuals.DonutArcDescriptor;
     import DonutDataPoint = powerbi.visuals.DonutDataPoint;
-    import DonutData = powerbi.visuals.DonutData;
+    // import DonutData = powerbi.visuals.DonutData;
     import DonutLayout = powerbi.visuals.DonutLayout;
     import DonutChart = powerbi.visuals.DonutChart;
-    import DonutChartProperties = powerbi.DonutChartProperties;
+    //  import DonutChartProperties = powerbi.DonutChartProperties;
 
-    export interface MyViewModel { };
     export interface DonutChartSettings {
         /**
          * The duration for a long animation displayed after a user interaction with an interactive chart. 
@@ -21,6 +21,20 @@
          * The duration for a short animation displayed after a user interaction with an interactive chart.
          */
         legendTransitionAnimationDuration?: number;
+    }
+    export interface DonutDataGMO {
+        dataPointsToDeprecate: DonutDataPoint[];
+        dataPoints: DonutArcDescriptor[]; // The data points will be culled based on viewport size to remove invisible slices
+        unCulledDataPoints: DonutDataPoint[]; // The unculled data points will never be culled
+        dataPointsToEnumerate?: LegendDataPoint[];
+        legendData: LegendData;
+        hasHighlights: boolean;
+        dataLabelsSettings: VisualDataLabelsSettings;
+        legendObjectProperties?: DataViewObject;
+        maxValue?: number;
+        visibleGeometryCulled?: boolean;
+        defaultDataPointColor?: string;
+        showAllDataPoints?: boolean;
     }
 
     export interface InteractivityState {
@@ -38,6 +52,23 @@
         currentIndexDrag: number; // index of the slice that is currently showing in the legend 
         previousIndexDrag: number; // index of the slice that was showing in the legend before current drag event
     }
+    export var DonutChartGMOProperties = {
+        general: {
+            formatString: <DataViewObjectPropertyIdentifier>{ objectName: 'general', propertyName: 'formatString' },
+        },
+        dataPoint: {
+            defaultColor: <DataViewObjectPropertyIdentifier>{ objectName: 'dataPoint', propertyName: 'defaultColor' },
+            fill: <DataViewObjectPropertyIdentifier>{ objectName: 'dataPoint', propertyName: 'fill' },
+            showAllDataPoints: <DataViewObjectPropertyIdentifier>{ objectName: 'dataPoint', propertyName: 'showAllDataPoints' },
+        },
+        legend: {
+            show: <DataViewObjectPropertyIdentifier>{ objectName: 'legend', propertyName: 'show' },
+            position: <DataViewObjectPropertyIdentifier>{ objectName: 'legend', propertyName: 'position' },
+            showTitle: <DataViewObjectPropertyIdentifier>{ objectName: 'legend', propertyName: 'showTitle' },
+            titleText: <DataViewObjectPropertyIdentifier>{ objectName: 'legend', propertyName: 'titleText' },
+            labelColor: <DataViewObjectPropertyIdentifier>{ objectName: 'legend', propertyName: 'labelColor' },
+        },
+    };
     export class DonutChartInteractiveLegend {
 
         private static LegendContainerClassName = 'legend-container';
@@ -810,7 +841,7 @@
         private parentViewport: IViewport;
         private currentViewport: IViewport;
         private formatter: ICustomValueFormatter;
-        private data: DonutData;
+        private data: DonutDataGMO;
         private pie: D3.Layout.PieLayout;
         private arc: D3.Svg.Arc;
         private outerArc: D3.Svg.Arc;
@@ -1004,7 +1035,7 @@
             }
         }
 
-        public static converter(dataView: DataView, colors: IDataColorPalette, defaultDataPointColor?: string, viewport?: IViewport, disableGeometricCulling?: boolean, interactivityService?: IInteractivityService): DonutData {
+        public static converter(dataView: DataView, colors: IDataColorPalette, defaultDataPointColor?: string, viewport?: IViewport, disableGeometricCulling?: boolean, interactivityService?: IInteractivityService): DonutDataGMO {
             var converter = new DonutChartConversion.DonutChartConverter(dataView, colors, defaultDataPointColor);
             converter.convert();
             var d3PieLayout = d3.layout.pie()
@@ -1117,7 +1148,6 @@
 
         public update(options: VisualUpdateOptions): void {
             debug.assertValue(options, 'options');
-
             // Viewport resizing
             var viewport = options.viewport;
             this.parentViewport = viewport;
@@ -1131,8 +1161,8 @@
                     var objects: DataViewObjects = dataViewMetadata.objects;
 
                     if (objects) {
-                        showAllDataPoints = DataViewObjects.getValue<boolean>(objects, donutChartProps.dataPoint.showAllDataPoints);
-                        defaultDataPointColor = DataViewObjects.getFillColor(objects, donutChartProps.dataPoint.defaultColor);
+                        showAllDataPoints = DataViewObjects.getValue<boolean>(objects, DonutChartGMOProperties.dataPoint.showAllDataPoints);
+                        defaultDataPointColor = DataViewObjects.getFillColor(objects, DonutChartGMOProperties.dataPoint.defaultColor);
                     }
                 }
 
@@ -1417,11 +1447,11 @@
             return d3.merge([second, onlyFirst]);
         }
 
-        private updateInternal(data: DonutData, suppressAnimations: boolean, duration: number = 0) {
+        private updateInternal(data: DonutDataGMO, suppressAnimations: boolean, duration: number = 0) {
             var viewport = this.currentViewport;
             duration = duration || AnimatorCommon.GetAnimationDuration(this.animator, suppressAnimations);
             if (this.animator) {
-                var layout = DonutChart.getLayout(this.radius, this.sliceWidthRatio, viewport, data.dataLabelsSettings);
+                var layout = DonutChartGMO.getLayout(this.radius, this.sliceWidthRatio, viewport, data.dataLabelsSettings);
                 var result: DonutChartAnimationResult;
                 var shapes: D3.UpdateSelection;
                 var highlightShapes: D3.UpdateSelection;
@@ -1648,7 +1678,7 @@
             this.interactivityState.sliceAngles = angles;
         }
 
-        private assignInteractions(slices: D3.Selection, highlightSlices: D3.Selection, data: DonutData): void {
+        private assignInteractions(slices: D3.Selection, highlightSlices: D3.Selection, data: DonutDataGMO): void {
             // assign interactions according to chart interactivity type
             if (this.isInteractive) {
                 this.assignInteractiveChartInteractions(slices);
@@ -1659,8 +1689,8 @@
                     clearCatcher: this.clearCatcher,
                     slices: slices,
                     highlightSlices: highlightSlices,
-                    allowDrilldown: this.allowDrilldown,
-                    visual: this,
+                    //allowDrilldown: this.allowDrilldown,
+                    //visual: this,
                     hasHighlights: data.hasHighlights,
                     svg: this.svg,
                 };
@@ -1815,7 +1845,7 @@
             }
         }
 
-        private updateInternalToMove(data: DonutData, duration: number = 0) {
+        private updateInternalToMove(data: DonutDataGMO, duration: number = 0) {
             // Cache for performance
             var svg = this.svg;
             var pie = this.pie;
@@ -1960,7 +1990,7 @@
             }
         }
 
-        public static drawDefaultShapes(graphicsContext: D3.Selection, donutData: DonutData, layout: DonutLayout, colors: IDataColorPalette, radius: number, hasSelection: boolean, sliceWidthRatio: number, defaultColor?: string): D3.UpdateSelection {
+        public static drawDefaultShapes(graphicsContext: D3.Selection, donutData: DonutDataGMO, layout: DonutLayout, colors: IDataColorPalette, radius: number, hasSelection: boolean, sliceWidthRatio: number, defaultColor?: string): D3.UpdateSelection {
             var shapes = graphicsContext.select('.slices')
                 .selectAll('path' + DonutChartGMO.sliceClass.selector)
                 .data(donutData.dataPoints, (d: DonutArcDescriptor) => d.data.identity.getKey());
@@ -1984,7 +2014,7 @@
             return shapes;
         }
 
-        public static drawDefaultHighlightShapes(graphicsContext: D3.Selection, donutData: DonutData, layout: DonutLayout, colors: IDataColorPalette, radius: number, sliceWidthRatio: number): D3.UpdateSelection {
+        public static drawDefaultHighlightShapes(graphicsContext: D3.Selection, donutData: DonutDataGMO, layout: DonutLayout, colors: IDataColorPalette, radius: number, sliceWidthRatio: number): D3.UpdateSelection {
             var shapes = graphicsContext.select('.slices')
                 .selectAll('path' + DonutChartGMO.sliceHighlightClass.selector)
                 .data(donutData.dataPoints.filter((value: DonutArcDescriptor) => value.data.highlightRatio != null), (d: DonutArcDescriptor) => d.data.identity.getKey());
