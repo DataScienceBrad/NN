@@ -33,6 +33,7 @@
     export class circularGauge implements IVisual {
         //Variables 
         private svg: D3.Selection;
+        private root: D3.Selection;
         private percentage: string;
         public canvas: D3.Selection;
         public group: D3.Selection;
@@ -83,7 +84,8 @@
         //One time setup
         //First time it will be called and made the structure of your visual
         public init(options: VisualInitOptions): void {
-            this.svg = d3.select(options.element.get(0)).append('svg');
+            this.root = d3.select(options.element.get(0));
+            this.svg = this.root.append('svg');
             this.container = this.svg.append('g');
 
             this.group = this.container.append('g');
@@ -102,8 +104,8 @@
         public static converter(dataView: DataView): ProgressIndicatorValues {
             var data: ProgressIndicatorValues = circularGauge.getDefaultData();
 
-            if (dataView) {
-                if (dataView.table && dataView.metadata && dataView.table.rows[0].length == 2) {
+            if (dataView && dataView.categorical) {
+                if (dataView.metadata && dataView.table.rows[0].length == 2) {
                     if (dataView.metadata.columns[0].roles['ActualValue']) {
                         data.actual = dataView.table.rows[0][0];
                         data.target = dataView.table.rows[0][1];
@@ -142,12 +144,12 @@
             var height = viewport.height;
             var width = viewport.width;
 
+            this.svg.attr('width', width)
+                .attr('height', height);
+
             this.cardFormatSetting = this.getDefaultFormatSettings();
             var labelSettings = null;
-            var objects = null;
-            if (this.dataView && this.dataView.metadata) {
-                objects = this.dataView.metadata.objects;
-            }
+            var objects = this.dataView.metadata.objects;
             if (objects) {
                 labelSettings = this.cardFormatSetting.labelSettings;
 
@@ -178,9 +180,6 @@
             };
             var textWidth = powerbi.TextMeasurementService.measureSvgTextWidth(textProperties);
             var textHeight = powerbi.TextMeasurementService.measureSvgTextHeight(textProperties);
-
-            this.svg.attr('width', width)
-                .attr('height', height);
 
             var outerRadius = ((((width / 2) - (textWidth + 17)) < ((height / 2) - (textHeight)) ? ((width / 2) - (textWidth + 17)) : ((height / 2) - (textHeight))));
             outerRadius = outerRadius - (outerRadius * 0.1);
@@ -246,25 +245,30 @@
                     .attr("y1", (y / h) * outerRadius * 1.02)
                     .attr("x2", ((x / h) * outerRadius * 1.1))
                     .attr("y2", (y / h) * outerRadius * 1.1)
-                    .attr('style', "stroke:#DDDDDD;stroke-width:2");
+                    .attr('style', "stroke:#DDDDDD;stroke-width:1");
 
                 this.groupInner.select("line#line2")
                     .attr("x1", (x / h) * outerRadius * 1.1)
                     .attr("y1", (y / h) * outerRadius * 1.1)
                     .attr("x2", ((x / h) * outerRadius * 1.1) + 15)
                     .attr("y2", (y / h) * outerRadius * 1.1)
-                    .attr('style', "stroke:#DDDDDD;stroke-width:2");
+                    .attr('style', "stroke:#DDDDDD;stroke-width:1");
+
+                if (percentCompleted < 0.10 || percentCompleted > 0.90) {
+                    this.groupInner.select("text").attr('x', ((x / h) * outerRadius * 1.1) + 39);
+                    this.groupInner.select("line#line2").attr("x2", ((x / h) * outerRadius * 1.1) + 35);
+                }
 
                 this.group.attr('transform', 'translate(' + ((width / 2)) + ',' + ((height / 2)) + ')');
                 this.groupInner.attr('transform', 'translate(' + ((width / 2)) + ',' + ((height / 2)) + ')');
 
                 this.data.toolTipInfo[1] = {
                     displayName: 'Actual',
-                    value: this.data.actualFormat + circularGauge.numberWithCommas(this.data.actual + '')
+                    value: this.data.actualFormat + circularGauge.numberWithCommas(this.data.actual)
                 }
                 this.data.toolTipInfo[0] = {
                     displayName: 'Target',
-                    value: this.data.targetFormat + circularGauge.numberWithCommas(this.data.target + '')
+                    value: this.data.targetFormat + circularGauge.numberWithCommas(this.data.target)
                 }
                 this.data.toolTipInfo[2] = {
                     displayName: 'Percentage Remaining',
@@ -275,7 +279,13 @@
         }
 
         public static numberWithCommas(x): string {
-            return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+            var numeric = parseInt(x);
+            var decimal = (x + "").split(".")[1];
+            if (decimal) {
+                return numeric.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '.' + decimal;
+            } else {
+                return numeric.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+            }
         }
         // Make visual properties available in the property pane in Power BI
         // values which we can customized from property pane in Power BI                
