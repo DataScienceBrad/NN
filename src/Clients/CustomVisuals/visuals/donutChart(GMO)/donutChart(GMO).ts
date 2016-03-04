@@ -722,7 +722,7 @@
                     dataPoints.push(dataPoint);
 
                     this.legendDataPoints.push({
-                        label: dataPoint.label + ' ' + dataPoint.measureValue.value,
+                        label: dataPoint.label + ' ' + measureLabel,
                         color: dataPoint.color,
                         icon: LegendIcon.Box,
                         identity: dataPoint.identity,
@@ -895,13 +895,22 @@
                     displayName: data.createDisplayNameGetter('Role_DisplayName_Details'),
                     description: data.createDisplayNameGetter('Role_DisplayName_DetailsDonutChartDescription'),
 
-                }, {
+                },
+                {
                     name: 'Y',
                     kind: VisualDataRoleKind.Measure,
-                    displayName: data.createDisplayNameGetter('Role_DisplayName_Values'),
-                    description: data.createDisplayNameGetter('Role_DisplayName_ValuesDescription'),
+                    displayName: 'Primary Measure',//data.createDisplayNameGetter('Role_DisplayName_Values'),
+                    description: 'Primary Measure', //data.createDisplayNameGetter('Role_DisplayName_ValuesDescription'),
                     requiredTypes: [{ numeric: true }, { integer: true }],
-                }
+                },
+                {
+                    name: 'SecondaryMeasure',
+                    kind: VisualDataRoleKind.Measure,
+                    displayName: 'Secondary Measure',//data.createDisplayNameGetter('Role_DisplayName_Values'),
+                    description: 'Secondary Measure', //data.createDisplayNameGetter('Role_DisplayName_ValuesDescription'),
+                    requiredTypes: [{ numeric: true }, { integer: true }],
+                },
+
             ],
             objects: {
                 general: {
@@ -1039,7 +1048,7 @@
             },
             dataViewMappings: [{
                 conditions: [
-                    { 'Category': { max: 1 }, 'Series': { max: 0 } },
+                    { 'Category': { max: 1 }, 'Series': { max: 0 }, 'Y': { max: 1 } },
                     { 'Category': { max: 1 }, 'Series': { min: 1, max: 1 }, 'Y': { max: 1 } }
                 ],
                 categorical: {
