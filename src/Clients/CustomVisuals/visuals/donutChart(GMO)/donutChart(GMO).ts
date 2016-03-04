@@ -1,4 +1,6 @@
-﻿module powerbi.visuals {
+﻿
+/// <reference path="../../_references.ts"/>
+module powerbi.visuals {
     import ClassAndSelector = jsCommon.CssConstants.ClassAndSelector;
     import createClassAndSelector = jsCommon.CssConstants.createClassAndSelector;
     import PixelConverter = jsCommon.PixelConverter;
@@ -822,6 +824,7 @@
         private root: D3.Selection;
         private dataView: DataView;
         private titleSize: number = 12;
+        private updateCount: number = 0;
         private static ClassName = 'donutChart';
         private static InteractiveLegendClassName = 'donutLegend';
         private static InteractiveLegendArrowClassName = 'donutLegendArrow';
@@ -1048,8 +1051,8 @@
             },
             dataViewMappings: [{
                 conditions: [
-                    { 'Category': { max: 1 }, 'Series': { max: 0 }, 'Y': { max: 1 } },
-                    { 'Category': { max: 1 }, 'Series': { min: 1, max: 1 }, 'Y': { max: 1 } }
+                    { 'Category': { max: 1 }, 'Series': { max: 0 }, 'Y': { max: 1 }, 'SecondaryMeasure': { max: 1 } },
+                    { 'Category': { max: 1 }, 'Series': { min: 1, max: 1 }, 'Y': { max: 1 }, 'SecondaryMeasure': { max: 1 } }
                 ],
                 categorical: {
                     categories: {
@@ -1059,7 +1062,7 @@
                     values: {
                         group: {
                             by: 'Series',
-                            select: [{ bind: { to: 'Y' } }],
+                            select: [{ bind: { to: 'Y' } }, { bind: { to: 'SecondaryMeasure' } }],
                             dataReductionAlgorithm: { top: {} }
                         }
                     },
@@ -1160,7 +1163,7 @@
                 .style({ 'width': '100%', 'display': 'inline-block' })
                 // .style({'width':'100%', 'display':'inline-block', 'position':'absolute'})
                 .html('<div class = "GMODonutTitleDiv" style = "max-width: 80%; display: inline-block">' + '</div>'
-                + '<span class = "GMODonutTitleIcon" style = "width: 2%; display: inline-block; cursor: pointer; position: absolute">&nbsp(&#063;)</span>');
+                + '<span class = "GMODonutTitleIcon" style = "width: 2%; display: none; cursor: pointer; position: absolute">&nbsp(&#063;)</span>');
 
             if (this.behavior) {
                 this.interactivityService = createInteractivityService(options.host);
@@ -1216,6 +1219,7 @@
 
         public update(options: VisualUpdateOptions): void {
             // MAQCode 
+            this.updateCount++;
             var GMODonutTitleOnOffStatus: IDataLabelSettings = false
                 , titleText: IDataLabelSettings = ""
                 , tooltiptext: IDataLabelSettings = ""
@@ -1223,6 +1227,8 @@
                 , titleHeight: number
                 , titlecolor: IDataLabelSettings
                 , titlebgcolor: IDataLabelSettings;
+            this.dataView = options.dataViews[0];
+
             if (this.getShowTitle(this.dataView)) {
                 GMODonutTitleOnOffStatus = true;
             }
@@ -1259,11 +1265,9 @@
             this.root.select('.GMODonutTitleDiv')
                 .text(titleText);
 
-            if ("" === tooltiptext) {
-                this.root.select('.GMODonutTitleIcon').style({ 'display': 'none' });
-            }
+            this.root.select('.GMODonutTitleIcon').style({ 'display': 'none' });
 
-            else {
+            if ("" !== tooltiptext && (1 !== this.updateCount || "" !== titleText)) {
                 this.root.select('.GMODonutTitleIcon')
                     .style({ 'display': 'inline-block' })
                     .attr('title', tooltiptext);
@@ -1428,6 +1432,7 @@
             returnTitleLegend = "";
             returnTitleDetails = "";
             returnTitle = "";
+            tempTitle = "";
             if (dataView && dataView.metadata && dataView.metadata.objects) {
                 if (dataView.metadata.objects.hasOwnProperty('GMODonutTitle')) {
                     var titletext = dataView.metadata.objects['GMODonutTitle'];
@@ -1436,25 +1441,31 @@
                     }
                 }
             }
-            if (dataView && dataView.categorical && dataView.categorical.values) {
-                returnTitleValues = dataView.categorical.values[0].source.displayName;
-                for (var iCount = 1; iCount < dataView.categorical.values.length; iCount++) {
-                    if (iCount + 1 !== dataView.categorical.values.length) {
-                        returnTitleValues = returnTitleValues + ", ";
-                    }
-                    else {
-                        returnTitleValues = returnTitleValues + " and ";
-                    }
-                    returnTitleValues = returnTitleValues + dataView.categorical.values[iCount].source.displayName;
-                }
-            }
-            if (dataView && dataView.categorical && dataView.categorical.categories) {
-                returnTitleLegend = dataView.categorical.categories[0].source.displayName;
-            }
 
             if (dataView && dataView.categorical && dataView.categorical.values && dataView.categorical.values.source) {
                 returnTitleDetails = dataView.categorical.values.source.displayName;
             }
+            if (dataView && dataView.categorical && dataView.categorical.values && dataView.categorical.values[0].source && dataView.categorical.values[0].source.roles.hasOwnProperty('Y')) {
+                if (dataView.categorical.values[0].source.displayName) {
+                    returnTitleValues = dataView.categorical.values[0].source.displayName;
+                }
+                if ("" === returnTitleDetails) {
+                    for (var iCount = 1; iCount < dataView.categorical.values.length; iCount++) {
+                        if (iCount + 1 !== dataView.categorical.values.length) {
+                            returnTitleValues = returnTitleValues + ", ";
+                        }
+                        else {
+                            returnTitleValues = returnTitleValues + " and ";
+                        }
+                        returnTitleValues = returnTitleValues + dataView.categorical.values[iCount].source.displayName;
+                    }
+                }
+            }
+
+            if (dataView && dataView.categorical && dataView.categorical.categories) {
+                returnTitleLegend = dataView.categorical.categories[0].source.displayName;
+            }
+
             if ("" !== returnTitleValues) {
                 tempTitle = " by ";
             }
