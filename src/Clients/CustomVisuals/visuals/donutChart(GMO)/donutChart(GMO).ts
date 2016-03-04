@@ -628,6 +628,12 @@ module powerbi.visuals {
                     var legendIdentity = SelectionId.createWithId(this.categoryIdentities[categoryIndex]);
                     var color = this.colorHelper.getColorForSeriesValue(thisCategoryObjects, this.categoryColumnRef, categoryValue);
                     var categoryLabel = valueFormatter.format(categoryValue, this.categoryFormatString);
+                    var sumOfPrimaryValues: number = 0;
+                    var targetvalueIndex = 0;
+                    var measureValObject = {
+                        measure: 0,
+                        value: 0
+                    };
 
                     // Series are either measures in the multi-measure case, or the single series otherwise
                     for (var seriesIndex = 0; seriesIndex < this.seriesCount; seriesIndex++) {
@@ -655,9 +661,12 @@ module powerbi.visuals {
                             .withMeasure(measure)
                             .createSelectionId();
 
+                        if (dataViewCategorical.values[seriesIndex].source.roles && dataViewCategorical.values[seriesIndex].source.roles.hasOwnProperty('Y')) {
+                            targetvalueIndex = seriesIndex;
+                        }
                         var dataPoint: ConvertedDataPoint = {
                             identity: identity,
-                            measureFormat: valueFormatter.getFormatString(seriesData.source, formatStringProp, true),
+                            measureFormat: valueFormatter.getFormatString(dataViewCategorical.values[targetvalueIndex].source, formatStringProp, true),
                             measureValue: <MeasureAndValue>{
                                 measure: nonHighlight,
                                 value: Math.abs(nonHighlight),
@@ -672,11 +681,15 @@ module powerbi.visuals {
                             color: color,
                             seriesIndex: seriesIndex
                         };
+                        sumOfPrimaryValues += dataPoint.measureValue.value;
                         dataPoints.push(dataPoint);
                     }
-
+                    measureValObject.measure = 0;
+                    measureValObject.value = sumOfPrimaryValues;
+                    var normalizedNonHighlight = DonutChartConverter.normalizedMeasureAndValue(measureValObject);
+                    var percentage = (this.total > 0) ? normalizedNonHighlight.value / this.total : 0.0;
                     this.legendDataPoints.push({
-                        label: categoryLabel + ' ' + dataPoints[0].measureValue.value,
+                        label: categoryLabel + ' ' + visuals.valueFormatter.format(sumOfPrimaryValues, dataPoint.measureFormat) + ' ' + visuals.valueFormatter.format(percentage, '0.00 %;-0.00 %;0.00 %'),
                         color: color,
                         icon: LegendIcon.Box,
                         identity: legendIdentity,
@@ -722,9 +735,10 @@ module powerbi.visuals {
                         color: color
                     };
                     dataPoints.push(dataPoint);
-
+                    var normalizedNonHighlight = DonutChartConverter.normalizedMeasureAndValue(dataPoint.measureValue);
+                    var percentage = (this.total > 0) ? normalizedNonHighlight.value / this.total : 0.0;
                     this.legendDataPoints.push({
-                        label: dataPoint.label + ' ' + measureLabel,
+                        label: dataPoint.label + ' ' + visuals.valueFormatter.format(dataPoint.measureValue.value, dataPoint.measureFormat) + ' ' + visuals.valueFormatter.format(percentage, '0.00 %;-0.00 %;0.00 %'),
                         color: dataPoint.color,
                         icon: LegendIcon.Box,
                         identity: dataPoint.identity,
@@ -1445,23 +1459,17 @@ module powerbi.visuals {
             if (dataView && dataView.categorical && dataView.categorical.values && dataView.categorical.values.source) {
                 returnTitleDetails = dataView.categorical.values.source.displayName;
             }
-            if (dataView && dataView.categorical && dataView.categorical.values && dataView.categorical.values[0].source && dataView.categorical.values[0].source.roles.hasOwnProperty('Y')) {
-                if (dataView.categorical.values[0].source.displayName) {
-                    returnTitleValues = dataView.categorical.values[0].source.displayName;
-                }
-                if ("" === returnTitleDetails) {
-                    for (var iCount = 1; iCount < dataView.categorical.values.length; iCount++) {
-                        if (iCount + 1 !== dataView.categorical.values.length) {
-                            returnTitleValues = returnTitleValues + ", ";
+            var iLength = 0;
+            if (dataView && dataView.categorical && dataView.categorical.values) {
+                for (var iLength = 0; iLength < dataView.categorical.values.length; iLength++) {
+                    if (dataView.categorical.values[iLength].source && dataView.categorical.values[iLength].source.roles.hasOwnProperty('Y')) {
+                        if (dataView.categorical.values[iLength].source.displayName) {
+                            returnTitleValues = dataView.categorical.values[iLength].source.displayName;
+                            break;
                         }
-                        else {
-                            returnTitleValues = returnTitleValues + " and ";
-                        }
-                        returnTitleValues = returnTitleValues + dataView.categorical.values[iCount].source.displayName;
                     }
                 }
             }
-
             if (dataView && dataView.categorical && dataView.categorical.categories) {
                 returnTitleLegend = dataView.categorical.categories[0].source.displayName;
             }
