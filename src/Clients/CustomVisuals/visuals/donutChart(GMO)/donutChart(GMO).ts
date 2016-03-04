@@ -1,5 +1,4 @@
-﻿/// <reference path="../../_references.ts"/>
-module powerbi.visuals {
+﻿module powerbi.visuals {
     import ClassAndSelector = jsCommon.CssConstants.ClassAndSelector;
     import createClassAndSelector = jsCommon.CssConstants.createClassAndSelector;
     import PixelConverter = jsCommon.PixelConverter;
@@ -36,7 +35,6 @@ module powerbi.visuals {
         defaultDataPointColor?: string;
         showAllDataPoints?: boolean;
     }
-
     export interface InteractivityState {
         interactiveLegend: DonutChartInteractiveLegend;
         valueToAngleFactor: number; // Ratio between 360 and the sum of the angles
@@ -68,6 +66,14 @@ module powerbi.visuals {
             titleText: <DataViewObjectPropertyIdentifier>{ objectName: 'legend', propertyName: 'titleText' },
             labelColor: <DataViewObjectPropertyIdentifier>{ objectName: 'legend', propertyName: 'labelColor' },
         },
+        // MAQCode
+        show: { objectName: 'GMODonutTitle', propertyName: 'show' },
+        titleText: { objectName: 'GMODonutTitle', propertyName: 'titleText' },
+        titleFill: { objectName: 'GMODonutTitle', propertyName: 'fill1' },
+        titleBackgroundColor: { objectName: 'GMODonutTitle', propertyName: 'backgroundColor' },
+        titleFontSize: { objectName: 'GMODonutTitle', propertyName: 'fontSize' },
+        tooltipText: { objectName: 'GMODonutTitle', propertyName: 'tooltipText' },
+
     };
     export class DonutChartInteractiveLegend {
 
@@ -808,10 +814,14 @@ module powerbi.visuals {
     }
 
     export class DonutChartGMO implements IVisual {
-		/**
-		  * Informs the System what it can do
-		  * Fields, Formatting options, data reduction & QnA hints
-		  */
+        /**
+          * Informs the System what it can do
+          * Fields, Formatting options, data reduction & QnA hints
+          */
+        // MAQCode
+        private root: D3.Selection;
+        private dataView: DataView;
+        private titleSize: number = 12;
         private static ClassName = 'donutChart';
         private static InteractiveLegendClassName = 'donutLegend';
         private static InteractiveLegendArrowClassName = 'donutLegendArrow';
@@ -989,6 +999,43 @@ module powerbi.visuals {
                         },
                     },
                 },
+                // MAQCode
+                GMODonutTitle: {
+                    displayName: 'Donut Title',
+                    properties: {
+                        show: {
+                            displayName: data.createDisplayNameGetter('Visual_Show'),
+                            type: { bool: true }
+                        },
+                        titleText: {
+                            displayName: 'Title Text',
+                            description: 'The name of the visual',
+                            type: { text: true }
+                        },
+                        fill1: {
+                            displayName: 'Font color',
+                            description: 'Font color for the GMO Donut title',
+                            type: { fill: { solid: { color: true } } }
+                        },
+                        fontSize: {
+                            displayName: 'Text Size',
+                            description: 'Font size for the GMO Donut title',
+                            type: { formatting: { fontSize: true } }
+                        },
+                        backgroundColor: {
+                            displayName: 'Background color',
+                            description: 'Background color for the GMO Donut title',
+                            type: { fill: { solid: { color: true } } }
+                        },
+                        tooltipText: {
+                            displayName: 'Tooltip Text',
+                            description: 'Tooltip text for the GMO Donut title',
+                            type: { text: true }
+                        }
+                    }
+                },
+
+                //vend
             },
             dataViewMappings: [{
                 conditions: [
@@ -1010,6 +1057,8 @@ module powerbi.visuals {
                     rowCount: { preferred: { min: 2 }, supported: { min: 1 } }
                 },
             }],
+            // MAQCode
+            suppressDefaultTitle: true,
             sorting: {
                 default: {},
             },
@@ -1064,6 +1113,8 @@ module powerbi.visuals {
         }
 
         public init(options: VisualInitOptions) {
+            // MAQCode
+            this.root = d3.select(options.element.get(0));
             this.options = options;
             var element = options.element;
             // Ensure viewport is empty on init
@@ -1093,6 +1144,14 @@ module powerbi.visuals {
             this.radius = 0;
             this.isInteractive = options.interactivity && options.interactivity.isInteractiveLegend;
             var donutChartSettings = this.settings;
+            // MAQCode
+            d3.select(element.get(0))
+                .append('div')
+                .classed('Title_Div_Text', true)
+                .style({ 'width': '100%', 'display': 'inline-block' })
+                // .style({'width':'100%', 'display':'inline-block', 'position':'absolute'})
+                .html('<div class = "GMODonutTitleDiv" style = "max-width: 80%; display: inline-block">' + '</div>'
+                + '<span class = "GMODonutTitleIcon" style = "width: 2%; display: inline-block; cursor: pointer; position: absolute">&nbsp(&#063;)</span>');
 
             if (this.behavior) {
                 this.interactivityService = createInteractivityService(options.host);
@@ -1125,7 +1184,7 @@ module powerbi.visuals {
 
             this.svg = d3.select(element.get(0))
                 .append('svg')
-                .style('position', 'absolute')
+                .style('position', 'relative')
                 .classed(DonutChartGMO.ClassName, true);
 
             if (this.behavior)
@@ -1147,6 +1206,60 @@ module powerbi.visuals {
         }
 
         public update(options: VisualUpdateOptions): void {
+            // MAQCode 
+            var GMODonutTitleOnOffStatus: IDataLabelSettings = false
+                , titleText: IDataLabelSettings = ""
+                , tooltiptext: IDataLabelSettings = ""
+                , titlefontsize: number
+                , titleHeight: number
+                , titlecolor: IDataLabelSettings
+                , titlebgcolor: IDataLabelSettings;
+            if (this.getShowTitle(this.dataView)) {
+                GMODonutTitleOnOffStatus = true;
+            }
+            if (this.getTitleText(this.dataView)) {
+                titleText = this.getTitleText(this.dataView);
+            }
+            if (this.getTooltipText(this.dataView)) {
+                tooltiptext = this.getTooltipText(this.dataView);
+            }
+            titlefontsize = this.getTitleSize(this.dataView);
+            if (!titlefontsize) titlefontsize = 12;
+            this.titleSize = titlefontsize;
+            if (GMODonutTitleOnOffStatus && (titleText || tooltiptext)) {
+                titleHeight = titlefontsize;
+            }
+            else { titleHeight = 0; }
+
+            if (this.getTitleFill(this.dataView)) {
+                titlecolor = this.getTitleFill(this.dataView).solid.color;
+            }
+            if (this.getTitleBgcolor(this.dataView)) {
+                titlebgcolor = this.getTitleBgcolor(this.dataView).solid.color;
+                if ("none" === titlebgcolor) {
+                    titlebgcolor = "#ffffff";
+                }
+            }
+            if (!GMODonutTitleOnOffStatus) {
+                this.root.select('.Title_Div_Text').style({ 'display': 'none' });
+            }
+            else {
+                this.root.select('.Title_Div_Text').style({ 'display': 'inline-block', 'background-color': titlebgcolor, 'font-size': titlefontsize + 'pt', 'color': titlecolor });
+            }
+
+            this.root.select('.GMODonutTitleDiv')
+                .text(titleText);
+
+            if ("" === tooltiptext) {
+                this.root.select('.GMODonutTitleIcon').style({ 'display': 'none' });
+            }
+
+            else {
+                this.root.select('.GMODonutTitleIcon')
+                    .style({ 'display': 'inline-block' })
+                    .attr('title', tooltiptext);
+            }
+
             debug.assertValue(options, 'options');
             // Viewport resizing
             var viewport = options.viewport;
@@ -1187,6 +1300,8 @@ module powerbi.visuals {
 
             this.initViewportDependantProperties();
             this.initDonutProperties();
+            // MAQCode
+            // this.root.select('.legend').style({ 'position': 'relative' });
             this.updateInternal(this.data, options.suppressAnimations);
             this.hasSetData = true;
 
@@ -1249,8 +1364,149 @@ module powerbi.visuals {
                     };
                     dataLabelUtils.enumerateDataLabels(labelSettingOptions);
                     break;
+                // MAQCode
+                case 'GMODonutTitle':
+                    enumeration.pushInstance({
+                        objectName: 'GMODonutTitle',
+                        displayName: 'Donut title',
+                        selector: null,
+                        properties: {
+                            show: this.getShowTitle(this.dataViews[0]),
+                            titleText: this.getTitleText(this.dataViews[0]),
+                            tooltipText: this.getTooltipText(this.dataViews[0]),
+                            fill1: this.getTitleFill(this.dataViews[0]),
+                            backgroundColor: this.getTitleBgcolor(this.dataViews[0]),
+                            fontSize: this.getTitleSize(this.dataViews[0]),
+                        }
+                    });
+                    break;
             }
             return enumeration.complete();
+        }
+        // MAQCode
+        // This function returns the font colot selected for the title in the format window
+        private getTitleFill(dataView: DataView): Fill {
+            if (dataView && dataView.metadata && dataView.metadata.objects) {
+                if (dataView.metadata.objects && dataView.metadata.objects.hasOwnProperty('GMODonutTitle')) {
+                    var FTitle = dataView.metadata.objects['GMODonutTitle'];
+                    if (FTitle && FTitle.hasOwnProperty('fill1')) {
+                        return <Fill>FTitle['fill1'];
+                    }
+                } else {
+                    return dataView && dataView.metadata && DataViewObjects.getValue(dataView.metadata.objects, DonutChartGMOProperties.titleFill, { solid: { color: '#333333' } });
+                }
+            }
+            return dataView && dataView.metadata && DataViewObjects.getValue(dataView.metadata.objects, DonutChartGMOProperties.titleFill, { solid: { color: '#333333' } });
+        }
+        // This function returns the background color selected for the title in the format window
+        private getTitleBgcolor(dataView: DataView): Fill {
+            if (dataView && dataView.metadata && dataView.metadata.objects) {
+                if (dataView.metadata.objects && dataView.metadata.objects.hasOwnProperty('GMODonutTitle')) {
+                    var FTitle = dataView.metadata.objects['GMODonutTitle'];
+                    if (FTitle && FTitle.hasOwnProperty('backgroundColor')) {
+                        return <Fill>FTitle['backgroundColor'];
+                    }
+                } else {
+                    return dataView && dataView.metadata && DataViewObjects.getValue(dataView.metadata.objects, DonutChartGMOProperties.titleBackgroundColor, { solid: { color: 'none' } });
+                }
+            }
+            return dataView && dataView.metadata && DataViewObjects.getValue(dataView.metadata.objects, DonutChartGMOProperties.titleBackgroundColor, { solid: { color: 'none' } });
+        }
+        /* This function returns the title text given for the title in the format window */
+        private getTitleText(dataView: DataView): IDataLabelSettings {
+            var returnTitleValues: string, returnTitleLegend: string, returnTitleDetails: string, returnTitle: string, tempTitle: string;
+            returnTitleValues = "";
+            returnTitleLegend = "";
+            returnTitleDetails = "";
+            returnTitle = "";
+            if (dataView && dataView.metadata && dataView.metadata.objects) {
+                if (dataView.metadata.objects.hasOwnProperty('GMODonutTitle')) {
+                    var titletext = dataView.metadata.objects['GMODonutTitle'];
+                    if (titletext && titletext.hasOwnProperty('titleText')) {
+                        return <IDataLabelSettings>titletext['titleText'];
+                    }
+                }
+            }
+            if (dataView && dataView.categorical && dataView.categorical.values) {
+                returnTitleValues = dataView.categorical.values[0].source.displayName;
+                for (var iCount = 1; iCount < dataView.categorical.values.length; iCount++) {
+                    if (iCount + 1 !== dataView.categorical.values.length) {
+                        returnTitleValues = returnTitleValues + ", ";
+                    }
+                    else {
+                        returnTitleValues = returnTitleValues + " and ";
+                    }
+                    returnTitleValues = returnTitleValues + dataView.categorical.values[iCount].source.displayName;
+                }
+            }
+            if (dataView && dataView.categorical && dataView.categorical.categories) {
+                returnTitleLegend = dataView.categorical.categories[0].source.displayName;
+            }
+
+            if (dataView && dataView.categorical && dataView.categorical.values && dataView.categorical.values.source) {
+                returnTitleDetails = dataView.categorical.values.source.displayName;
+            }
+            if ("" !== returnTitleValues) {
+                tempTitle = " by ";
+            }
+            if ("" !== returnTitleLegend && "" !== returnTitleDetails) {
+                tempTitle = tempTitle + returnTitleLegend + " and " + returnTitleDetails;
+            }
+            else if ("" === returnTitleLegend && "" === returnTitleDetails) {
+                tempTitle = "";
+            }
+            else {
+                // means one in empty and other is non empty
+                tempTitle = tempTitle + returnTitleLegend + returnTitleDetails;
+            }
+
+            returnTitle = returnTitleValues + tempTitle;
+            return <IDataLabelSettings>returnTitle;
+        }
+
+        // This function returns the tool tip text given for the tooltip in the format window
+        private getTooltipText(dataView: DataView): IDataLabelSettings {
+            if (dataView && dataView.metadata && dataView.metadata.objects) {
+                if (dataView.metadata.objects && dataView.metadata.objects.hasOwnProperty('GMODonutTitle')) {
+                    var tooltiptext = dataView.metadata.objects['GMODonutTitle'];
+                    if (tooltiptext && tooltiptext.hasOwnProperty('tooltipText')) {
+                        return <IDataLabelSettings>tooltiptext['tooltipText'];
+                    }
+                } else {
+                    return <IDataLabelSettings>'Your tooltip text goes here';
+                }
+            }
+            return <IDataLabelSettings>'Your tooltip text goes here';
+        }
+
+        // This function returns on/off status of the funnel title properties
+        private getShowTitle(dataView: DataView): IDataLabelSettings {
+            if (dataView && dataView.metadata && dataView.metadata.objects) {
+                if (dataView.metadata.objects && dataView.metadata.objects.hasOwnProperty('GMODonutTitle')) {
+                    var showTitle = dataView.metadata.objects['GMODonutTitle'];
+                    if (dataView.metadata.objects && showTitle.hasOwnProperty('show')) {
+                        return <IDataLabelSettings>showTitle['show'];
+                    }
+                } else {
+                    return <IDataLabelSettings>true;
+                }
+            }
+            return <IDataLabelSettings>true;
+        }
+
+        // This function returns the funnel title font size selected for the title in the format window
+        private getTitleSize(dataView: DataView) {
+            if (dataView && dataView.metadata && dataView.metadata.objects) {
+                if (dataView.metadata.objects && dataView.metadata.objects.hasOwnProperty('GMODonutTitle')) {
+                    var FTitle = dataView.metadata.objects['GMODonutTitle'];
+                    if (FTitle && FTitle.hasOwnProperty('fontSize')) {
+                        return FTitle['fontSize'];
+                    }
+                } else {
+                    return 12;
+                }
+            }
+            return 12;
         }
 
         private enumerateDataPoints(enumeration: ObjectEnumerationBuilder): void {
@@ -1295,7 +1551,7 @@ module powerbi.visuals {
 
             var legendObjectProperties: DataViewObjects = { legend: data.legendObjectProperties };
 
-            //var show = DataViewObjects.getValue(legendObjectProperties, donutChartProps.legend.show, this.legend.isVisible());
+            var show = DataViewObjects.getValue(legendObjectProperties, donutChartProps.legend.show, this.legend.isVisible());
             var showTitle = DataViewObjects.getValue(legendObjectProperties, donutChartProps.legend.showTitle, true);
             var titvarext = DataViewObjects.getValue(legendObjectProperties, donutChartProps.legend.titleText, this.data.legendData.title);
             var labelColor = DataViewObject.getValue(legendObjectProperties, legendProps.labelColor, this.data.legendData.labelColor);
@@ -1305,7 +1561,7 @@ module powerbi.visuals {
                 selector: null,
                 objectName: 'legend',
                 properties: {
-                    show: true,
+                    show: show,
                     position: LegendPosition[this.legend.getOrientation()],
                     showTitle: showTitle,
                     titvarext: titvarext,
@@ -1364,10 +1620,10 @@ module powerbi.visuals {
         }
 
         private initViewportDependantProperties(duration: number = 0) {
-            this.currentViewport.height = this.parentViewport.height;
+            // MAQCode
+            this.currentViewport.height = this.parentViewport.height - this.titleSize - 40;
             this.currentViewport.width = this.parentViewport.width;
             var viewport = this.currentViewport;
-
             if (this.isInteractive) {
                 viewport.height -= DonutChart.InteractiveLegendContainerHeight; // leave space for the legend
             }
@@ -1449,6 +1705,9 @@ module powerbi.visuals {
 
         private updateInternal(data: DonutDataGMO, suppressAnimations: boolean, duration: number = 0) {
             var viewport = this.currentViewport;
+            if (this.tooltipsEnabled === void 0) {
+                this.tooltipsEnabled = true;
+            }
             duration = duration || AnimatorCommon.GetAnimationDuration(this.animator, suppressAnimations);
             if (this.animator) {
                 var layout = DonutChartGMO.getLayout(this.radius, this.sliceWidthRatio, viewport, data.dataLabelsSettings);
@@ -1482,7 +1741,7 @@ module powerbi.visuals {
                     shapes = DonutChart.drawDefaultShapes(this.svg, data, layout, this.colors, this.radius, this.interactivityService && this.interactivityService.hasSelection(), this.sliceWidthRatio, this.data.defaultDataPointColor);
                     highlightShapes = DonutChart.drawDefaultHighlightShapes(this.svg, data, layout, this.colors, this.radius, this.sliceWidthRatio);
                     NewDataLabelUtils.drawDefaultLabels(this.labelGraphicsContext, labels, false, true);
-                    this.drawLabelLeaderLines(this.labelGraphicsContext, labels);
+                    NewDataLabelUtils.drawLabelLeaderLines(this.labelGraphicsContext, labels);
                 }
 
                 this.assignInteractions(shapes, highlightShapes, data);
@@ -1498,30 +1757,7 @@ module powerbi.visuals {
 
             SVGUtil.flushAllD3TransitionsIfNeeded(this.options);
         }
-        private drawLabelLeaderLines(context: D3.Selection, filteredDataLabels: Label[], key?: (data: any, index?: number) => any, leaderLineColor?: string) {
-            if (context.select("linesGraphicsContext").empty())
-                context.append('g').classed("linesGraphicsContext", true);
 
-            var lines = context.select("linesGraphicsContext").selectAll('polyline')
-                .data(filteredDataLabels, key);
-
-            lines.enter()
-                .append('polyline')
-                .classed("lines", true);
-
-            lines
-                .attr('points', (d: Label) => {
-                    return d.leaderLinePoints;
-                }).
-                style({
-                    'stroke': (d: Label) => leaderLineColor ? leaderLineColor : d.fill,
-                    'stroke-width': DonutLabelUtils.LineStrokeWidth,
-                });
-
-            lines
-                .exit()
-                .remove();
-        }
         private createLabels(): Label[] {
             var labelLayout = new DonutLabelLayout({
                 maximumOffset: NewDataLabelUtils.maxLabelOffset,
@@ -1568,7 +1804,7 @@ module powerbi.visuals {
             var labelSettings = this.data.dataLabelsSettings;
             var measureFormatter = measureFormatterCache.getOrCreate(d.data.labelFormatString, labelSettings, alternativeScale);
 
-            var position = labelX < 0 ? 4 : 8; //NewPointLabelPosition.Left : NewPointLabelPosition.Right;
+            var position = labelX < 0 ? 4 : 8;//Left and right values from NewLabelDataPosition
             var pointPosition: LabelParentPoint = {
                 point: {
                     x: labelX,
@@ -1613,7 +1849,6 @@ module powerbi.visuals {
 
             var leaderLinePoints = DonutLabelUtils.getLabelLeaderLineForDonutChart(d, this.donutProperties, pointPosition.point);
             var leaderLinesSize: ISize[] = DonutLabelUtils.getLabelLeaderLinesSizeForDonutChart(leaderLinePoints);
-
             return {
                 isPreferred: true,
                 text: "",
@@ -1623,7 +1858,7 @@ module powerbi.visuals {
                 identity: d.data.identity,
                 parentShape: pointPosition,
                 insideFill: NewDataLabelUtils.defaultInsideLabelColor,
-                parentType: 0, //LabelDataPointParentType.Point,
+                parentType: 0,//Point Tag
                 alternativeScale: alternativeScale,
                 donutArcDescriptor: d,
                 angle: (d.startAngle + d.endAngle) / 2 - (Math.PI / 2),
@@ -1634,6 +1869,7 @@ module powerbi.visuals {
                 leaderLinePoints: leaderLinePoints,
                 linesSize: leaderLinesSize,
             };
+
         }
 
         private renderLegend(): void {
@@ -1712,8 +1948,8 @@ module powerbi.visuals {
                     clearCatcher: this.clearCatcher,
                     slices: slices,
                     highlightSlices: highlightSlices,
-                    //allowDrilldown: this.allowDrilldown,
-                    //visual: this,
+                    allowDrilldown: this.allowDrilldown,
+                    visual: this,
                     hasHighlights: data.hasHighlights,
                     svg: this.svg
                 };
@@ -1941,7 +2177,7 @@ module powerbi.visuals {
                     labels = this.createLabels();
                 }
                 NewDataLabelUtils.drawDefaultLabels(this.labelGraphicsContext, labels, false, true);
-                this.drawLabelLeaderLines(this.labelGraphicsContext, labels);
+                NewDataLabelUtils.drawLabelLeaderLines(this.labelGraphicsContext, labels);
             }
             var highlightSlices = undefined;
             if (data.hasHighlights) {
@@ -2062,7 +2298,7 @@ module powerbi.visuals {
 
             return shapes;
         }
-        
+
         /**
             Set true to the last data point when all slices have the same color
         */
