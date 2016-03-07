@@ -1,5 +1,6 @@
 ﻿
 /// <reference path="../../_references.ts"/>
+
 module powerbi.visuals {
     import ClassAndSelector = jsCommon.CssConstants.ClassAndSelector;
     import createClassAndSelector = jsCommon.CssConstants.createClassAndSelector;
@@ -36,6 +37,7 @@ module powerbi.visuals {
         visibleGeometryCulled?: boolean;
         defaultDataPointColor?: string;
         showAllDataPoints?: boolean;
+        totalSum?: number;
     }
     export interface InteractivityState {
         interactiveLegend: DonutChartInteractiveLegend;
@@ -67,6 +69,7 @@ module powerbi.visuals {
             showTitle: <DataViewObjectPropertyIdentifier>{ objectName: 'legend', propertyName: 'showTitle' },
             titleText: <DataViewObjectPropertyIdentifier>{ objectName: 'legend', propertyName: 'titleText' },
             labelColor: <DataViewObjectPropertyIdentifier>{ objectName: 'legend', propertyName: 'labelColor' },
+            detailedLegend: <DataViewObjectPropertyIdentifier>{ objectName: 'legend', propertyName: 'detailedLegend' },
         },
         // MAQCode
         show: { objectName: 'GMODonutTitle', propertyName: 'show' },
@@ -77,6 +80,12 @@ module powerbi.visuals {
         tooltipText: { objectName: 'GMODonutTitle', propertyName: 'tooltipText' },
 
     };
+    export var detailedLegendType: IEnumType = createEnumType([
+        { value: 'None', displayName: 'None' },
+        { value: 'Primary Measure', displayName: 'Primary Measure' },
+        { value: 'Percentage', displayName: 'Percentage' },
+        { value: 'Both', displayName: 'Both' }
+    ]);
     export class DonutChartInteractiveLegend {
 
         private static LegendContainerClassName = 'legend-container';
@@ -490,6 +499,10 @@ module powerbi.visuals {
                 return normalized;
             }
 
+            public fetchTotal(): number {
+                return this.total;
+            }
+
             public convert(): void {
                 var convertedData: ConvertedDataPoint[];
                 if (this.total !== 0) {
@@ -628,12 +641,6 @@ module powerbi.visuals {
                     var legendIdentity = SelectionId.createWithId(this.categoryIdentities[categoryIndex]);
                     var color = this.colorHelper.getColorForSeriesValue(thisCategoryObjects, this.categoryColumnRef, categoryValue);
                     var categoryLabel = valueFormatter.format(categoryValue, this.categoryFormatString);
-                    var sumOfPrimaryValues: number = 0;
-                    var targetvalueIndex = 0;
-                    var measureValObject = {
-                        measure: 0,
-                        value: 0
-                    };
 
                     // Series are either measures in the multi-measure case, or the single series otherwise
                     for (var seriesIndex = 0; seriesIndex < this.seriesCount; seriesIndex++) {
@@ -661,12 +668,9 @@ module powerbi.visuals {
                             .withMeasure(measure)
                             .createSelectionId();
 
-                        if (dataViewCategorical.values[seriesIndex].source.roles && dataViewCategorical.values[seriesIndex].source.roles.hasOwnProperty('Y')) {
-                            targetvalueIndex = seriesIndex;
-                        }
                         var dataPoint: ConvertedDataPoint = {
                             identity: identity,
-                            measureFormat: valueFormatter.getFormatString(dataViewCategorical.values[targetvalueIndex].source, formatStringProp, true),
+                            measureFormat: valueFormatter.getFormatString(seriesData.source, formatStringProp, true),
                             measureValue: <MeasureAndValue>{
                                 measure: nonHighlight,
                                 value: Math.abs(nonHighlight),
@@ -681,15 +685,10 @@ module powerbi.visuals {
                             color: color,
                             seriesIndex: seriesIndex
                         };
-                        sumOfPrimaryValues += dataPoint.measureValue.value;
                         dataPoints.push(dataPoint);
                     }
-                    measureValObject.measure = 0;
-                    measureValObject.value = sumOfPrimaryValues;
-                    var normalizedNonHighlight = DonutChartConverter.normalizedMeasureAndValue(measureValObject);
-                    var percentage = (this.total > 0) ? normalizedNonHighlight.value / this.total : 0.0;
                     this.legendDataPoints.push({
-                        label: categoryLabel + ' ' + visuals.valueFormatter.format(sumOfPrimaryValues, dataPoint.measureFormat) + ' ' + visuals.valueFormatter.format(percentage, '0.00 %;-0.00 %;0.00 %'),
+                        label: categoryLabel,
                         color: color,
                         icon: LegendIcon.Box,
                         identity: legendIdentity,
@@ -735,10 +734,9 @@ module powerbi.visuals {
                         color: color
                     };
                     dataPoints.push(dataPoint);
-                    var normalizedNonHighlight = DonutChartConverter.normalizedMeasureAndValue(dataPoint.measureValue);
-                    var percentage = (this.total > 0) ? normalizedNonHighlight.value / this.total : 0.0;
+
                     this.legendDataPoints.push({
-                        label: dataPoint.label + ' ' + visuals.valueFormatter.format(dataPoint.measureValue.value, dataPoint.measureFormat) + ' ' + visuals.valueFormatter.format(percentage, '0.00 %;-0.00 %;0.00 %'),
+                        label: dataPoint.label,
                         color: dataPoint.color,
                         icon: LegendIcon.Box,
                         identity: dataPoint.identity,
@@ -839,6 +837,12 @@ module powerbi.visuals {
         private dataView: DataView;
         private titleSize: number = 12;
         private updateCount: number = 0;
+        public totalSum: number = 0;
+        public detailLabelsColor: any;
+        public detailLabelsDisplayUnits: any;
+        public detailLabelsDecimalPlaces: any;
+        public detailLabelsTextSize: any;
+        public detailLabelsShowSummary: any;
         private static ClassName = 'donutChart';
         private static InteractiveLegendClassName = 'donutLegend';
         private static InteractiveLegendArrowClassName = 'donutLegendArrow';
@@ -969,7 +973,13 @@ module powerbi.visuals {
                         fontSize: {
                             displayName: data.createDisplayNameGetter('Visual_TextSize'),
                             type: { formatting: { fontSize: true } }
-                        }
+                        },
+                        detailedLegend: {
+                            displayName: 'Legend Style',
+                            description: 'Displaying the legend details based on selection',
+                            type: { enumeration: detailedLegendType },
+                            suppressFormatPainterCopy: true
+                        },
                     }
                 },
                 dataPoint: {
@@ -1022,6 +1032,11 @@ module powerbi.visuals {
                         labelStyle: {
                             displayName: data.createDisplayNameGetter('Visual_LabelStyle'),
                             type: { enumeration: labelStyle.type }
+                        },
+                        // MAQCode
+                        showSummary: {
+                            displayName: 'Show Summary',
+                            type: { bool: true }
                         },
                     },
                 },
@@ -1113,6 +1128,7 @@ module powerbi.visuals {
         public static converter(dataView: DataView, colors: IDataColorPalette, defaultDataPointColor?: string, viewport?: IViewport, disableGeometricCulling?: boolean, interactivityService?: IInteractivityService): DonutDataGMO {
             var converter = new DonutChartConversion.DonutChartConverter(dataView, colors, defaultDataPointColor);
             converter.convert();
+            var totalSum = converter.fetchTotal();
             var d3PieLayout = d3.layout.pie()
                 .sort(null)
                 .value((d: DonutDataPoint) => {
@@ -1135,6 +1151,7 @@ module powerbi.visuals {
                 legendObjectProperties: converter.legendObjectProperties,
                 maxValue: converter.maxValue,
                 visibleGeometryCulled: converter.dataPoints.length !== culledDataPoints.length,
+                totalSum: totalSum,
             };
         }
 
@@ -1229,11 +1246,37 @@ module powerbi.visuals {
                 .value((d: DonutDataPoint) => {
                     return d.percentage;
                 });
+            d3.select(element.get(0))
+                .append('div')
+                .classed('errorMessage', true)
+                .text("Please select any Primary Measure")
+                .style({ 'display': 'none' });
         }
 
         public update(options: VisualUpdateOptions): void {
             // MAQCode 
             this.updateCount++;
+            this.dataView = options.dataViews[0];
+            var isPrimaryMeasureSelected = false,
+                legendProperties;
+            this.root.select('.legend').style({ 'display': 'inherit' });
+            if (this.dataView.categorical && this.dataView.categorical.values) {
+                for (var iCount = 0; iCount < this.dataView.categorical.values.length; iCount++) {
+                    if (this.dataView.categorical.values[iCount].source
+                        && this.dataView.categorical.values[iCount].source.roles
+                        && this.dataView.categorical.values[iCount].source.roles.hasOwnProperty('Y')) {
+                        isPrimaryMeasureSelected = true;
+                        break;
+                    }
+                }
+            }
+            // Viewport resizing
+            var viewport = options.viewport;
+            this.parentViewport = viewport;
+            // this.root.selectAll('.errorMessage').remove();
+            // this.root.select('.legend').style({ 'display': '' });
+            this.root.select('.errorMessage').style({ 'display': 'none' });
+            this.root.select('.donutChart').style({ 'display': '' });
             var GMODonutTitleOnOffStatus: IDataLabelSettings = false
                 , titleText: IDataLabelSettings = ""
                 , tooltiptext: IDataLabelSettings = ""
@@ -1241,8 +1284,7 @@ module powerbi.visuals {
                 , titleHeight: number
                 , titlecolor: IDataLabelSettings
                 , titlebgcolor: IDataLabelSettings;
-            this.dataView = options.dataViews[0];
-
+                
             if (this.getShowTitle(this.dataView)) {
                 GMODonutTitleOnOffStatus = true;
             }
@@ -1288,10 +1330,6 @@ module powerbi.visuals {
             }
 
             debug.assertValue(options, 'options');
-            // Viewport resizing
-            var viewport = options.viewport;
-            this.parentViewport = viewport;
-
             var dataViews = this.dataViews = options.dataViews;
             if (dataViews && dataViews.length > 0 && dataViews[0].categorical) {
                 var dataViewMetadata = dataViews[0].metadata;
@@ -1309,8 +1347,23 @@ module powerbi.visuals {
                 this.data = DonutChartGMO.converter(dataViews[0], this.colors, defaultDataPointColor, this.currentViewport, this.disableGeometricCulling, this.interactivityService);
                 this.data.showAllDataPoints = showAllDataPoints;
                 this.data.defaultDataPointColor = defaultDataPointColor;
+                for (var i = 0; i < this.data.dataPoints.length; i++) {
+                    if (this.getDetailedLegend(this.dataView) === 'None') {
+                        this.data.legendData.dataPoints[i].label = this.data.dataPoints[i].data.label;
+
+                    } else if (this.getDetailedLegend(this.dataView) === 'Primary Measure') {
+                        this.data.legendData.dataPoints[i].label = this.data.dataPoints[i].data.label + " " + visuals.valueFormatter.format(this.data.dataPoints[i].data.measure, this.data.dataPoints[i].data.measureFormat);
+
+                    } else if (this.getDetailedLegend(this.dataView) === 'Percentage') {
+                        this.data.legendData.dataPoints[i].label = this.data.dataPoints[i].data.label + " " + visuals.valueFormatter.format(this.data.dataPoints[i].data.percentage, '0.00 %;-0.00 %;0.00 %');
+                    } else {
+                        this.data.legendData.dataPoints[i].label = this.data.dataPoints[i].data.label + " " + visuals.valueFormatter.format(this.data.dataPoints[i].data.measure, this.data.dataPoints[i].data.measureFormat) + " " + visuals.valueFormatter.format(this.data.dataPoints[i].data.percentage, '0.00 %;-0.00 %;0.00 %');
+                    }
+                }
+
                 if (!(this.options.interactivity && this.options.interactivity.isInteractiveLegend))
                     this.renderLegend();
+                legendProperties = this.data.legendObjectProperties;
             }
 
             else {
@@ -1345,6 +1398,65 @@ module powerbi.visuals {
 
                 this.hostService.setWarnings(warnings);
             }
+
+            // Add component for displaying Error Message                
+            if (!isPrimaryMeasureSelected) {
+
+                var legendWidth = this.root.select('.legend').attr('width')
+                    , legendStyle = this.root.select('.legend').attr('style')
+                    , legendTop
+                    , legendLeft
+                    , arrStyleTop = legendStyle.split('top:')
+                    , arrStyleLeft = legendStyle.split('left:');
+                if (2 === arrStyleTop.length) {
+                    legendTop = arrStyleTop[1].split('px')[0];
+                }
+                else {
+                    legendTop = 0;
+                }
+                if (2 === arrStyleLeft.length) {
+                    legendLeft = arrStyleLeft[1].split('px')[0];
+                }
+                else {
+                    legendLeft = 0;
+                }
+
+                this.root.select('.Title_Div_Text').style({ 'display': 'none' });
+                this.root.select('.donutChart').style({ 'display': 'none' });
+                this.root.select('.legend').style({ 'display': 'none' });
+                this.root.select('.SummarizedDiv').style({ 'display': 'none' });
+                this.root.select('.errorMessage').style({
+                    'display': 'block', 'text-align': 'center'
+                    , 'top': this.parentViewport.height / 2 + 10 + 'px', 'position': 'relative'
+                    , 'width': '100%'
+                });
+                if (!!legendProperties && legendProperties['show']) {
+                    var legendPosition = legendProperties.position;
+                    switch (legendPosition) {
+                        case 'Bottom':
+                            this.root.select('.errorMessage').style({ 'padding': 0 + 'px', 'top': parseInt(legendTop, 10) / 2 + 'px', 'width': '100%' });
+                            break;
+                        case 'Left':
+                            this.root.select('.errorMessage').style({ 'padding': '0px 0px 0px ' + legendWidth + 'px', 'width': this.parentViewport.width - parseInt(legendWidth, 10) + 'px' });
+                            break;
+                        case 'Right':
+                            this.root.select('.errorMessage').style({ 'padding': '0px ' + legendWidth + 'px' + ' 0px 0px', 'width': this.parentViewport.width - parseInt(legendWidth, 10) + 'px' });
+                            break;
+                        case 'BottomCenter':
+                            this.root.select('.errorMessage').style({ 'padding': 0 + 'px', 'top': parseInt(legendTop, 10) / 2 + 'px', 'width': '100%' });
+                            break;
+                        case 'LeftCenter':
+                            this.root.select('.errorMessage').style({ 'padding': '0px 0px 0px ' + legendWidth + 'px', 'width': this.parentViewport.width - parseInt(legendWidth, 10) + 'px' });
+                            break;
+                        case 'RightCenter':
+                            this.root.select('.errorMessage').style({ 'padding': '0px ' + legendWidth + 'px' + ' 0px 0px', 'width': this.parentViewport.width - parseInt(legendWidth, 10) + 'px' });
+                            break;
+                        default:
+                            this.root.select('.errorMessage').style({ 'padding': 0 + 'px', 'width': '100%' });
+                            break;
+                    }
+                }
+            }
         }
 
         public onDataChanged(options: VisualDataChangedOptions): void {
@@ -1367,7 +1479,6 @@ module powerbi.visuals {
 
         public enumerateObjectInstances(options: EnumerateVisualObjectInstancesOptions): VisualObjectInstanceEnumeration {
             var enumeration = new ObjectEnumerationBuilder();
-
             var dataLabelsSettings = this.data && this.data.dataLabelsSettings
                 ? this.data.dataLabelsSettings
                 : dataLabelUtils.getDefaultDonutLabelSettings();
@@ -1381,6 +1492,7 @@ module powerbi.visuals {
                     break;
                 case 'labels':
                     var labelSettingOptions: VisualDataLabelsSettingsOptions = {
+                        // objectName: 'showSummary',
                         enumeration: enumeration,
                         dataLabelsSettings: dataLabelsSettings,
                         show: true,
@@ -1388,8 +1500,10 @@ module powerbi.visuals {
                         precision: true,
                         fontSize: true,
                         labelStyle: true,
+                        showSummary: this.getShowSummary(this.dataViews[0]),
                     };
-                    dataLabelUtils.enumerateDataLabels(labelSettingOptions);
+                    // MAQCode
+                    this.enumerateDataLabels(labelSettingOptions);
                     break;
                 // MAQCode
                 case 'GMODonutTitle':
@@ -1410,6 +1524,64 @@ module powerbi.visuals {
             }
             return enumeration.complete();
         }
+
+        // MAQCode
+        private enumerateDataLabels(options: VisualDataLabelsSettingsOptions): ObjectEnumerationBuilder {
+            this.root.select('.Title_Div_Text');
+            debug.assertValue(options, 'options');
+            debug.assertValue(options.enumeration, 'enumeration');
+
+            if (!options.dataLabelsSettings)
+                return;
+
+            var instance: VisualObjectInstance = {
+                objectName: 'labels',
+                selector: options.selector,
+                properties: {},
+            };
+            if (options.show && options.selector) {
+                instance.properties['showSeries'] = options.dataLabelsSettings.show;
+            }
+            else if (options.show) {
+                instance.properties['show'] = options.dataLabelsSettings.show;
+            }
+
+            this.detailLabelsColor = instance.properties['color'] = options.dataLabelsSettings.labelColor;
+
+            if (options.displayUnits) {
+                this.detailLabelsDisplayUnits = instance.properties['labelDisplayUnits'] = options.dataLabelsSettings.displayUnits;
+            }
+            if (options.precision) {
+                var precision = options.dataLabelsSettings.precision;
+                this.detailLabelsDecimalPlaces = instance.properties['labelPrecision'] = precision === dataLabelUtils.defaultLabelPrecision ? null : precision;
+            }
+            if (options.position) {
+                instance.properties['labelPosition'] = options.dataLabelsSettings.position;
+                if (options.positionObject) {
+                    debug.assert(!instance.validValues, '!instance.validValues');
+
+                    instance.validValues = { 'labelPosition': options.positionObject };
+                }
+            }
+            if (options.labelStyle)
+                instance.properties['labelStyle'] = options.dataLabelsSettings.labelStyle;
+            if (options.fontSize)
+                this.detailLabelsTextSize = instance.properties['fontSize'] = options.dataLabelsSettings.fontSize;
+            if (options.labelDensity) {
+                var lineChartSettings = <LineChartDataLabelsSettings>options.dataLabelsSettings;
+                if (lineChartSettings)
+                    instance.properties['labelDensity'] = lineChartSettings.labelDensity;
+            }
+            // var a=this.dataView.metadata.objects['Labels'];
+            // MAQCode
+            this.detailLabelsShowSummary = instance.properties['showSummary'] = this.getShowSummary(this.dataViews[0]);
+            //Keep show all as the last property of the instance.
+            if (options.showAll)
+                instance.properties['showAll'] = options.dataLabelsSettings.showLabelPerSeries;
+
+            return options.enumeration.pushInstance(instance);
+        }
+
         // MAQCode
         // This function returns the font colot selected for the title in the format window
         private getTitleFill(dataView: DataView): Fill {
@@ -1522,6 +1694,20 @@ module powerbi.visuals {
             return <IDataLabelSettings>true;
         }
 
+        // This function returns on/off status of the Show Summary properties
+        private getShowSummary(dataView: DataView): IDataLabelSettings {
+            if (dataView && dataView.metadata && dataView.metadata.objects) {
+                if (dataView.metadata.objects && dataView.metadata.objects.hasOwnProperty('labels')) {
+                    var showTitle = dataView.metadata.objects['labels'];
+                    if (dataView.metadata.objects && showTitle.hasOwnProperty('showSummary')) {
+                        return <IDataLabelSettings>showTitle['showSummary'];
+                    }
+                } else {
+                    return <IDataLabelSettings>true;
+                }
+            }
+            return <IDataLabelSettings>true;
+        }
         // This function returns the funnel title font size selected for the title in the format window
         private getTitleSize(dataView: DataView) {
             if (dataView && dataView.metadata && dataView.metadata.objects) {
@@ -1594,7 +1780,8 @@ module powerbi.visuals {
                     showTitle: showTitle,
                     titvarext: titvarext,
                     labelColor: labelColor,
-                    fontSize: labelFontSize
+                    fontSize: labelFontSize,
+                    detailedLegend: this.getDetailedLegend(this.dataView),
                 }
             });
         }
@@ -2258,9 +2445,55 @@ module powerbi.visuals {
                     .duration(0)
                     .remove();
             }
+            //tarang
+            d3.select('.SummarizedDiv').remove();
+            if (this.data.legendObjectProperties && this.data.legendObjectProperties['show']) {
+                var x = (this.currentViewport.width / 2) - (innerRadius / Math.SQRT2) + 4;
+                var y = ((this.currentViewport.height / 2) + 26.656) - (innerRadius / Math.SQRT2) + 20; //20 is the Header height
+                var width = (innerRadius * Math.SQRT2);
+                var height = (innerRadius * Math.SQRT2);
+            }
+            else {
+                var x = (this.currentViewport.width / 2) - (innerRadius / Math.SQRT2) + 4;
+                var y = (this.currentViewport.height / 2) - (innerRadius / Math.SQRT2) + 20;
+                var width = (innerRadius * Math.SQRT2);
+                var height = (innerRadius * Math.SQRT2);
+            }
+            console.log("currentViewport.height=" + this.currentViewport.height);
+            //console.log("center = " + this.currentViewport.width / 2 + " , " + this.currentViewport.height / 2);
+            //svg.select('.slices').append('line').attr({ 'x1': '0', 'y1': '0', 'x2': -x, 'y2': -y }).style({'stroke': 'rgb(255,0,0)'});
+            //svg.select('.slices')
+            //    .append('rect')
+            //    .classed('SummarizedRect', true)
+            //    .attr({ 'x': x, 'y': y, 'width': width, 'height': height })
+            //    .style({ 'fill': 'none' });
+            if (this.currentViewport.width > 50 && this.currentViewport.height > 50) {
+                d3.select('.vcBody')
+                    .append('div')
+                    .classed('SummarizedDiv', true)
+                    .style({
+                        'width': width + 'px',
+                        'height': height + 'px',
+                        'top': y + 'px',
+                        'left': x + 'px',
+                        'position': 'fixed',
+                    });
 
+                d3.select('.SummarizedDiv')
+                    .append('p')
+                    .classed('TotalText', true)
+                    .text('Total')
+                    .style({ 'font-size': innerRadius / 4 + 'px', 'overflow': 'hidden', 'text-overflow': 'ellipsis', 'text-align': 'center', 'vertical-align': 'middle', 'margin-bottom': '0' });
+
+                d3.select('.SummarizedDiv')
+                    .append('p')
+                    .classed('TotalValue', true)
+                    .style({ 'font-size': innerRadius / 4 + 'px', 'overflow': 'hidden', 'text-overflow': 'ellipsis', 'text-align': 'center', 'vertical-align': 'middle', 'margin-top': '0' });
+
+                d3.select('.TotalValue')
+                    .html('<div style="width:80%; float:left;text-overflow: ellipsis;overflow: hidden;">' + this.data.totalSum + '</div><span stytle="width=15% float:right;">&#8593;</span>');
+            }
             this.assignInteractions(slice, highlightSlices, data);
-
             if (this.tooltipsEnabled) {
                 TooltipManager.addTooltip(slice, (tooltipEvent: TooltipEvent) => tooltipEvent.data.data.tooltipInfo);
                 if (data.hasHighlights) {
@@ -2429,6 +2662,18 @@ module powerbi.visuals {
             }
 
             return culledDataPoints;
+        }
+        private getDetailedLegend(dataView: DataView) {
+            var property: any = [], displayOption: string = 'None';
+            if (dataView && dataView.metadata && dataView.metadata.objects) {
+                if (dataView.metadata.objects && dataView.metadata.objects.hasOwnProperty('legend')) {
+                    property = dataView.metadata.objects['legend'];
+                    if (property && property.hasOwnProperty('detailedLegend')) {
+                        displayOption = property['detailedLegend'];
+                    }
+                }
+            }
+            return displayOption;
         }
     }
 }
