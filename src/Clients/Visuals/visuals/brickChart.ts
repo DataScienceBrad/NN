@@ -11,7 +11,6 @@
         legendFill: string;
         legendShowAllDataPoints: boolean;
         legendDefaultColor: string;
-        randColor: any[];
     }
 
     export class BrickChart implements IVisual {
@@ -28,11 +27,11 @@
         public zoom;
         public toolTipInfo;
         public myStyles: D3.Selection;
-        public randColor: any[];
+        public randColor: [string];
 
         public static getDefaultData(): BrickChartValues {
             return {
-                categories: {}
+                categories: { 'India': 1, 'B': -2, 'C': 3 }
                 , hasLegend: true
                 , legendTextSize: 11
                 , titleText: "Category"
@@ -56,6 +55,7 @@
             this.initMatrix(options);
             this.initTooltip(options);
             this.updateZoom(options);
+            this.updateStyleColor();
             this.toolTipInfo = [{ displayName: '', value: '' }];
         }
 
@@ -97,36 +97,33 @@
                     svg[0][0].onmousemove = function (e) {
                         var ele = e['srcElement'] || e['target'];
                         self.toolTipInfo[0].displayName = ele["cust_leg_name"];
-                        self.toolTipInfo[0].value = ele["cust_leg_val"] + '';
+                        self.toolTipInfo[0].value = BrickChart.numberWithCommas(ele["cust_leg_val"]);
                         TooltipManager.ToolTipInstance.currentTooltipData = this.toolTipInfo;
                     };
                 }
             }
         }
 
-        public highlightLegend(self, ind): void {
-            var clsRect = 'category-clr' + ind;
-            if (self.groupLegendSelected == false || (self.groupLegendSelected !== false && clsRect !== self.groupLegendSelected)) {
-                this.rootElement.selectAll("svg>rect").classed("highlight", true);
-                this.rootElement.selectAll(".legend").classed("highlight", true);
-                this.rootElement.selectAll("svg>rect." + clsRect).classed("highlight", false);
-                this.rootElement.selectAll(".leg-grp" + ind).classed("highlight", false);
-
-                self.groupLegendSelected = clsRect;
+        public static numberWithCommas(x): string {
+            // var format: string;
+            // var formatter = valueFormatter.create({ format: format, value: 1, allowFormatBeautification: true  });        
+            var numeric = parseInt(x);
+            var decimal = (x + "").split(".")[1];
+            if (decimal) {
+                return numeric.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '.' + decimal;
+            } else {
+                return numeric.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
             }
-            else {
-                self.groupLegendSelected = false;
-                this.rootElement.selectAll("svg>rect").classed("highlight", false);
-                this.rootElement.selectAll(".legend").classed("highlight", false);
-            }
+            //return formatter.format(x);            
         }
         
         // Random colors logic
         public initRandColor(options: VisualInitOptions): void {
-            var MAX_LEGENDS = 20;
+            var MAX_LEGENDS = 80;
             var style = ""
                 , letters = '0123456789ABCDEF'.split(''), color = '#';
-            this.randColor = new Array();
+            this.randColor = [''];
+            this.randColor.pop();
             this.randColor.push('#01B8AA');
             this.randColor.push('#374649');
             this.randColor.push('#FD625E');
@@ -147,37 +144,61 @@
             this.randColor.push('#493c37');
             this.randColor.push('#5efd6e');
             this.randColor.push('#9f0ff2');
-
+            this.randColor.push('#FB8281');
+            this.randColor.push('#F4D25A');
+            this.randColor.push('#7F898A');
+            this.randColor.push('#A4DDEE');
+            this.randColor.push('#FDAB89');
+            this.randColor.push('#B687AC');
+            this.randColor.push('#28738A');
+            this.randColor.push('#A78F8F');
+            this.randColor.push('#168980');
+            this.randColor.push('#B59525');
+            //this.randColor.push('#9f0ff2');                       
+            
             for (var index = 1; index <= MAX_LEGENDS; index++) {
                 color = "#";
-                for (var i = 0; i < 6; i++) {
-                    color += letters[Math.floor(Math.random() * 16)];
+                var bDuplicateFound = true;
+                while (bDuplicateFound) {
+                    for (var i = 0; i < 6; i++) {
+                        color += letters[Math.floor(Math.random() * 16)];
+                    }
+                    if (this.randColor.indexOf(color) >= 0) {
+                        bDuplicateFound = true;
+                    } else {
+                        this.randColor.push(color);
+                        bDuplicateFound = false;
+                    }
                 }
-                this.randColor.push(color);
             }
         }
+
         public updateStyleColor() {
             if (!this.myStyles) {
                 this.myStyles = this.rootElement
                     .append('style')
                     .attr('id', 'legends_clr');
             }
-            if ($(".brickchart_topContainer .category-clr1").length) {
-                for (var index = 1; index <= this.randColor.length; index++) {
-                    var color = this.randColor[index - 1];
-                    this.rootElement.selectAll(".brickchart_topContainer .category-clr" + index).attr('style', 'fill:' + color + ';background:' + color + ';stroke:' + this.data.borderColor);
-                }
+            
+            //  setting the boxes color
+            var style = "";
+            for (var index = 1; index <= this.randColor.length; index++) {
+                var color = this.randColor[index - 1];
+                style += ".brickchart_topContainer .category-clr" + index + "{fill:" + color + ";background:" + color + ";}";
             }
-            else {
+            
+            //setting the stroke color
+            style += ".brickchart_topContainer svg>rect{stroke:" + '#555' + " ;}"
 
-                this.rootElement.selectAll(".brickchart_topContainer svg>rect").attr('style', ';stroke:' + this.data.borderColor);
-            }
+            this.myStyles.html(style);
+
         }
         public initTooltip(options: VisualInitOptions): void {
             this.tooltip = this.matrix.append('div')
                 .classed('c_tooltip', true)
                 .html('');
             this.tooltip[0][0].onmouseover = function (e) {
+
             };
         }
         
@@ -191,25 +212,33 @@
                 .append('div')
                 .classed('title', true)
                 .classed('text', true);
+            title[0][0].innerText = "Category: ";
 
             for (var c in dataSet) {
-                var div = this.groupLegends
-                    .append('div')
-                    .classed('legend leg-grp' + index, true);
-
-                div.append('div')
-                    .classed('category' + ' category-clr' + index, true);
-
-                div.append('div').text(c.length <= 10 ? c : c.substr(0, 8) + '...')
-                    .classed('text', true)
-                    .attr('title', c);
-
-                div[0][0]['cust_leg_ind'] = index;
-                div[0][0]['cust_leg_name'] = c;
-                div[0][0]['cust_leg_value'] = dataSet[c]['value'];
-
                 sum += dataSet[c].value;
-                index++;
+            }
+
+            for (var legend in dataSet) {
+                if (dataSet[legend].value > 0) {
+                    var cnt = Math.round(100 * (dataSet[legend].value / sum));
+                    if (cnt > 0) {
+                        var div = this.groupLegends
+                            .append('div')
+                            .classed('legend leg-grp' + index, true);
+
+                        div.append('div')
+                            .classed('category' + ' category-clr' + index, true);
+
+                        div.append('div').text(legend.length <= 10 ? legend : legend.substr(0, 8) + '...')
+                            .classed('text', true)
+                            .attr('title', legend);
+
+                        div[0][0]['cust_leg_ind'] = index;
+                        div[0][0]['cust_leg_name'] = legend;
+                        div[0][0]['cust_leg_value'] = dataSet[legend]['value'];
+                        index++;
+                    }
+                }
             }
             return sum;
         }
@@ -224,9 +253,11 @@
 
                 var dataSet = {};
                 for (var i = 0; i < legends.length; i++) {
-                    dataSet[legends[i]] = {};
-                    dataSet[legends[i]]["value"] = values[i];
-                    dataSet[legends[i]]["identity"] = (dataView.table['identity'] ? dataView.table.identity[i] : 0);
+                    if (parseInt(values[i]) > 0) {
+                        dataSet[legends[i]] = {};
+                        dataSet[legends[i]]["value"] = values[i];
+                        //dataSet[legends[i]]["identity"] = (dataView.table['identity']?dataView.table.identity[i]:0);
+                    }
                 }
                 data.categories = dataSet;
             }
@@ -246,6 +277,8 @@
                 this.matrix.style('transform', 'Scale(' + this.zoom + ')');
             else
                 this.matrix.style('zoom', this.zoom);
+            // this.matrix.style('zoom', this.zoom);
+            //this.rootElement.style('zoom',0);
         }
         
         /** Update is called for data updates, resizes & formatting changes */
@@ -258,19 +291,21 @@
             //Assigning css color class to the squares
             var last = 0, category = 0;
             for (var legend in dataSet) {
-                var cnt = Math.round(100 * (dataSet[legend].value / sum));
-                category++;
-                for (var index = 0; index < cnt; index++) {
-                    if (index >= 100) break;
-                    var row = Math.floor((last + index) / 10);
-                    var col = (last + index) % 10;
-                    if (!this.svgs[col + ':' + row]) { break; }
-                    this.svgs[col + ':' + row].setAttribute("class", "linearSVG category-clr" + category);
-                    this.svgs[col + ':' + row]["cust_leg_ind"] = category;
-                    this.svgs[col + ':' + row]["cust_leg_name"] = legend;
-                    this.svgs[col + ':' + row]["cust_leg_val"] = dataSet[legend]['value'];
+                if (dataSet[legend].value > 0) {
+                    var cnt = Math.round(100 * (dataSet[legend].value / sum));
+                    category++;
+                    for (var index = 0; index < cnt; index++) {
+                        if (index >= 100) break;
+                        var row = Math.floor((last + index) / 10);
+                        var col = (last + index) % 10;
+                        if (!this.svgs[col + ':' + row]) { break; }
+                        this.svgs[col + ':' + row].setAttribute("class", "linearSVG category-clr" + category);
+                        this.svgs[col + ':' + row]["cust_leg_ind"] = category;
+                        this.svgs[col + ':' + row]["cust_leg_name"] = legend;
+                        this.svgs[col + ':' + row]["cust_leg_val"] = dataSet[legend]['value'];
+                    }
+                    last += cnt;
                 }
-                last += cnt;
             }
             //Assigning class and storing the category names and corresponding values 
             for (var i = last; i < 100; i++) {
@@ -283,6 +318,7 @@
             }
 
             var objects = null;
+
             if (options.dataViews[0] && options.dataViews[0].metadata && options.dataViews[0].metadata.objects) {
                 objects = options.dataViews[0].metadata.objects
 
@@ -292,6 +328,10 @@
                 this.data.showTitle = DataViewObjects.getValue(objects, { objectName: 'legends', propertyName: 'showTitle' }, this.data.showTitle);
                 this.data.labelColor = DataViewObjects.getFillColor(objects, { objectName: 'legends', propertyName: 'labelColor' }, this.data.labelColor);
                 this.data.borderColor = DataViewObjects.getFillColor(objects, { objectName: 'general', propertyName: 'borderColor' }, this.data.borderColor);
+
+                this.rootElement.select("svg.svg")
+                    .selectAll("rect")
+                    .style('stroke', this.data.borderColor);
 
                 var ind = 0;
                 for (var k in this.data.categories) {
@@ -312,17 +352,14 @@
                 });
             
             // update the legend title text and show/hide the legend title
-            if ($(".brickchart_topContainer .category-clr1").length == 0) {
-                this.data.showTitle = false;
-            }
             this.rootElement.selectAll(".legends .title")
-                .style('display', (this.data.showTitle ? 'inline-block' : 'none'))[0][0].innerHTML = this.data.titleText;
+                .style('display', (this.data.showTitle ? 'inline-block' : 'none'))
+            [0][0].innerText = this.data.titleText;
                 
             //update the tooltip
             TooltipManager.addTooltip(this.matrix, (tooltipEvent: TooltipEvent) => this.toolTipInfo, true);//Adding visual tips
                         
             this.updateZoom(options);
-            this.updateStyleColor();
         }
 
         public enumerateObjectInstances(options: EnumerateVisualObjectInstancesOptions): VisualObjectInstanceEnumeration {
