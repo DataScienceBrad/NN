@@ -31,7 +31,8 @@
 
         public static getDefaultData(): BrickChartValues {
             return {
-                categories: { 'India': 1, 'B': -2, 'C': 3 }
+                //categories: {'India': 1, 'B': -2, 'C': 3}
+                categories: {}
                 , hasLegend: true
                 , legendTextSize: 11
                 , titleText: "Category"
