@@ -322,4 +322,10 @@ module powerbi.visuals.plugins {
         capabilities: powerbi.visuals.BrickChart.capabilities,
         create: () => new powerbi.visuals.BrickChart()
     };
+
+    export var stockChart: IVisualPlugin = {
+        name: 'stockChart',
+        capabilities: powerbi.visuals.StockChart.capabilities,
+        create: () => new powerbi.visuals.StockChart()
+    };
 }
