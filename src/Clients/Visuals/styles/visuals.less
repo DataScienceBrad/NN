@@ -1916,3 +1916,83 @@ div.ql-toolbar {
     display: inline-block;
 }
 /*Styles for brick chart end*/
+
+/*Styles form stock chart start*/
+/** Your CSS code goes here */
+.Stock_axis path,
+.Stock_axis line {
+    fill: none;
+    stroke: black;
+    shape-rendering: crispEdges;
+    stroke-width:1px;
+}
+.Stock_Legend{
+  visibility:visible;
+}
+ .Stock_axis .tick{
+   margin-top: 10px;
+ }
+.Stock_yaxis line{
+  fill: none;
+    stroke: black;
+    shape-rendering: crispEdges;
+    stroke-width:0px;
+}
+.Stock_yaxis .tick {
+    stroke: lightgrey;
+    opacity: 0.7;
+}
+.Stock_yaxis .tick {
+      stroke-width: 0px;
+      border-style:solid;
+      border-width:2px;
+}
+.Stock_yaxis path {
+      stroke-width: 0;
+}
+.Stock_axis text {
+    font-family: sans-serif;
+    font-size: 11px;  
+}
+.Stock_yaxis text{
+  font-family: sans-serif;
+    font-size: 11px;
+}
+.main_Container{
+ text-align: left;
+  line-height: normal;
+  margin-top: 5px;
+}
+.main_Container .legends {
+  text-align: left;
+  float:left;
+  width:100%;
+}
+.main_Container .legends_LowHighBlock{
+  display: inline-block;  
+  margin-right: 17px;
+  font-family: wf_segoe-ui_Semibold;
+  margin-left: 0;
+  float: left;
+}
+.main_Container .legends_OpenCloseBlock{
+  display: inline-block;
+  margin-left: 2px; 
+  font-family: wf_segoe-ui_Semibold;  
+}
+.legends .legend{
+  display: inline-block; 
+  margin-top:-2px;
+}
+.main_Container .legends .title{
+  display: inline-block;  
+  font-family: wf_segoe-ui_Semibold;
+  display: inline-block;   
+   margin-right: 5px;
+}
+.main_Container .chart{
+  margin-top:10px;  
+  width: 100%;  
+  float: left;  
+}
+/*Styles form stock chart end*/
