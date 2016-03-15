@@ -15,8 +15,6 @@ We are working on adding an option to show legends and the value in the visual i
 Create at-a-glance visualization to compare your progress against identified goals and warning zones. By allowing you to include multiple data points, the component provides the ability to illustrate trend details, such as monthly or year-to-date completion rates. The pointer notes targets and the colored bar shows the current progress toward those goals.
 ![Linear Gauge](src/Clients/Visuals/visuals/Images/Linear Gauge/LinearGauge_Screenshot_410_424.png)
 
-#####Coming soon
-We are working on enabling text format for Trend values
 
 ###[Brick Chart](https://github.com/maqsoftware/PowerBI-visuals/blob/master/src/Clients/Visuals/visuals/Brickchart.ts)
 Brick Chart consists of 100 squares that are colored according to the percentage breakdown of your datasets. Hover your mouse over a square to bring up a tooltip. The tooltip indicates which dataset the color represents and the percentage value of that category. An optional legend above the chart identifies which datasets correspond with which colors. You may tailor the legend’s title, size and color. You may also customize the chart’s width and height. 
@@ -24,6 +22,10 @@ Brick Chart consists of 100 squares that are colored according to the percentage
 
 #####Coming soon
 We are working on enabling report filtering on click of brick
+
+###[Stock Chart](https://github.com/maqsoftware/PowerBI-visuals/blob/master/src/Clients/Visuals/visuals/stockChart.ts)
+Stock Chart displays significant stock price points as colored vertical bars. Low and high price values are represented by grey bars. Open and close price values are shown as either red or green bars, which are superimposed over the low and high values. If a stock’s price dropped the bar will be red, and if the price rose the bar will be green. Prices are listed on the vertical axis and time increments are listed on the horizontal axis. The ranges for prices and time increments are customizable. 
+![Stock Chart](https://raw.githubusercontent.com/maqsoftware/PowerBI-visuals/master/src/Clients/Visuals/visuals/Images/Stock%20Chart/StockChart_Screenshot_410_424.png)
 
 ## What is included
 
