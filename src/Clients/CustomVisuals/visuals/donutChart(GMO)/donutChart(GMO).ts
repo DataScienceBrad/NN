@@ -9,11 +9,8 @@ module powerbi.visuals {
     import DonutConstructorOptions = powerbi.visuals.DonutConstructorOptions;
     import DonutArcDescriptor = powerbi.visuals.DonutArcDescriptor;
     import DonutDataPoint = powerbi.visuals.DonutDataPoint;
-    // import DonutData = powerbi.visuals.DonutData;
     import DonutLayout = powerbi.visuals.DonutLayout;
     import DonutChart = powerbi.visuals.DonutChart;
-    //  import DonutChartProperties = powerbi.DonutChartProperties;
-
     export interface DonutChartSettings {
         /**
          * The duration for a long animation displayed after a user interaction with an interactive chart. 
@@ -37,7 +34,8 @@ module powerbi.visuals {
         visibleGeometryCulled?: boolean;
         defaultDataPointColor?: string;
         showAllDataPoints?: boolean;
-        totalSum?: number;
+        primaryMeasureSum?: number;
+        secondaryMeasureSum?: number;
     }
     export interface InteractivityState {
         interactiveLegend: DonutChartInteractiveLegend;
@@ -59,9 +57,7 @@ module powerbi.visuals {
             formatString: <DataViewObjectPropertyIdentifier>{ objectName: 'general', propertyName: 'formatString' },
         },
         dataPoint: {
-            defaultColor: <DataViewObjectPropertyIdentifier>{ objectName: 'dataPoint', propertyName: 'defaultColor' },
             fill: <DataViewObjectPropertyIdentifier>{ objectName: 'dataPoint', propertyName: 'fill' },
-            showAllDataPoints: <DataViewObjectPropertyIdentifier>{ objectName: 'dataPoint', propertyName: 'showAllDataPoints' },
         },
         legend: {
             show: <DataViewObjectPropertyIdentifier>{ objectName: 'legend', propertyName: 'show' },
@@ -70,6 +66,8 @@ module powerbi.visuals {
             titleText: <DataViewObjectPropertyIdentifier>{ objectName: 'legend', propertyName: 'titleText' },
             labelColor: <DataViewObjectPropertyIdentifier>{ objectName: 'legend', propertyName: 'labelColor' },
             detailedLegend: <DataViewObjectPropertyIdentifier>{ objectName: 'legend', propertyName: 'detailedLegend' },
+            legendDisplayUnits: <DataViewObjectPropertyIdentifier>{ objectName: 'legend', propertyName: 'legendDisplayUnits' },
+            legendPrecision: <DataViewObjectPropertyIdentifier>{ objectName: 'legend', propertyName: 'legendPrecision' },
         },
         // MAQCode
         show: { objectName: 'GMODonutTitle', propertyName: 'show' },
@@ -79,28 +77,41 @@ module powerbi.visuals {
         titleFontSize: { objectName: 'GMODonutTitle', propertyName: 'fontSize' },
         tooltipText: { objectName: 'GMODonutTitle', propertyName: 'tooltipText' },
 
+        // Indicators code
+        Indicators: {
+            show: <DataViewObjectPropertyIdentifier>{ objectName: 'Indicators', propertyName: 'show' },
+
+            PrimaryMeasure: <DataViewObjectPropertyIdentifier>{ objectName: 'Indicators', propertyName: 'PrimaryMeasure' },
+            Threshold: <DataViewObjectPropertyIdentifier>{ objectName: 'Indicators', propertyName: 'Threshold' },
+            Total_threshold: <DataViewObjectPropertyIdentifier>{ objectName: 'Indicators', propertyName: 'Total_threshold' },
+        },
+
+        SMIndicator: {
+            show: <DataViewObjectPropertyIdentifier>{ objectName: 'SMIndicator', propertyName: 'show' },
+            SecondaryMeasure: <DataViewObjectPropertyIdentifier>{ objectName: 'SMIndicator', propertyName: 'SecondaryMeasure' },
+            SMThreshold: <DataViewObjectPropertyIdentifier>{ objectName: 'SMIndicator', propertyName: 'SMThreshold' },
+            SMTotalThreshold: <DataViewObjectPropertyIdentifier>{ objectName: 'SMIndicator', propertyName: 'SMTotalThreshold' },
+        }
     };
     export var detailedLegendType: IEnumType = createEnumType([
         { value: 'None', displayName: 'None' },
-        { value: 'Primary Measure', displayName: 'Primary Measure' },
+        { value: 'Value', displayName: 'Value' },
         { value: 'Percentage', displayName: 'Percentage' },
         { value: 'Both', displayName: 'Both' }
     ]);
     export class DonutChartInteractiveLegend {
-
         private static LegendContainerClassName = 'legend-container';
-        private static LegendContainerSelector = '.legend-container';
         private static LegendItemClassName = 'legend-item';
+        public static InteractiveLegendClassName = 'donutLegend';
+        private static LegendContainerSelector = '.legend-container';
         private static LegendItemSelector = '.legend-item';
         private static LegendItemCategoryClassName = 'category';
         private static LegendItemPercentageClassName = 'percentage';
-        private static LegendItemValueClassName = 'value';
-
+        private static LegendSecondaryClassName = 'secondary';
         private static MaxLegendItemBoxSize = 160;
-        private static ItemMargin = 30; // Margin between items
+        private static ItemMargin = 10; // Margin between items
         private static MinimumSwipeDX = 15; // Minimup swipe gesture to create a change in the legend
         private static MinimumItemsInLegendForCycled = 3; // Minimum items in the legend before we cycle it
-
         private donutChart: DonutChartGMO;
         private legendContainerParent: D3.Selection;
         private legendContainer: D3.Selection;
@@ -108,7 +119,8 @@ module powerbi.visuals {
         private data: DonutDataPoint[];
         private colors: IDataColorPalette;
         private visualInitOptions: VisualInitOptions;
-
+        public noOfLegends: number = 0;
+        public noOfColumns: number = 0;
         private currentNumberOfLegendItems: number;
         private currentIndex: number;
         private leftMostIndex: number;
@@ -127,119 +139,492 @@ module powerbi.visuals {
             this.legendTransitionAnimationDuration = settings && settings.legendTransitionAnimationDuration ? settings.legendTransitionAnimationDuration : 0;
         }
 
-        public drawLegend(data: DonutDataPoint[]): void {
-            this.data = data;
-
-            this.currentNumberOfLegendItems = data.length;
+        public drawLegend(donutObject: DonutDataGMO, dataViews: any, legendContainerHeight: any, parentViewPort: any): void {
+            this.data = donutObject.unCulledDataPoints;
+            this.currentNumberOfLegendItems = this.data.length;
             this.currentIndex = 0;
             this.leftMostIndex = 0;
-            this.rightMostIndex = data.length - 1;
+            this.rightMostIndex = this.data.length - 1;
+            var displayUnits, modelPrecisionValue;
+            var precisionValue = DonutChartGMO.prototype.getLegendDispalyUnits(dataViews, 'labelPrecision');
+            if (!precisionValue) {
+                if ((this.data.length > 0) && (this.data[0].tooltipInfo.length > 1) && (this.data[0].tooltipInfo[1].value.indexOf('.') > -1))
+                    modelPrecisionValue = this.data[0].tooltipInfo[1].value.split('.')[1].length;
+            }
+            else {
+                modelPrecisionValue = precisionValue;
+            }
+
+            if (modelPrecisionValue > 20)
+                modelPrecisionValue = 20;
+            if (precisionValue > 20)
+                precisionValue = 20;
+            if (DonutChartGMO.prototype.getLegendDispalyUnits(dataViews, 'labelDisplayUnits')) {
+                displayUnits = DonutChartGMO.prototype.getLegendDispalyUnits(dataViews, 'labelDisplayUnits');
+            }
+            else {
+                displayUnits = 0;
+            }
 
             if (this.legendContainerParent.select(DonutChartInteractiveLegend.LegendContainerSelector).empty()) {
                 this.legendContainer = this.legendContainerParent.append('div').classed(DonutChartInteractiveLegend.LegendContainerClassName, true);
             }
 
-            var legendItems = this.legendContainer.selectAll(DonutChartInteractiveLegend.LegendItemSelector).data(data);
+            var legendItems = this.legendContainer.selectAll(DonutChartInteractiveLegend.LegendItemSelector).data(this.data);
             var legendContainerWidth = this.legendContainerWidth = this.legendContainer.node().getBoundingClientRect().width;
-            var initialXOffset = legendContainerWidth / 2 - (legendContainerWidth * 0.4 / 2) + DonutChartInteractiveLegend.ItemMargin;
+            var initialXOffset = legendContainerWidth / (legendContainerWidth / 2 * this.currentNumberOfLegendItems); //Set Initial off set value by dividing total with by twice the no. of legend items
             var currX = initialXOffset;
             this.currentXOffset = initialXOffset;
 
             // Given the legend item div, create the item values (category, percentage and measure) on top of it.
             var createLegendItem = (itemDiv: JQuery, datum: DonutDataPoint) => {
+                var itemType: string = '';
+                if ($(itemDiv[0]).hasClass('titleLegendText')) {
+                    itemType = 'Title';
+                }
                 // position the legend item
-                itemDiv
-                    .attr('data-legend-index', datum.index) // assign index for later use
-                    .css({
-                        'position': 'absolute',
-                        'left': currX,
-                        //'margin-right': DonutChartInteractiveLegend.ItemMargin + 'px',
-                    });
+                if (donutObject.legendObjectProperties && donutObject.legendObjectProperties['position'] === 'Top') {
+                    this.legendContainer.style({ 'position': 'absolute', 'height': '', 'text-align': 'left', 'top': '', 'transform': '', 'left': '' });
+                    itemDiv
+                        .css({
+                            'display': 'inline-block',
+                            //'position': 'absolute',
+                            'left': currX,
+                            //'margin-right': DonutChartInteractiveLegend.ItemMargin + 'px',
+                        });
+                }
+                else if (donutObject.legendObjectProperties && donutObject.legendObjectProperties['position'] === 'TopCenter') {
+                    this.legendContainer.style({ 'position': 'absolute', 'width': '100%', 'height': '', 'text-align': 'center', 'top': '', 'transform': '', 'left': '' });
+                    itemDiv
+                        .css({
+                            'display': 'inline-block',
+                            //'position': 'absolute',=
+                            'left': currX,
+                        });
+                }
+                else if (donutObject.legendObjectProperties && donutObject.legendObjectProperties['position'] === 'Bottom') {
+                    this.legendContainer.style({ 'position': 'absolute', 'width': '100%', 'height': '', 'text-align': 'left', 'top': '100%', 'transform': 'translate(0, -40%)', 'left': '' });
+                    itemDiv
+                        .css({
+                            'display': 'inline-block',
+                            //'position': 'absolute',
+                            'left': currX,
+                        });
+                }
+                else if (donutObject.legendObjectProperties && donutObject.legendObjectProperties['position'] === 'BottomCenter') {
+                    this.legendContainer.style({ 'position': 'absolute', 'width': '100%', 'height': '', 'text-align': 'center', 'top': '100%', 'transform': 'translate(0, -40%)', 'left': '' });
+                    itemDiv
+                        .css({
+                            'display': 'inline-block',
+                            //'position': 'absolute',
+                            'left': currX,
+                        });
+                }
+                else if (donutObject.legendObjectProperties && donutObject.legendObjectProperties['position'] === 'Left') {
+                    this.legendContainer.style({ 'position': 'absolute', 'width': '', 'height': '100%', 'text-align': 'left', 'top': '', 'transform': '', 'left': '' });
+                    itemDiv
+                        .css({
+                            'display': 'inline-block',
+                            //'position': 'absolute',
+                            'left': currX,
+                            'float': 'left',
+                            'clear': 'both',
+                        });
+                }
+                else if (donutObject.legendObjectProperties && donutObject.legendObjectProperties['position'] === 'LeftCenter') {
+                    this.legendContainer.style({ 'position': 'absolute', 'width': '', 'height': '100%', 'text-align': 'left', 'top': '50%', 'transform': 'translate(0, -50%)', 'left': '' });
+                    itemDiv
+                        .css({
+                            'display': 'inline-block',
+                            //'position': 'absolute',
+                            'left': currX,
+                            'float': 'left',
+                            'clear': 'both',
+                        });
+                }
+                else if (donutObject.legendObjectProperties && donutObject.legendObjectProperties['position'] === 'Right') {
+                    this.legendContainer.style({ 'position': 'absolute', 'width': '', 'height': '100%', 'text-align': 'left', 'top': '', 'transform': 'translate(-75%, 0)', 'left': '85%' });
+                    itemDiv
+                        .css({
+                            'display': 'inline-block',
+                            //'position': 'absolute',
+                            'left': currX,
+                            'float': 'left',
+                            'clear': 'both',
+                        });
+                }
+                else if (donutObject.legendObjectProperties && donutObject.legendObjectProperties['position'] === 'RightCenter') {
+                    this.legendContainer.style({ 'position': 'absolute', 'width': '', 'height': '100%', 'text-align': 'left', 'top': '50%', 'transform': 'translate(0, -50%)', 'left': '85%' });
+                    itemDiv
+                        .css({
+                            'display': 'inline-block',
+                            //'position': 'absolute',
+                            'left': currX,
+                            'float': 'left',
+                            'clear': 'both',
 
-                // Add the category, percentage and value
-                var itemCategory = valueFormatter.format(datum.label);
-                var itemValue = valueFormatter.format(datum.measure, datum.measureFormat);
-                var itemPercentage = valueFormatter.format(datum.percentage, '0.00 %;-0.00 %;0.00 %');
-                var itemColor = datum.color;
+                        });
+                }
+                else {
+                    this.legendContainer.style({ 'position': 'absolute', 'width': '100%', 'height': '', 'text-align': 'left', 'top': '', 'transform': '', 'left': '' });
+                    itemDiv
+                        .css({
+                            //'position': 'absolute',
+                            'display': 'inline-block',
+                            'left': currX,
+                            //'margin-right': DonutChartInteractiveLegend.ItemMargin + 'px',
+                        });
 
-                // Create basic spans for width calculations
-                var itemValueSpan = DonutChartInteractiveLegend.createBasicLegendItemSpan(DonutChartInteractiveLegend.LegendItemValueClassName, itemValue, 11);
-                var itemCategorySpan = DonutChartInteractiveLegend.createBasicLegendItemSpan(DonutChartInteractiveLegend.LegendItemCategoryClassName, itemCategory, 11);
-                var itemPercentageSpan = DonutChartInteractiveLegend.createBasicLegendItemSpan(DonutChartInteractiveLegend.LegendItemPercentageClassName, itemPercentage, 20);
+                }
+                var isSecondaryMeasure, secondaryMeasureIndex, secondaryColumnName;
+                for (var i = 0; i < dataViews.metadata.columns.length; i++) {
+                    if (dataViews.metadata.columns[i].roles.hasOwnProperty('SecondaryMeasure')) {
+                        isSecondaryMeasure = true;
+                        secondaryMeasureIndex = i;
+                        secondaryColumnName = dataViews.metadata.columns[i].displayName;
+                        break;
+                    }
+                }
+                if (itemType !== 'Title') {
 
-                // Calculate Legend Box size according to widths and set the width accordingly
-                var valueSpanWidth = DonutChartInteractiveLegend.spanWidth(itemValueSpan);
-                var categorySpanWidth = DonutChartInteractiveLegend.spanWidth(itemCategorySpan);
-                var precentageSpanWidth = DonutChartInteractiveLegend.spanWidth(itemPercentageSpan);
-                var currentLegendBoxWidth = DonutChartInteractiveLegend.legendBoxSize(valueSpanWidth, categorySpanWidth, precentageSpanWidth);
-                itemDiv.css('width', currentLegendBoxWidth);
+                    // Add the category, percentage and value
+                    var itemCategory: string;
+                    var showDetail = false;
+                    if (datum.tooltipInfo && datum.tooltipInfo[1]) {
+                        for (var i = 0; i < dataViews.metadata.columns.length; i++) {
+                            if (dataViews.metadata.columns[i].roles && dataViews.metadata.columns[i].roles.hasOwnProperty('Series')) {
+                                showDetail = true;
+                                break;
+                            }
+                        }
+                        if (!showDetail) {
+                            itemCategory = valueFormatter.format(datum.label);
+                        } else {
+                            itemCategory = valueFormatter.format(datum.label) + '-' + datum.tooltipInfo[1].value;
+                        }
 
-                // Calculate margins so that all the spans will be placed in the middle
-                var getLeftValue = (spanWidth: number) => {
-                    return currentLegendBoxWidth - spanWidth > 0 ? (currentLegendBoxWidth - spanWidth) / 2 : 0;
-                };
-                var marginLeftValue = getLeftValue(valueSpanWidth);
-                var marginLeftCategory = getLeftValue(categorySpanWidth);
-                var marginLeftPrecentage = getLeftValue(precentageSpanWidth);
+                    } else {
+                        itemCategory = valueFormatter.format(datum.label);
+                    }
+                    var isPrimaryPercentage;
+                    var itemValue = valueFormatter.format(datum.measure, datum.measureFormat);
+                    var itemPercentage = valueFormatter.format(datum.percentage, '0.00 %;-0.00 %;0.00 %');
+                    var itemColor = datum.color;
+                    var indicatorValue = dataViews.categorical.values[0].values[index];
+                    var formattedValue;
+                    if (datum.measureFormat && datum.measureFormat.search('%') > 0) {
+                        formattedValue = itemValue;
+                        isPrimaryPercentage = true;
+                    }
+                    else {
+                        isPrimaryPercentage = false;
+                        if (isNaN(parseInt(indicatorValue, 10))) {
+                            formattedValue = '';
+                        }
+                        else {
+                            formattedValue = DonutChartGMO.prototype.format(parseInt(indicatorValue, 10), displayUnits, modelPrecisionValue, 'sample');
+                            if (isNaN(parseInt(itemValue, 10)) || isNaN(parseInt(itemValue[itemValue.length - 1], 10)))
+                                formattedValue = this.addSpecialCharacters(formattedValue, itemValue);
+                        }
+                    }
+                    // console.log(formattedValue);
+                    if (donutObject.legendObjectProperties && donutObject.legendObjectProperties['detailedLegend']) {
+                        if (donutObject.legendObjectProperties['detailedLegend'] === "None") {
+                            formattedValue = '';
+                            itemPercentage = '';
+                        } else if (donutObject.legendObjectProperties['detailedLegend'] === "Value") {
+                            itemPercentage = '';
+                        } else if (donutObject.legendObjectProperties['detailedLegend'] === "Percentage") {
+                            formattedValue = '';
+                        }
+                    } else {
 
-                // Create the actual spans with the right styling and margins so it will be center aligned and add them
-                DonutChartInteractiveLegend.createLegendItemSpan(itemCategorySpan, marginLeftCategory);
-                DonutChartInteractiveLegend.createLegendItemSpan(itemValueSpan, marginLeftValue);
-                DonutChartInteractiveLegend.createLegendItemSpan(itemPercentageSpan, marginLeftPrecentage).css('color', itemColor);
+                        formattedValue = '';
+                        itemPercentage = '';
+                    }
+                    // Create basic spans for width calculations
+                    //var itemValueSpan = DonutChartInteractiveLegend.createBasicLegendItemSpan(DonutChartInteractiveLegend.LegendItemValueClassName, itemValue, 11);
 
-                itemDiv.append(itemCategorySpan);
-                itemDiv.append(itemPercentageSpan);
-                itemDiv.append(itemValueSpan);
+                    var itemCategorySpan = DonutChartInteractiveLegend.createBasicLegendItemSpan(DonutChartInteractiveLegend.LegendItemCategoryClassName, itemCategory, PixelConverter.fromPointToPixel(donutObject.legendData.fontSize), donutObject.legendData.labelColor);
+                    var itemPercentageSpan = DonutChartInteractiveLegend.createBasicValueItemSpan(DonutChartInteractiveLegend.LegendItemPercentageClassName, formattedValue, itemPercentage, donutObject.legendData.fontSize, dataViews, indicatorValue, isPrimaryPercentage);
 
+                    var secondaryIndex;
+
+                    for (var i = 0; i < dataViews.categorical.values.length; i++) {
+                        if (dataViews.categorical.values[i].source.roles.hasOwnProperty('SecondaryMeasure')) {
+
+                            secondaryIndex = i;
+                        }
+                    }
+
+                    if (isSecondaryMeasure) {
+
+                        var isPercentage;
+                        var secondaryValue = valueFormatter.format(dataViews.categorical.values[secondaryIndex].values[index], dataViews.metadata.columns[secondaryMeasureIndex].format);
+                        var secondaryIndicator = dataViews.categorical.values[secondaryIndex].values[index];
+                        var secondaryFormattedValue;
+                        if (dataViews.metadata.columns[secondaryMeasureIndex].format && dataViews.metadata.columns[secondaryMeasureIndex].format.search('%') > 0) {
+                            secondaryFormattedValue = secondaryValue;
+                            isPercentage = true;
+                        }
+                        else {
+                            isPercentage = false;
+                            if (isNaN(parseInt(secondaryIndicator, 10))) {
+                                secondaryFormattedValue = '';
+                            }
+                            else {
+                                secondaryFormattedValue = DonutChartGMO.prototype.format(parseInt(secondaryIndicator, 10), displayUnits, precisionValue, 'sample');
+                                if (isNaN(parseInt(secondaryValue, 10)) || isNaN(parseInt(secondaryValue[secondaryValue.length - 1], 10)))
+                                    secondaryFormattedValue = this.addSpecialCharacters(secondaryFormattedValue, secondaryValue);
+                            }
+                        }
+                        //if (dataViews.categorical.values.length>index){
+                        var secondaryValueSpan = DonutChartInteractiveLegend.createBasicSecondaryItemSpan(DonutChartInteractiveLegend.LegendSecondaryClassName, secondaryFormattedValue, donutObject.legendData.fontSize, dataViews, secondaryIndicator, isPercentage);
+                        var secondarySpanWidth = DonutChartInteractiveLegend.spanWidth(secondaryValueSpan);
+                        var secondarySpanHeight = DonutChartInteractiveLegend.spanHeight(secondaryValueSpan);
+                        DonutChartInteractiveLegend.createLegendItemSpan(secondaryValueSpan);
+                        // itemDiv.append(secondaryValueSpan);
+                        //    }
+                    }
+                    else {
+                        secondarySpanWidth = 0;
+                        secondarySpanHeight = 0;
+                    }
+                    // itemCategorySpan.text(itemCategorySpan.text() + String.fromCharCode(parseInt('&#9650;', 16)));
+                    // Calculate Legend Box size according to widths and set the width accordingly
+                    // var valueSpanWidth = DonutChartInteractiveLegend.spanWidth(itemValueSpan);
+                    var categorySpanWidth = DonutChartInteractiveLegend.spanWidth(itemCategorySpan);
+                    var categorySpanHeight = DonutChartInteractiveLegend.spanHeight(itemCategorySpan);
+                    var precentageSpanWidth = DonutChartInteractiveLegend.spanWidth(itemPercentageSpan);
+                    var percentageSpanHeight = DonutChartInteractiveLegend.spanHeight(itemPercentageSpan);
+                    if (categorySpanWidth < secondarySpanWidth)
+                        var sampleCategoryWidth = secondarySpanWidth;
+                    else
+                        sampleCategoryWidth = categorySpanWidth;
+                    var currentLegendBoxWidth = DonutChartInteractiveLegend.legendBoxSize(sampleCategoryWidth, precentageSpanWidth);
+                    var currentLegendBoxHeight = categorySpanHeight + percentageSpanHeight + secondarySpanHeight + 3;
+                    this.noOfLegends = legendContainerHeight / currentLegendBoxHeight;
+                    this.noOfColumns = this.currentNumberOfLegendItems / (this.noOfLegends - 1);
+
+                    itemDiv.css({ 'width': currentLegendBoxWidth, 'height': currentLegendBoxHeight });
+
+                    // Calculate margins so that all the spans will be placed 
+                    var getLeftValue = (spanWidth: number) => {
+                        return currentLegendBoxWidth + currX + 10;//when percentage and value exists,deduct margin-left(10) value to provide gap between value and %
+                        // return currentLegendBoxWidth - spanWidth > 0 ? (currentLegendBoxWidth - spanWidth) / 2 : 0;
+                    };
+                    // var marginLeftValue = getLeftValue(valueSpanWidth);
+                    var marginLeftCategory = getLeftValue(categorySpanWidth);
+                    // Create the actual spans with the right styling and margins so it will be center aligned and add them
+                    DonutChartInteractiveLegend.createLegendItemSpan(itemCategorySpan).css('color', itemColor);
+                    //DonutChartInteractiveLegend.createLegendItemSpan(itemValueSpan, marginLeftValue);
+                    DonutChartInteractiveLegend.createLegendItemSpan(itemPercentageSpan);
+                     
+                    // itemDiv.append('<g><circle attr="cx:10;cy:10;r:5;" style="fill:red;"></circle></g>');
+                    itemDiv.append(itemCategorySpan);
+                    itemDiv.append(itemPercentageSpan);
+                    //  itemDiv.append(itemValueSpan);
+                    itemDiv.append(secondaryValueSpan);
+
+                }
+                else {
+
+                    itemCategory = donutObject.legendData.title;
+                    for (var i = 0; i < dataViews.metadata.columns.length; i++) {
+                        if (dataViews.metadata.columns[i].roles.hasOwnProperty('Y')) {
+
+                            var primaryMesureColumnName = dataViews.metadata.columns[i].displayName;
+                            break;
+                        }
+                    }
+    
+                    // Create basic spans for width calculations
+                    //var itemValueSpan = DonutChartInteractiveLegend.createBasicLegendItemSpan(DonutChartInteractiveLegend.LegendItemValueClassName, itemValue, 11);
+
+                    var itemCategorySpan = DonutChartInteractiveLegend.createBasicLegendTitleSpan(DonutChartInteractiveLegend.LegendItemCategoryClassName, itemCategory, PixelConverter.fromPointToPixel(donutObject.legendData.fontSize));
+
+                    var itemPercentageSpan = DonutChartInteractiveLegend.createBasicTitleItemSpan(DonutChartInteractiveLegend.LegendItemCategoryClassName, PixelConverter.fromPointToPixel(donutObject.legendData.fontSize), primaryMesureColumnName);
+                    if (isSecondaryMeasure) {
+                        var secondaryValueSpan = DonutChartInteractiveLegend.createBasicTitleItemSpan(DonutChartInteractiveLegend.LegendItemCategoryClassName, PixelConverter.fromPointToPixel(donutObject.legendData.fontSize), secondaryColumnName);
+
+                    }
+                    var categorySpanWidth = DonutChartInteractiveLegend.spanWidth(itemCategorySpan);
+                    var precentageSpanWidth = DonutChartInteractiveLegend.spanWidth(itemPercentageSpan);
+                    var currentLegendBoxWidth = DonutChartInteractiveLegend.legendBoxSize(categorySpanWidth, precentageSpanWidth);
+                    var secondarySpanWidth = DonutChartInteractiveLegend.spanWidth(secondaryValueSpan);
+                    itemDiv.css('width', currentLegendBoxWidth);
+
+                    // Calculate margins so that all the spans will be placed 
+                    var getLeftValue = (spanWidth: number) => {
+                        return currentLegendBoxWidth + currX + 10;//when percentage and value exists,deduct margin-left(10) value to provide gap between value and %
+
+                    };
+                    // var marginLeftValue = getLeftValue(valueSpanWidth);
+                    var marginLeftCategory = getLeftValue(categorySpanWidth);
+
+                    // Create the actual spans with the right styling and margins so it will be center aligned and add them
+                    DonutChartInteractiveLegend.createLegendItemSpan(itemCategorySpan).css('color', itemColor);
+                    if (donutObject.legendObjectProperties && donutObject.legendObjectProperties['detailedLegend']) {
+                        if (donutObject.legendObjectProperties['detailedLegend'] === "None") {
+                            DonutChartInteractiveLegend.createLegendItemSpan(itemPercentageSpan).css('display', 'none');
+                        }
+                        else {
+                            DonutChartInteractiveLegend.createLegendItemSpan(itemPercentageSpan).css('visibility', 'visible');
+                        }
+                    }
+                    else {
+                        DonutChartInteractiveLegend.createLegendItemSpan(itemPercentageSpan).css('display', 'none');
+                    }
+                    itemDiv.append(itemCategorySpan);
+                    itemDiv.append(itemPercentageSpan);
+                    itemDiv.append(secondaryValueSpan);
+                }
                 this.legendItemsPositions.push({
                     startX: currX,
                     boxWidth: currentLegendBoxWidth,
                 });
                 currX += currentLegendBoxWidth + DonutChartInteractiveLegend.ItemMargin;
             };
+            this.legendContainer.selectAll('.donutLegendArrow').remove();
+            if ($(this.legendContainer[0][0].childNodes).length)
+                $(this.legendContainer[0][0]).empty();
+            // this.legendContainer.selectAll('.titleLegendText').remove();
+            if (donutObject.legendData.title) {
+                this.legendContainer.append('div')
+                    .classed('titleLegendText', true)
+                    .classed(DonutChartInteractiveLegend.LegendItemClassName, true);
+                if (donutObject.legendObjectProperties === undefined) {
+                    this.legendContainer.select('.titleLegendText').style({ 'white-space': 'nowrap' });
+                }
+                else if (donutObject.legendObjectProperties && donutObject.legendObjectProperties['detailedLegend'] === undefined) {
+                    this.legendContainer.select('.titleLegendText').style({ 'white-space': 'nowrap' });
+                }
+                else if (donutObject.legendObjectProperties['show'] === true && donutObject.legendObjectProperties['detailedLegend'] === "None") {
+                    this.legendContainer.select('.titleLegendText').style({ 'white-space': 'nowrap' });
+                }
 
+                else {
+                    this.legendContainer.select('.titleLegendText').style({ 'white-space': '' });
+                }
+                createLegendItem($(this.legendContainer[0][0].childNodes[0]), this.data[0]);
+
+            }
             // Create the Legend Items
-            legendItems.enter()
-                .insert('div')
-                .classed(DonutChartInteractiveLegend.LegendItemClassName, true)
-                .each(function (d: DonutDataPoint) {
-                    createLegendItem($(this), d);
-                });
 
+            if (donutObject.legendObjectProperties && ((donutObject.legendObjectProperties['position'] === 'Left') || (donutObject.legendObjectProperties['position'] === 'RightCenter') || (donutObject.legendObjectProperties['position'] === 'Right') || (donutObject.legendObjectProperties['position'] === 'LeftCenter'))) {
+                var top: number = 0;
+                this.noOfColumns = this.data.length / (this.noOfLegends - 1);
+                var widthOfSingleLegendPoint = 0,
+                    heightOfSingleLegendPoint = 0;
+
+                var index: number = 0;
+                for (var iCount = 0; iCount < this.noOfColumns; iCount++) {
+                    this.legendContainer.append('div').classed('column' + (iCount + 1), true);
+                    for (var iLegend = 0; (iLegend < this.noOfLegends - 1) && (index < this.data.length); iLegend++ , index++) {
+                        this.legendContainer.select('.column' + (iCount + 1)).append('div').attr('data-legend-index', index).classed(DonutChartInteractiveLegend.LegendItemClassName, true);
+                        createLegendItem($(this.legendContainer[0]).find('[data-legend-index=' + index + ']'), this.data[index]);
+
+                    }
+                    if (iCount) {
+                        if ((donutObject.legendObjectProperties['position'] === 'RightCenter') || (donutObject.legendObjectProperties['position'] === 'Right')) {
+                            this.legendContainer.select('.column' + (iCount + 1)).style({ 'float': 'right' });
+                        } else {
+                            this.legendContainer.select('.column' + (iCount + 1)).style({ 'float': 'left' });
+                        }
+                    }
+                    else {
+                        if ((donutObject.legendObjectProperties['position'] === 'RightCenter') || (donutObject.legendObjectProperties['position'] === 'Right')) {
+                            this.legendContainer.select('.column' + (iCount + 1)).style({ 'clear': 'both', 'float': 'right' });
+                        } else {
+                            this.legendContainer.select('.column' + (iCount + 1)).style({ 'clear': 'both', 'float': 'left' });
+                        }
+                    }
+                }
+                var top: number = 0;
+                this.noOfLegends = 0;
+                for (var index = 0; index < this.data.length; index++) {
+                    if (top < (legendContainerHeight)) {// - $(this.legendContainer[0]).find('[data-legend-index=' + index + ']').height())
+                        top += $(this.legendContainer[0]).find('[data-legend-index=' + index + ']').height();
+                        // console.log('legend item height' + top);
+                        // console.log('legend height' + legendContainerHeight);
+                        this.noOfLegends++;
+                        continue;
+                    }
+                    else {
+                        break;
+                    }
+                }
+                if (this.legendContainer[0]) {
+                    widthOfSingleLegendPoint = $(this.legendContainer[0]).find('[data-legend-index=' + 0 + ']').width();
+                    if (this.noOfColumns < 1) {
+                        this.noOfColumns = 1;
+                    }
+                    this.legendContainer.style({ 'width': Math.floor(this.noOfColumns) * widthOfSingleLegendPoint + 'px', 'height': '100%' });
+                }
+
+                legendItems.exit().remove();
+                // Assign interactions on the legend
+                this.assignInteractions();
+            }
+            else {
+                for (var index = 0; index < this.data.length; index++) {
+                    //  $(this.legendContainer[0]).find('[data-legend-index=' + index + ']').empty();
+                    this.legendContainer.append('div').attr('data-legend-index', index).classed(DonutChartInteractiveLegend.LegendItemClassName, true); // assign index for later use.classed(DonutChartInteractiveLegend.LegendItemClassName, true);
+                    createLegendItem($(this.legendContainer[0]).find('[data-legend-index=' + index + ']'), this.data[index]);
+                }
+                var top: number = 0;
+                this.noOfLegends = 0;
+                for (var index = 0; index < this.data.length; index++) {
+                    if (top < (legendContainerHeight)) {// - $(this.legendContainer[0]).find('[data-legend-index=' + index + ']').height())
+                        top += $(this.legendContainer[0]).find('[data-legend-index=' + index + ']').height();
+                        console.log('legend item height' + top);
+                        console.log('legend height' + legendContainerHeight);
+                        this.noOfLegends++;
+                        continue;
+                    }
+                    else {
+                        break;
+                    }
+                }
+
+                var left = 0, currIndex = 0;
+                for (var index = 0; index < this.data.length; index++) {
+                    if (left < (parentViewPort.width - $(this.legendContainer[0]).find('[data-legend-index=' + index + ']').width())) {
+                        // $(this.legendContainer[0]).find('[data-legend-index=' + index + ']').css('display', 'inline-block');
+                        left = parseInt($(this.legendContainer[0]).find('[data-legend-index=' + index + ']').css('left').split('px')[0], 10);
+                        left += $(this.legendContainer[0]).find('[data-legend-index=' + index + ']').width();
+                        currIndex = index;
+                        continue;
+                    }
+                    else {
+                        while (index < this.data.length) {
+                            //  $(this.legendContainer[0]).find('[data-legend-index=' + index + ']').css('display', 'none');
+                            index++;
+                        }
+                        break;
+                    }
+                }
+                if (0 === currIndex) {
+                    currIndex = 1;
+                }
+                var noOfRows = this.data.length / currIndex;
+                if (noOfRows < 1) {
+                    noOfRows = 1;
+                }
+                if (this.legendContainer[0]) {
+                    heightOfSingleLegendPoint = $(this.legendContainer[0]).find('[data-legend-index=' + 0 + ']').height();
+                    this.legendContainer.style({ 'height': Math.floor(noOfRows) * heightOfSingleLegendPoint + 'px', 'width': '100%' });
+                }
+            }
             legendItems.exit().remove();
-
             // Assign interactions on the legend
             this.assignInteractions();
         }
-
         public updateLegend(sliceIndex): void {
             if (this.currentNumberOfLegendItems <= 1) return; // If the number of labels is one no updates are needed
-            var legendContainerWidth = this.legendContainerWidth;
-
             this.currentIndex = sliceIndex;
             // "rearrange" legend items if needed, so we would have contnious endless scrolling
             this.updateLabelBlocks(sliceIndex);
-            var legendTransitionAnimationDuration = this.legendTransitionAnimationDuration;
-            // Transform the legend so that the selected slice would be in the middle
-            var nextXOffset = (this.legendItemsPositions[sliceIndex].startX + (this.legendItemsPositions[sliceIndex].boxWidth / 2) - (legendContainerWidth / 2)) * (-1);
-            this.legendContainer
-                .transition()
-                .styleTween('-webkit-transform', (d: any, i: number, a: any) => {
-                    return d3.interpolate(
-                        SVGUtil.translateWithPixels(this.currentXOffset, 0),
-                        SVGUtil.translateWithPixels(nextXOffset, 0));
-                })
-                .styleTween('transform', (d: any, i: number, a: any) => {
-                    return d3.interpolate(
-                        SVGUtil.translateWithPixels(this.currentXOffset, 0),
-                        SVGUtil.translateWithPixels(nextXOffset, 0));
-                })
-                .duration(legendTransitionAnimationDuration)
-                .ease('bounce')
-                .each('end', () => {
-                    this.currentXOffset = nextXOffset;
-                });
-            SVGUtil.flushAllD3TransitionsIfNeeded(this.visualInitOptions);
         }
 
         private assignInteractions() {
@@ -270,6 +655,7 @@ module powerbi.visuals {
                 .style({
                     'touch-action': 'none',
                     'cursor': 'pointer'
+
                 })
                 .call(drag);
         }
@@ -310,8 +696,8 @@ module powerbi.visuals {
             if (rightSidedShift) {
                 var smallestItem = legendContainer$.find('[data-legend-index=' + this.leftMostIndex + ']');
                 smallestItem.remove().insertAfter(legendContainer$.find('[data-legend-index=' + this.rightMostIndex + ']'));
-                var newX = this.legendItemsPositions[this.rightMostIndex].startX + this.legendItemsPositions[this.rightMostIndex].boxWidth + DonutChartInteractiveLegend.ItemMargin;
-                this.legendItemsPositions[this.leftMostIndex].startX = newX;
+                var newX = parseInt(legendContainer$.find('[data-legend-index=' + this.rightMostIndex + ']').css('left').split('px')[0], 10) + legendContainer$.find('[data-legend-index=' + this.rightMostIndex + ']').width() + DonutChartInteractiveLegend.ItemMargin;
+                // this.legendItemsPositions[this.leftMostIndex].startX = newX;
                 smallestItem.css('left', newX);
 
                 this.rightMostIndex = this.leftMostIndex;
@@ -362,33 +748,98 @@ module powerbi.visuals {
             }
         }
 
-        private static createBasicLegendItemSpan(spanClass: string, text: string, fontSize: number): JQuery {
-            return $('<span/>')
-                .addClass(spanClass)
-                .css({
-                    'white-space': 'nowrap',
-                    'font-size': fontSize + 'px',
-                })
-                .text(text);
+        private static createBasicLegendItemSpan(spanClass: string, text: string, fontSize: number, color: any): JQuery {
+            var size = fontSize + 6;
+            return $('<span/>').html('<span style="font-size:' + size + 'px;">&#9679;</span><span style="white-space:nowrap;font-size:' + fontSize + 'px;color:' + color + '" class="' + spanClass + '"title="' + text + '">' + text + '</span>');
+
+        }
+        private static createBasicLegendTitleSpan(spanClass: string, text: string, fontSize: number): JQuery {
+            return $('<span/>').html('<span style="white-space:nowrap;font-size:' + fontSize + 'px;" class="' + spanClass + '" title="' + text + '">' + text + '</span>');
+
+        }
+        private static createBasicSecondaryItemSpan(spanClass: string, value: string, fontSize: number, dataview: any, secondaryIndicator: any, isPercentage: any) {
+            var indicatorFontSize = PixelConverter.fromPointToPixel(fontSize - 2);
+            fontSize = PixelConverter.fromPointToPixel(fontSize);
+            if (DonutChartGMO.prototype.getShowStatus(dataview, 'show', 'SMIndicator')) {
+                if (DonutChartGMO.prototype.getShowStatus(dataview, 'SecondaryMeasure', 'SMIndicator'))
+                    var threshold_Value = 0;
+
+                else {
+                    threshold_Value = DonutChartGMO.prototype.getStatus(dataview, 'SMThreshold', 'SMIndicator');
+                    if (isPercentage)
+                        threshold_Value = threshold_Value / 100;
+                }
+                if (!isPercentage) {
+                    secondaryIndicator = parseInt(secondaryIndicator, 10);
+                }
+                if (threshold_Value <= secondaryIndicator) {
+                    return $('<span/>').html('<span style="white-space:nowrap;font-size:' + fontSize + 'px" class="' + spanClass + '"><span title="' + value + '">' + value + '</span><span style="margin-left:5px"></span></span><span style="color:green;font-size:' + indicatorFontSize + 'px;margin-right: 2px;margin-left: 3px;">&#9650;</span>');
+                }
+                else {
+                    return $('<span/>').html('<span style="white-space:nowrap;font-size:' + fontSize + 'px" class="' + spanClass + '"><span title="' + value + '">' + value + '</span><span style="margin-left:5px"></span></span><span style="color:red;font-size:' + indicatorFontSize + 'px;margin-right: 2px;margin-left: 3px;">&#9660;</span>');
+                }
+            }
+            else {
+                return $('<span/>').html('<span style="white-space:nowrap;font-size:' + fontSize + 'px" class="' + spanClass + '"><span title="' + value + '">' + value + '</span><span style="margin-left:5px"></span></span>');
+            }
+        }
+        private static createBasicValueItemSpan(spanClass: string, value: string, percentage: string, fontSize: number, dataview: any, indicatorValue, isPercentage: any): JQuery {
+            var indicatorFontSize = PixelConverter.fromPointToPixel(fontSize - 2);
+            fontSize = PixelConverter.fromPointToPixel(fontSize);
+
+            if (value === '' && percentage === '') {
+                return $('');
+            } else {
+                if (DonutChartGMO.prototype.getShowStatus(dataview, 'show', 'Indicators')) {
+                    if (DonutChartGMO.prototype.getShowStatus(dataview, 'PrimaryMeasure', 'Indicators'))
+                        var threshold_Value = 0;
+
+                    else {
+                        threshold_Value = DonutChartGMO.prototype.getStatus(dataview, 'Threshold', 'Indicators');
+
+                        if (isPercentage) {
+                            threshold_Value = threshold_Value / 100;
+
+                        }
+                    }
+                    if (!isPercentage) {
+                        indicatorValue = parseInt(indicatorValue, 10);
+                    }
+
+                    if (threshold_Value <= indicatorValue) {
+                        return $('<span/>').html('<span style="white-space:nowrap;font-size:' + fontSize + 'px" class="' + spanClass + '"><span title="' + value + '">' + value + '</span><span style="margin-left:5px" title="' + percentage + '">' + percentage + '</span></span><span style="color:green;font-size:' + indicatorFontSize + 'px;margin-right: 2px;margin-left: 3px;">&#9650;</span>');
+                    }
+                    else {
+                        return $('<span/>').html('<span style="white-space:nowrap;font-size:' + fontSize + 'px" class="' + spanClass + '"><span title="' + value + '">' + value + '</span><span style="margin-left:5px" title="' + percentage + '">' + percentage + '</span></span><span style="color:red;font-size:' + indicatorFontSize + 'px;margin-right: 2px;margin-left: 3px;">&#9660;</span>');
+                    }
+                }
+                else {
+                    return $('<span/>').html('<span style="white-space:nowrap;font-size:' + fontSize + 'px" class="' + spanClass + '"><span title="' + value + '">' + value + '</span><span style="margin-left:5px" title="' + percentage + '">' + percentage);
+                }
+            }
+        }
+        private static createBasicTitleItemSpan(spanClass: string, fontSize: number, title: string): JQuery {
+
+            return $('<span/>').html('<span style="white-space:nowrap;font-size:' + fontSize + 'px" class="' + spanClass + '"><span>' + title + '</span>').css({ 'visibility': 'visible', 'display': 'block', 'overflow': 'hidden', 'text-overflow': 'ellipsis', 'width': '100%' });
+
         }
 
         /** This method alters the given span and sets it to the final legen item span style. */
-        private static createLegendItemSpan(existingSpan: JQuery, marginLeft: number): JQuery {
+        private static createLegendItemSpan(existingSpan: JQuery): JQuery {
             existingSpan
                 .css({
                     'overflow': 'hidden',
                     'text-overflow': 'ellipsis',
                     'display': 'inline-block',
-                    'width': '100%',
-                    'margin-left': marginLeft
+                    'width': '100%'
                 });
             return existingSpan;
         }
 
         /** Caclulte entire legend box size according to its building spans */
-        private static legendBoxSize(valueSpanWidth: number, categorySpanWidth: number, precentageSpanWidth: number): number {
-            var boxSize = valueSpanWidth > categorySpanWidth ? valueSpanWidth : categorySpanWidth;
-            boxSize = boxSize > precentageSpanWidth ? boxSize : precentageSpanWidth;
+        private static legendBoxSize(categorySpanWidth: number, precentageSpanWidth: number): number {
+            //var categorySpanWidthboxSize = valueSpanWidth > categorySpanWidth ? valueSpanWidth : categorySpanWidth;
+            var boxSize = categorySpanWidth > precentageSpanWidth ? categorySpanWidth : precentageSpanWidth;
             boxSize = boxSize > DonutChartInteractiveLegend.MaxLegendItemBoxSize ? DonutChartInteractiveLegend.MaxLegendItemBoxSize : (boxSize + 2);
             return boxSize;
         }
@@ -402,7 +853,47 @@ module powerbi.visuals {
             this.FakeElementSpan.append(span);
             return this.FakeElementSpan.width();
         }
+        private static spanHeight(span: JQuery): any {
+            if (!this.FakeElementSpan) {
+                this.FakeElementSpan = $('<span>').hide().appendTo(document.body);
+            }
+            this.FakeElementSpan.empty();
+            this.FakeElementSpan.append(span);
+            return this.FakeElementSpan.height();
+        }
+        public addSpecialCharacters(sKMBValue, title) {
+            var displayValue: string = '', specialcharacters: string = '', titlelength: number = title.length;
+            //Append characters front
+            if (isNaN(parseInt(title[0], 10))) {
+                for (var iLoop = 0; iLoop < title.length; iLoop++) {
+                    if (isNaN(parseInt(title[iLoop], 10))) {
+                        specialcharacters += title[iLoop];
+                    }
+                    else break;
+                }
+                displayValue = specialcharacters + sKMBValue;
+            }
+            //Append characters end
+            if (isNaN(parseInt(title[title.length - 1], 10))) {
+                var specialarray = [], index: number = 0;
+                for (var iLoop = titlelength - 1; iLoop >= 0; iLoop--) {
+                    if (isNaN(parseInt(title[iLoop], 10))) {
+                        specialarray[index] = title[iLoop];
+                        index++;
+                    }
+                    else break;
+                }
+                for (var iLoop = specialarray.length - 1; iLoop >= 0; iLoop--) {
+                    specialcharacters += specialarray[iLoop];
+                }
+                displayValue = sKMBValue + specialcharacters;
+            }
+            // if (isNaN(parseInt(title[0])) || isNaN(parseInt(title[title.length - 1])))
+
+            return displayValue.trim();
+        }
     }
+
     module DonutChartConversion {
 
         interface ConvertedDataPoint {
@@ -427,6 +918,10 @@ module powerbi.visuals {
             private dataViewMetadata: DataViewMetadata;
             private highlightsOverflow: boolean;
             private total: number;
+            private primaryMeasureTotal: number;
+            private secondaryMeasureTotal: number;
+            private primaryMeasureIndex: number = -1;
+            private secondaryMeasureIndex: number = -1;
             private highlightTotal: number;
             private grouped: DataViewValueColumnGroup[];
             private isMultiMeasure: boolean;
@@ -440,23 +935,19 @@ module powerbi.visuals {
             private legendDataPoints: LegendDataPoint[];
             private colorHelper: ColorHelper;
             private categoryFormatString: string;
-
             public hasHighlights: boolean;
             public dataPoints: DonutDataPoint[];
             public legendData: LegendData;
             public dataLabelsSettings: VisualDataLabelsSettings;
             public legendObjectProperties: DataViewObject;
             public maxValue: number;
-
             public constructor(dataView: DataView, colors: IDataColorPalette, defaultDataPointColor?: string) {
                 var dataViewCategorical = dataView.categorical;
                 this.dataViewCategorical = dataViewCategorical;
                 this.dataViewMetadata = dataView.metadata;
-
                 this.seriesCount = dataViewCategorical.values ? dataViewCategorical.values.length : 0;
                 this.colorHelper = new ColorHelper(colors, donutChartProps.dataPoint.fill, defaultDataPointColor);
                 this.maxValue = 0;
-
                 if (dataViewCategorical.categories && dataViewCategorical.categories.length > 0) {
                     var category = dataViewCategorical.categories[0];
                     this.categoryIdentities = category.identity;
@@ -470,22 +961,38 @@ module powerbi.visuals {
                 this.isMultiMeasure = grouped && grouped.length > 0 && grouped[0].values && grouped[0].values.length > 1;
                 this.isSingleMeasure = grouped && grouped.length === 1 && grouped[0].values && grouped[0].values.length === 1;
                 this.isDynamicSeries = !!(dataViewCategorical.values && dataViewCategorical.values.source);
-
                 this.hasHighlights = this.seriesCount > 0 && !_.isEmpty(dataViewCategorical.values) && !!dataViewCategorical.values[0].highlights;
                 this.highlightsOverflow = false;
                 this.total = 0;
+                this.primaryMeasureTotal = 0;
+                this.secondaryMeasureTotal = 0;
+                this.primaryMeasureIndex = -1;
+                this.secondaryMeasureIndex = -1;
                 this.highlightTotal = 0;
                 this.dataPoints = [];
                 this.legendDataPoints = [];
                 this.dataLabelsSettings = null;
+                // Assuming here that seriesCount can have maximum value 2 (primary measure and secondary measure)
 
                 for (var seriesIndex = 0; seriesIndex < this.seriesCount; seriesIndex++) {
                     var seriesData = dataViewCategorical.values[seriesIndex];
+                    var localSum = 0;
                     for (var measureIndex = 0; measureIndex < seriesData.values.length; measureIndex++) {
+                        localSum += Math.abs(seriesData.values[measureIndex]);
                         this.total += Math.abs(seriesData.values[measureIndex]);
                         this.highlightTotal += this.hasHighlights ? Math.abs(seriesData.highlights[measureIndex]) : 0;
                     }
+                    if (seriesData && seriesData.source && seriesData.source.roles && seriesData.source.roles.hasOwnProperty('Y')) {
+                        this.primaryMeasureTotal = localSum;
+                        this.primaryMeasureIndex = seriesIndex;
+                    }
+                    else if (seriesData && seriesData.source && seriesData.source.roles && seriesData.source.roles.hasOwnProperty('SecondaryMeasure')) {
+                        this.secondaryMeasureTotal = localSum;
+                        this.secondaryMeasureIndex = seriesIndex;
+                    }
                 }
+                this.secondaryMeasureTotal = AxisHelper.normalizeNonFiniteNumber(this.secondaryMeasureTotal);
+                this.primaryMeasureTotal = AxisHelper.normalizeNonFiniteNumber(this.primaryMeasureTotal);
 
                 this.total = AxisHelper.normalizeNonFiniteNumber(this.total);
                 this.highlightTotal = AxisHelper.normalizeNonFiniteNumber(this.highlightTotal);
@@ -495,14 +1002,15 @@ module powerbi.visuals {
                 var normalized: MeasureAndValue = $.extend(true, {}, measureAndValue);
                 normalized.measure = AxisHelper.normalizeNonFiniteNumber(normalized.measure);
                 normalized.value = AxisHelper.normalizeNonFiniteNumber(normalized.value);
-
                 return normalized;
             }
 
-            public fetchTotal(): number {
-                return this.total;
+            public fetchPrimaryMeasureTotal(): number {
+                return this.primaryMeasureTotal;
             }
-
+            public fetchSecondaryMeasureTotal(): number {
+                return this.secondaryMeasureTotal;
+            }
             public convert(): void {
                 var convertedData: ConvertedDataPoint[];
                 if (this.total !== 0) {
@@ -596,7 +1104,7 @@ module powerbi.visuals {
                         measureFormat: point.measureFormat,
                         percentage: percentage,
                         index: point.index,
-                        label: point.label,
+                        label: categoryValue,//point.label,
                         highlightRatio: highlightRatio,
                         selected: false,
                         tooltipInfo: tooltipInfo,
@@ -608,7 +1116,6 @@ module powerbi.visuals {
 
                 this.legendData = this.convertLegendData();
             }
-
             private getLegendTitle(): string {
                 if (this.total !== 0) {
                     // If category exists, we render title using category source. If not, we render title
@@ -628,22 +1135,23 @@ module powerbi.visuals {
                     return "";
                 }
             }
-
             private convertCategoricalWithSlicing(): ConvertedDataPoint[] {
                 var dataViewCategorical = this.dataViewCategorical;
+
                 var formatStringProp = donutChartProps.general.formatString;
                 var dataPoints: ConvertedDataPoint[] = [];
-
+                // if (-1 === this.primaryMeasureIndex) {
+                //     return dataPoints;
+                // }
                 for (var categoryIndex = 0, categoryCount = this.categoryValues.length; categoryIndex < categoryCount; categoryIndex++) {
                     var categoryValue = this.categoryValues[categoryIndex];
                     var thisCategoryObjects = this.allCategoryObjects ? this.allCategoryObjects[categoryIndex] : undefined;
-
                     var legendIdentity = SelectionId.createWithId(this.categoryIdentities[categoryIndex]);
                     var color = this.colorHelper.getColorForSeriesValue(thisCategoryObjects, this.categoryColumnRef, categoryValue);
                     var categoryLabel = valueFormatter.format(categoryValue, this.categoryFormatString);
-
                     // Series are either measures in the multi-measure case, or the single series otherwise
                     for (var seriesIndex = 0; seriesIndex < this.seriesCount; seriesIndex++) {
+                        // var seriesIndex = this.primaryMeasureIndex;
                         var seriesData = dataViewCategorical.values[seriesIndex];
 
                         var label = this.isSingleMeasure
@@ -667,17 +1175,18 @@ module powerbi.visuals {
                             .withSeries(seriesGroup, seriesGroup)
                             .withMeasure(measure)
                             .createSelectionId();
-
                         var dataPoint: ConvertedDataPoint = {
                             identity: identity,
                             measureFormat: valueFormatter.getFormatString(seriesData.source, formatStringProp, true),
                             measureValue: <MeasureAndValue>{
                                 measure: nonHighlight,
                                 value: Math.abs(nonHighlight),
+
                             },
                             highlightMeasureValue: <MeasureAndValue>{
                                 measure: highlight,
                                 value: Math.abs(highlight),
+
                             },
                             index: categoryIndex * this.seriesCount + seriesIndex,
                             label: label,
@@ -686,6 +1195,9 @@ module powerbi.visuals {
                             seriesIndex: seriesIndex
                         };
                         dataPoints.push(dataPoint);
+                        if (!(seriesData.source.roles.hasOwnProperty('Y'))) {
+                            dataPoints.pop();
+                        }
                     }
                     this.legendDataPoints.push({
                         label: categoryLabel,
@@ -698,12 +1210,14 @@ module powerbi.visuals {
 
                 return dataPoints;
             }
-
             private convertMeasures(): ConvertedDataPoint[] {
                 var dataViewCategorical = this.dataViewCategorical;
                 var dataPoints: ConvertedDataPoint[] = [];
                 var formatStringProp = donutChartProps.general.formatString;
-
+                // var measureIndex = this.primaryMeasureIndex;
+                // if (-1 === this.primaryMeasureIndex) {
+                //     return dataPoints;
+                // }
                 for (var measureIndex = 0; measureIndex < this.seriesCount; measureIndex++) {
                     var measureData = dataViewCategorical.values[measureIndex];
                     var measureFormat = valueFormatter.getFormatString(measureData.source, formatStringProp, true);
@@ -734,7 +1248,9 @@ module powerbi.visuals {
                         color: color
                     };
                     dataPoints.push(dataPoint);
-
+                    if (!(measureData.source.roles.hasOwnProperty('Y'))) {
+                        dataPoints.pop();
+                    }
                     this.legendDataPoints.push({
                         label: dataPoint.label,
                         color: dataPoint.color,
@@ -743,16 +1259,17 @@ module powerbi.visuals {
                         selected: false
                     });
                 }
-
                 return dataPoints;
             }
-
             private convertSeries(): ConvertedDataPoint[] {
                 var dataViewCategorical = this.dataViewCategorical;
                 var dataPoints: ConvertedDataPoint[] = [];
                 var formatStringProp = donutChartProps.general.formatString;
-
+                // var seriesIndex = this.primaryMeasureIndex;
                 for (var seriesIndex = 0; seriesIndex < this.seriesCount; seriesIndex++) {
+                    // if (-1 === this.primaryMeasureIndex) {
+                    //     return dataPoints;
+                    // }
                     var seriesData = dataViewCategorical.values[seriesIndex];
                     var seriesFormat = valueFormatter.getFormatString(seriesData.source, formatStringProp, true);
                     var label = converterHelper.getFormattedLegendLabel(seriesData.source, dataViewCategorical.values, formatStringProp);
@@ -773,10 +1290,12 @@ module powerbi.visuals {
                         measureValue: <MeasureAndValue>{
                             measure: nonHighlight,
                             value: Math.abs(nonHighlight),
+
                         },
                         highlightMeasureValue: <MeasureAndValue>{
                             measure: highlight,
                             value: Math.abs(highlight),
+
                         },
                         index: seriesIndex,
                         label: label,
@@ -785,7 +1304,9 @@ module powerbi.visuals {
                         seriesIndex: seriesIndex
                     };
                     dataPoints.push(dataPoint);
-
+                    if (!(seriesData.source.roles.hasOwnProperty('Y'))) {
+                        dataPoints.pop();
+                    }
                     this.legendDataPoints.push({
                         label: dataPoint.label,
                         color: dataPoint.color,
@@ -794,10 +1315,8 @@ module powerbi.visuals {
                         selected: false
                     });
                 }
-
                 return dataPoints;
             }
-
             private convertDataLabelSettings(): VisualDataLabelsSettings {
                 var dataViewMetadata = this.dataViewMetadata;
                 var dataLabelsSettings = dataLabelUtils.getDefaultDonutLabelSettings();
@@ -815,7 +1334,6 @@ module powerbi.visuals {
 
                 return dataLabelsSettings;
             }
-
             private convertLegendData(): LegendData {
                 return {
                     dataPoints: this.legendDataPoints,
@@ -837,15 +1355,27 @@ module powerbi.visuals {
         private dataView: DataView;
         private titleSize: number = 12;
         private updateCount: number = 0;
-        public totalSum: number = 0;
+        public isPrimaryMeasureSelected: any = false;
+        public isSecondaryMeasureSelected: any = false;
+        public isPrimaryMeasurePercentage: any = false;
+        public isSecondaryMeasurePercentage: any = false;
+        public primaryMeasureSum: number = 0;
+        public secondaryMeasureName: string = "";
+        public secondaryMeasureSum: number = 0;
+        public isLegendFieldSelected: any = false;
+        public isDetailsFieldSelected: any = false;
+        public primaryMeasureSpecialCharacter: string = "";
+        public primaryMeasureSpecialCharacterIndex: number = -1;    // 0 refers to starting of datavalue, 1 indicates last in data value
+        public secondaryMeasureSpecialCharacter: string = "";
+        public secondaryMeasureSpecialCharacterIndex: number = -1; // 0 refers to starting of datavalue, 1 indicates last in data value
         public detailLabelsColor: any;
         public detailLabelsDisplayUnits: any;
         public detailLabelsDecimalPlaces: any;
         public detailLabelsTextSize: any;
         public detailLabelsShowSummary: any;
+        public primaryMeasureSummaryText: any;
         private static ClassName = 'donutChart';
         private static InteractiveLegendClassName = 'donutLegend';
-        private static InteractiveLegendArrowClassName = 'donutLegendArrow';
         private static DrillDownAnimationDuration = 1000;
         private static OuterArcRadiusRatio = 0.9;
         private static InnerArcRadiusRatio = 0.8;
@@ -856,19 +1386,16 @@ module powerbi.visuals {
         private static sliceClass: ClassAndSelector = createClassAndSelector('slice');
         private static sliceHighlightClass: ClassAndSelector = createClassAndSelector('slice-highlight');
         private static twoPi = 2 * Math.PI;
-
         public static InteractiveLegendContainerHeight = 70;
         public static EffectiveZeroValue = 0.000000001; // Very small multiplier so that we have a properly shaped zero arc to animate to/from.
         public static PolylineOpacity = 0.5;
-
-        private dataViews: DataView[];
+        public dataViews: DataView[];
         private sliceWidthRatio: number;
         private svg: D3.Selection;
         private mainGraphicsContext: D3.Selection;
         private labelGraphicsContext: D3.Selection;
         private clearCatcher: D3.Selection;
         private legendContainer: D3.Selection;
-        private interactiveLegendArrow: D3.Selection;
         private parentViewport: IViewport;
         private currentViewport: IViewport;
         private formatter: ICustomValueFormatter;
@@ -898,7 +1425,16 @@ module powerbi.visuals {
         private tooltipsEnabled: boolean;
         private donutProperties: DonutChartProperties;
         private maxHeightToScaleDonutLegend: number;
-
+        //global variables for indicators
+        private show: any;
+        private PrimaryMeasure: any;
+        private Threshold: number;
+        private Total_Threshold: number;
+        private SecondaryMeasure: any;
+        private SMThreshold: number;
+        private SMTotalThreshold: number;
+        public customLegendHeight: any = 0;
+        public customLegendWidth: any = 0;
         /**
          * Note: Public for testing.
          */
@@ -910,12 +1446,6 @@ module powerbi.visuals {
                     kind: VisualDataRoleKind.Grouping,
                     displayName: data.createDisplayNameGetter('Role_DisplayName_Legend'),
                     description: data.createDisplayNameGetter('Role_DisplayName_LegendDescription')
-                }, {
-                    name: 'Series',
-                    kind: VisualDataRoleKind.Grouping,
-                    displayName: data.createDisplayNameGetter('Role_DisplayName_Details'),
-                    description: data.createDisplayNameGetter('Role_DisplayName_DetailsDonutChartDescription'),
-
                 },
                 {
                     name: 'Y',
@@ -975,10 +1505,24 @@ module powerbi.visuals {
                             type: { formatting: { fontSize: true } }
                         },
                         detailedLegend: {
-                            displayName: 'Legend Style',
+                            displayName: 'Primary Measure',
                             description: 'Displaying the legend details based on selection',
                             type: { enumeration: detailedLegendType },
                             suppressFormatPainterCopy: true
+                        },
+                        labelDisplayUnits: {
+                            displayName: data.createDisplayNameGetter('Visual_DisplayUnits'),
+                            description: data.createDisplayNameGetter('Visual_DisplayUnitsDescription'),
+                            placeHolderText: '0',
+                            type: { formatting: { labelDisplayUnits: true } },
+                            suppressFormatPainterCopy: true,
+                        },
+                        labelPrecision: {
+                            displayName: data.createDisplayNameGetter('Visual_Precision'),
+                            description: data.createDisplayNameGetter('Visual_PrecisionDescription'),
+                            placeHolderText: data.createDisplayNameGetter('Visual_Precision_Auto'),
+                            type: { numeric: true },
+                            suppressFormatPainterCopy: true,
                         },
                     }
                 },
@@ -986,14 +1530,6 @@ module powerbi.visuals {
                     displayName: data.createDisplayNameGetter('Visual_DataPoint'),
                     description: data.createDisplayNameGetter('Visual_DataPointDescription'),
                     properties: {
-                        defaultColor: {
-                            displayName: data.createDisplayNameGetter('Visual_DefaultColor'),
-                            type: { fill: { solid: { color: true } } }
-                        },
-                        showAllDataPoints: {
-                            displayName: data.createDisplayNameGetter('Visual_DataPoint_Show_All'),
-                            type: { bool: true }
-                        },
                         fill: {
                             displayName: data.createDisplayNameGetter('Visual_Fill'),
                             type: { fill: { solid: { color: true } } }
@@ -1033,14 +1569,16 @@ module powerbi.visuals {
                             displayName: data.createDisplayNameGetter('Visual_LabelStyle'),
                             type: { enumeration: labelStyle.type }
                         },
-                        // MAQCode
                         showSummary: {
                             displayName: 'Show Summary',
                             type: { bool: true }
                         },
+                        primaryMeasureSummaryText: {
+                            displayName: 'Summary Text',
+                            type: { text: true }
+                        },
                     },
                 },
-                // MAQCode
                 GMODonutTitle: {
                     displayName: 'Donut Title',
                     properties: {
@@ -1075,13 +1613,63 @@ module powerbi.visuals {
                         }
                     }
                 },
+                //Indicators Code
+                Indicators: {
+                    displayName: 'Primary Indicators',
+                    description: 'Display Indicators options',
+                    properties: {
+                        show: {
+                            type: { bool: true }
+                        },
+                        PrimaryMeasure: {
+                            displayName: 'Sign Indicator',
+                            description: 'Indicator based on sign for Primary Measure',
+                            placeHolderText: true,
+                            type: { bool: true }
+                        },
+                        Threshold: {
+                            displayName: 'Threshold',
+                            description: 'Threshold value for Primary Measure',
+                            type: { numeric: true }
+                        },
+                        Total_Threshold: {
+                            displayName: 'Total Value Threshold',
+                            description: 'Threshold value for primary measure total',
+                            type: { numeric: true }
+                        },
+                    },
+                },
 
-                //vend
+                SMIndicator: {
+                    displayName: 'Secondary Indicators',
+                    description: 'Display Indicators options',
+                    properties: {
+                        show: {
+                            type: { bool: true }
+                        },
+                        SecondaryMeasure: {
+                            displayName: 'Sign Indicator',
+                            description: 'Indicator for Secondary Measure',
+                            type: { bool: true }
+                        },
+                        SMThreshold: {
+                            displayName: 'Threshold',
+                            description: 'Threshold value for Secondary Measure',
+                            type: { numeric: true }
+                        },
+
+                        SMTotalThreshold: {
+                            displayName: 'Total Value Threshold',
+                            description: 'Threshold value for secondary measure total',
+                            type: { numeric: true }
+                        },
+                    },
+                },
             },
             dataViewMappings: [{
                 conditions: [
-                    { 'Category': { max: 1 }, 'Series': { max: 0 }, 'Y': { max: 1 }, 'SecondaryMeasure': { max: 1 } },
-                    { 'Category': { max: 1 }, 'Series': { min: 1, max: 1 }, 'Y': { max: 1 }, 'SecondaryMeasure': { max: 1 } }
+                    { 'Category': { max: 1 }, 'Y': { max: 1 }, 'SecondaryMeasure': { max: 1 } },//'Series': { max: 0 },
+                    { 'Category': { max: 1 }, 'Y': { max: 1 }, 'SecondaryMeasure': { max: 1 } }//'Series': { min: 1, max: 1 },
                 ],
                 categorical: {
                     categories: {
@@ -1128,13 +1716,13 @@ module powerbi.visuals {
         public static converter(dataView: DataView, colors: IDataColorPalette, defaultDataPointColor?: string, viewport?: IViewport, disableGeometricCulling?: boolean, interactivityService?: IInteractivityService): DonutDataGMO {
             var converter = new DonutChartConversion.DonutChartConverter(dataView, colors, defaultDataPointColor);
             converter.convert();
-            var totalSum = converter.fetchTotal();
+            var primaryMeasureSum = converter.fetchPrimaryMeasureTotal()
+                , secondaryMeasureSum = converter.fetchSecondaryMeasureTotal();
             var d3PieLayout = d3.layout.pie()
                 .sort(null)
                 .value((d: DonutDataPoint) => {
                     return d.percentage;
                 });
-
             if (interactivityService) {
                 interactivityService.applySelectionStateToData(converter.dataPoints);
                 interactivityService.applySelectionStateToData(converter.legendData.dataPoints);
@@ -1151,7 +1739,8 @@ module powerbi.visuals {
                 legendObjectProperties: converter.legendObjectProperties,
                 maxValue: converter.maxValue,
                 visibleGeometryCulled: converter.dataPoints.length !== culledDataPoints.length,
-                totalSum: totalSum,
+                primaryMeasureSum: primaryMeasureSum,
+                secondaryMeasureSum: secondaryMeasureSum,
             };
         }
 
@@ -1203,27 +1792,27 @@ module powerbi.visuals {
 
             this.hostService = options.host;
 
-            if (this.isInteractive) {
-                this.chartRotationAnimationDuration = (donutChartSettings && donutChartSettings.chartRotationAnimationDuration) ? donutChartSettings.chartRotationAnimationDuration : 0;
+            // if (this.isInteractive) {
+            this.chartRotationAnimationDuration = (donutChartSettings && donutChartSettings.chartRotationAnimationDuration) ? donutChartSettings.chartRotationAnimationDuration : 0;
 
-                // Create interactive legend
-                var legendContainer = this.legendContainer = d3.select(element.get(0))
-                    .append('div')
-                    .classed(DonutChartGMO.InteractiveLegendClassName, true);
-                this.interactivityState = {
-                    interactiveLegend: new DonutChartInteractiveLegend(this, legendContainer, this.colors, options, this.settings),
-                    valueToAngleFactor: 0,
-                    sliceAngles: [],
-                    currentRotate: 0,
-                    interactiveChosenSliceFinishedSetting: false,
-                    lastChosenInteractiveSliceIndex: 0,
-                    totalDragAngleDifference: 0,
-                    currentIndexDrag: 0,
-                    previousIndexDrag: 0,
-                    previousDragAngle: 0,
-                    donutCenter: { x: 0, y: 0 },
-                };
-            }
+            // Create interactive legend
+            var legendContainer = this.legendContainer = d3.select(element.get(0))
+                .append('div')
+                .classed(DonutChartGMO.InteractiveLegendClassName, true);
+            this.interactivityState = {
+                interactiveLegend: new DonutChartInteractiveLegend(this, legendContainer, this.colors, options, this.settings),
+                valueToAngleFactor: 0,
+                sliceAngles: [],
+                currentRotate: 0,
+                interactiveChosenSliceFinishedSetting: false,
+                lastChosenInteractiveSliceIndex: 0,
+                totalDragAngleDifference: 0,
+                currentIndexDrag: 0,
+                previousIndexDrag: 0,
+                previousDragAngle: 0,
+                donutCenter: { x: 0, y: 0 },
+            };
+            //   }
 
             this.svg = d3.select(element.get(0))
                 .append('svg')
@@ -1245,31 +1834,119 @@ module powerbi.visuals {
                 .sort(null)
                 .value((d: DonutDataPoint) => {
                     return d.percentage;
+
                 });
             d3.select(element.get(0))
                 .append('div')
                 .classed('errorMessage', true)
-                .text("Please select any Primary Measure")
+                .text("Please select 'Primary Measure' value")
                 .style({ 'display': 'none' });
+
+            //tarang
+            d3.select(element.get(0))
+                .append('div')
+                .classed('SummarizedDiv', true);
         }
 
         public update(options: VisualUpdateOptions): void {
             // MAQCode 
             this.updateCount++;
             this.dataView = options.dataViews[0];
-            var isPrimaryMeasureSelected = false,
-                legendProperties;
+            this.isPrimaryMeasureSelected = false;
+            this.isSecondaryMeasureSelected = false;
+            this.isLegendFieldSelected = false;
+            this.isDetailsFieldSelected = false;
+            var legendProperties;
+            this.isPrimaryMeasurePercentage = false;
+            this.isSecondaryMeasurePercentage = false;
             this.root.select('.legend').style({ 'display': 'inherit' });
-            if (this.dataView.categorical && this.dataView.categorical.values) {
+            this.root.select('.donutLegend').style({ 'display': 'block' });
+            this.primaryMeasureSpecialCharacter = "";
+            this.primaryMeasureSpecialCharacterIndex = -1;
+            this.secondaryMeasureSpecialCharacter = "";
+            this.secondaryMeasureSpecialCharacterIndex = -1;
+            var valueWithSpecialCharacter = "";
+            if (this.dataView && this.dataView.categorical && this.dataView.categorical.categories && this.dataView.categorical.categories.length > 0) {
+                this.isLegendFieldSelected = true;
+            }
+            if (this.dataView && this.dataView.categorical && this.dataView.categorical.values) {
+                if (this.dataView.categorical.values.source) {
+                    this.isDetailsFieldSelected = true;
+                }
                 for (var iCount = 0; iCount < this.dataView.categorical.values.length; iCount++) {
+                    valueWithSpecialCharacter = "";
                     if (this.dataView.categorical.values[iCount].source
                         && this.dataView.categorical.values[iCount].source.roles
                         && this.dataView.categorical.values[iCount].source.roles.hasOwnProperty('Y')) {
-                        isPrimaryMeasureSelected = true;
-                        break;
+                        this.isPrimaryMeasureSelected = true;
+                        valueWithSpecialCharacter = valueFormatter.format(2, this.dataView.categorical.values[iCount].source.format);
+                        valueWithSpecialCharacter = valueWithSpecialCharacter + "";
+                        valueWithSpecialCharacter = valueWithSpecialCharacter.replace(/\s+/g, '');
+                        if (-1 === this.primaryMeasureSpecialCharacterIndex) {
+                            if (isNaN(parseInt(valueWithSpecialCharacter.charAt(0), 10))) {
+                                for (var iCounts = 0; iCounts < valueWithSpecialCharacter.indexOf("2"); iCounts++) {
+                                    this.primaryMeasureSpecialCharacter = this.primaryMeasureSpecialCharacter + valueWithSpecialCharacter.charAt(iCounts);
+                                }
+                                this.primaryMeasureSpecialCharacterIndex = 0;
+                            }
+                            else {
+                                if (valueWithSpecialCharacter.length > 1 && isNaN(parseInt(valueWithSpecialCharacter.charAt(valueWithSpecialCharacter.length - 1), 10))) {
+                                    for (var iLength = valueWithSpecialCharacter.length - 1; iLength >= 0; iLength--) {
+                                        if (isNaN(parseInt(valueWithSpecialCharacter.charAt(iLength), 10))) {
+                                            this.primaryMeasureSpecialCharacter = valueWithSpecialCharacter.charAt(iLength) + this.primaryMeasureSpecialCharacter;
+                                        }
+                                        else {
+                                            break;
+                                        }
+                                    }
+                                    this.primaryMeasureSpecialCharacterIndex = 1;
+                                    if ("%" === this.primaryMeasureSpecialCharacter) {
+
+                                        this.isPrimaryMeasurePercentage = true;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    else if (this.dataView.categorical.values[iCount].source
+                        && this.dataView.categorical.values[iCount].source.roles
+                        && this.dataView.categorical.values[iCount].source.roles.hasOwnProperty('SecondaryMeasure')) {
+                        this.secondaryMeasureName = this.dataView.categorical.values[iCount].source.displayName;
+                        this.isSecondaryMeasureSelected = true;
+                        valueWithSpecialCharacter = valueFormatter.format(2, this.dataView.categorical.values[iCount].source.format);
+                        valueWithSpecialCharacter = valueWithSpecialCharacter + "";
+                        valueWithSpecialCharacter = valueWithSpecialCharacter.replace(/\s+/g, '');
+                        if (-1 === this.secondaryMeasureSpecialCharacterIndex) {
+                            if (isNaN(parseInt(valueWithSpecialCharacter.charAt(0), 10))) {
+                                for (var iCounted = 0; iCounted < valueWithSpecialCharacter.indexOf("2"); iCounted++) {
+                                    this.secondaryMeasureSpecialCharacter = this.secondaryMeasureSpecialCharacter + valueWithSpecialCharacter.charAt(iCounted);
+                                }
+                                this.secondaryMeasureSpecialCharacterIndex = 0;
+                            }
+                            else {
+                                if (valueWithSpecialCharacter.length > 1 && isNaN(parseInt(valueWithSpecialCharacter.charAt(valueWithSpecialCharacter.length - 1), 10))) {
+                                    for (var iLengths = valueWithSpecialCharacter.length - 1; iLengths >= 0; iLengths--) {
+                                        if (isNaN(parseInt(valueWithSpecialCharacter.charAt(iLengths), 10))) {
+                                            this.secondaryMeasureSpecialCharacter = valueWithSpecialCharacter.charAt(iLengths) + this.secondaryMeasureSpecialCharacter;
+                                        }
+                                        else {
+                                            break;
+                                        }
+                                    }
+                                    this.secondaryMeasureSpecialCharacterIndex = 1;
+                                    if ("%" === this.secondaryMeasureSpecialCharacter) {
+
+                                        this.isSecondaryMeasurePercentage = true;
+                                    }
+                                }
+                            }
+
+                        }
+
                     }
                 }
             }
+
             // Viewport resizing
             var viewport = options.viewport;
             this.parentViewport = viewport;
@@ -1284,7 +1961,7 @@ module powerbi.visuals {
                 , titleHeight: number
                 , titlecolor: IDataLabelSettings
                 , titlebgcolor: IDataLabelSettings;
-                
+
             if (this.getShowTitle(this.dataView)) {
                 GMODonutTitleOnOffStatus = true;
             }
@@ -1315,7 +1992,7 @@ module powerbi.visuals {
                 this.root.select('.Title_Div_Text').style({ 'display': 'none' });
             }
             else {
-                this.root.select('.Title_Div_Text').style({ 'display': 'inline-block', 'background-color': titlebgcolor, 'font-size': titlefontsize + 'pt', 'color': titlecolor });
+                this.root.select('.Title_Div_Text').style({ 'display': 'inline-block', 'background-color': titlebgcolor, 'font-size': PixelConverter.fromPointToPixel(titlefontsize) + 'px', 'color': titlecolor });
             }
 
             this.root.select('.GMODonutTitleDiv')
@@ -1328,42 +2005,22 @@ module powerbi.visuals {
                     .style({ 'display': 'inline-block' })
                     .attr('title', tooltiptext);
             }
+            this.root.selectAll('.SummarizedDivContainer').remove();
 
             debug.assertValue(options, 'options');
             var dataViews = this.dataViews = options.dataViews;
             if (dataViews && dataViews.length > 0 && dataViews[0].categorical) {
-                var dataViewMetadata = dataViews[0].metadata;
-                var showAllDataPoints = undefined;
                 var defaultDataPointColor = undefined;
-                if (dataViewMetadata) {
-                    var objects: DataViewObjects = dataViewMetadata.objects;
-
-                    if (objects) {
-                        showAllDataPoints = DataViewObjects.getValue<boolean>(objects, DonutChartGMOProperties.dataPoint.showAllDataPoints);
-                        defaultDataPointColor = DataViewObjects.getFillColor(objects, DonutChartGMOProperties.dataPoint.defaultColor);
-                    }
-                }
-
                 this.data = DonutChartGMO.converter(dataViews[0], this.colors, defaultDataPointColor, this.currentViewport, this.disableGeometricCulling, this.interactivityService);
-                this.data.showAllDataPoints = showAllDataPoints;
-                this.data.defaultDataPointColor = defaultDataPointColor;
-                for (var i = 0; i < this.data.dataPoints.length; i++) {
-                    if (this.getDetailedLegend(this.dataView) === 'None') {
-                        this.data.legendData.dataPoints[i].label = this.data.dataPoints[i].data.label;
+               
+                // this.data.showAllDataPoints = showAllDataPoints;
+                // this.data.defaultDataPointColor = defaultDataPointColor;
+                this.renderLegend(dataViews[0], $(this.root[0]).height());
+                // if (dataViewMetadata && dataViewMetadata.objects && dataViewMetadata.objects['legend'] && dataViewMetadata.objects['legend']['position']) {
+                //     if (dataViewMetadata.objects['legend']['position'] === 'Left' || dataViewMetadata.objects['legend']['position'] === 'LeftCenter' || dataViewMetadata.objects['legend']['position'] === 'Right' || dataViewMetadata.objects['legend']['position'] === 'RightCenter')
+                //         this.addLegends();
+                // }
 
-                    } else if (this.getDetailedLegend(this.dataView) === 'Primary Measure') {
-                        this.data.legendData.dataPoints[i].label = this.data.dataPoints[i].data.label + " " + visuals.valueFormatter.format(this.data.dataPoints[i].data.measure, this.data.dataPoints[i].data.measureFormat);
-
-                    } else if (this.getDetailedLegend(this.dataView) === 'Percentage') {
-                        this.data.legendData.dataPoints[i].label = this.data.dataPoints[i].data.label + " " + visuals.valueFormatter.format(this.data.dataPoints[i].data.percentage, '0.00 %;-0.00 %;0.00 %');
-                    } else {
-                        this.data.legendData.dataPoints[i].label = this.data.dataPoints[i].data.label + " " + visuals.valueFormatter.format(this.data.dataPoints[i].data.measure, this.data.dataPoints[i].data.measureFormat) + " " + visuals.valueFormatter.format(this.data.dataPoints[i].data.percentage, '0.00 %;-0.00 %;0.00 %');
-                    }
-                }
-
-                if (!(this.options.interactivity && this.options.interactivity.isInteractiveLegend))
-                    this.renderLegend();
-                legendProperties = this.data.legendObjectProperties;
             }
 
             else {
@@ -1382,25 +2039,10 @@ module powerbi.visuals {
             this.initDonutProperties();
             // MAQCode
             // this.root.select('.legend').style({ 'position': 'relative' });
-            this.updateInternal(this.data, options.suppressAnimations);
-            this.hasSetData = true;
-
-            if (dataViews) {
-                var warnings = getInvalidValueWarnings(
-                    dataViews,
-                    false /*supportsNaN*/,
-                    false /*supportsNegativeInfinity*/,
-                    false /*supportsPositiveInfinity*/);
-
-                if (this.data.visibleGeometryCulled) {
-                    warnings.unshift(new GeometryCulledWarning());
-                }
-
-                this.hostService.setWarnings(warnings);
-            }
+            this.root.select('.SummarizedDiv').style({ 'display': 'block' });
 
             // Add component for displaying Error Message                
-            if (!isPrimaryMeasureSelected) {
+            if (!this.isPrimaryMeasureSelected) {
 
                 var legendWidth = this.root.select('.legend').attr('width')
                     , legendStyle = this.root.select('.legend').attr('style')
@@ -1424,6 +2066,7 @@ module powerbi.visuals {
                 this.root.select('.Title_Div_Text').style({ 'display': 'none' });
                 this.root.select('.donutChart').style({ 'display': 'none' });
                 this.root.select('.legend').style({ 'display': 'none' });
+                this.root.select('.donutLegend').style({ 'display': 'none' });
                 this.root.select('.SummarizedDiv').style({ 'display': 'none' });
                 this.root.select('.errorMessage').style({
                     'display': 'block', 'text-align': 'center'
@@ -1455,6 +2098,113 @@ module powerbi.visuals {
                             this.root.select('.errorMessage').style({ 'padding': 0 + 'px', 'width': '100%' });
                             break;
                     }
+                }
+            }
+            else {
+                this.root.select('.errorMessage').style({ 'display': 'none' });
+                // var formattedPrimaryMeasureSum     = this.format(this.data.primaryMeasureSum,1000,null);
+                //  this.root.select('.primaryMeasureSum').html(formattedPrimaryMeasureSum);
+                //  var formattedSecondaryMeasureSum   =  this.format(this.data.secondaryMeasureSum,1000,null);
+                //  this.root.select('.secondaryMeasureSum').html(formattedSecondaryMeasureSum);
+                //  this.root.select('.SummarizedDiv').style({'display':'block'});                 
+                //  this.root.select('.SummarizedDivContainer').style({'color':this.detailLabelsColor,'font-size': this.detailLabelsTextSize + 'px'});
+                //  this.root.select('.TotalText').html(this.primaryMeasureSummaryText);
+                //  if(this.isPrimaryMeasurePercentage){
+                // 	 this.root.select('.TotalText').style({'display':'none'});
+                //  	 this.root.select('.TotalValue').style({'display':'none'});
+                //  }
+                //  else{
+                // 	 this.root.select('.TotalText').style({'display':'block'});
+                //  	 this.root.select('.TotalValue').style({'display':'block'});
+                //  }
+                // }
+                this.updateInternal(this.data, options.suppressAnimations);
+                if (undefined === this.detailLabelsShowSummary || this.detailLabelsShowSummary) {
+                    if (undefined === this.detailLabelsDisplayUnits || 0 === this.detailLabelsDisplayUnits) {
+                        this.detailLabelsDisplayUnits = 0;
+                    }
+
+                    var formattedPrimaryMeasureSum = "";
+                    if (this.detailLabelsDecimalPlaces > 20) {
+                        this.detailLabelsDecimalPlaces = 20;
+                    }
+                    if (this.isPrimaryMeasurePercentage) {
+                        formattedPrimaryMeasureSum = this.format(this.data.primaryMeasureSum * 100, 1, this.detailLabelsDecimalPlaces, 'PrimaryMeasure');
+                        formattedPrimaryMeasureSum = formattedPrimaryMeasureSum + "%";
+                    }
+                    else {
+                        formattedPrimaryMeasureSum = this.format(this.data.primaryMeasureSum, this.detailLabelsDisplayUnits, this.detailLabelsDecimalPlaces, 'PrimaryMeasure');
+                        if (0 === this.primaryMeasureSpecialCharacterIndex) {
+                            formattedPrimaryMeasureSum = this.primaryMeasureSpecialCharacter + formattedPrimaryMeasureSum;
+                        }
+                        else if (1 === this.primaryMeasureSpecialCharacterIndex) {
+                            formattedPrimaryMeasureSum = formattedPrimaryMeasureSum + this.primaryMeasureSpecialCharacter;
+                        }
+                    }
+                    if (undefined === this.detailLabelsTextSize) {
+                        this.detailLabelsTextSize = 9;
+                    }
+                    var sizeInPixel = PixelConverter.fromPointToPixel(this.detailLabelsTextSize);
+                    var indicatorSize = PixelConverter.fromPointToPixel(this.detailLabelsTextSize - 2);
+                    this.root.select('.primaryMeasureSum').html(formattedPrimaryMeasureSum).attr('title', this.data.primaryMeasureSum).style({ 'font-size': sizeInPixel + 'px' });
+                    this.root.select('.primaryMeasureIndicator').style({ 'font-size': indicatorSize + 'px', 'margin-top': '2px' });
+                    this.root.select('.secondaryMeasureIndicator').style({ 'font-size': indicatorSize + 'px', 'margin-top': '2px' });
+                    var formattedSecondaryMeasureSum = "";
+                    if (this.isSecondaryMeasurePercentage) {
+                        formattedSecondaryMeasureSum = this.format(this.data.secondaryMeasureSum * 100, 1, this.detailLabelsDecimalPlaces, 'SecondaryMeasure');
+                        formattedSecondaryMeasureSum = formattedSecondaryMeasureSum + "%";
+                    }
+                    else {
+                        formattedSecondaryMeasureSum = this.format(this.data.secondaryMeasureSum, this.detailLabelsDisplayUnits, this.detailLabelsDecimalPlaces, 'SecondaryMeasure');
+                        if (0 === this.secondaryMeasureSpecialCharacterIndex) {
+                            formattedSecondaryMeasureSum = this.secondaryMeasureSpecialCharacter + formattedSecondaryMeasureSum;
+                        }
+                        else if (1 === this.secondaryMeasureSpecialCharacterIndex) {
+                            formattedSecondaryMeasureSum = formattedSecondaryMeasureSum + this.secondaryMeasureSpecialCharacter;
+                        }
+                    }
+                    this.root.select('.secondaryMeasureSum').html(formattedSecondaryMeasureSum).attr('title', this.data.secondaryMeasureSum).style({ 'font-size': sizeInPixel + 'px' });
+                    this.root.select('.SummarizedDiv').style({ 'display': 'block' });
+                    this.root.select('.SummarizedDivContainer').style({ 'color': this.detailLabelsColor, 'font-size': sizeInPixel + 'px' });
+                    if (undefined === this.primaryMeasureSummaryText) {
+                        this.primaryMeasureSummaryText = "Total";
+                    }
+                    this.root.select('.TotalText').html(this.primaryMeasureSummaryText).style({ 'font-size': sizeInPixel + 'px' });
+                    if (this.isPrimaryMeasurePercentage && (this.isLegendFieldSelected || this.isDetailsFieldSelected)) {
+                        this.root.select('.TotalText').style({ 'display': 'none' });
+                        this.root.select('.TotalValue').style({ 'display': 'none' });
+                    }
+                    else {
+                        this.root.select('.TotalText').style({ 'display': 'block' });
+                        this.root.select('.TotalValue').style({ 'display': 'block' });
+                    }
+                    if (this.isSecondaryMeasurePercentage && (this.isLegendFieldSelected || this.isDetailsFieldSelected)) {
+                        this.root.select('.SecondaryText').style({ 'display': 'none' });
+                        this.root.select('.SecondaryValue').style({ 'display': 'none' });
+                    }
+                    else {
+                        this.root.select('.SecondaryText').style({ 'display': 'block' });
+                        this.root.select('.SecondaryValue').style({ 'display': 'block' });
+                    }
+                }
+                else {
+                    this.root.select('.SummarizedDiv').style({ 'display': 'none' });
+                }
+
+                this.hasSetData = true;
+
+                if (dataViews) {
+                    var warnings = getInvalidValueWarnings(
+                        dataViews,
+                        false /*supportsNaN*/,
+                        false /*supportsNegativeInfinity*/,
+                        false /*supportsPositiveInfinity*/);
+
+                    if (this.data.visibleGeometryCulled) {
+                        warnings.unshift(new GeometryCulledWarning());
+                    }
+
+                    this.hostService.setWarnings(warnings);
                 }
             }
         }
@@ -1501,6 +2251,7 @@ module powerbi.visuals {
                         fontSize: true,
                         labelStyle: true,
                         showSummary: this.getShowSummary(this.dataViews[0]),
+                        primaryMeasureSummaryText: this.getPrimaryMeasureSummaryText(this.dataViews[0]),
                     };
                     // MAQCode
                     this.enumerateDataLabels(labelSettingOptions);
@@ -1521,19 +2272,111 @@ module powerbi.visuals {
                         }
                     });
                     break;
+                // Start of Indicators
+                case 'Indicators':
+                    this.enumerateIndicator(enumeration, 'Indicators');
+                    break;
+
+                case 'SMIndicator':
+                    this.enumerateIndicator(enumeration, 'SMIndicator');
+                    break;
             }
             return enumeration.complete();
         }
 
+        private enumerateIndicator(enumeration: ObjectEnumerationBuilder, text: string): ObjectEnumerationBuilder {
+            var data = this.data;
+            if (!data)
+                return;
+            if (text === 'Indicators') {
+                this.show = this.getShowStatus(this.dataViews[0], 'show', text);
+                this.PrimaryMeasure = this.getShowStatus(this.dataViews[0], 'PrimaryMeasure', text);
+                if (!this.PrimaryMeasure) {
+                    this.Threshold = this.getStatus(this.dataViews[0], 'Threshold', text);
+                    this.Total_Threshold = this.getStatus(this.dataViews[0], 'Total_Threshold', text);
+                }
+                else {
+                    this.Threshold = null;
+                    this.Total_Threshold = null;
+                }
+                enumeration.pushInstance({
+                    selector: null,
+                    objectName: 'Indicators',
+                    properties: {
+                        show: this.show,
+                        PrimaryMeasure: this.PrimaryMeasure,
+                        Threshold: this.Threshold,
+                        Total_Threshold: this.Total_Threshold
+                    }
+                });
+            }
+            else {
+                this.show = this.getShowStatus(this.dataViews[0], 'show', text);
+                this.SecondaryMeasure = this.getShowStatus(this.dataViews[0], 'SecondaryMeasure', text);
+                if (!this.SecondaryMeasure) {
+                    this.SMThreshold = this.getStatus(this.dataViews[0], 'SMThreshold', text);
+                    this.SMTotalThreshold = this.getStatus(this.dataViews[0], 'SMTotalThreshold', text);
+                }
+                else {
+                    this.SMThreshold = null;
+                    this.SMTotalThreshold = null;
+                }
+                enumeration.pushInstance({
+                    selector: null,
+
+                    objectName: 'SMIndicator',
+                    properties: {
+                        show: this.show,
+                        SecondaryMeasure: this.SecondaryMeasure,
+                        SMThreshold: this.SMThreshold,
+                        SMTotalThreshold: this.SMTotalThreshold,
+                    }
+                });
+            }
+        }
+        // Gets the status of Indicators
+        public getShowStatus(dataView: DataView, text: string, category: string): IDataLabelSettings {
+            if (dataView && dataView.metadata && dataView.metadata.objects) {
+                if (dataView.metadata.objects && dataView.metadata.objects.hasOwnProperty(category)) {
+                    var showTitle = dataView.metadata.objects[category];
+                    if (dataView.metadata.objects && showTitle.hasOwnProperty(text)) {
+                        return <IDataLabelSettings>showTitle[text];
+                    }
+                    else if (text === 'PrimaryMeasure' || 'SecondaryMeasure') {
+                        return <IDataLabelSettings>true;
+                    }
+                } else {
+                    return <IDataLabelSettings>false;
+                }
+            }
+            return <IDataLabelSettings>false;
+        }
+        public getStatus(dataView: DataView, text: string, category: string): number {
+            if (dataView && dataView.metadata && dataView.metadata.objects) {
+                if (dataView.metadata.objects && dataView.metadata.objects.hasOwnProperty(category)) {
+                    var showTitle = dataView.metadata.objects[category];
+                    if (dataView.metadata.objects && showTitle.hasOwnProperty(text)) {
+                        return showTitle[text];
+                    }
+                } else {
+                    return 0;
+                }
+            }
+            return 0;
+        }
+        //End of Indicators	
         // MAQCode
         private enumerateDataLabels(options: VisualDataLabelsSettingsOptions): ObjectEnumerationBuilder {
-            this.root.select('.Title_Div_Text');
+            var formattedPrimaryMeasureSum = "",
+                formattedSecondaryMeasureSum = "",
+                sizeInPixel;
+            if (this.detailLabelsDecimalPlaces > 20) {
+                this.detailLabelsDecimalPlaces = 20;
+            }
             debug.assertValue(options, 'options');
             debug.assertValue(options.enumeration, 'enumeration');
-
             if (!options.dataLabelsSettings)
                 return;
-
             var instance: VisualObjectInstance = {
                 objectName: 'labels',
                 selector: options.selector,
@@ -1545,21 +2388,21 @@ module powerbi.visuals {
             else if (options.show) {
                 instance.properties['show'] = options.dataLabelsSettings.show;
             }
-
             this.detailLabelsColor = instance.properties['color'] = options.dataLabelsSettings.labelColor;
-
             if (options.displayUnits) {
                 this.detailLabelsDisplayUnits = instance.properties['labelDisplayUnits'] = options.dataLabelsSettings.displayUnits;
             }
             if (options.precision) {
                 var precision = options.dataLabelsSettings.precision;
                 this.detailLabelsDecimalPlaces = instance.properties['labelPrecision'] = precision === dataLabelUtils.defaultLabelPrecision ? null : precision;
+                if (this.detailLabelsDecimalPlaces > 20) {
+                    this.detailLabelsDecimalPlaces = 20;
+                }
             }
             if (options.position) {
                 instance.properties['labelPosition'] = options.dataLabelsSettings.position;
                 if (options.positionObject) {
                     debug.assert(!instance.validValues, '!instance.validValues');
-
                     instance.validValues = { 'labelPosition': options.positionObject };
                 }
             }
@@ -1567,6 +2410,7 @@ module powerbi.visuals {
                 instance.properties['labelStyle'] = options.dataLabelsSettings.labelStyle;
             if (options.fontSize)
                 this.detailLabelsTextSize = instance.properties['fontSize'] = options.dataLabelsSettings.fontSize;
+            sizeInPixel = PixelConverter.fromPointToPixel(this.detailLabelsTextSize);
             if (options.labelDensity) {
                 var lineChartSettings = <LineChartDataLabelsSettings>options.dataLabelsSettings;
                 if (lineChartSettings)
@@ -1575,10 +2419,66 @@ module powerbi.visuals {
             // var a=this.dataView.metadata.objects['Labels'];
             // MAQCode
             this.detailLabelsShowSummary = instance.properties['showSummary'] = this.getShowSummary(this.dataViews[0]);
+            this.primaryMeasureSummaryText = instance.properties['primaryMeasureSummaryText'] = this.getPrimaryMeasureSummaryText(this.dataViews[0]);
             //Keep show all as the last property of the instance.
             if (options.showAll)
                 instance.properties['showAll'] = options.dataLabelsSettings.showLabelPerSeries;
+            if (this.detailLabelsShowSummary) {
+                // if (0 === this.detailLabelsDisplayUnits) {
+                //    this.detailLabelsDisplayUnits = 1000;
 
+                //  }
+                if (this.isPrimaryMeasurePercentage) {
+                    formattedPrimaryMeasureSum = this.format(this.data.primaryMeasureSum * 100, 1, this.detailLabelsDecimalPlaces, 'PrimaryMeasure');
+                    formattedPrimaryMeasureSum = formattedPrimaryMeasureSum + "%";
+                }
+                else {
+                    formattedPrimaryMeasureSum = this.format(this.data.primaryMeasureSum, this.detailLabelsDisplayUnits, this.detailLabelsDecimalPlaces, 'PrimaryMeasure');
+                    if (0 === this.primaryMeasureSpecialCharacterIndex) {
+                        formattedPrimaryMeasureSum = this.primaryMeasureSpecialCharacter + formattedPrimaryMeasureSum;
+                    }
+                    else if (1 === this.primaryMeasureSpecialCharacterIndex) {
+                        formattedPrimaryMeasureSum = formattedPrimaryMeasureSum + this.primaryMeasureSpecialCharacter;
+                    }
+                }
+                this.root.select('.primaryMeasureSum').html(formattedPrimaryMeasureSum).attr('title', this.data.primaryMeasureSum).style({ 'font-size': sizeInPixel + 'px' });
+                if (this.isSecondaryMeasurePercentage) {
+                    formattedSecondaryMeasureSum = this.format(this.data.secondaryMeasureSum * 100, 1, this.detailLabelsDecimalPlaces, 'SecondaryMeasure');
+                    formattedSecondaryMeasureSum = formattedSecondaryMeasureSum + "%";
+                }
+                else {
+                    formattedSecondaryMeasureSum = this.format(this.data.secondaryMeasureSum, this.detailLabelsDisplayUnits, this.detailLabelsDecimalPlaces, 'SecondaryMeasure');
+                    if (0 === this.secondaryMeasureSpecialCharacterIndex) {
+                        formattedSecondaryMeasureSum = this.secondaryMeasureSpecialCharacter + formattedSecondaryMeasureSum;
+                    }
+                    else if (1 === this.secondaryMeasureSpecialCharacterIndex) {
+                        formattedSecondaryMeasureSum = formattedSecondaryMeasureSum + this.secondaryMeasureSpecialCharacter;
+                    }
+                }
+                this.root.select('.secondaryMeasureSum').html(formattedSecondaryMeasureSum).attr('title', this.data.secondaryMeasureSum).style({ 'font-size': sizeInPixel + 'px' });;
+                this.root.select('.SummarizedDiv').style({ 'display': 'block' });
+                this.root.select('.SummarizedDivContainer').style({ 'color': this.detailLabelsColor, 'font-size': sizeInPixel + 'px' });
+                this.root.select('.TotalText').html(this.primaryMeasureSummaryText).style({ 'font-size': sizeInPixel + 'px' });
+                if (this.isPrimaryMeasurePercentage && (this.isLegendFieldSelected || this.isDetailsFieldSelected)) {
+                    this.root.select('.TotalText').style({ 'display': 'none' });
+                    this.root.select('.TotalValue').style({ 'display': 'none' });
+                }
+                else {
+                    this.root.select('.TotalText').style({ 'display': 'block' });
+                    this.root.select('.TotalValue').style({ 'display': 'block' });
+                }
+                if (this.isSecondaryMeasurePercentage && (this.isLegendFieldSelected || this.isDetailsFieldSelected)) {
+                    this.root.select('.SecondaryText').style({ 'display': 'none' });
+                    this.root.select('.SecondaryValue').style({ 'display': 'none' });
+                }
+                else {
+                    this.root.select('.SecondaryText').style({ 'display': 'block' });
+                    this.root.select('.SecondaryValue').style({ 'display': 'block' });
+                }
+            }
+            else {
+                this.root.select('.SummarizedDiv').style({ 'display': 'none' });
+            }
             return options.enumeration.pushInstance(instance);
         }
 
@@ -1664,6 +2564,84 @@ module powerbi.visuals {
             return <IDataLabelSettings>returnTitle;
         }
 
+        // This function is to perform KMB formatting on values.
+        public format(d: number, displayunitValue: number, precisionValue: number, columnType: string) {
+            var result: string;
+            switch (displayunitValue) {
+                case 0:
+                    {
+                        var prefix = d3.formatPrefix(d);
+                        result = d3.round(prefix.scale(d), precisionValue).toFixed(precisionValue) + prefix.symbol.toUpperCase();
+                        break;
+                    }
+                case 1:
+                    {
+                        result = this.numberWithCommas(d.toFixed(precisionValue));
+                        break;
+                    }
+                case 1000:
+                    {
+                        result = this.numberWithCommas((d / 1000).toFixed(precisionValue)) + 'K';
+                        break;
+                    }
+                case 1000000:
+                    {
+                        result = this.numberWithCommas((d / 1000000).toFixed(precisionValue)) + 'M';
+                        break;
+                    }
+                case 1000000000:
+                    {
+                        result = this.numberWithCommas((d / 1000000000).toFixed(precisionValue)) + 'bn';
+                        break;
+                    }
+                case 1000000000000:
+                    {
+                        result = this.numberWithCommas((d / 1000000000000).toFixed(precisionValue)) + 'T';
+                        break;
+                    }
+            }
+            return result;
+            // var prefix = d3.formatPrefix(d);
+            // return d3.round(prefix.scale(d),2) + ' ' + prefix.symbol
+        }
+
+        public numberWithCommas(x) {
+            var parts = x.toString().split(".");
+            parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            return parts.join(".");
+            // return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        }
+        public addSpecialCharacters(sKMBValue, title) {
+            var displayValue: string = '', specialcharacters: string = '', titlelength: number = title.length;
+            //Append characters front
+            if (isNaN(parseInt(title[0], 10))) {
+                for (var iLoop = 0; iLoop < title.length; iLoop++) {
+                    if (isNaN(parseInt(title[iLoop], 10))) {
+                        specialcharacters += title[iLoop];
+                    }
+                    else break;
+                }
+                displayValue = specialcharacters + sKMBValue;
+            }
+            //Append characters end
+            if (isNaN(parseInt(title[title.length - 1], 10))) {
+                var specialarray = [], index: number = 0;
+                for (var iLoop = titlelength - 1; iLoop >= 0; iLoop--) {
+                    if (isNaN(parseInt(title[iLoop], 10))) {
+                        specialarray[index] = title[iLoop];
+                        index++;
+                    }
+                    else break;
+                }
+                for (var iLoop = specialarray.length - 1; iLoop >= 0; iLoop--) {
+                    specialcharacters += specialarray[iLoop];
+                }
+                displayValue = sKMBValue + specialcharacters;
+            }
+            // if (isNaN(parseInt(title[0])) || isNaN(parseInt(title[title.length - 1])))
+
+            return displayValue.trim();
+        }
         // This function returns the tool tip text given for the tooltip in the format window
         private getTooltipText(dataView: DataView): IDataLabelSettings {
             if (dataView && dataView.metadata && dataView.metadata.objects) {
@@ -1708,6 +2686,20 @@ module powerbi.visuals {
             }
             return <IDataLabelSettings>true;
         }
+
+        private getPrimaryMeasureSummaryText(dataView: DataView): IDataLabelSettings {
+            if (dataView && dataView.metadata && dataView.metadata.objects) {
+                if (dataView.metadata.objects && dataView.metadata.objects.hasOwnProperty('labels')) {
+                    var text = dataView.metadata.objects['labels'];
+                    if (dataView.metadata.objects && text.hasOwnProperty('primaryMeasureSummaryText')) {
+                        return <IDataLabelSettings>text['primaryMeasureSummaryText'];
+                    }
+                } else {
+                    return <IDataLabelSettings>"Total";
+                }
+            }
+            return <IDataLabelSettings>"Total";
+        }
         // This function returns the funnel title font size selected for the title in the format window
         private getTitleSize(dataView: DataView) {
             if (dataView && dataView.metadata && dataView.metadata.objects) {
@@ -1722,26 +2714,10 @@ module powerbi.visuals {
             }
             return 12;
         }
-
         private enumerateDataPoints(enumeration: ObjectEnumerationBuilder): void {
             var data = this.data;
             if (!data)
                 return;
-
-            enumeration.pushInstance({
-                objectName: 'dataPoint',
-                selector: null,
-                properties: {
-                    defaultColor: { solid: { color: data.defaultDataPointColor || this.colors.getColorByIndex(0).value } }
-                },
-            }).pushInstance({
-                objectName: 'dataPoint',
-                selector: null,
-                properties: {
-                    showAllDataPoints: !!data.showAllDataPoints
-                },
-            });
-
             var dataPoints = data.dataPointsToEnumerate;
             var dataPointsLength = dataPoints.length;
 
@@ -1765,12 +2741,17 @@ module powerbi.visuals {
 
             var legendObjectProperties: DataViewObjects = { legend: data.legendObjectProperties };
 
-            var show = DataViewObjects.getValue(legendObjectProperties, donutChartProps.legend.show, this.legend.isVisible());
-            var showTitle = DataViewObjects.getValue(legendObjectProperties, donutChartProps.legend.showTitle, true);
-            var titvarext = DataViewObjects.getValue(legendObjectProperties, donutChartProps.legend.titleText, this.data.legendData.title);
+            var show = DataViewObjects.getValue(legendObjectProperties, DonutChartGMOProperties.legend.show, this.legend.isVisible());
+            var showTitle = DataViewObjects.getValue(legendObjectProperties, DonutChartGMOProperties.legend.showTitle, this.legend.isVisible());
+            var titvarext = DataViewObjects.getValue(legendObjectProperties, DonutChartGMOProperties.legend.titleText, this.data.legendData.title);
             var labelColor = DataViewObject.getValue(legendObjectProperties, legendProps.labelColor, this.data.legendData.labelColor);
             var labelFontSize = DataViewObject.getValue(legendObjectProperties, legendProps.fontSize, this.data.legendData.fontSize);
 
+            var labelPrecision;
+            if (this.getLegendDispalyUnits(this.dataView, 'labelPrecision') > 20)
+                labelPrecision = 20;
+            else
+                labelPrecision = this.getLegendDispalyUnits(this.dataView, 'labelPrecision');
             enumeration.pushInstance({
                 selector: null,
                 objectName: 'legend',
@@ -1778,10 +2759,13 @@ module powerbi.visuals {
                     show: show,
                     position: LegendPosition[this.legend.getOrientation()],
                     showTitle: showTitle,
-                    titvarext: titvarext,
+                    titleText: titvarext,
                     labelColor: labelColor,
                     fontSize: labelFontSize,
                     detailedLegend: this.getDetailedLegend(this.dataView),
+                    labelDisplayUnits: this.getLegendDispalyUnits(this.dataView, 'labelDisplayUnits'),
+                    labelPrecision: labelPrecision
+
                 }
             });
         }
@@ -1825,26 +2809,90 @@ module powerbi.visuals {
             // no labels (isInteractive does not have labels since the interactive legend shows extra info)
             return Math.min(viewport.height, viewport.width) / 2;
         }
-
-        private getScaleForLegendArrow() {
-            var ratio = 1.0;
-            if (this.maxHeightToScaleDonutLegend && this.currentViewport.height < this.maxHeightToScaleDonutLegend) {
-                ratio = this.currentViewport.height / this.maxHeightToScaleDonutLegend;
-            }
-            return ratio;
-        }
-
         private initViewportDependantProperties(duration: number = 0) {
             // MAQCode
-            this.currentViewport.height = this.parentViewport.height - this.titleSize - 40;
+
+            this.customLegendWidth = parseInt(this.legendContainer.style('width'), 10);
+            this.customLegendWidth = $(($(this.legendContainer)[0])[0].childNodes[0]).width();
+            if (this.dataView && this.dataView.categorical && this.dataView.categorical.categories) {
+                var singleLegendWidth = parseInt(this.legendContainer.select('.legend-container')[0][0].childNodes[1].style['width'], 10);
+                var singleLegendHeight = parseInt(this.legendContainer.select('.legend-container')[0][0].childNodes[1].style['height'], 10);
+            }
+            else {
+                singleLegendWidth = parseInt(this.legendContainer.select('.legend-item').style('width'), 10);
+                singleLegendHeight = parseInt(this.legendContainer.select('.legend-item').style('height'), 10);
+            }
+            var legendTitleWidth = parseInt(this.legendContainer.select('.legend-container')[0][0].childNodes[0].style['width'], 10);
+            //var noOfLegendsInRow = Math.floor(this.customLegendWidth / singleLegendWidth);
+            var noOfRows = Math.ceil(((this.data.dataPointsToDeprecate.length * singleLegendWidth) + legendTitleWidth) / this.customLegendWidth);
+            this.customLegendHeight = noOfRows * singleLegendHeight;
+            // this.customLegendHeight = $(($(this.legendContainer)[0])[0].childNodes[0]).height();
+
+            if ((this.parentViewport.height - this.titleSize - 40) < 0)
+                this.currentViewport.height = this.titleSize + 40 - this.parentViewport.height;
+            else
+                this.currentViewport.height = this.parentViewport.height - this.titleSize - 40;
             this.currentViewport.width = this.parentViewport.width;
+            var legendPosition;
+            if (this.data && this.data.legendObjectProperties) {
+                legendPosition = this.data.legendObjectProperties['position'];
+            }
+            if ((this.data && this.data.legendObjectProperties && this.data.legendObjectProperties['show']) || undefined === this.data.legendObjectProperties || undefined === this.data.legendObjectProperties['show']) {
+                switch (legendPosition) {
+                    case 'Top':
+                        this.svg.style({ 'padding': this.customLegendHeight + 'px 0px 0px 0px' });
+                        this.currentViewport.height = this.currentViewport.height - this.customLegendHeight;
+                        break;
+
+                    case 'Bottom':
+                        this.svg.style({ 'padding': '0px 0px ' + this.customLegendHeight + 'px ' + '0px' });
+                        this.currentViewport.height = this.currentViewport.height - this.customLegendHeight;
+                        break;
+                    case 'Left':
+                        this.svg.style({ 'padding': '0px 0px 0px ' + this.customLegendWidth + 'px' });
+                        this.currentViewport.width = this.currentViewport.width - this.customLegendWidth;
+
+                        break;
+                    case 'Right':
+                        this.svg.style({ 'padding': '0px ' + this.customLegendWidth + 'px 0px 0px' });
+                        this.currentViewport.width = this.currentViewport.width - this.customLegendWidth;
+
+                        break;
+
+                    case 'BottomCenter':
+                        this.svg.style({ 'padding': '0px 0px ' + this.customLegendHeight + 'px ' + '0px' });
+                        this.currentViewport.height = this.currentViewport.height - this.customLegendHeight;
+
+                        break;
+                    case 'LeftCenter':
+                        this.svg.style({ 'padding': '0px 0px 0px ' + this.customLegendWidth + 'px' });
+                        this.currentViewport.width = this.currentViewport.width - this.customLegendWidth;
+
+                        break;
+                    case 'RightCenter':
+                        this.svg.style({ 'padding': '0px ' + this.customLegendWidth + 'px 0px 0px' });
+                        this.currentViewport.width = this.currentViewport.width - this.customLegendWidth;
+
+                        break;
+                    default:
+                        this.svg.style({ 'padding': this.customLegendHeight + 'px 0px 0px 0px' });
+                        this.currentViewport.height = this.currentViewport.height - this.customLegendHeight;
+                        break;
+                }
+
+            }
             var viewport = this.currentViewport;
+            if (viewport.height < 0)
+                viewport.height = 0;
             if (this.isInteractive) {
-                viewport.height -= DonutChart.InteractiveLegendContainerHeight; // leave space for the legend
+                viewport.height -= DonutChart.InteractiveLegendContainerHeight;//(this.legendContainer.node().getBoundingClientRect().height + legendMargins.height); // leave space for the legend
             }
             else {
                 var legendMargins = this.legend.getMargins();
-                viewport.height -= legendMargins.height;
+                if ((viewport.height - legendMargins.height) > 0)
+                    viewport.height -= legendMargins.height;
+                else
+                    viewport.height = legendMargins.height - viewport.height;
                 viewport.width -= legendMargins.width;
             }
 
@@ -1857,23 +2905,22 @@ module powerbi.visuals {
                 this.legendContainer
                     .style({
                         'width': '100%',
-                        'height': DonutChart.InteractiveLegendContainerHeight + 'px',
+                        // 'height': DonutChart.InteractiveLegendContainerHeight + 'px',
                         'overflow': 'hidden',
                         'top': 0
                     });
                 this.svg
-                    .style('top', DonutChart.InteractiveLegendContainerHeight);
+                    .style('top', (this.legendContainer.node().getBoundingClientRect().width + legendMargins.height) + 'px');
             } else {
-                Legend.positionChartArea(this.svg, this.legend);
+                this.svg
+                    .style('top', legendMargins.height + 'px');
             }
 
             this.previousRadius = this.radius;
             var radius = this.radius = this.calculateRadius();
             var halfViewportWidth = viewport.width / 2;
             var halfViewportHeight = viewport.height / 2;
-
             this.arc = d3.svg.arc();
-
             this.outerArc = d3.svg.arc()
                 .innerRadius(radius * DonutChartGMO.OuterArcRadiusRatio)
                 .outerRadius(radius * DonutChartGMO.OuterArcRadiusRatio);
@@ -1885,7 +2932,6 @@ module powerbi.visuals {
                 this.mainGraphicsContext.transition().duration(duration).attr('transform', SVGUtil.translate(halfViewportWidth, halfViewportHeight));
                 this.labelGraphicsContext.transition().duration(duration).attr('transform', SVGUtil.translate(halfViewportWidth, halfViewportHeight));
             }
-
             SVGUtil.flushAllD3TransitionsIfNeeded(this.options);
         }
 
@@ -1914,7 +2960,6 @@ module powerbi.visuals {
                 derived.percentage === undefined ? derived.data.percentage = 0 : derived.percentage = 0;
                 return derived;
             });
-
             return d3.merge([second, onlyFirst]);
         }
 
@@ -1958,9 +3003,7 @@ module powerbi.visuals {
                     NewDataLabelUtils.drawDefaultLabels(this.labelGraphicsContext, labels, false, true);
                     NewDataLabelUtils.drawLabelLeaderLines(this.labelGraphicsContext, labels);
                 }
-
                 this.assignInteractions(shapes, highlightShapes, data);
-
                 if (this.tooltipsEnabled) {
                     TooltipManager.addTooltip(shapes, (tooltipEvent: TooltipEvent) => tooltipEvent.data.data.tooltipInfo);
                     TooltipManager.addTooltip(highlightShapes, (tooltipEvent: TooltipEvent) => tooltipEvent.data.data.tooltipInfo);
@@ -2043,12 +3086,10 @@ module powerbi.visuals {
                 dataLabel = measureFormatter.format(d.data.measure);
                 dataLabelSize = this.getTextSize(dataLabel, fontSize);
             }
-
             if (labelSettingsStyle === labelStyle.both || labelSettingsStyle === labelStyle.category) {
                 categoryLabel = d.data.label;
                 categoryLabelSize = this.getTextSize(categoryLabel, fontSize);
             }
-
             switch (labelSettingsStyle) {
                 case labelStyle.both:
                     var text = categoryLabel + " (" + dataLabel + ")";
@@ -2061,7 +3102,6 @@ module powerbi.visuals {
                     textSize = _.clone(dataLabelSize);
                     break;
             }
-
             var leaderLinePoints = DonutLabelUtils.getLabelLeaderLineForDonutChart(d, this.donutProperties, pointPosition.point);
             var leaderLinesSize: ISize[] = DonutLabelUtils.getLabelLeaderLinesSizeForDonutChart(leaderLinePoints);
             return {
@@ -2084,47 +3124,31 @@ module powerbi.visuals {
                 leaderLinePoints: leaderLinePoints,
                 linesSize: leaderLinesSize,
             };
-
         }
 
-        private renderLegend(): void {
+        private renderLegend(dataview: any, visualHeight: number): void {
             if (!this.isInteractive) {
                 var legendObjectProperties = this.data.legendObjectProperties;
+                var legendContainerHeight = visualHeight;
                 if (legendObjectProperties) {
                     var legendData = this.data.legendData;
                     LegendData.update(legendData, legendObjectProperties);
                     var position = <string>legendObjectProperties[legendProps.position];
+                    var show = <string>legendObjectProperties[legendProps.show];
                     if (position)
                         this.legend.changeOrientation(LegendPosition[position]);
-
-                    this.legend.drawLegend(legendData, this.parentViewport);
+                    if (show) {
+                        this.root.selectAll('.donutLegend').style('display', 'block');
+                        this.interactivityState.interactiveLegend.drawLegend(this.data, dataview, legendContainerHeight, this.parentViewport);
+                    }
+                    else
+                        this.root.selectAll('.donutLegend').style('display', 'none');
                 } else {
                     this.legend.changeOrientation(LegendPosition.Top);
-                    this.legend.drawLegend({ dataPoints: [] }, this.parentViewport);
+                    this.interactivityState.interactiveLegend.drawLegend(this.data, dataview, legendContainerHeight, this.parentViewport);
                 }
             }
         }
-
-        private addInteractiveLegendArrow(): void {
-            var arrowHeightOffset = 11;
-            var arrowWidthOffset = 33 / 2;
-            if (!this.interactiveLegendArrow) {
-                var interactiveLegendArrow = this.svg.append('g');
-                interactiveLegendArrow.append('path')
-                    .classed(DonutChartGMO.InteractiveLegendArrowClassName, true)
-                    .attr('d', 'M1.5,2.6C0.65,1.15,1.85,0,3,0l27,0c1.65,0,2.35,1.15,1.5,2.6L18,26.45c-0.8,1.45-2.15,1.45-2.95,0L1.95,2.6z');
-                this.interactiveLegendArrow = interactiveLegendArrow;
-            }
-            var viewport = this.currentViewport;
-            // Calculate the offsets from the legend container to the arrow.
-            var scaleRatio = this.getScaleForLegendArrow();
-
-            var distanceBetweenLegendAndArrow = (viewport.height - 2 * this.radius) / 2 + (arrowHeightOffset * scaleRatio);
-            var middleOfChart = viewport.width / 2 - (arrowWidthOffset * scaleRatio);
-
-            this.interactiveLegendArrow.attr('transform', SVGUtil.translateAndScale(middleOfChart, distanceBetweenLegendAndArrow, scaleRatio));
-        }
-
         private calculateSliceAngles(): void {
             var angles: number[] = [];
             var data = this.data.dataPoints;
@@ -2151,7 +3175,6 @@ module powerbi.visuals {
 
             this.interactivityState.sliceAngles = angles;
         }
-
         private assignInteractions(slices: D3.Selection, highlightSlices: D3.Selection, data: DonutDataGMO): void {
             // assign interactions according to chart interactivity type
             if (this.isInteractive) {
@@ -2179,6 +3202,7 @@ module powerbi.visuals {
                     .sort(null)
                     .value((d: DonutDataPoint) => {
                         return d.percentage;
+
                     });
                 // Drill into the current selection.
                 var legendDataPoints: LegendDataPoint[] = [{ label: selection.label, color: selection.color, icon: LegendIcon.Box, identity: selection.identity, selected: selection.selected }];
@@ -2200,15 +3224,12 @@ module powerbi.visuals {
 
         private assignInteractiveChartInteractions(slice: D3.Selection) {
             var svg = this.svg;
-
             this.interactivityState.interactiveChosenSliceFinishedSetting = true;
             var svgRect = svg.node().getBoundingClientRect();
             this.interactivityState.donutCenter = { x: svgRect.left + svgRect.width / 2, y: svgRect.top + svgRect.height / 2 }; // Center of the donut chart
             this.interactivityState.totalDragAngleDifference = 0;
             this.interactivityState.currentRotate = 0;
-
             this.calculateSliceAngles();
-
             // Set the on click method for the slices so thsete pie chart will turn according to each slice's corresponding angle [the angle its on top]
             slice.on('click', (d: DonutArcDescriptor, clickedIndex: number) => {
                 if (d3.event.defaultPrevented) return; // click was suppressed, for example from drag event
@@ -2264,9 +3285,7 @@ module powerbi.visuals {
         private interactiveDragMove(): void {
             var data = this.data.dataPoints;
             var viewport = this.currentViewport;
-
             var interactivityState = this.interactivityState;
-
             if (interactivityState.interactiveChosenSliceFinishedSetting === true) {
                 // get current angle from the drag event
                 var currentDragAngle = this.getAngleFromDragEvent();
@@ -2363,12 +3382,11 @@ module powerbi.visuals {
                 .style('stroke-width', (d: DonutArcDescriptor) => d.data.strokeWidth)
                 .transition().duration(duration)
                 .attrTween('d', function (d) {
+
                     var i = d3.interpolate(this._current, d),
                         k = d3.interpolate(previousRadius * DonutChartGMO.InnerArcRadiusRatio
                             , radius * DonutChartGMO.InnerArcRadiusRatio);
-
                     this._current = i(0);
-
                     return function (t) {
                         return arc.innerRadius(innerRadius).outerRadius(k(t))(i(t));
                     };
@@ -2418,13 +3436,12 @@ module powerbi.visuals {
                     .style('stroke-width', (d: DonutArcDescriptor) => d.data.highlightRatio === 0 ? 0 : d.data.strokeWidth)
                     .transition().duration(duration)
                     .attrTween('d', function (d: DonutArcDescriptor) {
+
                         var i = d3.interpolate(this._current, d),
                             k = d3.interpolate(
                                 previousRadius * DonutChartGMO.InnerArcRadiusRatio,
                                 DonutChartGMO.getHighlightRadius(radius, sliceWidthRatio, d.data.highlightRatio));
-
                         this._current = i(0);
-
                         return function (t) {
                             return arc.innerRadius(innerRadius).outerRadius(k(t))(i(t));
                         };
@@ -2446,53 +3463,160 @@ module powerbi.visuals {
                     .remove();
             }
             //tarang
-            d3.select('.SummarizedDiv').remove();
-            if (this.data.legendObjectProperties && this.data.legendObjectProperties['show']) {
-                var x = (this.currentViewport.width / 2) - (innerRadius / Math.SQRT2) + 4;
-                var y = ((this.currentViewport.height / 2) + 26.656) - (innerRadius / Math.SQRT2) + 20; //20 is the Header height
-                var width = (innerRadius * Math.SQRT2);
-                var height = (innerRadius * Math.SQRT2);
+            var titleHeight = parseInt(this.root.select('.Title_Div_Text').style('height'), 10);
+            // var legendHeight = parseInt(this.root.select('.legend-item').style('height'), 10);
+            if (this.getShowTitle(this.dataView)) {
+                if (this.data.legendObjectProperties === undefined) {
+                    var x = (this.currentViewport.width / 2) - (innerRadius / Math.SQRT2);
+                    var y = ((this.currentViewport.height + 50) / 2) - (innerRadius / Math.SQRT2) + (titleHeight) + parseInt(this.customLegendHeight, 10);
+                }
+                else if ((this.data.legendObjectProperties['show']) && (this.data.legendObjectProperties['position'] === 'Top' || this.data.legendObjectProperties['position'] === 'TopCenter')) {
+                    var x = (this.currentViewport.width / 2) - (innerRadius / Math.SQRT2);
+                    var y = ((this.currentViewport.height + 50) / 2) - (innerRadius / Math.SQRT2) + (titleHeight) + parseInt(this.customLegendHeight, 10);
+                }
+                else if (this.data.legendObjectProperties['show'] && (this.data.legendObjectProperties['position'] === 'Bottom' || this.data.legendObjectProperties['position'] === 'BottomCenter')) {
+                    var x = (this.currentViewport.width / 2) - (innerRadius / Math.SQRT2);
+                    var y = ((this.currentViewport.height) / 2) - (innerRadius / Math.SQRT2) + (titleHeight) - parseInt(this.customLegendHeight, 10);
+                }
+                else if (this.data.legendObjectProperties['show'] && (this.data.legendObjectProperties['position'] === 'Left' || this.data.legendObjectProperties['position'] === 'LeftCenter')) {
+                    var x = (this.currentViewport.width / 2) - (innerRadius / Math.SQRT2) + parseInt(this.customLegendWidth, 10);
+                    var y = ((this.currentViewport.height) / 2) - (innerRadius / Math.SQRT2) + (titleHeight);
+                }
+
+                else if (this.data.legendObjectProperties['show'] && (this.data.legendObjectProperties['position'] === 'Right' || this.data.legendObjectProperties['position'] === 'RightCenter')) {
+                    var x = (this.currentViewport.width / 2) - (innerRadius / Math.SQRT2) - parseInt(this.customLegendWidth, 10);
+                    var y = ((this.currentViewport.height) / 2) - (innerRadius / Math.SQRT2) + (titleHeight);
+                }
+                else {
+                    var x = (this.currentViewport.width / 2) - (innerRadius / Math.SQRT2);
+                    var y = ((this.currentViewport.height + 50) / 2) - (innerRadius / Math.SQRT2) + (titleHeight);
+                }
             }
             else {
-                var x = (this.currentViewport.width / 2) - (innerRadius / Math.SQRT2) + 4;
-                var y = (this.currentViewport.height / 2) - (innerRadius / Math.SQRT2) + 20;
-                var width = (innerRadius * Math.SQRT2);
-                var height = (innerRadius * Math.SQRT2);
+                if (this.data.legendObjectProperties === undefined) {
+                    var x = (this.currentViewport.width / 2) - (innerRadius / Math.SQRT2);
+                    var y = ((this.currentViewport.height + 50) / 2) - (innerRadius / Math.SQRT2) + parseInt(this.customLegendHeight, 10);
+
+                }
+                else if ((this.data.legendObjectProperties['show']) && (this.data.legendObjectProperties['position'] === 'Top' || this.data.legendObjectProperties['position'] === 'TopCenter')) {
+                    var x = (this.currentViewport.width / 2) - (innerRadius / Math.SQRT2);
+                    var y = ((this.currentViewport.height + 50) / 2) - (innerRadius / Math.SQRT2);
+                }
+                else if (this.data.legendObjectProperties['show'] && (this.data.legendObjectProperties['position'] === 'Bottom' || this.data.legendObjectProperties['position'] === 'BottomCenter')) {
+                    var x = (this.currentViewport.width / 2) - (innerRadius / Math.SQRT2);
+                    var y = ((this.currentViewport.height) / 2) - (innerRadius / Math.SQRT2);
+                }
+                else if (this.data.legendObjectProperties['show'] && (this.data.legendObjectProperties['position'] === 'Left' || this.data.legendObjectProperties['position'] === 'LeftCenter')) {
+                    var x = (this.currentViewport.width / 2) - (innerRadius / Math.SQRT2);
+                    var y = ((this.currentViewport.height + 50) / 2) - (innerRadius / Math.SQRT2);
+                }
+                else if (this.data.legendObjectProperties['show'] && (this.data.legendObjectProperties['position'] === 'Right' || this.data.legendObjectProperties['position'] === 'RightCenter')) {
+                    var x = (this.currentViewport.width / 2) - (innerRadius / Math.SQRT2);
+                    var y = ((this.currentViewport.height + 50) / 2) - (innerRadius / Math.SQRT2);
+                }
+                else {
+                    var x = (this.currentViewport.width / 2) - (innerRadius / Math.SQRT2);
+                    var y = ((this.currentViewport.height + 50) / 2) - (innerRadius / Math.SQRT2);
+                }
             }
-            console.log("currentViewport.height=" + this.currentViewport.height);
-            //console.log("center = " + this.currentViewport.width / 2 + " , " + this.currentViewport.height / 2);
-            //svg.select('.slices').append('line').attr({ 'x1': '0', 'y1': '0', 'x2': -x, 'y2': -y }).style({'stroke': 'rgb(255,0,0)'});
-            //svg.select('.slices')
-            //    .append('rect')
-            //    .classed('SummarizedRect', true)
-            //    .attr({ 'x': x, 'y': y, 'width': width, 'height': height })
-            //    .style({ 'fill': 'none' });
-            if (this.currentViewport.width > 50 && this.currentViewport.height > 50) {
-                d3.select('.vcBody')
-                    .append('div')
-                    .classed('SummarizedDiv', true)
-                    .style({
+            var width = (innerRadius * Math.SQRT2);
+            var height = (innerRadius * Math.SQRT2);
+            if (this.currentViewport.width > 150 && this.currentViewport.height > 100) {
+                this.root.select('.SummarizedDiv')
+                    .append('div').style({
                         'width': width + 'px',
                         'height': height + 'px',
                         'top': y + 'px',
                         'left': x + 'px',
-                        'position': 'fixed',
+                        'position': 'absolute',
+                        'overflow': 'hidden',
+                    }).classed('SummarizedDivContainer', true);
+
+                this.root.select('.SummarizedDivContainer')
+                    .append('div')
+                    .classed('pContainer', true)
+                    .style({
+                        'position': 'absolute',
+                        'top': '50%',
+                        'transform': 'translate(0, -50%)',
+                        'width': '100%',
                     });
 
-                d3.select('.SummarizedDiv')
-                    .append('p')
-                    .classed('TotalText', true)
-                    .text('Total')
-                    .style({ 'font-size': innerRadius / 4 + 'px', 'overflow': 'hidden', 'text-overflow': 'ellipsis', 'text-align': 'center', 'vertical-align': 'middle', 'margin-bottom': '0' });
+                if (this.isPrimaryMeasureSelected) {
+                    this.root.select('.pContainer')
+                        .append('p')
+                        .classed('TotalText', true)
+                        .text('Total')
+                        .style({ 'overflow': 'hidden', 'text-overflow': 'ellipsis', 'text-align': 'center', 'vertical-align': 'middle', 'margin': '0', 'white-space': 'nowrap' });
+                    this.root.select('.pContainer')
+                        .append('p')
+                        .classed('TotalValue', true)
+                        .style({ 'overflow': 'hidden', 'text-overflow': 'ellipsis', 'text-align': 'center', 'vertical-align': 'middle', 'margin': '0', 'white-space': 'nowrap' });
 
-                d3.select('.SummarizedDiv')
-                    .append('p')
-                    .classed('TotalValue', true)
-                    .style({ 'font-size': innerRadius / 4 + 'px', 'overflow': 'hidden', 'text-overflow': 'ellipsis', 'text-align': 'center', 'vertical-align': 'middle', 'margin-top': '0' });
+                    if (this.getShowStatus(this.dataViews[0], 'show', 'Indicators')) {
+                        if (this.getShowStatus(this.dataViews[0], 'PrimaryMeasure', 'Indicators'))
+                            var threshold_Value = 0;
 
-                d3.select('.TotalValue')
-                    .html('<div style="width:80%; float:left;text-overflow: ellipsis;overflow: hidden;">' + this.data.totalSum + '</div><span stytle="width=15% float:right;">&#8593;</span>');
+                        else {
+                            threshold_Value = this.getStatus(this.dataViews[0], 'Total_Threshold', 'Indicators');
+                            if (this.isPrimaryMeasurePercentage)
+                                threshold_Value = threshold_Value / 100;
+                        }
+                        if (threshold_Value <= this.data.primaryMeasureSum) {
+                            //console.log(this.getStatus(this.dataViews[0], 'Threshold'));
+                            this.root.select('.TotalValue')
+                                .html('<div class = "primaryMeasureSum" title = "' + this.data.primaryMeasureSum + '"' + ' style="max-width:80%; text-overflow: ellipsis;overflow: hidden; display: inline-block">' + this.data.primaryMeasureSum + '</div><span class="primaryMeasureIndicator" style="width=15%;                                                    position:absolute;float:left; color:green;margin-left:2px;">&#9650;</span>');
+                        }
+                        else {
+                            this.root.select('.TotalValue')
+                                .html('<div class="primaryMeasureSum" title = "' + this.data.primaryMeasureSum + '"' + ' style="max-width:80%; text-overflow: ellipsis;overflow: hidden; display: inline-block">' + this.data.primaryMeasureSum + '</div><span class = "primaryMeasureIndicator" style="width=15%;                                                     position:absolute;float:left; color:red;margin-left:2px;">&#9660;</span>');
+                        }
+
+                    }
+                    else {
+                        this.root.select('.TotalValue')
+                            .html('<div class="primaryMeasureSum" title = "' + this.data.primaryMeasureSum + '"' + ' style="width:100%; float:left;text-overflow: ellipsis;overflow: hidden;">' + this.data.primaryMeasureSum);
+                    }
+                }
+                if (this.isSecondaryMeasureSelected) {
+                    this.root.select('.pContainer')
+                        .append('p')
+                        .classed('SecondaryText', true)
+                        .text(this.secondaryMeasureName)
+                        .style({ 'overflow': 'hidden', 'text-overflow': 'ellipsis', 'text-align': 'center', 'vertical-align': 'middle', 'margin': '0', 'white-space': 'nowrap' });
+
+                    this.root.select('.pContainer')
+                        .append('p')
+                        .classed('SecondaryValue', true)
+                        .style({ 'overflow': 'hidden', 'text-overflow': 'ellipsis', 'text-align': 'center', 'vertical-align': 'middle', 'margin': '0', 'white-space': 'nowrap' });
+
+                    if (this.getShowStatus(this.dataViews[0], 'show', 'SMIndicator')) {
+                        if (this.getShowStatus(this.dataViews[0], 'SecondaryMeasure', 'SMIndicator'))
+                            var threshold_Value = 0;
+
+                        else {
+                            threshold_Value = this.getStatus(this.dataViews[0], 'SMTotalThreshold', 'SMIndicator');
+                            if (this.isSecondaryMeasurePercentage)
+                                threshold_Value = threshold_Value / 100;
+                        }
+                        if (threshold_Value <= this.data.secondaryMeasureSum) {
+                            //console.log(this.getStatus(this.dataViews[0], 'SMThreshold'));
+                            this.root.select('.SecondaryValue')
+                                .html('<div class = "secondaryMeasureSum" title = "' + this.data.secondaryMeasureSum + '"' + ' style="max-width:80%; text-overflow: ellipsis;overflow: hidden; display: inline-block">' + this.data.secondaryMeasureSum + '</div><span class="secondaryMeasureIndicator"                                        style="width=15%; position:absolute;float:left; color:green;margin-left:2px;">&#9650;</span>');
+                        }
+                        else {
+                            this.root.select('.SecondaryValue')
+                                .html('<div class="secondaryMeasureSum" title = "' + this.data.secondaryMeasureSum + '"' + ' style="max-width:80%; text-overflow: ellipsis;overflow: hidden; display: inline-block">' + this.data.secondaryMeasureSum + '</div><span class = "secondaryMeasureIndicator"                                        style="width=15%; position:absolute;float:left; color:red;margin-left:2px;">&#9660;</span>');
+                        }
+                    }
+                    else {
+                        this.root.select('.SecondaryValue')
+                            .html('<div class="secondaryMeasureSum" title = "' + this.data.secondaryMeasureSum + '"' + ' style="width:100%; float:left;text-overflow: ellipsis;overflow: hidden;">' + this.data.secondaryMeasureSum + '</div>');
+                    }
+                }
             }
+            //tarang end
+
             this.assignInteractions(slice, highlightSlices, data);
             if (this.tooltipsEnabled) {
                 TooltipManager.addTooltip(slice, (tooltipEvent: TooltipEvent) => tooltipEvent.data.data.tooltipInfo);
@@ -2503,11 +3627,11 @@ module powerbi.visuals {
 
             SVGUtil.flushAllD3TransitionsIfNeeded(this.options);
 
-            if (this.isInteractive) {
-                this.addInteractiveLegendArrow();
-                this.interactivityState.interactiveLegend.drawLegend(this.data.dataPointsToDeprecate);
-                this.setInteractiveChosenSlice(this.interactivityState.lastChosenInteractiveSliceIndex ? this.interactivityState.lastChosenInteractiveSliceIndex : 0);
-            }
+            //  if (this.isInteractive) {
+            //this.addInteractiveLegendArrowGMO();
+            //this.interactivityState.interactiveLegend.drawLegend(this.data, this.dataViews[0]);
+            this.setInteractiveChosenSlice(this.interactivityState.lastChosenInteractiveSliceIndex ? this.interactivityState.lastChosenInteractiveSliceIndex : 0);
+            // }
         }
 
         public static drawDefaultShapes(graphicsContext: D3.Selection, donutData: DonutDataGMO, layout: DonutLayout, colors: IDataColorPalette, radius: number, hasSelection: boolean, sliceWidthRatio: number, defaultColor?: string): D3.UpdateSelection {
@@ -2673,6 +3797,23 @@ module powerbi.visuals {
                     }
                 }
             }
+            return displayOption;
+        }
+        public getLegendDispalyUnits(dataView: DataView, propertyName: string) {
+            var property: any = [], displayOption;
+            if (dataView && dataView.metadata && dataView.metadata.objects) {
+                if (dataView.metadata.objects && dataView.metadata.objects.hasOwnProperty('legend')) {
+                    property = dataView.metadata.objects['legend'];
+                    if (property && property.hasOwnProperty(propertyName)) {
+                        displayOption = property[propertyName];
+                    }
+                    else if (propertyName === 'labelDisplayUnits')
+                        displayOption = 0;
+                }
+                else if (propertyName === 'labelDisplayUnits')
+                    displayOption = 0;
+            } else if (propertyName === 'labelDisplayUnits')
+                displayOption = 0;
             return displayOption;
         }
     }
