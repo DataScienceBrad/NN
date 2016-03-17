@@ -136,8 +136,8 @@ module powerbi.visuals.plugins {
         capabilities: samples.ChordChart.capabilities,
         create: () => new samples.ChordChart()
     };
-    
-     export let mekkoChart: IVisualPlugin = {
+
+    export let mekkoChart: IVisualPlugin = {
         name: 'mekkoChart',
         watermarkKey: 'mekko',
         capabilities: samples.MekkoChart.capabilities,
@@ -145,9 +145,15 @@ module powerbi.visuals.plugins {
         customizeQuery: ColumnChart.customizeQuery,
         getSortableRoles: (visualSortableOptions?: VisualSortableOptions) => ColumnChart.getSortableRoles(visualSortableOptions),
     };
-     export var HorizontalFunnel: IVisualPlugin = {
-         name: 'HorizontalFunnel',
-         capabilities: powerbi.visuals.HorizontalFunnel.capabilities,
-         create: () => new powerbi.visuals.HorizontalFunnel()
-     };
+    export var HorizontalFunnel: IVisualPlugin = {
+        name: 'HorizontalFunnel',
+        capabilities: powerbi.visuals.HorizontalFunnel.capabilities,
+        create: () => new powerbi.visuals.HorizontalFunnel()
+    };
+    export var DonutChartGMO: IVisualPlugin = {
+        name: 'DonutChartGMO',
+        capabilities: powerbi.visuals.donutChartCapabilities,
+        create: () => new powerbi.visuals.DonutChartGMO()
+    };
+
 }
