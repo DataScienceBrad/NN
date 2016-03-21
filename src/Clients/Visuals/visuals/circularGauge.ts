@@ -38,7 +38,6 @@
         public canvas: D3.Selection;
         public group: D3.Selection;
         public groupInner: D3.Selection;
-        public group1: D3.Selection;
         public dataView: DataView;
         public data: ProgressIndicatorValues;
         private cardFormatSetting: CardFormatSetting;
@@ -85,7 +84,8 @@
         //First time it will be called and made the structure of your visual
         public init(options: VisualInitOptions): void {
             this.root = d3.select(options.element.get(0));
-            this.svg = this.root.append('svg');
+            this.svg = this.root.append('svg')
+                .style('overflow', 'visible');
             this.container = this.svg.append('g');
 
             this.group = this.container.append('g');
@@ -95,8 +95,6 @@
            	this.groupInner.append('text');
             this.groupInner.append('line').attr('id', 'line1');
             this.groupInner.append('line').attr('id', 'line2');
-            this.group1 = this.container.append('g');
-            this.group1.append('text');
         }
         
         //Convert the dataview into its view model
@@ -149,7 +147,10 @@
 
             this.cardFormatSetting = this.getDefaultFormatSettings();
             var labelSettings = null;
-            var objects = this.dataView.metadata.objects;
+            var objects = null;
+            if (this.dataView && this.dataView.metadata) {
+                objects = this.dataView.metadata.objects;
+            }
             if (objects) {
                 labelSettings = this.cardFormatSetting.labelSettings;
 
@@ -168,7 +169,7 @@
             }
 
             var percentCompleted = (data / max);
-            percentCompleted = (percentCompleted > 1) ? 1 : ((percentCompleted < 0) ? 0 : percentCompleted);
+            percentCompleted = isNaN(percentCompleted) || !isFinite(percentCompleted) ? 0 : (percentCompleted > 1) ? 1 : ((percentCompleted < 0) ? 0 : percentCompleted);
             this.cardFormatSetting.labelSettings.precision = this.cardFormatSetting.labelSettings.precision < 4 ? this.cardFormatSetting.labelSettings.precision : 4;
             var percentage = (percentCompleted * 100).toFixed(this.cardFormatSetting.labelSettings.precision);
             var fontSize = this.cardFormatSetting.labelSettings.fontSize;
@@ -176,8 +177,10 @@
             var textProperties: powerbi.TextProperties = {
                 text: percentage + '%',
                 fontFamily: "sans-serif",
-                fontSize: fontSize + 'pt'
+                fontSize: ((4 / 3) * fontSize) + 'px'
+                //fontSize: fontSize + 'pt'
             };
+
             var textWidth = powerbi.TextMeasurementService.measureSvgTextWidth(textProperties);
             var textHeight = powerbi.TextMeasurementService.measureSvgTextHeight(textProperties);
 
@@ -185,25 +188,23 @@
             outerRadius = outerRadius - (outerRadius * 0.1);
             var innerRadius;
 
-            if (this.data.isPie) {
-                this.data.ringWidth = this.data.ringWidth < 15 ? 15 : this.data.ringWidth;
-                if (this.data.ringWidth > outerRadius - 15) {
-                    innerRadius = 15;
-                } else {
-                    innerRadius = outerRadius - this.data.ringWidth;
-                }
-            } else {
-                innerRadius = 0;
-            }
+            this.data.ringWidth = this.data.ringWidth < 15 ? 15 : this.data.ringWidth;
+            innerRadius = outerRadius - this.data.ringWidth;
 
-            if (outerRadius >= 1) {
-                var arc = d3.svg.arc()
+            var arc, arc1;
+            if (innerRadius > 15) {
+
+                if (!this.data.isPie) {
+                    innerRadius = 0;
+                }
+
+                arc = d3.svg.arc()
                     .innerRadius(innerRadius)
                     .outerRadius(outerRadius)
                     .startAngle(0)
                     .endAngle(2 * Math.PI);
 
-                var arc1 = d3.svg.arc()
+                arc1 = d3.svg.arc()
                     .innerRadius(innerRadius)
                     .outerRadius(outerRadius)
                     .startAngle(0)
@@ -237,8 +238,6 @@
                     .attr('font-size', fontSize + 'pt')
                     .text(percentage + "%")
                     .attr('fill', this.cardFormatSetting.labelSettings.labelColor);
-                this.group1.select("text")
-                    .text('');
 
                 this.groupInner.select("line#line1")
                     .attr("x1", (x / h) * outerRadius * 1.02)
@@ -258,24 +257,68 @@
                     this.groupInner.select("text").attr('x', ((x / h) * outerRadius * 1.1) + 39);
                     this.groupInner.select("line#line2").attr("x2", ((x / h) * outerRadius * 1.1) + 35);
                 }
-
-                this.group.attr('transform', 'translate(' + ((width / 2)) + ',' + ((height / 2)) + ')');
-                this.groupInner.attr('transform', 'translate(' + ((width / 2)) + ',' + ((height / 2)) + ')');
-
-                this.data.toolTipInfo[1] = {
-                    displayName: 'Actual',
-                    value: this.data.actualFormat + circularGauge.numberWithCommas(this.data.actual)
-                }
-                this.data.toolTipInfo[0] = {
-                    displayName: 'Target',
-                    value: this.data.targetFormat + circularGauge.numberWithCommas(this.data.target)
-                }
-                this.data.toolTipInfo[2] = {
-                    displayName: 'Percentage Remaining',
-                    value: (100 - parseFloat(percentage)) + '%'
-                }
-                TooltipManager.addTooltip(this.container, (tooltipEvent: TooltipEvent) => this.data.toolTipInfo, false);//Adding visual tips
             }
+            else {
+                outerRadius = (width / 2) < (height / 2) ? width / 2 : height / 2;
+                outerRadius = outerRadius - (outerRadius * 0.1);
+                var innerRadius;
+
+                if (this.data.isPie) {
+                    this.data.ringWidth = this.data.ringWidth < 15 ? 15 : this.data.ringWidth;
+                    innerRadius = outerRadius - this.data.ringWidth;
+                } else {
+                    innerRadius = 0;
+                }
+
+                arc = d3.svg.arc()
+                    .innerRadius(innerRadius)
+                    .outerRadius(outerRadius)
+                    .startAngle(0)
+                    .endAngle(2 * Math.PI);
+
+                arc1 = d3.svg.arc()
+                    .innerRadius(innerRadius)
+                    .outerRadius(outerRadius)
+                    .startAngle(0)
+                    .endAngle(2 * Math.PI * percentCompleted);
+
+                this.groupInner
+                    .select("text")
+                    .attr('font-size', 0 + 'pt');
+
+                this.groupInner.select("line#line1")
+                    .attr('style', "stroke-width:0");
+
+                this.groupInner.select("line#line2")
+                    .attr('style', "stroke-width:0");
+            }
+
+            this.group.select('#a123')
+                .attr('d', arc)
+                .attr('fill', this.data.actualColor);
+
+            this.groupInner.select('#a1234')
+                .attr('d', arc1)
+                .attr('fill', this.data.targetColor);
+
+
+            this.group.attr('transform', 'translate(' + ((width / 2)) + ',' + ((height / 2)) + ')');
+            this.groupInner.attr('transform', 'translate(' + ((width / 2)) + ',' + ((height / 2)) + ')');
+
+            this.data.toolTipInfo[1] = {
+                displayName: 'Actual',
+                value: this.data.actualFormat + circularGauge.numberWithCommas(this.data.actual)
+            }
+            this.data.toolTipInfo[0] = {
+                displayName: 'Target',
+                value: this.data.targetFormat + circularGauge.numberWithCommas(this.data.target)
+            }
+            this.data.toolTipInfo[2] = {
+                displayName: 'Percentage Remaining',
+                value: (100 - parseFloat(percentage)) + '%'
+            }
+            TooltipManager.addTooltip(this.container, (tooltipEvent: TooltipEvent) => this.data.toolTipInfo, false);//Adding visual tips
+                            	
         }
 
         public static numberWithCommas(x): string {
@@ -312,8 +355,8 @@
                     break;
                 case 'custom':
                     enumeration.pushInstance({
-                        objectName: 'custom',
-                        displayName: 'Custom',
+                        objectName: "Custom",
+                        displayName: "Donut Chart",
                         selector: null,
                         properties: {
                             show: this.data.isPie,
@@ -341,14 +384,14 @@
         public static capabilities: VisualCapabilities = {
             dataRoles: [
                 {
-                    name: 'ActualValue',// This will be the name of role and we can find element in an object with the role
+                    name: "ActualValue",// This will be the name of role and we can find element in an object with the role
                     kind: VisualDataRoleKind.Measure,//Type of value
-                    displayName: 'Actual Value',// it will display as measure header name
+                    displayName: "Actual Value",// it will display as measure header name
                 },
                 {
-                    name: 'TargetValue',
+                    name: "TargetValue",
                     kind: VisualDataRoleKind.Measure,
-                    displayName: 'Target Value',
+                    displayName: "Target Value",
                 }
             ],
             objects: {
@@ -356,11 +399,11 @@
                     displayName: data.createDisplayNameGetter('Visual_General'),
                     properties: {
                         ActualFillColor: {
-                            displayName: 'Target Color',
+                            displayName: "Target Color",
                             type: { fill: { solid: { color: true } } }
                         },
                         ComparisonFillColor: {
-                            displayName: 'Value Color',
+                            displayName: "Value Color",
                             type: { fill: { solid: { color: true } } }
                         },
                     },
@@ -373,7 +416,7 @@
                             type: { bool: true }
                         },
                         ringWidth: {
-                            displayName: 'Ring Width',
+                            displayName: "Ring Width",
                             type: { formatting: { fontSize: true } }
                         }
                     }
