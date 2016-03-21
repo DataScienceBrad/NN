@@ -355,7 +355,7 @@
                     break;
                 case 'custom':
                     enumeration.pushInstance({
-                        objectName: "Custom",
+                        objectName: "custom",
                         displayName: "Donut Chart",
                         selector: null,
                         properties: {
