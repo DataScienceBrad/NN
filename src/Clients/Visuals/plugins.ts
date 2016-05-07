@@ -328,4 +328,10 @@ module powerbi.visuals.plugins {
         capabilities: powerbi.visuals.StockChart.capabilities,
         create: () => new powerbi.visuals.StockChart()
     };
+
+    export var LinearGauge: IVisualPlugin = {
+        name: 'LinearGauge',
+        capabilities: powerbi.visuals.LinearGauge.capabilities,
+        create: () => new powerbi.visuals.LinearGauge()
+    };
 }
