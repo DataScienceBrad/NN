@@ -81,7 +81,7 @@ module powerbi.visuals {
             xaxisColor: <DataViewObjectPropertyIdentifier>{ objectName: 'xAxis', propertyName: 'color' },
         }
 
-    };          
+    };
     //Visual
     export class StockChart implements IVisual {
         //Variables 
@@ -127,10 +127,10 @@ module powerbi.visuals {
                 trendLineWidth: 2,
                 textPrecision: 0
             };
-        }     
+        }
         //One time setup
         //First time it will be called and made the structure of your visual
-        public init(options: VisualInitOptions): void {			
+        public init(options: VisualInitOptions): void {
             //Create the SVG MainDivision 
             this.rootElement = d3.select(options.element.get(0))
                 .append('div')
@@ -151,7 +151,7 @@ module powerbi.visuals {
             this.SVG_SIZE = { h: 420, w: 500 };
             this.legends_height = 0;
         }
-        
+
         //Zoom function implementation to provide responsiveness
         public updateZoom(options): void {
             var viewport = options.viewport;
@@ -178,7 +178,7 @@ module powerbi.visuals {
             }
             this.chart.style('zoom', 1);
         }
-        
+
         //Convert the dataview into its view model
         //All the variable will be populated with the value we have passed
         public static converter(dataView: DataView): StackViewModel {
@@ -196,15 +196,32 @@ module powerbi.visuals {
                         if (dataView.metadata && dataView.metadata.columns[k] && dataView.metadata.columns[k].roles) {
                             if (dataView.metadata.columns[k].roles['date']) {
                                 var colName = cat_vals[k].displayName.toLowerCase();
-                                if (colName == "year") {
-                                    rowSet['date'] = dataView.table.rows[i][k] + '-01-01';
-                                    resultSet.IsGrouped = true;
-                                } else {
-                                    resultSet.IsGrouped = false;
-                                    colName = 'date';
-                                    var timezoneffset = (new Date()).getTimezoneOffset() * 60000;
-                                    rowSet['date'] = (new Date(dataView.table.rows[i][k] - timezoneffset)).toISOString().substring(0, 10);
+                                var dateVar = dataView.table.rows[i][k];
+                                if (Object.prototype.toString.call(dateVar) === "[object Date]") {
+                                    // it is a date
+                                    if (isNaN(dateVar.getTime())) {
+                                        // date is not valid
+                                        isPositive = false;
+                                        break;
+                                    }
+                                    else {
+                                        if (colName == "year") {
+                                            rowSet['date'] = dateVar + '-01-01';
+                                            resultSet.IsGrouped = true;
+                                        } else {
+                                            resultSet.IsGrouped = false;
+                                            colName = 'date';
+                                            var timezoneffset = (new Date()).getTimezoneOffset() * 60000;
+                                            rowSet['date'] = (new Date(dateVar - timezoneffset)).toISOString().substring(0, 10);
+                                        }
+                                    }
                                 }
+                                else {
+                                    // not a date
+                                    isPositive = false;
+                                    break;
+                                }
+
                             } else {
                                 if (dataView.metadata.columns[k].roles['low']) {
                                     colName = 'low';
@@ -242,7 +259,7 @@ module powerbi.visuals {
             var yearFormat = d3.time.format("%Y");
             var svgcontainer = this.svg;
             var T_TICKS_COUNT = Math.ceil(this.SVG_SIZE.h / 75);//7;
-            
+
             svgcontainer.selectAll("*").remove();
             //Create the Scale we will use for the XAxis 
             try {
@@ -277,7 +294,7 @@ module powerbi.visuals {
                     }
                     diff_days = (max_date - min_date) / (1000 * 60 * 60 * 24);
 
-                    var XScale = d3.time.scale()                   
+                    var XScale = d3.time.scale()
                         //.range([0, this.SVG_SIZE.w-20])
                         .range([0, this.SVG_SIZE.w])
                         .domain([min_date, max_date]);
@@ -348,7 +365,7 @@ module powerbi.visuals {
             catch (err) {
             }
         }
-            
+
         //Drawing the visual	   
         public update(options: VisualUpdateOptions) {
             var self = this;
@@ -373,7 +390,7 @@ module powerbi.visuals {
                 this.values.displayUnits = DataViewObjects.getValue<number>(objects, StockProps.yAxis.displayUnits, this.values.displayUnits);
                 this.values.trendLineWidth = DataViewObjects.getValue(objects, StockProps.trends.trendLineWidth, this.values.trendLineWidth);
                 this.values.textPrecision = DataViewObjects.getValue(objects, StockProps.yAxis.textPrecision, this.values.textPrecision);
-            }	            
+            }
             //if (dataView.table && dataView.table.rows[0].length == 5) {                                
             this.groupLegends.html("");
             this.svg.html('');
@@ -515,7 +532,7 @@ module powerbi.visuals {
                         if (this.values) {
                             // Trend line width range
                             if (this.values.hasTrend)
-                                this.values.trendLineWidth = this.values.trendLineWidth < 0 ? 0 : this.values.trendLineWidth;
+                                this.values.trendLineWidth = this.values.trendLineWidth < 0 ? 0 : (this.values.trendLineWidth > 5 ? 5 : this.values.trendLineWidth);
 
                             // Precision range
                             if (this.values.hasYAxis)
@@ -550,7 +567,7 @@ module powerbi.visuals {
                         line[0][0]['cust-tooltip'] = rect[0][0]['cust-tooltip'] = toolTipInfo;
                     }
                 }
-            
+
                 // Trend Line
                 if (point) {
                     point.splice(0, 1);
@@ -575,7 +592,7 @@ module powerbi.visuals {
                 }
                 this.rootElement.selectAll(('g.Stock_yaxis')).style('fill', this.values.yaxisColor);
                 this.rootElement.selectAll(('g.Stock_xaxis')).style('fill', this.values.xaxisColor);
-            
+
                 // Formatting option for y-axis through capabilities
                 // Formatting the y-axis
                 var k = 0;
@@ -587,7 +604,7 @@ module powerbi.visuals {
                             this.rootElement.selectAll("g.Stock_yaxis>g.tick>text")[0][k].innerHTML = d3.format(',.' + this.values.textPrecision + 'f')(this.rootElement.selectAll("g.Stock_yaxis>g.tick")[0][k].__data__);
                     }
                 }
-            
+
                 // Adding the tooltip for each rect/line
                 TooltipManager.addTooltip(this.rootElement.selectAll('svg.linearSVG>*'), (tooltipEvent: TooltipEvent) => {
                     return tooltipEvent.context['cust-tooltip'];
@@ -607,7 +624,7 @@ module powerbi.visuals {
 
             }
         }
-       
+
         // Make visual properties available in the property pane in Power BI
         // values which we can customized from property pane in Power BI                
         public enumerateObjectInstances(options: EnumerateVisualObjectInstancesOptions): VisualObjectInstanceEnumeration {
@@ -806,7 +823,7 @@ module powerbi.visuals {
                             { bind: { to: 'open' } },
                             { bind: { to: 'close' } },
                             //Binding with the categorical object
-                        
+
                         ]
                     },
                 },
