@@ -3,12 +3,12 @@
     var BrickChartDefaultLegendShow: boolean = true;
     var BrickChartLegendShowProp: DataViewObjectPropertyIdentifier = { objectName: "legend", propertyName: "show" };
     var BrickChartGeneralFormatStringProp: DataViewObjectPropertyIdentifier = { objectName: 'general', propertyName: 'formatString' };
-    
+
     //property to show or hide legend
     export interface BrickChartPlotSettings {
         showLegend: boolean;
     }
-    
+
     //Data points for legend generation
     export interface BrickChartDataPoint {
         color: string;
@@ -34,6 +34,7 @@
         public dataView: DataView;
         public groupLegends: D3.Selection;
         public matrix: D3.Selection;
+        public root: D3.Selection;
         public rootElement: D3.Selection;
         public svgs: {};
         public tooltip;
@@ -52,49 +53,43 @@
                 , borderColor: '#555'
                 , randColor: ['']
                 , dataPoints: null
+                , toolTipInfo: []
                 , legendData: null
                 , settings: { showLegend: BrickChartDefaultLegendShow }
                 , valueFormatter: null
             };
-        }                       
+        }
 
         /** This is called once when the visual is initialially created */
         public init(options: VisualInitOptions): void {
             this.legend = createLegend(options.element, false, null, true);
 
+            this.root = d3.select(options.element.get(0));
             this.rootElement = d3.select(options.element.get(0))
-                .append('div').attr('style', 'position:relative;margin:auto;')
-                .classed('brickchart_topContainer', true);
+                .append('div')
+                .classed('brickchart_topContainer', true)
 
             this.initRandColor(options);
-            this.initLegends(options);
             this.initMatrix(options);
             this.updateZoom(options);
             this.updateStyleColor();
             this.toolTipInfo = [{ displayName: '', value: '' }];
-
         }
-
-        public initLegends(options: VisualInitOptions): void {
-            // Making the parent div
-            this.groupLegends = this.rootElement
-                .append('div')
-                .classed('legends', true);
-        }
-
         public initMatrix(options: VisualInitOptions): void {
             var self = this;
             //Making the div for Square grid
             this.matrix = this.rootElement
                 .append('div')
-                .classed('matrix', true);
+                .classed('matrix', true)
 
             this.svg = this.matrix
                 .append('svg')
-                .classed('svg', true);  
-                 
+                .classed('svg', true)
+                .attr('width', 211)
+                .attr('height', 211);
+
             //Making squares
-            this.svgs = {};            
+            this.svgs = {};
             for (var row = 0; row < 10; row++) {
                 for (var col = 0; col < 10; col++) {
                     var svg = this.svg
@@ -107,20 +102,6 @@
                         .classed('linearSVG', true);
                     svg[0][0]['cust_id'] = row + ':' + col;
                     this.svgs[row + ':' + col] = svg[0][0];
-
-
-                    svg[0][0].onmouseover = function (e) {
-                        var ele = e['srcElement'] || e['target'];
-
-                        if (ele["cust_leg_val"] === '') {
-                            self.toolTipInfo[0].displayName = '';
-                            self.toolTipInfo[0].value = '';
-                        } else {
-                            self.toolTipInfo[0].displayName = ele["cust_leg_name"];
-                            self.toolTipInfo[0].value = BrickChart.numberWithCommas(ele["cust_leg_val"]);
-                        }
-                        TooltipManager.ToolTipInstance.currentTooltipData = this.toolTipInfo;
-                    };
                 }
             }
         }
@@ -134,7 +115,7 @@
                 return numeric.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
             }
         }
-        
+
         // Random colors logic
         public initRandColor(options: VisualInitOptions): void {
             var MAX_LEGENDS = 70;
@@ -196,21 +177,20 @@
                     .append('style')
                     .attr('id', 'legends_clr');
             }
-            
+
             //  setting the boxes color
             var style = "";
             for (var index = 1; index <= this.randColor.length; index++) {
                 var color = this.randColor[index - 1];
                 style += ".brickchart_topContainer .category-clr" + index + "{fill:" + color + ";background:" + color + ";}";
             }
-            
+
             //setting the stroke color
             style += ".brickchart_topContainer svg>rect{stroke:" + '#555' + " ;}"
 
             this.myStyles.html(style);
-
         }
-        
+
         // Calculate and return the sums
         public calculateSum(dataSet): number {
             var sum = 0, index = 1;
@@ -222,7 +202,7 @@
             }
             return sum;
         }
-        
+
         //Convertor Function       
         public static converter(dataView: DataView): BrickChartValues {
             var data: BrickChartValues = BrickChart.getDefaultData();
@@ -292,70 +272,84 @@
                 objects = dataView.metadata.objects;
             return { showLegend: DataViewObjects.getValue(objects, BrickChartLegendShowProp, BrickChartDefaultLegendShow) };
         }
-        
-        
+
+
         //Updates the zoom
         public updateZoom(options): void {
             var WIDTH = 211
                 , HEIGHT = 211;
             var viewport = options.viewport;
             var orient = this.legend.getOrientation();
-            var height = viewport.height, width = viewport.width;
+            var legendHeight = this.legend.getMargins().height;
+            var legendWidth = this.legend.getMargins().width;
 
-            if (this.legend.isVisible()) {
-                if (orient == 0 || orient == 1 || orient == 5 || orient == 6) {
-                    height -= (this.data ? this.legend.getMargins().height : 0);
-                    this.rootElement.classed('brickOrientationLeft', false);
-                    this.rootElement.classed('brickOrientationRight', false);
-                    this.rootElement.style('left', 0).style('right', 0);
-                    if (this.currentViewport != null) {
-                        var x = (this.currentViewport.width - this.currentViewport.height) / 2;
-                        if (x < 0 && (orient == 0 || orient == 5))
-                            this.rootElement.style('top', -x + this.legend.getMargins().height + 'px');
-                        else if (x < 0 && (orient == 1 || orient == 6))
-                            this.rootElement.style('top', -x + 'px');
-                    }
+            var legendHeightForZoom = ((this.legend.getMargins().height) * HEIGHT) / viewport.height,
+                legendWidthForZoom = (this.legend.getMargins().width) * WIDTH / viewport.width;
+            switch (orient) {
+                case 0:
+                case 5:
+                case 1:
+                case 4:
+                case 6: {
+                    this.rootElement.style('width', '100%');
+                    break;
                 }
-                else if (orient == 2 || orient == 7) {
-                    width -= (this.data ? this.legend.getMargins().width : 0);
-                    this.rootElement.classed('brickOrientationLeft', false).classed('brickOrientationRight', true);
-                    var x = (this.currentViewport.width - this.currentViewport.height) / 2;
-                    if (x > 0)
-                        this.rootElement.style('right', this.legend.getMargins().width + x + 'px');
-                    else {
-                        this.rootElement.style('top', -x + 'px');
-                        this.rootElement.style('right', this.legend.getMargins().width + 'px');
-                    }
+                case 7:
+                case 8:
+                case 2:
+                case 3: {
+                    var customWidth = viewport.width - legendWidth;
+                    this.rootElement.style('width', customWidth + 'px')
+                    WIDTH += legendWidthForZoom + 22;
+                    break;
                 }
-                else if (orient == 3 || orient == 8) {
-                    width -= (this.data && this.data.settings.showLegend ? this.legend.getMargins().width : 0);
-                    this.rootElement.classed('brickOrientationLeft', true).classed('brickOrientationRight', false);
-                    var x = (this.currentViewport.width - this.currentViewport.height) / 2;
-                    if (x > 0)
-                        this.rootElement.style('left', this.legend.getMargins().width + x + 'px');
-                    else
-                        this.rootElement.style('top', -x + 'px');
+                default:
+                    break;
+            }
+            var height = viewport.height - legendHeight;
+            var width = viewport.width - legendHeight;
+            this.zoom = Math.min(width / WIDTH, height / HEIGHT) - 0.03;
+
+            if (navigator.userAgent.indexOf('Firefox/') > 0) {
+                this.matrix.style('transform', 'Scale(' + this.zoom + ')');
+            }
+            if (navigator.userAgent.indexOf('Edge/') > 0) {
+                this.matrix.style('transform', 'Scale(' + this.zoom + ')');
+                if (this.zoom < 1) {
+                    this.matrix.style('zoom', this.zoom);
                 }
             }
             else {
-                this.rootElement.classed('brickOrientationRight', false).classed('brickOrientationLeft', false).style('left', 0);
-                if (this.currentViewport != null) {
-                    var x = (this.currentViewport.height - this.currentViewport.width) / 2;
-                    if (x > 0)
-                        this.rootElement.style('top', x + 'px');
-                }
-            }
-            this.zoom = Math.min(width / WIDTH, height / HEIGHT) - 0.03;
-            if (navigator.userAgent.indexOf('Firefox/') > 0)
-                this.matrix.style('transform', 'Scale(' + this.zoom + ')');
-            else
                 this.matrix.style('zoom', this.zoom);
+            }
+
+            if (this.zoom < 0.1) {
+                this.root.select('.legend').style('display', 'none');
+            }
+            else {
+                this.root.select('.legend').style('display', 'inherit');
+            }
+            if (this.zoom < 0.06) {
+                this.root.select('.matrix').style('display', 'none');
+            }
+            else {
+                this.root.select('.matrix').style('display', 'inline-block')
+            }
+
         }
-        
+
         /** Update is called for data updates, resizes & formatting changes */
         public update(options: VisualUpdateOptions) {
             var dataView = this.dataView = options.dataViews[0];
             this.data = BrickChart.converter(dataView);
+            var format = '0';
+            var formatter;
+            if (dataView && dataView.categorical && dataView.categorical.values && dataView.categorical.values[0] && dataView.categorical.values[0].source) {
+                format = dataView.categorical.values[0].source.format;
+                formatter = valueFormatter.create({ format: format, precision: 2, allowFormatBeautification: true });
+            } else {
+                formatter = valueFormatter.create({ value: 0, precision: 2, allowFormatBeautification: true });
+            }
             var dataSet = {};
             dataSet = this.data.categories;
             var sum = this.calculateSum(dataSet);
@@ -364,9 +358,18 @@
                 height: Math.max(0, options.viewport.height),
                 width: Math.max(0, options.viewport.width)
             };
-            
+
             //Assigning css color class to the squares
             var last = 0, category = 0;
+            for (var index = 0; index < 100; index++) {
+                var row = Math.floor((last + index) / 10);
+                var col = (last + index) % 10;
+                if (!this.svgs[col + ':' + row]) { break; }
+                this.svgs[col + ':' + row].setAttribute("class", "linearSVG category-clr");
+                this.svgs[col + ':' + row]["cust_leg_ind"] = '';
+                this.svgs[col + ':' + row]["cust_leg_name"] = '';
+                this.svgs[col + ':' + row]["cust_leg_val"] = '';
+            }
 
             if (this.data.dataPoints.length) {
                 for (var k1 = 0; k1 < this.data.dataPoints.length; k1++) {
@@ -383,21 +386,15 @@
                                 this.svgs[col + ':' + row]["cust_leg_ind"] = category;
                                 this.svgs[col + ':' + row]["cust_leg_name"] = this.data.dataPoints[k1].label;
                                 this.svgs[col + ':' + row]["cust_leg_val"] = this.data.dataPoints[k1].value;
+
+                                var toolTipInfo = [];
+                                toolTipInfo.push({ displayName: 'category', value: this.data.dataPoints[k1].label + '' });
+                                toolTipInfo.push({ displayName: 'value', value: formatter.format(this.data.dataPoints[k1].value) });
+                                this.svgs[col + ':' + row]['cust-tooltip'] = toolTipInfo;
                             }
                             last += cnt;
                         }
                     }
-                }
-            }
-            else {
-                for (var index = 0; index < 100; index++) {
-                    var row = Math.floor((last + index) / 10);
-                    var col = (last + index) % 10;
-                    if (!this.svgs[col + ':' + row]) { break; }
-                    this.svgs[col + ':' + row].setAttribute("class", "linearSVG category-clr");
-                    this.svgs[col + ':' + row]["cust_leg_ind"] = '';
-                    this.svgs[col + ':' + row]["cust_leg_name"] = '';
-                    this.svgs[col + ':' + row]["cust_leg_val"] = '';
                 }
             }
 
@@ -423,9 +420,10 @@
                 }
             }
             this.renderLegend(this.data, this.randColor, sum);
-            this.updateViewPortAccordingToLegend();
 
-            TooltipManager.addTooltip(this.matrix, (tooltipEvent: TooltipEvent) => this.toolTipInfo, true);//Adding visual tips
+            TooltipManager.addTooltip(d3.selectAll('svg>*'), (tooltipEvent: TooltipEvent) => {
+                return tooltipEvent.context['cust-tooltip'];
+            }, true);
             this.updateZoom(options);
         }
 
@@ -469,37 +467,12 @@
                 var position: string = <string>this.legendObjectProperties[legendProps.position];
 
                 if (position)
-                    this.legend.changeOrientation(LegendPosition[position]);//
+                    this.legend.changeOrientation(LegendPosition[position]);
             }
 
             this.legend.drawLegend(legendDataTorender, _.clone(this.currentViewport));
             Legend.positionChartArea(this.rootElement, this.legend);
 
-        }
-
-        private updateViewPortAccordingToLegend(): void {
-            var legendMargins: IViewport = this.legend.getMargins(),
-                legendPosition: LegendPosition;
-            if (!this.legendObjectProperties) return;
-            legendPosition = LegendPosition[<string>this.legendObjectProperties[legendProps.position]];
-            switch (legendPosition) {
-                case LegendPosition.Top:
-                case LegendPosition.TopCenter:
-                case LegendPosition.Bottom:
-                case LegendPosition.BottomCenter: {
-                    this.currentViewport.height -= legendMargins.height;
-                    break;
-                }
-                case LegendPosition.Left:
-                case LegendPosition.LeftCenter:
-                case LegendPosition.Right:
-                case LegendPosition.RightCenter: {
-                    this.currentViewport.width -= legendMargins.width;
-                    break;
-                }
-                default:
-                    break;
-            }
         }
 
         public enumerateObjectInstances(options: EnumerateVisualObjectInstancesOptions): VisualObjectInstanceEnumeration {
@@ -538,8 +511,6 @@
 
             return enumeration.complete();
         }
-
-               
         //Capabilities what this visualization can do
         public static capabilities: VisualCapabilities = {
             dataRoles: [

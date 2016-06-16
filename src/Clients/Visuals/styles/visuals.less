@@ -1847,84 +1847,23 @@ div.ql-toolbar {
 
 /*Styles for brick chart start*/
 .brickchart_topContainer .svg {
-    width: 213px;
-    height: 213px;
+    width: 211px;
+    height: 211px;
 }
-
-.brickchart_topContainer svg > rect {
-    width: 21px;
-    height: 21px;
-}
-
-.brickchart_topContainer .legend.highlight, .brickchart_topContainer svg > rect.highlight {
-    opacity: 0.4;
-}
-
-.brickchart_topContainer {
-    text-align: center;
+.brickchart_topContainer{
+    position: absolute;
     line-height: normal;
-    margin-top: 5px;
     cursor: default;
+    text-align: center;
 }
-
-.brickchart_topContainer .legends {
-    display: block;
-    text-align: left;
-}
-
-.brickchart_topContainer .legends .title {
-    margin-left: 0;
-}
-
-.brickchart_topContainer .legend {
-    display: inline-block;
-    margin-left: 2px;
-    width: auto;
-    border: none;
-    height: auto;
-    position: relative;
-    font-family: wf_segoe-ui_Semibold;
-    fill: rgb(102,102,102);
-}
-
-.brickchart_topContainer .text {
-    display: inline-block;
-    margin-left: 10px;
-    margin-right: 10px;
-}
-
-.brickchart_topContainer .category {
-    border-width: 1px;
-    height: 8px;
-    width: 8px;
-    display: inline-block;
-    position: static;
-    top: 50%;
-    margin-top: -2px;
-}
-
-.brickchart_topContainer .matrix {
+.brickchart_topContainer .matrix{
     position: relative;
     display: inline-block;
     margin-top: 0;
     margin-bottom: 0;
-    width: 213px;
-    height: 213px;
     transform-origin: 50% 0 0;
-}
-
-.brickchart_topContainer .legends .title {
-    display: inline-block;
-}
-
-.brickOrientationLeft {
-    position: relative;
-    float: left;
-}
-
-.brickOrientationRight {
-    position: relative;
-    float: right;
+	height: 211px;
+	width : 211px;
 }
 /*Styles for brick chart end*/
 
@@ -2066,7 +2005,7 @@ div.ql-toolbar {
 
 .subTitle {
     margin-left: 5px;
-    font-family: 'Segoe UI;
+    font-family: 'Segoe UI';
 }
 
 svg:not(:root) {
