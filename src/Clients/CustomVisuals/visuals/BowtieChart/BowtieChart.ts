@@ -96,7 +96,8 @@ module powerbi.visuals.samples {
         private titleSize: number = 12;
         private updateCount: number = 0;
         private prevIndicator = false;
-		private isNegative = false;
+        private isNegative = false;
+        private formatString = '0';
 
         private getDefaultBowtieData(): BowtieData {
             return <BowtieData>{
@@ -145,10 +146,15 @@ module powerbi.visuals.samples {
             var catDestValues = catDestination && catDestination.values;
             var catSourceValues = catSource ? catSource.values : null;
             var values = catDv && catDv.values;
+
+            if (values) {
+                this.formatString = values[0].source.format;
+            }
+
             this.metricName = values && values[0] && values[0].source.displayName;
             this.destinationName = catDestination && catDestination.source && catDestination.source.displayName;
             this.sourceName = catSource ? catSource.source.displayName : '';
-            
+
             var aggregatedSum = 0;
             if (values && values[0]) {
                 aggregatedSum = d3.sum(values[0].values, function (d) {
@@ -163,22 +169,23 @@ module powerbi.visuals.samples {
             asterDataResult.labelSettings.precision = 0;
             asterDataResult.labelSettings = this.getLabelSettings(dataView, asterDataResult.labelSettings);
             asterDataResult.AggregatelabelSettings = this.getAggregateLabelSettings(dataView);
-
             asterDataResult.chartType = isFullBowtie ? 'FullBowtie' : isHalfBowtie ? 'HalfBowtie' : null;
             asterDataResult.aggregatedSum = aggregatedSum;
 
             if (!catDestValues || catDestValues.length < 1 || !values || values.length < 1 || !asterDataResult.chartType) {
                 this.isNegative = false;
-                return asterDataResult;   
-            }                                		  		  
-		  
+                return asterDataResult;
+            }
+
+            var formatter = ValueFormatter.create({ format: 'dddd\, MMMM %d\, yyyy' });
             // Populating source and destination values and their aggregations
             // Destination
             var arrDestination = [];
             for (var i = 0, length = catDestValues.length; i < length; i++) {
                 if (values[0] && values[0].values && values[0].values.length > 0) {
                     var category = catDestValues[i];
-                    category = category ? category : "(Blank)";                    
+                    category = category ? category : "(Blank)";
+                    var sCategory = "";
                     var destArcWidth = 0;
                     var destCatSum = 0;
                     for (var j = 0; j < length; j++) {
@@ -186,9 +193,9 @@ module powerbi.visuals.samples {
                         if (value < 0) {
                             this.isNegative = true;
                             return;
-                        } 
+                        }
                         var innerCat = catDestValues[j];
-                        innerCat = (innerCat ? catDestValues[j] : "(Blank)"); 
+                        innerCat = (innerCat ? catDestValues[j] : "(Blank)");
                         if (innerCat == category)
                             destCatSum += value;
                     }
@@ -197,21 +204,34 @@ module powerbi.visuals.samples {
                     }
 
                     if (arrDestination.indexOf(category) == -1 && destCatSum != 0) {
-                        asterDataResult.dataPoints.push({
-                            DestCategoryLabel: category,
-                            SourceCategoryLabel: null,
-                            DestCatArcWidth: destArcWidth,
-                            SourceArcWidth: null,
-                            color: '',
-                            selector: SelectionId.createWithId(catDestination.identity[i]),
-                            value: destCatSum,
-                            srcValue: 0
-                        });
+                        if (Date.parse(category) && (formatter.format(category) != 'dddd MMMM %d yyyy')) {
+                            asterDataResult.dataPoints.push({
+                                DestCategoryLabel: formatter.format(category),
+                                SourceCategoryLabel: null,
+                                DestCatArcWidth: destArcWidth,
+                                SourceArcWidth: null,
+                                color: '',
+                                selector: SelectionId.createWithId(catDestination.identity[i]),
+                                value: destCatSum,
+                                srcValue: 0
+                            });
+                        } else {
+                            asterDataResult.dataPoints.push({
+                                DestCategoryLabel: category,
+                                SourceCategoryLabel: null,
+                                DestCatArcWidth: destArcWidth,
+                                SourceArcWidth: null,
+                                color: '',
+                                selector: SelectionId.createWithId(catDestination.identity[i]),
+                                value: destCatSum,
+                                srcValue: 0
+                            });
+                        }
                         arrDestination.push(category);
                     }
                 }
             }
-			
+
             if (asterDataResult.chartType == "FullBowtie") {
                 var arrSource = [];
                 for (var i = 0, srcLength = catSourceValues && catSourceValues.length; i < length; i++) {
@@ -227,7 +247,7 @@ module powerbi.visuals.samples {
                             return;
                         }
                         var innerCat = catSourceValues[j];
-                        innerCat = (innerCat ? catSourceValues[j] : "(Blank)");                        
+                        innerCat = (innerCat ? catSourceValues[j] : "(Blank)");
                         if (innerCat == category)
                             destCatSum += value;
                     }
@@ -235,16 +255,29 @@ module powerbi.visuals.samples {
                         destArcWidth = destCatSum / aggregatedSum;
 
                     if (arrSource.indexOf(category) == -1 && destCatSum != 0) {
-                        asterDataResult.dataPoints.push({
-                            DestCategoryLabel: null,
-                            SourceCategoryLabel: category,
-                            DestCatArcWidth: null,
-                            SourceArcWidth: destArcWidth,
-                            color: '',
-                            selector: null,
-                            value: 0,
-                            srcValue: destCatSum
-                        });
+                        if (Date.parse(category) && (formatter.format(category) != 'dddd MMMM %d yyyy')) {
+                            asterDataResult.dataPoints.push({
+                                DestCategoryLabel: null,
+                                SourceCategoryLabel: formatter.format(category),
+                                DestCatArcWidth: null,
+                                SourceArcWidth: destArcWidth,
+                                color: '',
+                                selector: null,
+                                value: 0,
+                                srcValue: destCatSum
+                            });
+                        } else {
+                            asterDataResult.dataPoints.push({
+                                DestCategoryLabel: null,
+                                SourceCategoryLabel: category,
+                                DestCatArcWidth: null,
+                                SourceArcWidth: destArcWidth,
+                                color: '',
+                                selector: null,
+                                value: 0,
+                                srcValue: destCatSum
+                            });
+                        }
                         arrSource.push(category);
                     }
                 }
@@ -262,6 +295,7 @@ module powerbi.visuals.samples {
             var asterPlotLabelsProperties = BowtieProps;
 
             labelSettings.precision = DataViewObjects.getValue(objects, asterPlotLabelsProperties.labels.textPrecision, labelSettings.precision);
+            labelSettings.precision = labelSettings.precision < 0 ? 0 : (labelSettings.precision > 20 ? 20 : labelSettings.precision);
             labelSettings.fontSize = DataViewObjects.getValue(objects, asterPlotLabelsProperties.labels.fontSize, labelSettings.fontSize);
             labelSettings.displayUnits = DataViewObjects.getValue(objects, asterPlotLabelsProperties.labels.displayUnits, labelSettings.displayUnits);
             labelSettings.labelColor = DataViewObjects.getFillColor(objects, asterPlotLabelsProperties.labels.color, labelSettings.labelColor);
@@ -281,6 +315,7 @@ module powerbi.visuals.samples {
             var asterPlotLabelsProperties = BowtieProps;
 
             labelSettings.textPrecision = DataViewObjects.getValue(objects, asterPlotLabelsProperties.Aggregatelabels.textPrecision, labelSettings.textPrecision);
+            labelSettings.textPrecision = labelSettings.textPrecision < 0 ? 0 : (labelSettings.textPrecision > 20 ? 20 : labelSettings.textPrecision);
             labelSettings.fontSize = DataViewObjects.getValue(objects, asterPlotLabelsProperties.Aggregatelabels.fontSize, labelSettings.fontSize);
             labelSettings.displayUnits = DataViewObjects.getValue(objects, asterPlotLabelsProperties.Aggregatelabels.displayUnits, labelSettings.displayUnits);
             labelSettings.color = DataViewObjects.getFillColor(objects, asterPlotLabelsProperties.Aggregatelabels.color, labelSettings.color);
@@ -300,14 +335,14 @@ module powerbi.visuals.samples {
             var container: D3.Selection = this.BowtieMainContainer = d3.select(element.get(0))
                 .append('div')
                 .classed('BowtieMainContainer', true);
-               
+
             container
                 .append('div')
                 .classed('Title_Div_Text', true)
                 .style({ 'width': '100%', 'display': 'inline-block' })
                 .html('<div class = "GMODonutTitleDiv" style = "max-width: 80%; display: inline-block">' + '</div>'
                 + '<span class = "GMODonutTitleIcon" style = "width: 2%; display: none; cursor: pointer; position: absolute">&nbsp(&#063;)</span>');
-           
+
 
             var BowtieChartError: D3.Selection = this.BowtieChartError = container
                 .append('div')
@@ -337,23 +372,23 @@ module powerbi.visuals.samples {
                 .append('div')
                 .classed('BowtieChartDestination', true);
         }
-        
-        private clearData(): void {
+
+        private clearData(isLargeDataSet): void {
             // Headings
             this.BowtieChartHeadings.selectAll('div').remove();
-    
+
             // Aggregated Sum settings
             this.BowtieChartAggregated.select('div').remove();
             this.BowtieChartSVGDestination.selectAll('svg').remove();
             this.BowtieChartSVGSource.selectAll('svg').remove();
-    
+
             // Destination Settings 
             this.BowtieChartDestination.selectAll('div').remove();
-    
+
             // Source Settings 
             this.BowtieChartSource.selectAll('div').remove();
-            
-            //Show Error Message
+
+            // Show Error Message
             this.BowtieChartError.selectAll('span').remove();
             this.BowtieMainContainer.style('width', this.currentViewport.width + 'px');
             this.BowtieMainContainer.style('height', this.currentViewport.height + 'px');
@@ -361,14 +396,21 @@ module powerbi.visuals.samples {
             var errorMessage = "";
             var errorMessageWidth = 0;
             if (!this.isNegative) {
-                errorMessage = "Please select 'Value', 'Source', and/or 'Destination'";
-                errorMessageWidth = 365;
+                errorMessage = "Please select non-empty 'Value', 'Source', and/or 'Destination'.";
+                errorMessageWidth = 335;
             } else {
-                errorMessage = "Negative values are not supported";
-                errorMessageWidth = 250;
+                errorMessage = "Negative values are not supported.";
+                errorMessageWidth = 195;
             }
+
+            if (isLargeDataSet) {
+                errorMessage = "Too many values. Try selecting more filters and/or increasing size of the visual.";
+                errorMessageWidth = 565;
+            }
+
             this.BowtieChartError.append('span')
                 .html(errorMessage)
+                .style('font-size', '12px')
                 .style({ 'display': 'block' })
                 .style('height', this.currentViewport.height - 20)
                 .style('line-height', this.currentViewport.height - 20 + 'px')
@@ -389,13 +431,13 @@ module powerbi.visuals.samples {
             this.dataViews = options.dataViews;
             var convertedData: BowtieData = this.data = this.converter(dataView, this.colors);
 
-            if (!convertedData || !convertedData.dataPoints || convertedData.dataPoints.length == 0) {                
-				this.clearData();
+            if (!convertedData || !convertedData.dataPoints || convertedData.dataPoints.length == 0) {
+                this.clearData(false);
                 return;
             } else {
                 this.BowtieChartError.selectAll('span').style('display', 'none');
             }
-           
+
             // Custom Tooltip Code            
             var viewport = options.viewport;
             this.root.select('.errorMessage').style({ 'display': 'none' });
@@ -452,17 +494,21 @@ module powerbi.visuals.samples {
                     .attr('title', tooltiptext);
             }
 
-            var formatter = valueFormatter.create({ format: '0', value: convertedData.labelSettings.displayUnits, precision: convertedData.labelSettings.precision });
-            var aggregateFormatter = valueFormatter.create({ format: '0', value: convertedData.AggregatelabelSettings.displayUnits, precision: convertedData.AggregatelabelSettings.textPrecision });
+            var formatter = valueFormatter.create({ format: this.formatString, value: convertedData.labelSettings.displayUnits, precision: convertedData.labelSettings.precision });
+            var aggregateFormatter = valueFormatter.create({ format: this.formatString, value: convertedData.AggregatelabelSettings.displayUnits, precision: convertedData.AggregatelabelSettings.textPrecision });
             this.data.ArcFillColor = DataViewObjects.getFillColor(this.dataView.metadata.objects, BowtieProps.general.ArcFillColor, this.data.ArcFillColor);
 
-            var heightOfTitle = $(".GMODonutTitleDiv").height();
+            var heightOfTitle = 0;
+            if (this.root.select(".GMODonutTitleDiv")) {
+                heightOfTitle = isNaN(parseFloat(this.root.select(".GMODonutTitleDiv").style("height"))) ? 0 : parseFloat(this.root.select(".GMODonutTitleDiv").style("height"));
+            }
             var BowtieChartAggregatedWidthPercentage = 12;
             var BowtieChartSVGDestinationWidthPercentage = 60;
             var BowtieChartDestinationWidthPercentage = 26;
             var fontSize = PixelConverter.fromPointToPixel(convertedData.labelSettings.fontSize) + "px";
             var aggregateFontSize = PixelConverter.fromPointToPixel(convertedData.AggregatelabelSettings.fontSize) + "px";
-            
+            var showHeading = true;
+
             if (convertedData.chartType == 'HalfBowtie') {
                 this.BowtieChartSource.style('display', 'none');
                 this.BowtieChartSVGSource.style('display', 'none');
@@ -473,7 +519,7 @@ module powerbi.visuals.samples {
                 this.BowtieChartSVGDestination.style('width', BowtieChartSVGDestinationWidthPercentage + '%');
                 this.BowtieChartSVGDestination.style('margin-right', '1%');
                 this.BowtieChartDestination.style('width', BowtieChartDestinationWidthPercentage + '%');
-                
+
                 // Chart Headings
                 var textPropertiesDestSourceName: powerbi.TextProperties = {
                     text: this.destinationName,
@@ -489,30 +535,51 @@ module powerbi.visuals.samples {
 
                 this.BowtieChartHeadings.selectAll('div').remove();
                 this.BowtieChartHeadings.append('div')
-                    .style('width',(this.currentViewport.width * (BowtieChartDestinationWidthPercentage / 2 - 1)) / 100 + 'px')
+                    .style('width', (this.currentViewport.width * (BowtieChartDestinationWidthPercentage / 2 - 1)) / 100 + 'px')
                     .style('margin-right', '1%')
                     .style('float', 'left')
                     .style('font-size', fontSize)
-                    .style('margin-left',(this.currentViewport.width * (BowtieChartSVGDestinationWidthPercentage + BowtieChartAggregatedWidthPercentage + 1)) / 100 + 'px')
+                    .attr('id', 'HalfBowtieDestSourceName')
+                    .style('margin-left', (this.currentViewport.width * (BowtieChartSVGDestinationWidthPercentage + BowtieChartAggregatedWidthPercentage + 1)) / 100 + 'px')
                     .append('span')
                     .attr('title', this.destinationName)
-                    .html(powerbi.TextMeasurementService.getTailoredTextOrDefault(textPropertiesDestSourceName,(this.currentViewport.width * (BowtieChartDestinationWidthPercentage / 2 - 1)) / 100));
+                    .html(powerbi.TextMeasurementService.getTailoredTextOrDefault(textPropertiesDestSourceName, (this.currentViewport.width * (BowtieChartDestinationWidthPercentage / 2 - 1)) / 100));
 
                 this.BowtieChartHeadings.append('div')
-                    .style('width',(this.currentViewport.width * (BowtieChartDestinationWidthPercentage / 2)) / 100 + 'px')
+                    .style('width', (this.currentViewport.width * (BowtieChartDestinationWidthPercentage / 2)) / 100 + 'px')
                     .style('float', 'left')
                     .style('font-size', fontSize)
+                    .attr('id', 'HalfBowtieDestSourceName')
                     .append('span')
                     .attr('title', this.metricName)
-                    .html(powerbi.TextMeasurementService.getTailoredTextOrDefault(textPropertiesDestSourceValue,(this.currentViewport.width * (BowtieChartDestinationWidthPercentage / 2)) / 100));
+                    .html(powerbi.TextMeasurementService.getTailoredTextOrDefault(textPropertiesDestSourceValue, (this.currentViewport.width * (BowtieChartDestinationWidthPercentage / 2)) / 100));
 
-                var heightOfHeadings = $(".BowtieChartHeadings").height();
+                var heightOfHeadings = 0;
+                if (this.root.select(".BowtieChartHeadings")) {
+                    heightOfHeadings = parseFloat(this.root.select(".BowtieChartHeadings").style("height"));
+                }
                 var avaialableHeight = this.currentViewport.height - heightOfHeadings - heightOfTitle - 15;
+
+                // Checking whether height is increased or not
+                var numberOfValues = convertedData.dataPoints.length;
+                var divisionHeight = avaialableHeight / numberOfValues;
+                var category = convertedData.dataPoints[0].DestCategoryLabel;
+                var textPropertiesForLabel: powerbi.TextProperties = {
+                    text: category,
+                    fontFamily: "Segoe UI",
+                    fontSize: fontSize
+                };
+                if (divisionHeight <= TextMeasurementService.measureSvgTextHeight(textPropertiesForLabel)) {
+                    showHeading = false;
+                    avaialableHeight = this.currentViewport.height - 0 - heightOfTitle - 15; // heightOfHeadings will be 0 in this case
+                } else {
+                    showHeading = true;
+                }
 
                 this.BowtieChartAggregated.style('height', avaialableHeight + 'px');
                 this.BowtieChartSVGDestination.style('height', avaialableHeight + 'px');
                 this.BowtieChartDestination.style('height', avaialableHeight + 'px');
-                            
+
                 // Aggregated Sum settings
                 this.BowtieChartAggregated.select('div').remove();
                 this.BowtieChartSVGDestination.selectAll('svg').remove();
@@ -538,16 +605,16 @@ module powerbi.visuals.samples {
 
                 AggregatedSum.append('div').append('span')
                     .attr('title', this.metricName)
-                    .html(powerbi.TextMeasurementService.getTailoredTextOrDefault(textPropertiesMetricName,(this.currentViewport.width * BowtieChartAggregatedWidthPercentage) / 100))
+                    .html(powerbi.TextMeasurementService.getTailoredTextOrDefault(textPropertiesMetricName, (this.currentViewport.width * BowtieChartAggregatedWidthPercentage) / 100))
 
                 var aggregatedValue = AggregatedSum.append('div');
                 aggregatedValue.append('span')
                     .attr('title', aggregateFormatter.format(convertedData.aggregatedSum))
-                    .html(powerbi.TextMeasurementService.getTailoredTextOrDefault(textPropertiesAggregateValue,((this.currentViewport.width * BowtieChartAggregatedWidthPercentage) / 100) - PixelConverter.fromPointToPixel(convertedData.AggregatelabelSettings.fontSize) - 2));
+                    .html(powerbi.TextMeasurementService.getTailoredTextOrDefault(textPropertiesAggregateValue, ((this.currentViewport.width * BowtieChartAggregatedWidthPercentage) / 100) - PixelConverter.fromPointToPixel(convertedData.AggregatelabelSettings.fontSize) - 2));
                 AggregatedSum
                     .style('font-size', aggregateFontSize)
                     .style('color', convertedData.AggregatelabelSettings.color);
-                
+
                 // Indicator logic
                 var color = 'green';
                 if (this.prevIndicator == false && convertedData.AggregatelabelSettings.Indicator) {
@@ -578,63 +645,91 @@ module powerbi.visuals.samples {
                 }
                 this.prevIndicator = convertedData.AggregatelabelSettings.Indicator;
 
-                var divHeight = $("[id$='divAggregatedSum']").height();
-                AggregatedSum.style('margin-top',(avaialableHeight / 2 - divHeight / 2) + 'px');                                      
-                                
+                var divHeight = 0;
+                if (this.root.select("#divAggregatedSum")) {
+                    divHeight = parseFloat(this.root.select("#divAggregatedSum").style("height"));
+                }
+                AggregatedSum.style('margin-top', (avaialableHeight / 2 - divHeight / 2) + 'px');
+
                 // Destination Settings 
                 this.BowtieChartDestination.selectAll('div').remove();
                 var numberOfValues = convertedData.dataPoints.length;
                 var divisionHeight = avaialableHeight / numberOfValues;
 
-                var fBranchHeight = avaialableHeight / 16;
+                var fBranchHeight = avaialableHeight / 12;
+                var fBranchHeight1 = avaialableHeight / 12;
+                // checking for large datasets                
+                for (var iDiv = 0; iDiv < numberOfValues; iDiv++) {
+                    if ((convertedData.dataPoints[iDiv].DestCatArcWidth * fBranchHeight) < 1) {
+                        fBranchHeight1 = fBranchHeight1 + 1;
+                    }
+                }
+
+                if (fBranchHeight1 > avaialableHeight) {
+                    this.clearData(true);
+                    return;
+                }
+
                 var fStartX = 0;
-                var fStartY = avaialableHeight / 2 - fBranchHeight / 2;
+                var fStartY = avaialableHeight / 2 - fBranchHeight1 / 2;
                 var fEndX = (this.currentViewport.width * BowtieChartSVGDestinationWidthPercentage) / 100;
                 var fEndY = 0;
                 var fCurveFactor = 0.65;
                 var svg = this.BowtieChartSVGDestination
                     .append('svg')
-                    .style('width',(this.currentViewport.width * BowtieChartSVGDestinationWidthPercentage) / 100 + 'px')
+                    .style('width', (this.currentViewport.width * BowtieChartSVGDestinationWidthPercentage) / 100 + 'px')
                     .style('height', avaialableHeight + 'px');
 
                 for (var iDiv = 0; iDiv < numberOfValues; iDiv++) {
+                    var category = convertedData.dataPoints[iDiv].DestCategoryLabel;
+                    var value = formatter.format(convertedData.dataPoints[iDiv].value);
                     var oDiv = this.BowtieChartDestination
                         .append('div')
                         .style('height', divisionHeight + 'px')
                         .style('margin-right', '1%')
-                        .style('width',(this.currentViewport.width * (BowtieChartDestinationWidthPercentage / 2 - 1)) / 100 + 'px');
+                        .style('width', (this.currentViewport.width * (BowtieChartDestinationWidthPercentage / 2 - 1)) / 100 + 'px');
                     var oDiv1 = this.BowtieChartDestination
                         .append('div')
                         .style('height', divisionHeight + 'px')
-                        .style('width',(this.currentViewport.width * (BowtieChartDestinationWidthPercentage / 2)) / 100 + 'px');
+                        .style('width', (this.currentViewport.width * (BowtieChartDestinationWidthPercentage / 2)) / 100 + 'px');
 
                     var textPropertiesForLabel: powerbi.TextProperties = {
-                        text: convertedData.dataPoints[iDiv].DestCategoryLabel,
+                        text: category,
                         fontFamily: "Segoe UI",
                         fontSize: fontSize
                     };
 
                     var textPropertiesForValue: powerbi.TextProperties = {
-                        text: formatter.format(convertedData.dataPoints[iDiv].value),
+                        text: value,
                         fontFamily: "Segoe UI",
                         fontSize: fontSize
                     };
 
-                    oDiv.append('span')
-                        .html(powerbi.TextMeasurementService.getTailoredTextOrDefault(textPropertiesForLabel,(this.currentViewport.width * (BowtieChartDestinationWidthPercentage / 2 - 1)) / 100))
-                        .attr('title', convertedData.dataPoints[iDiv].DestCategoryLabel)
-                        .style('float', 'left')
-                        .style('font-size', fontSize)
-                        .style('color', convertedData.labelSettings.labelColor)
-                        .style('line-height', divisionHeight + 'px');
+                    if (divisionHeight > TextMeasurementService.measureSvgTextHeight(textPropertiesForLabel) && showHeading) {
+                        showHeading = true;
+                        this.BowtieChartDestination.style('display', 'block');
+                        oDiv.append('span')
+                            .html(powerbi.TextMeasurementService.getTailoredTextOrDefault(textPropertiesForLabel, (this.currentViewport.width * (BowtieChartDestinationWidthPercentage / 2 - 1)) / 100))
+                            .attr('title', convertedData.dataPoints[iDiv].DestCategoryLabel)
+                            .style('float', 'left')
+                            .style('font-size', fontSize)
+                            .style('color', convertedData.labelSettings.labelColor)
+                            .style('line-height', divisionHeight + 'px');
 
-                    oDiv1.append('span')
-                        .html(powerbi.TextMeasurementService.getTailoredTextOrDefault(textPropertiesForValue,(this.currentViewport.width * (BowtieChartDestinationWidthPercentage / 2)) / 100))
-                        .attr('title', formatter.format(convertedData.dataPoints[iDiv].value))
-                        .style('float', 'left')
-                        .style('font-size', fontSize)
-                        .style('color', convertedData.labelSettings.labelColor)
-                        .style('line-height', divisionHeight + 'px');
+                        oDiv1.append('span')
+                            .html(powerbi.TextMeasurementService.getTailoredTextOrDefault(textPropertiesForValue, (this.currentViewport.width * (BowtieChartDestinationWidthPercentage / 2)) / 100))
+                            .attr('title', formatter.format(convertedData.dataPoints[iDiv].value))
+                            .style('float', 'left')
+                            .style('font-size', fontSize)
+                            .style('color', convertedData.labelSettings.labelColor)
+                            .style('line-height', divisionHeight + 'px');
+                    } else {
+                        showHeading = false;
+                        this.BowtieChartDestination.style('display', 'none');
+                        fEndX = (this.currentViewport.width * (BowtieChartSVGDestinationWidthPercentage + BowtieChartDestinationWidthPercentage)) / 100;
+                        this.BowtieChartSVGDestination.style('width', BowtieChartSVGDestinationWidthPercentage + BowtieChartDestinationWidthPercentage + '%');
+                        svg.style('width', (this.currentViewport.width * (BowtieChartSVGDestinationWidthPercentage + BowtieChartDestinationWidthPercentage)) / 100 + 'px');
+                    }
 
                     var percentage = convertedData.dataPoints[iDiv].value / convertedData.aggregatedSum;
                     fEndY = iDiv * (avaialableHeight / numberOfValues) + divisionHeight / 2;
@@ -642,7 +737,6 @@ module powerbi.visuals.samples {
                     var height = convertedData.dataPoints[iDiv].DestCatArcWidth * fBranchHeight;
                     height = height < 1 ? 1 : height;
                     fStartY += (height / 2);
-
                     if (iDiv > 0) {
                         if ((convertedData.dataPoints[iDiv - 1].DestCatArcWidth * fBranchHeight) > 1) {
                             fStartY += ((convertedData.dataPoints[iDiv - 1].DestCatArcWidth * fBranchHeight) / 2);
@@ -655,12 +749,23 @@ module powerbi.visuals.samples {
                     var d = 'M ' + fStartX + ' ' + fStartY + ' C ' + (fStartX + (fPipeArea * fCurveFactor)) + ' ' + fStartY +
                         ' ' + (fEndX - fPipeArea * fCurveFactor) + ' ' + fEndY + ' ' + fEndX + ' ' + fEndY;
 
-                    svg
+                    var path = svg
                         .append('path')
                         .attr('d', d)
                         .attr('stroke', this.data.ArcFillColor)
                         .attr('fill', 'none')
                         .attr('stroke-width', height);
+
+                    var toolTipInfo: TooltipDataItem[] = [];
+                    toolTipInfo.push({
+                        displayName: category,
+                        value: value,
+                    });
+
+                    path[0][0]['cust-tooltip'] = toolTipInfo;
+                }
+                if (!showHeading) {
+                    this.BowtieChartHeadings.selectAll('div').remove();
                 }
             } else {
                 BowtieChartAggregatedWidthPercentage = 9;
@@ -681,7 +786,7 @@ module powerbi.visuals.samples {
                 this.BowtieChartSVGSource.style('margin-left', '1%');
                 this.BowtieChartSource.style('width', BowtieChartDestinationWidthPercentage + '%');
                 this.BowtieChartSource.style('margin-left', '1%');
-                
+
                 // Chart Headings
                 var textPropertiesDestSourceName: powerbi.TextProperties = {
                     text: this.destinationName,
@@ -703,50 +808,91 @@ module powerbi.visuals.samples {
 
                 this.BowtieChartHeadings.selectAll('div').remove();
                 this.BowtieChartHeadings.append('div')
-                    .style('width',(this.currentViewport.width * (BowtieChartDestinationWidthPercentage / 2)) / 100 + 'px')
+                    .style('width', (this.currentViewport.width * (BowtieChartDestinationWidthPercentage / 2)) / 100 + 'px')
                     .style('margin-left', '1%')
                     .style('float', 'left')
                     .style('font-size', fontSize)
+                    .attr('id', 'FullBowtieDestSourceName')
                     .append('span')
                     .attr('title', this.sourceName)
-                    .html(powerbi.TextMeasurementService.getTailoredTextOrDefault(textPropertiesSourceName,(this.currentViewport.width * (BowtieChartDestinationWidthPercentage / 2)) / 100));
+                    .html(powerbi.TextMeasurementService.getTailoredTextOrDefault(textPropertiesSourceName, (this.currentViewport.width * (BowtieChartDestinationWidthPercentage / 2)) / 100));
 
                 this.BowtieChartHeadings
                     .append('div')
-                    .style('width',(this.currentViewport.width * (BowtieChartDestinationWidthPercentage / 2 - 1)) / 100 + 'px')
+                    .style('width', (this.currentViewport.width * (BowtieChartDestinationWidthPercentage / 2 - 1)) / 100 + 'px')
                     .style('float', 'left')
                     .style('text-align', 'right')
                     .style('font-size', fontSize)
+                    .attr('id', 'FullBowtieDestSourceValue')
                     .append('span')
                     .attr('title', this.metricName)
-                    .html(powerbi.TextMeasurementService.getTailoredTextOrDefault(textPropertiesDestSourceValue,(this.currentViewport.width * (BowtieChartDestinationWidthPercentage / 2 - 1)) / 100));
+                    .html(powerbi.TextMeasurementService.getTailoredTextOrDefault(textPropertiesDestSourceValue, (this.currentViewport.width * (BowtieChartDestinationWidthPercentage / 2 - 1)) / 100));
 
                 var margin = BowtieChartSVGDestinationWidthPercentage * 2 + BowtieChartAggregatedWidthPercentage + 3;
                 this.BowtieChartHeadings.append('div')
-                    .style('width',(this.currentViewport.width * (BowtieChartDestinationWidthPercentage / 2)) / 100 + 'px')
+                    .style('width', (this.currentViewport.width * (BowtieChartDestinationWidthPercentage / 2)) / 100 + 'px')
                     .style('float', 'left')
-                    .style('margin-left',(this.currentViewport.width * margin) / 100 + 'px')
+                    .style('margin-left', (this.currentViewport.width * margin) / 100 + 'px')
                     .style('font-size', fontSize)
+                    .attr('id', 'FullBowtieSourceName')
                     .attr('title', this.destinationName)
-                    .append('span').html(powerbi.TextMeasurementService.getTailoredTextOrDefault(textPropertiesDestSourceName,(this.currentViewport.width * (BowtieChartDestinationWidthPercentage / 2)) / 100));
+                    .append('span').html(powerbi.TextMeasurementService.getTailoredTextOrDefault(textPropertiesDestSourceName, (this.currentViewport.width * (BowtieChartDestinationWidthPercentage / 2)) / 100));
 
                 this.BowtieChartHeadings.append('div')
-                    .style('width',(this.currentViewport.width * (BowtieChartDestinationWidthPercentage / 2 - 1)) / 100 + 'px')
+                    .style('width', (this.currentViewport.width * (BowtieChartDestinationWidthPercentage / 2 - 1)) / 100 + 'px')
                     .style('float', 'left')
                     .style('font-size', fontSize)
+                    .attr('id', 'FullBowtieSourceValue')
                     .append('span')
                     .attr('title', this.metricName)
-                    .html(powerbi.TextMeasurementService.getTailoredTextOrDefault(textPropertiesDestSourceValue,(this.currentViewport.width * (BowtieChartDestinationWidthPercentage / 2 - 1)) / 100));
+                    .html(powerbi.TextMeasurementService.getTailoredTextOrDefault(textPropertiesDestSourceValue, (this.currentViewport.width * (BowtieChartDestinationWidthPercentage / 2 - 1)) / 100));
 
-                var heightOfHeadings = $(".BowtieChartHeadings").height();
+                var heightOfHeadings = 0;
+                if (this.root.select(".BowtieChartHeadings")) {
+                    heightOfHeadings = parseFloat(this.root.select(".BowtieChartHeadings").style("height"));
+                }
                 var avaialableHeight = this.currentViewport.height - heightOfHeadings - heightOfTitle - 10;
+
+
+                // Checking whether height is increased or not
+                var numberOfValues = 0;
+                for (var k = 0; k < convertedData.dataPoints.length; k++) {
+                    if (convertedData.dataPoints[k].DestCategoryLabel != null)
+                        numberOfValues++;
+                }
+                var divisionHeight = avaialableHeight / numberOfValues;
+                var category = convertedData.dataPoints[0].DestCategoryLabel;
+                var textPropertiesForLabel: powerbi.TextProperties = {
+                    text: category,
+                    fontFamily: "Segoe UI",
+                    fontSize: fontSize
+                };
+                if (divisionHeight <= TextMeasurementService.measureSvgTextHeight(textPropertiesForLabel)) {
+                    showHeading = false;
+                    avaialableHeight = this.currentViewport.height - 0 - heightOfTitle - 15; // heightOfHeadings will be 0 in this case
+                } else {
+                    showHeading = true;
+                }
+
+                // Checking whether height is increased or not				
+                var divisionHeight = avaialableHeight / (convertedData.dataPoints.length - numberOfValues);
+                var category = convertedData.dataPoints[numberOfValues].SourceCategoryLabel;
+                var textPropertiesForLabel: powerbi.TextProperties = {
+                    text: category,
+                    fontFamily: "Segoe UI",
+                    fontSize: fontSize
+                };
+                if (divisionHeight <= TextMeasurementService.measureSvgTextHeight(textPropertiesForLabel)) {
+                    showHeading = false;
+                    avaialableHeight = this.currentViewport.height - 0 - heightOfTitle - 15; // heightOfHeadings will be 0 in this case
+                }
 
                 this.BowtieChartAggregated.style('height', avaialableHeight + 'px');
                 this.BowtieChartSVGDestination.style('height', avaialableHeight + 'px');
                 this.BowtieChartDestination.style('height', avaialableHeight + 'px');
                 this.BowtieChartSVGSource.style('height', avaialableHeight + 'px');
                 this.BowtieChartSource.style('height', avaialableHeight + 'px');
-                
+
                 // Aggregated Sum settings 
                 this.BowtieChartAggregated.select('div').remove();
                 this.BowtieChartSVGDestination.selectAll('svg').remove();
@@ -768,21 +914,21 @@ module powerbi.visuals.samples {
                 var AggregatedSum =
                     this.BowtieChartAggregated.append('div')
                         .attr('id', 'divAggregatedSum')
-                        .style('width',(this.currentViewport.width * BowtieChartAggregatedWidthPercentage) / 100 + 'px')
+                        .style('width', (this.currentViewport.width * BowtieChartAggregatedWidthPercentage) / 100 + 'px')
                         .style('text-align', 'center');
                 AggregatedSum.append('div').append('span')
                     .attr('title', this.metricName)
-                    .html(powerbi.TextMeasurementService.getTailoredTextOrDefault(textPropertiesMetricName,(this.currentViewport.width * BowtieChartAggregatedWidthPercentage) / 100))
+                    .html(powerbi.TextMeasurementService.getTailoredTextOrDefault(textPropertiesMetricName, (this.currentViewport.width * BowtieChartAggregatedWidthPercentage) / 100))
                 var aggregatedValue = AggregatedSum.append('div');
 
                 aggregatedValue.append('span')
                     .attr('title', aggregateFormatter.format(convertedData.aggregatedSum))
-                    .html(powerbi.TextMeasurementService.getTailoredTextOrDefault(textPropertiesAggregateValue,((this.currentViewport.width * BowtieChartAggregatedWidthPercentage) / 100) - PixelConverter.fromPointToPixel(convertedData.AggregatelabelSettings.fontSize) - 2));
+                    .html(powerbi.TextMeasurementService.getTailoredTextOrDefault(textPropertiesAggregateValue, ((this.currentViewport.width * BowtieChartAggregatedWidthPercentage) / 100) - PixelConverter.fromPointToPixel(convertedData.AggregatelabelSettings.fontSize) - 2));
 
                 AggregatedSum
                     .style('font-size', aggregateFontSize)
                     .style('color', convertedData.AggregatelabelSettings.color);
-                            
+
                 // Indicator logic
                 var color = 'green';
                 if (this.prevIndicator == false && convertedData.AggregatelabelSettings.Indicator) {
@@ -813,10 +959,12 @@ module powerbi.visuals.samples {
                 }
                 this.prevIndicator = convertedData.AggregatelabelSettings.Indicator;
 
+                var divHeight = 0;
+                if (this.root.select("#divAggregatedSum")) {
+                    divHeight = parseFloat(this.root.select("#divAggregatedSum").style("height"));
+                }
+                AggregatedSum.style('margin-top', (avaialableHeight / 2 - divHeight / 2) + 'px');
 
-                var divHeight = $("[id$='divAggregatedSum']").height();
-                AggregatedSum.style('margin-top',(avaialableHeight / 2 - divHeight / 2) + 'px');                                               
-                                                       
                 // Destination Settings
                 this.BowtieChartDestination.selectAll('div').remove();
                 var numberOfValues = 0;
@@ -825,28 +973,44 @@ module powerbi.visuals.samples {
                         numberOfValues++;
                 }
                 var divisionHeight = avaialableHeight / numberOfValues;
-                var fBranchHeight = avaialableHeight / 16;
+                var fBranchHeight = avaialableHeight / 12;
+                var fBranchHeight1 = avaialableHeight / 12;
+
+                // checking for large datasets                
+                for (var iDiv = 0; iDiv < numberOfValues; iDiv++) {
+                    if ((convertedData.dataPoints[iDiv].DestCatArcWidth * fBranchHeight) < 1) {
+                        fBranchHeight1 = fBranchHeight1 + 1;
+                    }
+                }
+
+                if (fBranchHeight1 > avaialableHeight) {
+                    this.clearData(true);
+                    return;
+                }
+
                 var fStartX = 0;
-                var fStartY = avaialableHeight / 2 - fBranchHeight / 2;
+                var fStartY = avaialableHeight / 2 - fBranchHeight1 / 2;
                 var fEndX = (this.currentViewport.width * BowtieChartSVGDestinationWidthPercentage) / 100;
                 var fEndY = 0;
                 var fCurveFactor = 0.65;
                 var svg = this.BowtieChartSVGDestination
                     .append('svg')
-                    .style('width',(this.currentViewport.width * BowtieChartSVGDestinationWidthPercentage) / 100 + 'px')
+                    .style('width', (this.currentViewport.width * BowtieChartSVGDestinationWidthPercentage) / 100 + 'px')
                     .style('height', avaialableHeight + 'px');
 
                 for (var iDiv = 0; iDiv < numberOfValues; iDiv++) {
+                    var category = convertedData.dataPoints[iDiv].DestCategoryLabel;
+                    var value = formatter.format(convertedData.dataPoints[iDiv].value);
                     var oDiv = this.BowtieChartDestination
                         .append('div')
                         .style('height', divisionHeight + 'px')
-                        .style('width',(this.currentViewport.width * (BowtieChartDestinationWidthPercentage / 2)) / 100 + 'px')
+                        .style('width', (this.currentViewport.width * (BowtieChartDestinationWidthPercentage / 2)) / 100 + 'px')
                         .style('margin-right', '1%');
 
                     var oDiv1 = this.BowtieChartDestination
                         .append('div')
                         .style('height', divisionHeight + 'px')
-                        .style('width',(this.currentViewport.width * (BowtieChartDestinationWidthPercentage / 2 - 1)) / 100 + 'px');
+                        .style('width', (this.currentViewport.width * (BowtieChartDestinationWidthPercentage / 2 - 1)) / 100 + 'px');
 
                     var textPropertiesForLabel: powerbi.TextProperties = {
                         text: convertedData.dataPoints[iDiv].DestCategoryLabel,
@@ -860,21 +1024,31 @@ module powerbi.visuals.samples {
                         fontSize: fontSize
                     };
 
-                    oDiv.append('span')
-                        .html(powerbi.TextMeasurementService.getTailoredTextOrDefault(textPropertiesForLabel,(this.currentViewport.width * (BowtieChartDestinationWidthPercentage / 2)) / 100))
-                        .attr('title', convertedData.dataPoints[iDiv].DestCategoryLabel)
-                        .style('float', 'left')
-                        .style('font-size', fontSize)
-                        .style('color', convertedData.labelSettings.labelColor)
-                        .style('line-height', divisionHeight + 'px');
+                    if (divisionHeight > TextMeasurementService.measureSvgTextHeight(textPropertiesForLabel) && showHeading) {
+                        showHeading = true;
+                        this.BowtieChartDestination.style('display', 'block');
+                        oDiv.append('span')
+                            .html(powerbi.TextMeasurementService.getTailoredTextOrDefault(textPropertiesForLabel, (this.currentViewport.width * (BowtieChartDestinationWidthPercentage / 2)) / 100))
+                            .attr('title', convertedData.dataPoints[iDiv].DestCategoryLabel)
+                            .style('float', 'left')
+                            .style('font-size', fontSize)
+                            .style('color', convertedData.labelSettings.labelColor)
+                            .style('line-height', divisionHeight + 'px');
 
-                    oDiv1.append('span')
-                        .html(powerbi.TextMeasurementService.getTailoredTextOrDefault(textPropertiesForValue,(this.currentViewport.width * (BowtieChartDestinationWidthPercentage / 2 - 1)) / 100))
-                        .attr('title', formatter.format(convertedData.dataPoints[iDiv].value))
-                        .style('float', 'left')
-                        .style('font-size', fontSize)
-                        .style('color', convertedData.labelSettings.labelColor)
-                        .style('line-height', divisionHeight + 'px');
+                        oDiv1.append('span')
+                            .html(powerbi.TextMeasurementService.getTailoredTextOrDefault(textPropertiesForValue, (this.currentViewport.width * (BowtieChartDestinationWidthPercentage / 2 - 1)) / 100))
+                            .attr('title', formatter.format(convertedData.dataPoints[iDiv].value))
+                            .style('float', 'left')
+                            .style('font-size', fontSize)
+                            .style('color', convertedData.labelSettings.labelColor)
+                            .style('line-height', divisionHeight + 'px');
+                    } else {
+                        showHeading = false;
+                        this.BowtieChartDestination.style('display', 'none');
+                        fEndX = (this.currentViewport.width * (BowtieChartSVGDestinationWidthPercentage + BowtieChartDestinationWidthPercentage)) / 100;
+                        this.BowtieChartSVGDestination.style('width', BowtieChartSVGDestinationWidthPercentage + BowtieChartDestinationWidthPercentage + '%');
+                        svg.style('width', (this.currentViewport.width * (BowtieChartSVGDestinationWidthPercentage + BowtieChartDestinationWidthPercentage)) / 100 + 'px');
+                    }
 
                     var percentage = convertedData.dataPoints[iDiv].value / convertedData.aggregatedSum;
                     fEndY = iDiv * (avaialableHeight / numberOfValues) + divisionHeight / 2;
@@ -892,68 +1066,103 @@ module powerbi.visuals.samples {
                     var d = 'M ' + fStartX + ' ' + fStartY + ' C ' + (fStartX + (fPipeArea * fCurveFactor)) + ' ' + fStartY +
                         ' ' + (fEndX - fPipeArea * fCurveFactor) + ' ' + fEndY + ' ' + fEndX + ' ' + fEndY;
 
-                    svg
+                    var path = svg
                         .append('path')
                         .attr('d', d)
                         .attr('stroke', this.data.ArcFillColor)
                         .attr('fill', 'none')
                         .attr('stroke-width', height);
+
+                    var toolTipInfo: TooltipDataItem[] = [];
+                    toolTipInfo.push({
+                        displayName: category,
+                        value: value,
+                    });
+
+                    path[0][0]['cust-tooltip'] = toolTipInfo;
                 }
-                                
-                // Source Settings 
+
+                // Source Settings				 
                 this.BowtieChartSource.selectAll('div').remove();
+                fBranchHeight = avaialableHeight / 12;
+                fBranchHeight1 = avaialableHeight / 12;
+
+                // checking for large datasets                
+                for (var iDiv = numberOfValues; iDiv < (convertedData.dataPoints.length); iDiv++) {
+                    if ((convertedData.dataPoints[iDiv].SourceArcWidth * fBranchHeight) < 1) {
+                        fBranchHeight1 = fBranchHeight1 + 1;
+                    }
+                }
+
+                if (fBranchHeight1 > avaialableHeight) {
+                    this.clearData(true);
+                    return;
+                }
+
                 var fStartX = 0;
                 var fStartY = 0;
                 var fEndX = (this.currentViewport.width * BowtieChartSVGDestinationWidthPercentage) / 100;
-                var fEndY = avaialableHeight / 2 - fBranchHeight / 2;
+                var fEndY = avaialableHeight / 2 - fBranchHeight1 / 2;
                 var fCurveFactor = 0.25;
 
                 var divisionHeight = avaialableHeight / (convertedData.dataPoints.length - numberOfValues);
                 var svg = this.BowtieChartSVGSource
                     .append('svg')
-                    .style('width',(this.currentViewport.width * BowtieChartSVGDestinationWidthPercentage) / 100 + 'px')
+                    .style('width', (this.currentViewport.width * BowtieChartSVGDestinationWidthPercentage) / 100 + 'px')
                     .style('height', avaialableHeight + 'px');
 
                 for (var iDiv = numberOfValues; iDiv < (convertedData.dataPoints.length); iDiv++) {
+                    var category = convertedData.dataPoints[iDiv].SourceCategoryLabel;
+                    var value = formatter.format(convertedData.dataPoints[iDiv].srcValue);
                     var oDiv = this.BowtieChartSource
                         .append('div')
                         .style('height', divisionHeight + 'px')
-                        .style('width',(this.currentViewport.width * (BowtieChartDestinationWidthPercentage / 2)) / 100 + 'px')
+                        .style('width', (this.currentViewport.width * (BowtieChartDestinationWidthPercentage / 2)) / 100 + 'px')
                         .style('margin-right', '1%');
 
                     var oDiv1 = this.BowtieChartSource
                         .append('div')
                         .style('height', divisionHeight + 'px')
-                        .style('width',(this.currentViewport.width * (BowtieChartDestinationWidthPercentage / 2 - 1)) / 100 + 'px');
+                        .style('width', (this.currentViewport.width * (BowtieChartDestinationWidthPercentage / 2 - 1)) / 100 + 'px');
 
                     var textPropertiesForLabel: powerbi.TextProperties = {
-                        text: convertedData.dataPoints[iDiv].SourceCategoryLabel,
+                        text: category,
                         fontFamily: "Segoe UI",
                         fontSize: fontSize
                     };
 
                     var textPropertiesForValue: powerbi.TextProperties = {
-                        text: formatter.format(convertedData.dataPoints[iDiv].srcValue),
+                        text: value,
                         fontFamily: "Segoe UI",
                         fontSize: fontSize
                     };
 
-                    oDiv.append('span')
-                        .html(powerbi.TextMeasurementService.getTailoredTextOrDefault(textPropertiesForLabel,(this.currentViewport.width * (BowtieChartDestinationWidthPercentage / 2)) / 100))
-                        .attr('title', convertedData.dataPoints[iDiv].SourceCategoryLabel)
-                        .style('float', 'left')
-                        .style('font-size', fontSize)
-                        .style('color', convertedData.labelSettings.labelColor)
-                        .style('line-height', divisionHeight + 'px');
+                    if (divisionHeight > TextMeasurementService.measureSvgTextHeight(textPropertiesForLabel) && showHeading) {
+                        showHeading = true;
+                        this.BowtieChartSource.style('display', 'block');
+                        oDiv.append('span')
+                            .html(powerbi.TextMeasurementService.getTailoredTextOrDefault(textPropertiesForLabel, (this.currentViewport.width * (BowtieChartDestinationWidthPercentage / 2)) / 100))
+                            .attr('title', convertedData.dataPoints[iDiv].SourceCategoryLabel)
+                            .style('float', 'left')
+                            .style('font-size', fontSize)
+                            .style('color', convertedData.labelSettings.labelColor)
+                            .style('line-height', divisionHeight + 'px');
 
-                    oDiv1.append('span')
-                        .html(powerbi.TextMeasurementService.getTailoredTextOrDefault(textPropertiesForValue,(this.currentViewport.width * (BowtieChartDestinationWidthPercentage / 2 - 1)) / 100))
-                        .attr('title', formatter.format(convertedData.dataPoints[iDiv].srcValue))
-                        .style('float', 'right')
-                        .style('font-size', fontSize)
-                        .style('color', convertedData.labelSettings.labelColor)
-                        .style('line-height', divisionHeight + 'px');
-                        
+                        oDiv1.append('span')
+                            .html(powerbi.TextMeasurementService.getTailoredTextOrDefault(textPropertiesForValue, (this.currentViewport.width * (BowtieChartDestinationWidthPercentage / 2 - 1)) / 100))
+                            .attr('title', formatter.format(convertedData.dataPoints[iDiv].srcValue))
+                            .style('float', 'right')
+                            .style('font-size', fontSize)
+                            .style('color', convertedData.labelSettings.labelColor)
+                            .style('line-height', divisionHeight + 'px');
+                    } else {
+                        showHeading = false;
+                        this.BowtieChartSource.style('display', 'none');
+                        fEndX = (this.currentViewport.width * (BowtieChartSVGDestinationWidthPercentage + BowtieChartDestinationWidthPercentage)) / 100;
+                        this.BowtieChartSVGSource.style('width', BowtieChartSVGDestinationWidthPercentage + BowtieChartDestinationWidthPercentage + '%');
+                        svg.style('width', (this.currentViewport.width * (BowtieChartSVGDestinationWidthPercentage + BowtieChartDestinationWidthPercentage)) / 100 + 'px');
+                    }
+
                     // Code for SVG Path
                     var percentage = convertedData.dataPoints[iDiv].srcValue / convertedData.aggregatedSum;
                     fStartY = ((iDiv - numberOfValues) * divisionHeight) + divisionHeight / 2;
@@ -966,7 +1175,6 @@ module powerbi.visuals.samples {
                     if (iDiv > numberOfValues) {
                         if ((convertedData.dataPoints[iDiv - 1].SourceArcWidth * fBranchHeight) > 1) {
                             fEndY += ((convertedData.dataPoints[iDiv - 1].SourceArcWidth * fBranchHeight) / 2);
-                            //fEndY -= 0.3;
                         }
                         else {
                             fEndY += 0.5;
@@ -975,14 +1183,30 @@ module powerbi.visuals.samples {
                     var d = 'M ' + fStartX + ' ' + fStartY + ' C ' + (fEndX - (fPipeArea * fCurveFactor)) + ' ' + fStartY +
                         ' ' + (fStartX + (fPipeArea * fCurveFactor)) + ' ' + fEndY + ' ' + fEndX + ' ' + fEndY;
 
-                    svg
+                    var path = svg
                         .append('path')
                         .attr('d', d)
                         .attr('stroke', this.data.ArcFillColor)
                         .attr('fill', 'none')
                         .attr('stroke-width', height);
+
+                    var toolTipInfo: TooltipDataItem[] = [];
+                    toolTipInfo.push({
+                        displayName: category,
+                        value: value,
+                    });
+
+                    path[0][0]['cust-tooltip'] = toolTipInfo;
+                }
+                if (!showHeading) {
+                    this.BowtieChartHeadings.selectAll('div').remove();
                 }
             }
+
+            // Adding the tooltip for each path
+            TooltipManager.addTooltip(this.root.selectAll('svg > path'), (tooltipEvent: TooltipEvent) => {
+                return tooltipEvent.context['cust-tooltip'];
+            }, true);
         }
         private dataViewContainsCategory(dataView: DataView) {
             return dataView &&
@@ -990,7 +1214,7 @@ module powerbi.visuals.samples {
                 dataView.categorical.categories &&
                 dataView.categorical.categories[0];
         }
-        
+
         // This function returns on/off status of the funnel title properties
         private getShowTitle(dataView: DataView): IDataLabelSettings {
             if (dataView && dataView.metadata && dataView.metadata.objects) {
@@ -1005,7 +1229,7 @@ module powerbi.visuals.samples {
             }
             return <IDataLabelSettings>true;
         }
-        
+
         /* This function returns the title text given for the title in the format window */
         private getTitleText(dataView: DataView): IDataLabelSettings {
             var returnTitleValues: string, returnTitleLegend: string, returnTitleDetails: string, returnTitle: string, tempTitle: string;
@@ -1059,7 +1283,7 @@ module powerbi.visuals.samples {
             returnTitle = returnTitleValues + tempTitle;
             return <IDataLabelSettings>returnTitle;
         }
-        
+
         // This function returns the tool tip text given for the tooltip in the format window
         private getTooltipText(dataView: DataView): IDataLabelSettings {
             if (dataView && dataView.metadata && dataView.metadata.objects) {
@@ -1074,7 +1298,7 @@ module powerbi.visuals.samples {
             }
             return <IDataLabelSettings>'Your tooltip text goes here';
         }
-        
+
         // This function returns the font colot selected for the title in the format window
         private getTitleFill(dataView: DataView): Fill {
             if (dataView && dataView.metadata && dataView.metadata.objects) {
@@ -1089,7 +1313,7 @@ module powerbi.visuals.samples {
             }
             return dataView && dataView.metadata && DataViewObjects.getValue(dataView.metadata.objects, BowtieProps.titleFill, { solid: { color: '#333333' } });
         }
-        
+
         // This function returns the background color selected for the title in the format window
         private getTitleBgcolor(dataView: DataView): Fill {
             if (dataView && dataView.metadata && dataView.metadata.objects) {
@@ -1104,7 +1328,7 @@ module powerbi.visuals.samples {
             }
             return dataView && dataView.metadata && DataViewObjects.getValue(dataView.metadata.objects, BowtieProps.titleBackgroundColor, { solid: { color: 'none' } });
         }
-        
+
         // This function returns the funnel title font size selected for the title in the format window
         private getTitleSize(dataView: DataView) {
             if (dataView && dataView.metadata && dataView.metadata.objects) {
@@ -1119,7 +1343,7 @@ module powerbi.visuals.samples {
             }
             return 9;
         }
-        
+
         // This function retruns the values to be displayed in the property pane for each object.
         // Usually it is a bind pass of what the property pane gave you, but sometimes you may want to do
         // validation and return other values/defaults

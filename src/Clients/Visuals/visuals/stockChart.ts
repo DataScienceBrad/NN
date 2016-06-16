@@ -25,7 +25,6 @@
  */
 
 /* Please make sure that this path is correct */
-/// <reference path="../_references.ts"/>
 module powerbi.visuals {
     import ValueFormatter = powerbi.visuals.valueFormatter;
     //Model 
@@ -87,6 +86,7 @@ module powerbi.visuals {
         //Variables 
         private svg: D3.Selection;
         public rootElement: D3.Selection;
+        public errorDiv: D3.Selection;
         public dataView: DataView;
         public ORIGIN_COORD;
         public SVG_SIZE;
@@ -135,6 +135,7 @@ module powerbi.visuals {
             this.rootElement = d3.select(options.element.get(0))
                 .append('div')
                 .classed('stock_Container', true);
+            this.errorDiv = this.rootElement.append('div').classed('StockChartError', true);;
             this.groupLegends = this.rootElement
                 .append('div')
                 .classed('stock_legends', true);
@@ -175,6 +176,7 @@ module powerbi.visuals {
                 this.svg.style('display', 'block');
             } else {
                 this.svg.style('display', 'none');
+                this.groupLegends.selectAll('div').remove();
             }
             this.chart.style('zoom', 1);
         }
@@ -184,61 +186,55 @@ module powerbi.visuals {
         public static converter(dataView: DataView): StackViewModel {
             var resultSet: StackViewModel = StockChart.getDefaultData();
             resultSet.data.length = 0;
-            if (dataView && dataView.table && dataView.table.rows) {
-                for (var i = 0; i < dataView.table.rows.length; i++) {
+            if (dataView && dataView.categorical && dataView.categorical.values && (dataView.categorical.values.length == 4)) {
+                for (var i = 0; i < dataView.categorical.categories[0].values.length; i++) {
                     var rowSet = {};
-                    if (dataView.table.rows[i].length < 5) {
-                        return this.getDefaultData();
-                    }
                     var cat_vals = dataView.metadata.columns;
                     var isPositive = true;
-                    for (var k = 0; k < 5; k++) {
-                        if (dataView.metadata && dataView.metadata.columns[k] && dataView.metadata.columns[k].roles) {
-                            if (dataView.metadata.columns[k].roles['date']) {
-                                var colName = cat_vals[k].displayName.toLowerCase();
-                                var dateVar = dataView.table.rows[i][k];
-                                if (Object.prototype.toString.call(dateVar) === "[object Date]") {
-                                    // it is a date
-                                    if (isNaN(dateVar.getTime())) {
-                                        // date is not valid
-                                        isPositive = false;
-                                        break;
-                                    }
-                                    else {
-                                        if (colName == "year") {
-                                            rowSet['date'] = dateVar + '-01-01';
-                                            resultSet.IsGrouped = true;
-                                        } else {
-                                            resultSet.IsGrouped = false;
-                                            colName = 'date';
-                                            var timezoneffset = (new Date()).getTimezoneOffset() * 60000;
-                                            rowSet['date'] = (new Date(dateVar - timezoneffset)).toISOString().substring(0, 10);
-                                        }
-                                    }
-                                }
-                                else {
-                                    // not a date
-                                    isPositive = false;
-                                    break;
-                                }
-
-                            } else {
-                                if (dataView.metadata.columns[k].roles['low']) {
-                                    colName = 'low';
-                                } else if (dataView.metadata.columns[k].roles['high']) {
-                                    colName = 'high';
-                                } else if (dataView.metadata.columns[k].roles['open']) {
-                                    colName = 'open';
-                                } else if (dataView.metadata.columns[k].roles['close']) {
-                                    colName = 'close';
-                                }
-                                if (parseFloat(dataView.table.rows[i][k]) <= 0) {
-                                    isPositive = false;
-                                    break;
+                    for (var k = 0; k < 4; k++) {
+                        // Categories
+                        var colName = dataView.categorical.categories[0].source.displayName.toLowerCase();
+                        var dateVar = dataView.categorical.categories[0].values[i];
+                        if (Object.prototype.toString.call(dateVar) === "[object Date]" || Object.prototype.toString.call(dateVar) === "[object Number]") {
+                            // it is a date
+                            if (isNaN(new Date(dateVar).getTime())) {
+                                // date is not valid
+                                isPositive = false;
+                                break;
+                            }
+                            else {
+                                if (colName == "year") {
+                                    rowSet['date'] = dateVar + '-01-01';
+                                    resultSet.IsGrouped = true;
                                 } else {
-                                    rowSet[colName] = dataView.table.rows[i][k];
+                                    resultSet.IsGrouped = false;
+                                    colName = 'date';
+                                    var timezoneffset = (new Date()).getTimezoneOffset() * 60000;
+                                    rowSet['date'] = (new Date(dateVar - timezoneffset)).toISOString().substring(0, 10);
                                 }
                             }
+                        }
+                        else {
+                            // not a date
+                            isPositive = false;
+                            break;
+                        }
+
+                        // Each values
+                        if (dataView.categorical.values[k].source.roles['low']) {
+                            colName = 'low';
+                        } else if (dataView.categorical.values[k].source.roles['high']) {
+                            colName = 'high';
+                        } else if (dataView.categorical.values[k].source.roles['open']) {
+                            colName = 'open';
+                        } else if (dataView.categorical.values[k].source.roles['close']) {
+                            colName = 'close';
+                        }
+                        if (parseFloat(dataView.categorical.values[k].values[i]) <= 0) {
+                            isPositive = false;
+                            break;
+                        } else {
+                            rowSet[colName] = dataView.categorical.values[k].values[i];
                         }
                     }
                     if (isPositive) {
@@ -249,6 +245,8 @@ module powerbi.visuals {
                         }
                     }
                 }
+            } else {
+                return this.getDefaultData();
             }
             return resultSet;
         }
@@ -391,60 +389,76 @@ module powerbi.visuals {
                 this.values.trendLineWidth = DataViewObjects.getValue(objects, StockProps.trends.trendLineWidth, this.values.trendLineWidth);
                 this.values.textPrecision = DataViewObjects.getValue(objects, StockProps.yAxis.textPrecision, this.values.textPrecision);
             }
-            //if (dataView.table && dataView.table.rows[0].length == 5) {                                
-            this.groupLegends.html("");
-            this.svg.html('');
 
-            var legends_LowHighBlock = this.groupLegends
-                .append('div').attr('title', this.values.legendName)
-                .classed('legends_LowHighBlock', true)
-
-            var title = legends_LowHighBlock
-                .append('div')
-                .classed('title', true)
-                .classed('text', true)
-                .style('font-size', this.values.legendTextSize + 'px')
-                .style('color', this.values.labelColor).text(this.values.legendName);
-
-            legends_LowHighBlock
-                .append('div')
-                .classed('legend', true)
-                .style('width', this.values.Low_HighIndicator)
-                .style('height', this.values.Low_HighIndicator)
-                .style('border-left', '8px solid transparent')
-                .style('border-right', '8px solid transparent')
-                .style('border-bottom', '8px solid')
-                .style('border-bottom-color', this.values.IncreasingTrend);
-
-            var legends_OpenCloseBlock = this.groupLegends
-                .append('div').attr('title', this.values.legendName2)
-                .classed('legends_OpenCloseBlock', true)
-                .style('display', 'inline-block');
-
-            var textopen = legends_OpenCloseBlock
-                .append('div')
-                .classed('title', true)
-                .classed('text', true)
-                .style('font-size', this.values.legendTextSize + 'px')
-                .style('color', this.values.labelColor).text(this.values.legendName2);
-
-            legends_OpenCloseBlock
-                .append('div')
-                .classed('legend', true)
-                .style('right', '-35px')
-                .style('width', this.values.Low_HighIndicator)
-                .style('height', this.values.Low_HighIndicator)
-                .style('border-left', '8px solid transparent')
-                .style('border-right', '8px solid transparent')
-                .style('border-top', '8px solid')
-                .style('border-top-color', this.values.DecreasingTrend);
-
-            this.rootElement.selectAll(".stock_legends").style({
-                display: this.values.hasLegend ? 'block' : 'none'
-            });
-
-            this.updateZoom(options);
+            this.errorDiv.selectAll('span').remove();
             if (viewModel && viewModel.data[0] && viewModel.data[0]['date']) {
+                this.groupLegends.selectAll('div').remove();
+                this.svg.selectAll('g').remove();
+                this.svg.selectAll('path').remove();
+                this.svg.selectAll('line').remove();
+
+                var legends_LowHighBlock = this.groupLegends
+                    .append('div').attr('title', this.values.legendName)
+                    .classed('legends_LowHighBlock', true)
+
+                var textPropertiesLegenName: powerbi.TextProperties = {
+                    text: this.values.legendName,
+                    fontFamily: "Segoe UI",
+                    fontSize: this.values.legendTextSize
+                };
+
+                var textPropertiesLegendName2: powerbi.TextProperties = {
+                    text: this.values.legendName2,
+                    fontFamily: "Segoe UI",
+                    fontSize: this.values.legendTextSize
+                };
+
+                var title = legends_LowHighBlock
+                    .append('div')
+                    .classed('title', true)
+                    .classed('text', true)
+                    .style('font-size', this.values.legendTextSize + 'px')
+                    .style('color', this.values.labelColor).text(powerbi.TextMeasurementService.getTailoredTextOrDefault(textPropertiesLegenName, (options.viewport.width * 20) / 100));
+
+                legends_LowHighBlock
+                    .append('div')
+                    .classed('legend', true)
+                    .style('width', this.values.Low_HighIndicator)
+                    .style('height', this.values.Low_HighIndicator)
+                    .style('border-left', '8px solid transparent')
+                    .style('border-right', '8px solid transparent')
+                    .style('border-bottom', '8px solid')
+                    .style('border-bottom-color', this.values.IncreasingTrend);
+
+                var legends_OpenCloseBlock = this.groupLegends
+                    .append('div').attr('title', this.values.legendName2)
+                    .classed('legends_OpenCloseBlock', true)
+                    .style('display', 'inline-block');
+
+                var textopen = legends_OpenCloseBlock
+                    .append('div')
+                    .classed('title', true)
+                    .classed('text', true)
+                    .style('font-size', this.values.legendTextSize + 'px')
+                    .style('color', this.values.labelColor).text(powerbi.TextMeasurementService.getTailoredTextOrDefault(textPropertiesLegendName2, (options.viewport.width * 20) / 100));
+
+                legends_OpenCloseBlock
+                    .append('div')
+                    .classed('legend', true)
+                    .style('right', '-35px')
+                    .style('width', this.values.Low_HighIndicator)
+                    .style('height', this.values.Low_HighIndicator)
+                    .style('border-left', '8px solid transparent')
+                    .style('border-right', '8px solid transparent')
+                    .style('border-top', '8px solid')
+                    .style('border-top-color', this.values.DecreasingTrend);
+
+                this.rootElement.selectAll(".stock_legends").style({
+                    display: this.values.hasLegend ? 'block' : 'none'
+                });
+
+                this.updateZoom(options);
+
                 this.createAxis(viewModel, options);
 
                 if (viewModel && viewModel.data[0]) {
@@ -621,7 +635,6 @@ module powerbi.visuals {
                     this.svg.style('left', 5);
                     this.rootElement.selectAll('g.Stock_yaxis').style('display', 'none');
                 }
-
             }
         }
 
@@ -812,18 +825,20 @@ module powerbi.visuals {
             },
             dataViewMappings: [{
                 conditions: [
-                    { 'date': { max: 1 }, 'low': { max: 1 }, 'high': { max: 1 }, 'open': { max: 1 }, 'close': { max: 1 } },//Maximum no. of values we can provide
+                    { 'date': { max: 1 }, 'low': { max: 1 }, 'high': { max: 1 }, 'open': { max: 1 }, 'close': { max: 1 } }, //Maximum no. of values we can provide
                 ],
                 categorical: {
+                    categories: {
+                        for: { in: 'date' },
+                        dataReductionAlgorithm: { top: {} }
+                    },
                     values: {
                         select: [
-                            { bind: { to: 'date' } },
+                            // { bind: { to: 'date' } },
                             { bind: { to: 'low' } },
                             { bind: { to: 'high' } },
                             { bind: { to: 'open' } },
                             { bind: { to: 'close' } },
-                            //Binding with the categorical object
-
                         ]
                     },
                 },
