@@ -24,8 +24,22 @@ Brick Chart consists of 100 squares that are colored according to the percentage
 We are working on enabling report filtering on click of brick
 
 ###[Stock Chart](https://github.com/maqsoftware/PowerBI-visuals/blob/master/src/Clients/Visuals/visuals/stockChart.ts)
-Stock Chart displays significant stock price points as colored vertical bars. Low and high price values are represented by grey bars. Open and close price values are shown as either red or green bars, which are superimposed over the low and high values. If a stock’s price dropped the bar will be red, and if the price rose the bar will be green. Prices are listed on the vertical axis and time increments are listed on the horizontal axis. The ranges for prices and time increments are customizable. 
+Stock Chart displays significant stock price points as colored vertical bars. Low and high price values are represented by grey bars. Open and close price values are shown as either red or green bars, which are superimposed over the low and high values. If a stock’s price dropped the bar will be red, and if the price rose the bar will be green. Prices are listed on the vertical axis and time increments are listed on the horizontal axis. The ranges for prices and time increments are customizable.
 ![Stock Chart](https://raw.githubusercontent.com/maqsoftware/PowerBI-visuals/master/src/Clients/Visuals/visuals/Images/Stock%20Chart/StockChart_Screenshot_410_424.png)
+
+
+###[Bowtie Chart](https://github.com/maqsoftware/PowerBI-visuals/blob/master/src/Clients/CustomVisuals/visuals/BowtieChart/BowtieChart.ts)
+Bowtie Chart displays categorization of a value by branching out smooth interpolated nodes. The thickness of the branch indicates the weightage of the category. You can display Half Bowtie or Full Bowtie by providing source category or both source and destination categories respectively. Used for displaying the categorization of an aggregated value.
+![Bowtie Chart](https://github.com/maqsoftware/PowerBI-visuals/blob/master/src/Clients/CustomVisuals/visuals/BowtieChart/Images/BowtieChart_Screenshot_410_424.png)
+
+
+###[Horizontal Funnel](https://github.com/maqsoftware/PowerBI-visuals/blob/master/src/Clients/CustomVisuals/visuals/horizontalFunnel/HorizontalFunnel.ts)
+Horizontal Funnel allows you to visualize a customizable primary measure as colored bars. Use this to display a number of metric types, such as sales stages, time or geographic locations. A second customizable value is displayed beneath the colored bars. This feature provides you the ability to track an additional metric against your primary measure. The component includes the option to create a tool tip, which you may tailor to your specific needs.
+
+
+###[Donut Chart(GMO)](https://github.com/maqsoftware/PowerBI-visuals/blob/master/src/Clients/CustomVisuals/visuals/donutChart(GMO)/donutChart(GMO).ts)
+A doughnut charts represent data as slices, where the size of each slice is determined by the slice value relative to the sum of the values of all slices. Each data series that you plot in a doughnut chart adds a ring to the chart. These rings have different colors for easy representation of the data slices in doughnut chart.
+
 
 ## What is included
 
