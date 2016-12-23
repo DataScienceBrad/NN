@@ -1,0 +1,190 @@
+{
+    "dataRoles": [
+        {
+            "displayName": "X Axis",
+            "name": "xAxis",
+            "kind": 0
+        },
+        {
+            "displayName": "Y Axis",
+            "name": "yAxis",
+            "kind": 0
+        },
+		{
+            "displayName": "Radial Axis",
+            "name": "radialAxis",
+            "kind": 0
+        },
+		{
+            "displayName": "Legend Axis",
+            "name": "legendAxis",
+            "kind": 0
+        }
+
+    ],
+      "dataViewMappings":[  
+      {  
+         "conditions":[  
+            {  
+               "xAxis":{  
+                  "max":1
+               },
+               "yAxis":{  
+                  "max":1
+               },
+			   "radialAxis":{  
+                  "max":1
+               },
+			   "legendAxis":{  
+                  "max":1
+               }
+            }
+         ],
+         "categorical":{  
+            "categories":{  
+               "for":{  
+                  "in":"xAxis"
+               }
+            },
+            "values":{  
+               "select":[
+                    { "bind": { "to": "radialAxis" } },
+                    { "bind": { "to": "yAxis" } },
+					{ "bind": { "to": "legendAxis" } }
+                ]
+         }
+      }
+	  }
+   ],
+   "objects":{  
+	 "quadrantNames":{  
+         "displayName":"Quadrant",
+         "properties":{  
+            "show":{  
+               "type":{  
+                  "bool":true
+               }
+            },
+            "quadrant1":{  
+               "displayName":"Quadrant1 name",
+               "description":"Name of quadrant1",
+               "type":{  
+                  "text":true
+               }
+			},
+			"quadrant2":{  
+               "displayName":"Quadrant2 name",
+               "description":"Name of quadrant2",
+               "type":{  
+                  "text":true
+               }
+			},
+			"quadrant3":{  
+               "displayName":"Quadrant3 name",
+               "description":"Name of quadrant3",
+               "type":{  
+                  "text":true
+               }
+			},
+			"quadrant4":{  
+               "displayName":"Quadrant4 name",
+               "description":"Name of quadrant4",
+               "type":{  
+                  "text":true
+               }
+			},
+			"quadrantDivisionX":{  
+               "displayName":"X-Axis division line",
+               "description":"Quadrant division line for x-axis",
+               "type":{  
+                  "numeric":true
+               }
+			},
+			"quadrantDivisionY":{  
+               "displayName":"Y-Axis division line",
+               "description":"Quadrant division line for y-axis",
+               "type":{  
+                  "numeric":true
+               }
+			}
+		 }
+       },
+	 "xAxis":{  
+         "displayName":"X-Axis",
+         "properties":{
+			"show":{  
+               "type":{  
+                  "bool":true
+               }
+            },  
+            "titleEnable":{  
+			   "displayName":"Title",
+               "description":"Title",
+               "type":{  
+                  "bool":true
+               }
+            },
+            "titleText":{  
+               "displayName":"Title text",
+               "description":"Title text",
+               "type":{  
+                  "text":true
+               }
+            },
+			"label":{  
+               "displayName":"Labels",
+               "description":"Labels",
+               "type":{  
+                  "bool":true
+               }
+            }
+         }
+      },
+	  "yAxis":{  
+         "displayName":"Y-Axis",
+         "properties":{
+			"show":{  
+               "type":{  
+                  "bool":true
+               }
+            },
+            "titleEnable":{  
+			   "displayName":"Title",
+               "description":"Title",
+               "type":{  
+                  "bool":true
+               }
+            },
+            "titleText":{  
+               "displayName":"Title text",
+               "description":"Title text",
+               "type":{  
+                  "text":true
+               }
+            },
+			"label":{  
+               "displayName":"Labels",
+               "description":"Labels",
+               "type":{  
+                  "bool":true
+               }
+            }
+         }
+      },
+	   "legendColors": {
+            "displayName": "Legend colors",
+            "properties": {
+               "legendColor": {
+                    "displayName": "Color",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                }
+            }
+        }
+	}
+}

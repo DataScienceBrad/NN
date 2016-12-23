@@ -1,0 +1,61 @@
+{
+	"dataRoles": [
+		{
+			"displayName": "Name",
+			"name": "Name",
+			"kind": 0
+		},
+		{
+			"displayName": "Value",
+			"name": "Value",
+			"kind": 0
+		}
+	],
+	"dataViewMappings": [
+		{
+			"conditions": [
+				{
+					"Name": {
+						"max": 1
+					},
+					"Value": {
+						"max": 1
+					}
+				}
+			],
+			"categorical": {
+				"categories": {
+					"for": {
+						"in": "Name"
+					}
+				},
+				"values": {
+					"select": [
+						{
+							"bind": {
+								"to": "Value"
+							}
+						}
+					]
+				}
+			}
+		}
+	],
+	"objects": {
+		 "sectionColors": {
+            "displayName": "Section colors",
+            "properties": {
+               "sColors": {
+                    "displayName": "Color",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                }
+            }
+        }
+	}
+}

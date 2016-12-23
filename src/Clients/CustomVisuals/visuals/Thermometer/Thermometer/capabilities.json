@@ -1,0 +1,95 @@
+{
+	"dataRoles": [
+		{
+			"name": "Temperature",
+			"kind": 1,
+			"displayName": "Temperature"
+		}
+	],
+	"dataViewMappings": [
+		{
+			"conditions": [
+				{
+					"Temperature": {
+						"max": 1
+					}
+				}
+			],
+			"categorical": {
+				"values": {
+					"select": [
+						{
+							"for": {
+								"in": "Temperature"
+							}
+						}
+					],
+					"dataReductionAlgorithm": {
+						"bottom": {}
+					}
+				}
+			}
+		}
+	],
+	"objects": {
+		"config": {
+			"displayName": "Configurations",
+			"properties": {
+				"fill": {
+					"type": {
+						"fill": {
+							"solid": {
+								"color": true
+							}
+						}
+					},
+					"displayName": "Fill"
+				},
+				"border": {
+					"type": {
+						"fill": {
+							"solid": {
+								"color": true
+							}
+						}
+					},
+					"displayName": "Border"
+				},
+				"max": {
+					"type": {
+						"numeric": true
+					},
+					"displayName": "Max"
+				},
+				"min": {
+					"type": {
+						"numeric": true
+					},
+					"displayName": "Min"
+				},
+				"tickBar": {
+					"type": {
+						"bool": true
+					},
+					"displayName": "Tick bar"
+				},
+				"fontColor": {
+					"type": {
+						"fill": {
+							"solid": {
+								"color": true
+							}
+						}
+					},
+					"displayName": "Target Color"
+				},
+				"postfix": {
+					"type": {
+						"text": true
+					},
+					"displayName": "Unit"
+				}
+			}
+		}
+	}
+}
