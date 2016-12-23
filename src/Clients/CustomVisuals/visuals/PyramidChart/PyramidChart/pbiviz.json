@@ -1,0 +1,25 @@
+{
+  "visual": {
+    "name": "PyramidChart",
+    "displayName": "Pyramid chart",
+    "guid": "PBI_CV_309E6B47_39A5_4681_808F_132AFB230872",
+    "visualClassName": "PyramidChart",
+    "version": "1.0.0",
+    "description": "A pyramid chart has the form of a triangle with lines dividing it into sections. A related topic or idea is placed in each section. Because of the triangular shape, each section is a different width from the others; this width indicates a level of hierarchy among the topics. For example, the widest section may contain a general topic and the narrowest section may contain a much more specific topic from within that general topic. However, the width is not visually representative of the quantity beyond larger or smaller.",
+    "supportUrl": "https://github.com/maqsoftware/PowerBI-visuals/issues",
+    "gitHubUrl": "https://github.com/maqsoftware/PowerBI-visuals/"
+  },
+  "apiVersion": "1.1.0",
+  "author": {
+    "name": "MAQ Software",
+    "email": "sales@maqsoftware.com"
+  },
+  "assets": {
+    "icon": "./assets/icon.png",
+	"thumbnail": "./assets/thumbnail.png",
+    "screenshot": "./assets/screenshot.png"
+  },
+  "externalJS": [],
+  "style": "style/visual.less",
+  "capabilities": "capabilities.json"
+}

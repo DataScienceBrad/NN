@@ -1,0 +1,204 @@
+{  
+   "dataRoles":[  
+      {  
+         "displayName":"X data",
+         "name":"xAxis",
+         "kind":0
+      },
+      {  
+         "displayName":"Y data",
+         "name":"yAxis",
+         "kind":0
+      }
+   ],
+   "dataViewMappings":[  
+      {  
+         "conditions":[  
+            {  
+               "xAxis":{  
+                  "max":1
+               },
+               "yAxis":{  
+                  "max":1
+               }
+            }
+         ],
+         "categorical":{  
+            "categories":{  
+               "for":{  
+                  "in":"xAxis"
+               }
+            },
+            "values":{  
+               "select":[  
+                  {  
+                     "bind":{  
+                        "to":"yAxis"
+                     }
+                  }
+               ]
+            }
+         }
+      }
+   ],
+   "objects":{  
+      "points":{  
+         "displayName":"Points",
+         "properties":{  
+            "show":{  
+               "type":{  
+                  "bool":true
+               }
+            },
+            "pointTooltip":{  
+               "displayName":"Tooltip",
+               "description":"Enable or disable tooltip",
+               "type":{  
+                  "bool":true
+               }
+            },
+            "pointColor":{  
+               "displayName":"Color",
+               "description":"Point color",
+               "type":{  
+                  "fill":{  
+                     "solid":{  
+                        "color":true
+                     }
+                  }
+               }
+            }
+         }
+      },
+      "bars":{  
+         "displayName":"Bars",
+         "properties":{  
+            "show":{  
+               "type":{  
+                  "bool":true
+               }
+            },
+            "barTooltip":{  
+               "displayName":"Tooltip",
+               "description":"Enable or disable tooltip",
+               "type":{  
+                  "bool":true
+               }
+            },
+            "barColor":{  
+               "displayName":"Color",
+               "description":"Point color",
+               "type":{  
+                  "fill":{  
+                     "solid":{  
+                        "color":true
+                     }
+                  }
+               }
+            }
+         }
+      },
+	  "xAxis":{  
+         "displayName":"X-Axis",
+         "properties":{  
+            "titleEnable":{  
+			   "displayName":"Title",
+               "description":"Title",
+               "type":{  
+                  "bool":true
+               }
+            },
+            "titleText":{  
+               "displayName":"Title text",
+               "description":"Title text",
+               "type":{  
+                  "text":true
+               }
+            },
+			"label":{  
+               "displayName":"Labels",
+               "description":"Labels",
+               "type":{  
+                  "bool":true
+               }
+            }
+         }
+      },
+	  "yAxisRight":{  
+         "displayName":"Y-Axis right",
+         "properties":{  
+            "titleEnable":{  
+			   "displayName":"Title",
+               "description":"Title",
+               "type":{  
+                  "bool":true
+               }
+            },
+            "titleText":{  
+               "displayName":"Title text",
+               "description":"Title text",
+               "type":{  
+                  "text":true
+               }
+            },
+			"label":{  
+               "displayName":"Labels",
+               "description":"Labels",
+               "type":{  
+                  "bool":true
+               }
+            }
+         }
+      },
+	  "yAxisLeft":{  
+         "displayName":"Y-Axis left",
+         "properties":{  
+            "titleEnable":{  
+			   "displayName":"Title",
+               "description":"Title",
+               "type":{  
+                  "bool":true
+               }
+            },
+            "titleText":{  
+               "displayName":"Title text",
+               "description":"Title text",
+               "type":{  
+                  "text":true
+               }
+            },
+			"label":{  
+               "displayName":"Labels",
+               "description":"Labels",
+               "type":{  
+                  "bool":true
+               }
+            }
+         }
+      },
+	  "gridLines":{  
+         "displayName":"Grid lines",
+         "properties":{  
+            "show":{  
+               "type":{  
+                  "bool":true
+               }
+            },
+            "xAxis":{  
+               "displayName":"X-Axis",
+               "description":"X-Axis grid lines",
+               "type":{  
+                  "bool":true
+               }
+            },
+			"yAxis":{  
+               "displayName":"Y-Axis",
+               "description":"Y-Axis grid lines",
+               "type":{  
+                  "bool":true
+               }
+            }
+         }
+      }
+	}
+}

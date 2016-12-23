@@ -1,0 +1,23 @@
+{
+  "visual": {
+    "name": "Background Column Chart",
+    "displayName": "Background Column Chart",
+    "guid": "PBI_CV_309E6B47_39A5_4681_808F_132AFB230860",
+    "visualClassName": "Visual",
+    "version": "1.0.0",
+    "description": "",
+    "supportUrl": "",
+    "gitHubUrl": ""
+  },
+  "apiVersion": "1.1.0",
+  "author": {
+    "name": "",
+    "email": ""
+  },
+  "assets": {
+    "icon": "assets/icon.png"
+  },
+  "externalJS": [],
+  "style": "style/visual.less",
+  "capabilities": "capabilities.json"
+}
