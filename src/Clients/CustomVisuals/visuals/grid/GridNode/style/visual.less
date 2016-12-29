@@ -1,13 +1,13 @@
 /*CSS*/
 .visual, .DataDiv {
-    overflow: auto !important;
+    overflow: auto;
 }
 
 .DataDiv {
 	display: inline-block;
 	position: relative;
 	width: 100%;
-	height: calc(100% - 35px);
+	height: ~"calc(100% - 35px)";
 }
 
 .jsonGrid{
@@ -35,7 +35,7 @@ Property -moz-background-size is an unknown vendor extension
 Property -moz-background-size is an unknown vendor extension
     */
 .jsonGrid, .jsonGridFooter a {
-    color: #2a2a2a !important;
+    color: #2a2a2a;
 }
 
     .jsonGrid td {
@@ -47,16 +47,13 @@ Property -moz-background-size is an unknown vendor extension
     }
 
     .jsonGrid .click-disabled {
-        color: #dbdbdb !important;
+        color: #dbdbdb;
         cursor: default;
     }
 
     .jsonGridFooter div, .jsonGrid .middle {
         display: inline;
         float: left;
-    }
-
-    .jsonGrid .middle, .jsonGridFooter div {
         vertical-align: middle;
     }
 
@@ -110,9 +107,6 @@ Property -moz-background-size is an unknown vendor extension
             margin-top: 7px;
         }
 
-.jsonGridFooter .PaginationPrevArrowDiv {
-    margin-right: 0;
-}
 
 .jsonGridFooter {
 	border-top: 1px solid #d2d2d2;
@@ -151,7 +145,7 @@ td.jsonGridRow {
 }
 
 .jsonGridFooter a {
-    outline: none !important;
+    outline: none;
 }
 
 .jsonGridFooter .jsonFooterLabel {
@@ -168,14 +162,14 @@ td.jsonGridRow {
 }
 
 .jsonGridRow a:hover {
-    color: #0095c4 !important;
-    text-decoration: underline !important;
+    color: #0095c4;
+    text-decoration: underline;
     cursor: pointer;
 }
 
 .jsonGridRow a, .jsonGridRow a:visited {
-    color: #00749e !important;
-    text-decoration: none !important;
+    color: #00749e;
+    text-decoration: none;
 }
 
 .SortIndicator {
@@ -192,8 +186,8 @@ td.jsonGridRow {
         width: 12px;
     }
 	.SortIndicator  > span.asc {
-	  	width: 0 !important;
-	  	height: 0 !important;
+	  	width: 0;
+	  	height: 0;
 	  	border-left: 5px solid transparent;
 	  	border-right: 5px solid transparent;
 	  	border-top: 0;
@@ -201,8 +195,8 @@ td.jsonGridRow {
 	  	float: right;
 	}
 	.SortIndicator  > span.desc {
-	  	width: 0 !important;
-	  	height: 0 !important;
+	  	width: 0;
+	  	height: 0;
 	  	border-left: 5px solid transparent;
 	  	border-right: 5px solid transparent;
 	  	border-bottom: 0;
@@ -215,15 +209,7 @@ td.jsonGridRow {
 }
 
 .SortedColumn {
-    background-color: #0072C6 !important;
-}
-
-#MASABGrid_Grid_First, #MASABGrid_Grid_Last {
-    height: 24px;
-}
-
-a#MASABGrid_Grid_Prev, a#MASABGrid_Grid_Next {
-    text-decoration: none;
+    background-color: #0072C6;
 }
 
 .jsonGridRow {
@@ -272,8 +258,8 @@ div.PageListItem {
         margin-right: 0;
     }
 
-.Hidden {
-    display: none !important;
+.jsonGrid .Hidden {
+    display: none;
 }
 
 div.ListOptionContainerParent {
@@ -310,7 +296,7 @@ select::-ms-expand {
 
 .SelectedPage, select.ListOptionContainer option:focus, select.ListOptionContainer option:hover {
     color: #fff;
-    background-color: #1570A6 !important;
+    background-color: #1570A6;
 }
 
 .jsonScrollHeader {
@@ -365,7 +351,7 @@ td.DrillDownCell {
 }
 
 .DrillDownCell > .jsonGridOverflow {
-    width: 75% !important; /*Required since width is set inline in jsongrid.js*/
+    width: 75%; /*Required since width is set inline in jsongrid.js*/
     float: left;
     padding-top: 2px;
 }
@@ -391,14 +377,14 @@ td.GridEndRow {
     clear: both;
 }
 
-.totalPagesLabel {
-    margin-left: 10px !important;
-    margin-top: 12px !important;
-    font-style: italic !important;
+.jsonGrid .jsonFooter .jsonGridFooter > div.totalPagesLabel {
+    margin-left: 10px;
+    margin-top: 12px;
+    font-style: italic;
 }
 
 .DropDownRecords {
-    margin-top: 10px !important;
+    margin-top: 10px;
 }
 
 td.jsonGridRow .gridCellWrap {
@@ -414,6 +400,6 @@ td.SubTableHeader {
 }
 
 .hyperLink {
-    color: #005999 !important;
+    color: #005999;
     cursor: pointer;
 }

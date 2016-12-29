@@ -1,559 +1,151 @@
-module powerbi.visuals {
-    export interface MyViewModel { };
-    
-    //Please note that class name has to be in PascalCase!
-    export class Grid implements IVisual {
-		/**
-		  * Informs the System what it can do
-		  * Fields, Formatting options, data reduction & QnA hints
-		  */
-        public static capabilities: VisualCapabilities = {
-        dataRoles: [{
-            name: 'Values',
-            kind: VisualDataRoleKind.GroupingOrMeasure,
-        }],
-        objects: {
-            general: {
-                displayName: 'Visual_General',
-                properties: {
-                    formatString: {
-                        type: { formatting: { formatString: true } },
-                    },
-                    columnWidth: {
-                        type: { numeric: true }
-                    },
-                    totals: {
-                        type: { bool: true },
-                        displayName: 'Visual_Totals'
-                    },
-                    autoSizeColumnWidth: {
-                        type: { bool: true },
-                        displayName: 'Visual_Adjust_Column_Width'
-                    },
-                    textSize: {
-                        displayName: 'Visual_TextSize',
-                        type: { numeric: true }
-                    },
-                },
-            },
-
-            grid: {
-                displayName: 'Visual_Grid',
-                properties: {
-                    outlineColor: {
-                        displayName: 'Visual_OutlineColor',
-                        description: 'Visual_OutlineColor_Desc',
-                        type: { fill: { solid: { color: true } } }
-                    },
-                    outlineWeight: {
-                        displayName: 'Visual_OutlineWeight',
-                        description: 'Visual_OutlineWeight_Desc',
-                        type: { numeric: true }
-                    },
-                    gridVertical: {
-                        displayName: 'Visual_GridVertical',
-                        description: 'Visual_GridVertical_Desc',
-                        type: { bool: true }
-                    },
-                    gridVerticalColor: {
-                        displayName: 'Visual_GridVertical_Color',
-                        description: 'Visual_GridVertical_Color_Desc',
-                        type: { fill: { solid: { color: true } } }
-                    },
-                    gridVerticalWeight: {
-                        displayName: 'Visual_GridVertical_Weight',
-                        description: 'Visual_GridVertical_Weight_Desc',
-                        type: { numeric: true }
-                    },
-                    gridHorizontal: {
-                        displayName: 'Visual_GridHorizontal',
-                        description: 'Visual_GridHorizontal_Desc',
-                        type: { bool: true }
-                    },
-                    gridHorizontalColor: {
-                        displayName: 'Visual_GridHorizontal_Color',
-                        description: 'Visual_GridHorizontal_Color_Desc',
-                        type: { fill: { solid: { color: true } } }
-                    },
-                    gridHorizontalWeight: {
-                        displayName: 'Visual_GridHorizontal_Weight',
-                        description: 'Visual_GridHorizontal_Weight_Desc',
-                        type: { numeric: true }
-                    },
-                    rowPadding: {
-                        displayName: 'Visual_RowPadding',
-                        description: 'Visual_RowPadding_Desc',
-                        type: { numeric: true }
-                    },
-                }
-            },
-
-            columnHeaders: {
-                displayName: 'Visual_Tablix_ColumnHeaders',
-                properties: {
-                    outline: {
-                        displayName: 'Visual_Outline',
-                        type: { enumeration: outline.type }
-                    },
-                    fontColor: {
-                        displayName: 'Visual_Tablix_FontColor',
-                        description: 'Visual_Tablix_FontColor_Desc',
-                        type: { fill: { solid: { color: true } } }
-                    },
-                    backColor: {
-                        displayName: 'Visual_Tablix_BackColor',
-                        description: 'Visual_Tablix_BackColor_Desc',
-                        type: { fill: { solid: { color: true } } }
-                    },
-                }
-            },
-
-            values: {
-                displayName: 'Visual_Tablix_Values',
-                properties: {
-                    outline: {
-                        displayName: 'Visual_Outline',
-                        type: { enumeration: outline.type }
-                    },
-                    // TODO: VSTS 7167767: Remove temporary code for product demo.
-                    backgroundColorConditional: {
-                        displayName: 'Conditional Formatting',
-                        type: { bool: true }
-                    },
-                    fontColorPrimary: {
-                        displayName: 'Visual_Tablix_FontColorPrimary',
-                        description: 'Visual_Tablix_FontColorPrimary_Desc',
-                        type: { fill: { solid: { color: true } } }
-                    },
-                    backColorPrimary: {
-                        displayName: 'Visual_Tablix_BackColorPrimary',
-                        description: 'Visual_Tablix_BackColorPrimary_Desc',
-                        type: { fill: { solid: { color: true } } }
-                    },
-                    fontColorSecondary: {
-                        displayName: 'Visual_Tablix_FontColorSecondary',
-                        description: 'Visual_Tablix_FontColorSecondary_Desc',
-                        type: { fill: { solid: { color: true } } }
-                    },
-                    backColorSecondary: {
-                        displayName: 'Visual_Tablix_BackColorSecondary',
-                        description: 'Visual_Tablix_BackColorSecondary_Desc',
-                        type: { fill: { solid: { color: true } } }
-                    },
-                    urlIcon: {
-                        displayName: 'Visual_Tablix_UrlIcon',
-                        description: 'Visual_Tablix_UrlIcon_Desc',
-                        type: { bool: true }
-                    },
-                }
-            },
-
-            total: {
-                displayName: 'Visual_Tablix_TotalGrand',
-                properties: {
-                    outline: {
-                        displayName: 'Visual_Outline',
-                        type: { enumeration: outline.type }
-                    },
-                    fontColor: {
-                        displayName: 'Visual_Tablix_FontColor',
-                        description: 'Visual_Tablix_FontColor_Desc',
-                        type: { fill: { solid: { color: true } } }
-                    },
-                    backColor: {
-                        displayName: 'Visual_Tablix_BackColor',
-                        description: 'Visual_Tablix_BackColor_Desc',
-                        type: { fill: { solid: { color: true } } }
-                    },
-                }
-            }, GridConfig: {
-                displayName: 'Grid Configuration',
-                properties: {
-                    fontSize: {
-                        displayName: 'Text Size',
-                        description: 'Font size for the Grid',
-                        type: { formatting: { fontSize: true } }
-                    },
-                    maxRows: {
-                        displayName: 'Max rows',
-                        description: 'Maximum rows in single page',
-                        type: { numeric: true }
-                    },
-                    sortKey: {
-                        displayName: 'Sort Key',
-                        description: 'Default Sort Key for Grid',
-                        type: { numeric: true }
-                    },
-                    sortOrder: {
-                        displayName: 'Sort Order',
-                        description: 'Default Sort Order for Grid',
-                        type: { text: true }
-                    },
-                    isCustomRedirect: {
-                        displayName: 'Enable custom redirection',
-                        description: 'Boolean flag to enable custom redirection',
-                        type: { bool: true }
-                    },
-                    apiUrl: {
-                        displayName: 'API URL',
-                        description: 'API URL for sending id to backend',
-                        type: { text: true }
-                    },
-                    columnNumber: {
-                        displayName: 'Column Number',
-                        description: 'Column Number for binding event',
-                        type: { numeric: true }
-                    }
-                }
-            },
+var scripts = document.querySelectorAll('script[src]');
+for (var i = 0; i < scripts.length; i++) {
+    if (document.querySelectorAll('script[src]')[i] && document.querySelectorAll('script[src]')[i].src && 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js' === document.querySelectorAll('script[src]')[i].src) {
+        var elem = document.querySelectorAll('script[src]')[i];
+        elem.parentNode.removeChild(elem);
+    }
+}
+var script = document.createElement("SCRIPT");
+script.src = 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js';
+script.type = 'text/javascript';
+document.getElementsByTagName("head")[0].appendChild(script);
+function myMAQlibrary(dWagon, gridFormatters) {
+    var consumeData = dWagon;
+    var dataViewObj;
+    var config = {
+        "container": "KPIGrid",
+        "data": [],
+        "columnHeader": [],
+        "gridSort": {},
+        "pagination": {
+            "maxRows": gridFormatters.maxRows,
+            "retainPageOnSort": false,
+            "paginate": true
         },
-        dataViewMappings: [{
-            table: {
-                rows: {
-                    for: { in: 'Values' },
-                    dataReductionAlgorithm: { top: { count: 30000000 } }
-                },
-                rowCount: { preferred: { min: 1 } }
-            },
-        }],
-        sorting: {
-            custom: {},
+        "rows": {
+            "alternate": false
         },
-        suppressDefaultTitle: true,
-        supportsSelection: false,
-        disableVisualDetails: true,
+        "clientGrid": true,
+        "isWin8App": false,
+        "callBackFunc": null
     };
 
 
-        private element: JQuery;
-        private viewport:IViewport;
-        private root: D3.Selection;
-        private style: IVisualStyle;
-        private colors: IDataColorPalette;
-        private hostService: IVisualHostServices;
-        public dataView: DataView;
-        // Convert a DataView into a view model
-        public static converter(dataView: DataView): MyViewModel {
-            return {};
-        }
-		
-        /* One time setup*/
-        public init(options: VisualInitOptions): void {            
-            this.root = d3.select(options.element.get(0));
-
-            this.style = options.style;
-            this.viewport = _.clone(options.viewport);
-            this.hostService = options.host;
-            this.colors = this.style.colorPalette.dataColors;
-            
-            this.element = options.element;
-            
-            d3.select(options.element.get(0))
-                .append('div')
-                .classed('DataDiv', true)
-                .attr("id", "KPIGrid");
-            d3.select(options.element.get(0))
-                .append('div')
-                .classed('errorMessage', true)
-                .text("No data available")
-                .style({
-                'display': 'none', 'text-align': 'center'
-                , 'top': this.viewport.height / 2 + 'px', 'position': 'relative'
-                , 'width': '100%'
-            });
-        }
-
-        /* Called for data, size, formatting changes*/ 
-        public update(options: VisualUpdateOptions) {
-            var dataViews = options.dataViews;
-            if (!dataViews || 0 === dataViews.length ||  !dataViews[0].table) {
-                //console.log('No inputs');
-                this.root.select('.errorMessage').style({ 'display': 'block', 'top': this.viewport.height / 2 + 'px' });
-                return;
+    var obj, data = [];
+    for (jCount = 0; jCount < dWagon.table.rows.length; jCount++) {
+        obj = {};
+        for (iCount = 0; iCount < dWagon.table.columns.length; iCount++) {
+            var col = dWagon.table.columns[iCount].queryName;
+            var name = col.substring(col.indexOf('.') + 1, col.length);
+            if (col.lastIndexOf(')') === (col.length - 1)) {
+                name = col.substring(col.indexOf('.') + 1, col.lastIndexOf(')'));
             }
-            this.dataView = dataViews[0];
-            this.root.select('.errorMessage').style({ 'display': 'none', 'top': this.viewport.height / 2 + 'px' });
-                             
-            var config = {
-                "container": "KPIGrid",
-                "data": [],
-                "columnHeader": [],
-                "gridSort": {},
-                "pagination": {
-                    "maxRows": this.getMaxRows(this.dataView),
-                    "retainPageOnSort": false,
-                    "paginate": true
-                },
-                "rows": {
-                    "alternate": false
-                },
-                "clientGrid": true,
-                "isWin8App": false,
-                "callBackFunc": null
-            };
-            var obj, data =[];
-             for(jCount =0;jCount<dataViews[0].table.rows.length;jCount++){
-                 obj = {};
-                for(iCount =0;iCount<dataViews[0].table.columns.length;iCount++){
-                     var col = dataViews[0].table.columns[iCount].queryName;
-                     var name = col.substring(col.indexOf('.') + 1, col.length);
-                     if(col.lastIndexOf(')') === (col.length - 1)) {
-                         name = col.substring(col.indexOf('.') + 1, col.lastIndexOf(')'));
-                     }
-                     obj[name] = dataViews[0].table.rows[jCount][iCount];
-                 }
-                 data.push(obj);
-             }
-             config.data = data;
-             
-             config.columnHeader = [];
-             for(iCount = 0;iCount<dataViews[0].table.columns.length;iCount++){
-                 obj ={};
-                 obj.columnText =  dataViews[0].table.columns[iCount].displayName;
-                 var col = dataViews[0].table.columns[iCount].queryName;
-                 obj.name =  col.substring(col.indexOf('.') + 1, col.length);
-                 if(col.lastIndexOf(')') === (col.length - 1)) {
-                     obj.name = col.substring(col.indexOf('.') + 1, col.lastIndexOf(')'));
-                 }
-                 obj.sortable = true;
-                 obj.sortType = "parseString";
-                 switch(typeof(dataViews[0].table.rows[0][iCount])){
-                     case 'number':
-                        obj.sortType = "parseInteger";
-                        break;   
-                     case 'object':
-                        if(dataViews[0].table.rows[iCount][0] instanceof Date){
-                            obj.sortType = "parseDate";
-                        }
-                        break;                 
-                 }
-                 var col = dataViews[0].table.columns[iCount].queryName;
-                 obj.sortKey =  col.substring(col.indexOf('.') + 1, col.length);
-                 if(col.lastIndexOf(')') === (col.length - 1)) {
-                     obj.sortKey = col.substring(col.indexOf('.') + 1, col.lastIndexOf(')'));
-                 }
-                 obj.headerClassName =  "TableHeader";
-                 obj.formatter = "";
-                 obj.style =  {
-                    "width": "350px"
-                };
-                config.columnHeader.push(obj);
-             }
-             var col = dataViews[0].table.columns[0].queryName;
-             var gridSort = {
-                    "sortby": col.substring(col.indexOf('.') + 1, col.length),
-                    "sortorder": "asc",
-                    "sortType": "parseString"
-                };
-                var sortKey = this.getSortKey(this.dataView),
-                    sortOrder = this.getSortOrder(this.dataView);
-                if(sortKey) {
-                    sortKey = parseInt(sortKey);
-                    if(sortKey > dataViews[0].table.columns.length)
-                        sortKey = dataViews[0].table.columns.length;
-                    sortKey--;
-                    col = dataViews[0].table.columns[sortKey].queryName;
-                    gridSort.sortby = col.substring(col.indexOf('.') + 1, col.length);
-                } else{
-                    sortKey = 0;
-                }
-                if(sortOrder && ('asc' == sortOrder.toLowerCase() || 'desc' == sortOrder.toLowerCase())) {
-                    gridSort.sortorder = sortOrder.toLowerCase();
-                } else{
-                    sortOrder = 'asc';
-                }
-             switch(typeof(dataViews[0].table.rows[sortKey][sortKey])){
-                 case 'number':
-                    gridSort.sortType = "parseInteger";
-                    break;    
-                 case 'object':
-                    if(dataViews[0].table.rows[sortKey][0] instanceof Date){
-                        gridSort.sortType = "parseDate";
-                    }
-                    break;                
-             }
-            config.gridSort = gridSort;
-            document.getElementById('KPIGrid').innerHTML = "";
-            function intializeEvents() {
-                var apiUrl = getAPIUrl(dataViewObj);
-                var columnNumber = getColumnNumber(dataViewObj);
-                var isCustomRedirect = getIsCustomRedirect(dataViewObj);    
-                if(columnNumber > dataViewObj.table.columns.length)
-                    columnNumber = dataViewObj.table.columns.length;
-                if(isCustomRedirect && apiUrl && columnNumber){
-    			     loadJquery(apiUrl, columnNumber);
-                } 
-            }
-            dataViewObj = this.dataView;
-            config.callBackFunc = intializeEvents; 
-            MAQ.JsonGrid(config); 
-            
-            var apiUrl = this.getAPIUrl(this.dataView);
-            var columnNumber = this.getColumnNumber(this.dataView);
-            var isCustomRedirect = this.getIsCustomRedirect(this.dataView);
-              
-            if(columnNumber > this.dataView.table.columns.length)
-                columnNumber = this.dataView.table.columns.length;
-            if(isCustomRedirect && apiUrl && columnNumber){
-			     loadJquery(apiUrl, columnNumber);
-            }
-			this.getMaxRows(dataViewObj);
-            this.getFontSize(dataViewObj);  
+            obj[name] = dWagon.table.rows[jCount][iCount];
         }
-
-        /*About to remove your visual, do clean up here */ 
-        public destroy() {}
-		
-        public enumerateObjectInstances(options: EnumerateVisualObjectInstancesOptions): VisualObjectInstanceEnumeration {
-            var enumeration = new ObjectEnumerationBuilder();
-
-            switch (options.objectName) {
-                case 'GridConfig':
-                    enumeration.pushInstance({
-                        objectName: 'GridConfig',
-                        displayName: 'Font Updates',
-                        selector: null,
-                        properties: {
-                            fontSize: this.getFontSize(this.dataView),
-                            maxRows: this.getMaxRows(this.dataView),
-                            sortKey: this.getSortKey(this.dataView),
-                            sortOrder: this.getSortOrder(this.dataView),
-                            isCustomRedirect: this.getIsCustomRedirect(this.dataView),
-                            apiUrl: this.getAPIUrl(this.dataView),
-                            columnNumber: this.getColumnNumber(this.dataView)
-                        }
-                    });
-                    break;
-            }
-            return enumeration.complete();
-        }
-        
-        public getIsCustomRedirect(dataView: DataView): Fill {
-			if (dataView.metadata.objects && dataView.metadata.objects.hasOwnProperty('GridConfig')) {
-                if(dataView.metadata.objects['GridConfig'].hasOwnProperty('isCustomRedirect') && dataView.metadata.objects['GridConfig']['isCustomRedirect']){
-                    return dataView.metadata.objects['GridConfig']['isCustomRedirect'];
-                }
-			}
-            return false;
-        }
-        public getAPIUrl(dataView: DataView): Fill {
-			if (dataView.metadata.objects && dataView.metadata.objects.hasOwnProperty('GridConfig')) {
-                if(dataView.metadata.objects['GridConfig'].hasOwnProperty('apiUrl') && dataView.metadata.objects['GridConfig']['apiUrl']){
-                    return dataView.metadata.objects['GridConfig']['apiUrl'];
-                }
-			}
-            return "http://jsonplaceholder.typicode.com/posts/";
-        }
-        public getColumnNumber(dataView: DataView): Fill {
-			if (dataView.metadata.objects && dataView.metadata.objects.hasOwnProperty('GridConfig')) {
-                if(dataView.metadata.objects['GridConfig'].hasOwnProperty('columnNumber') && dataView.metadata.objects['GridConfig']['columnNumber']){
-                    if(parseInt(dataView.metadata.objects['GridConfig']['columnNumber']) > 0)
-                        return dataView.metadata.objects['GridConfig']['columnNumber'];
-                    else
-                        return 1;
-                }
-			}
-            return 1;
-        }
-        private getFontSize(dataView: DataView) {
-			if (dataView.metadata.objects && dataView.metadata.objects.hasOwnProperty('GridConfig')) {
-                if(dataView.metadata.objects['GridConfig'].hasOwnProperty('fontSize') && dataView.metadata.objects['GridConfig']['fontSize']){
-                    this.root.select('.DataDiv').style({ 'font-size': dataView.metadata.objects['GridConfig']['fontSize'] + 'px'});
-                    this.root.select('.first').style({ 'width': dataView.metadata.objects['GridConfig']['fontSize'] + 'px'});
-                    this.root.select('.next').style({ 'width': dataView.metadata.objects['GridConfig']['fontSize'] + 'px'});
-					return dataView.metadata.objects['GridConfig']['fontSize'];
-                }
-			}
-            return 12;
-        }
-        private getMaxRows(dataView: DataView) {
-			if (dataView.metadata.objects && dataView.metadata.objects.hasOwnProperty('GridConfig')) {
-                if(dataView.metadata.objects['GridConfig'].hasOwnProperty('maxRows') && dataView.metadata.objects['GridConfig']['maxRows']){                    
-					if(parseInt(dataView.metadata.objects['GridConfig']['maxRows']) > 0)
-                        return dataView.metadata.objects['GridConfig']['maxRows'];
-                    else
-                        return 5;
-                }
-			}
-            return 5;
-        }
-        private getSortKey(dataView: DataView) {
-			if (dataView.metadata.objects && dataView.metadata.objects.hasOwnProperty('GridConfig')) {
-                if(dataView.metadata.objects['GridConfig'].hasOwnProperty('sortKey') && dataView.metadata.objects['GridConfig']['sortKey']){                    
-					if(parseInt(dataView.metadata.objects['GridConfig']['sortKey']) > 0)
-                        return dataView.metadata.objects['GridConfig']['sortKey'];
-                    else
-                        return 1;
-                }
-			}
-            return 1;
-        }
-        private getSortOrder(dataView: DataView) {
-			if (dataView.metadata.objects && dataView.metadata.objects.hasOwnProperty('GridConfig')) {
-                if(dataView.metadata.objects['GridConfig'].hasOwnProperty('sortOrder') && dataView.metadata.objects['GridConfig']['sortOrder']){                    
-					if(-1 !== ['asc', 'desc'].indexOf(dataView.metadata.objects['GridConfig']['sortOrder'].toString().toLowerCase()))
-                        return dataView.metadata.objects['GridConfig']['sortOrder'];
-                    else
-                        return 'asc';
-                }
-			}
-            return 'asc';
-        }
+        data.push(obj);
     }
-}
+    config.data = data;
 
-var dataViewObj;
-
-function getIsCustomRedirect(dataView) {
-	if (dataView.metadata.objects && dataView.metadata.objects.hasOwnProperty('GridConfig')) {
-        if(dataView.metadata.objects['GridConfig'].hasOwnProperty('isCustomRedirect') && dataView.metadata.objects['GridConfig']['isCustomRedirect']){
-            return dataView.metadata.objects['GridConfig']['isCustomRedirect'];
+    config.columnHeader = [];
+    for (iCount = 0; iCount < dWagon.table.columns.length; iCount++) {
+        obj = {};
+        obj.columnText = dWagon.table.columns[iCount].displayName;
+        var col = dWagon.table.columns[iCount].queryName;
+        obj.name = col.substring(col.indexOf('.') + 1, col.length);
+        if (col.lastIndexOf(')') === (col.length - 1)) {
+            obj.name = col.substring(col.indexOf('.') + 1, col.lastIndexOf(')'));
         }
-	}
-    return false;
-}
-function getAPIUrl(dataView) {
-	if (dataView.metadata.objects && dataView.metadata.objects.hasOwnProperty('GridConfig')) {
-        if(dataView.metadata.objects['GridConfig'].hasOwnProperty('apiUrl') && dataView.metadata.objects['GridConfig']['apiUrl']){
-            return dataView.metadata.objects['GridConfig']['apiUrl'];
+        obj.sortable = true;
+        obj.sortType = "parseString";
+        switch (typeof(dWagon.table.rows[0][iCount])) {
+            case 'number':
+                obj.sortType = "parseInteger";
+                break;
+            case 'object':
+                if (dWagon.table.rows[iCount][0] instanceof Date) {
+                    obj.sortType = "parseDate";
+                }
+                break;
         }
-	}
-    return "http://jsonplaceholder.typicode.com/posts/";
-}
-function getColumnNumber(dataView) {
-	if (dataView.metadata.objects && dataView.metadata.objects.hasOwnProperty('GridConfig')) {
-        if(dataView.metadata.objects['GridConfig'].hasOwnProperty('columnNumber') && dataView.metadata.objects['GridConfig']['columnNumber']){
-            return dataView.metadata.objects['GridConfig']['columnNumber'];
+        var col = dWagon.table.columns[iCount].queryName;
+        obj.sortKey = col.substring(col.indexOf('.') + 1, col.length);
+        if (col.lastIndexOf(')') === (col.length - 1)) {
+            obj.sortKey = col.substring(col.indexOf('.') + 1, col.lastIndexOf(')'));
         }
-	}
-    return 1;
-}
-function loadJquery(apiUrl, columnNumber) {
-    var scripts = document.querySelectorAll('script[src]');
-    for (var i = 0; i < scripts.length; i++) {
-        if (document.querySelectorAll('script[src]')[i] && document.querySelectorAll('script[src]')[i].src && 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js' === document.querySelectorAll('script[src]')[i].src) {
-            var elem = document.querySelectorAll('script[src]')[i];
-			elem.parentNode.removeChild(elem);
-        }
+        obj.headerClassName = "TableHeader";
+        obj.formatter = "";
+        obj.style = {
+            "width": "350px"
+        };
+        config.columnHeader.push(obj);
     }
-    var script = document.createElement("SCRIPT");
-    script.src = 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js';
-    script.type = 'text/javascript';
-    document.getElementsByTagName("head")[0].appendChild(script);
-
-    // Poll for jQuery to come into existance
-    var checkReady = function(callback) {
-        if (window.jQuery) {
-            callback(jQuery);
-        }
-        else {
-            window.setTimeout(function() { checkReady(callback); }, 100);
-        }
+    var col = dWagon.table.columns[0].queryName;
+    var gridSort = {
+        "sortby": col.substring(col.indexOf('.') + 1, col.length),
+        "sortorder": "asc",
+        "sortType": "parseString"
     };
+    var sortKey = gridFormatters.sortKey,
+        sortOrder = gridFormatters.sortOrder;
+    if (sortKey) {
+        sortKey = parseInt(sortKey);
+        if (sortKey > dWagon.table.columns.length)
+            sortKey = dWagon.table.columns.length;
+        sortKey--;
+        col = dWagon.table.columns[sortKey].queryName;
+        gridSort.sortby = col.substring(col.indexOf('.') + 1, col.length);
+    } else {
+        sortKey = 0;
+    }
+    if (sortOrder && ('asc' == sortOrder.toLowerCase() || 'desc' == sortOrder.toLowerCase())) {
+        gridSort.sortorder = sortOrder.toLowerCase();
+    } else {
+        sortOrder = 'asc';
+    }
+    switch (typeof(dWagon.table.rows[sortKey][sortKey])) {
+        case 'number':
+            gridSort.sortType = "parseInteger";
+            break;
+        case 'object':
+            if (dWagon.table.rows[sortKey][0] instanceof Date) {
+                gridSort.sortType = "parseDate";
+            }
+            break;
+    }
+    config.gridSort = gridSort;
+    $('#KPIGrid').html('');
 
-    // Start polling...
-    checkReady(function($) {
-        if(!columnNumber){
+    function intializeEvents() {
+        var apiUrl = gridFormatters.apiUrl;
+        var columnNumber = gridFormatters.columnNumber;
+        var isCustomRedirect = gridFormatters.isCustomRedirect;
+        if (columnNumber > dataViewObj.table.columns.length)
+            columnNumber = dataViewObj.table.columns.length;
+        if (isCustomRedirect && apiUrl && columnNumber) {
+            loadJquery(apiUrl, columnNumber);
+        }
+    }
+
+    dataViewObj = dWagon;
+    config.callBackFunc = intializeEvents;
+
+
+    MAQ.JsonGrid(config);
+    d3.select('.DataDiv').style({ 'font-size': gridFormatters.fontSize + 'px'});
+    d3.select('.first').style({ 'width': gridFormatters.fontSize + 'px'});
+    d3.select('.next').style({ 'width': gridFormatters.fontSize + 'px'});
+    var apiUrl = gridFormatters.apiUrl;
+    var columnNumber = gridFormatters.columnNumber;
+    var isCustomRedirect = gridFormatters.isCustomRedirect;
+
+    if (columnNumber > dWagon.table.columns.length)
+        columnNumber = dWagon.table.columns.length;
+    if (isCustomRedirect && apiUrl && columnNumber) {
+        loadJquery(apiUrl, columnNumber);
+    }
+
+    function loadJquery(apiUrl, columnNumber) {
+        if (!columnNumber) {
             columnNumber = 1;
         }
         $('.jsonGridRow:nth-child(' + columnNumber + ')').addClass('hyperLink');
@@ -561,20 +153,21 @@ function loadJquery(apiUrl, columnNumber) {
         $('.jsonGridRow:nth-child(' + columnNumber + ')').click(function() {
             sendRequest($(this).text(), apiUrl);
         });
-    });
+    }
+
+    function sendRequest(id, apiUrl) {
+        if (!apiUrl) {
+            apiUrl = "http://jsonplaceholder.typicode.com/posts/"
+        }
+        var frame = document.createElement('iframe');
+        frame.setAttribute('style', 'display:none');
+        frame.className = "hiddenFrame";
+        frame.setAttribute('src', apiUrl + id);
+        document.body.appendChild(frame);
+    }
 }
 
-function sendRequest(id, apiUrl) {
-    if(!apiUrl) {
-        apiUrl = "http://jsonplaceholder.typicode.com/posts/"
-        //console.log("API URL is not configured");
-    }
-    var frame = document.createElement('iframe');	
-    frame.setAttribute('style', 'display:none');
-    frame.className = "hiddenFrame";
-    frame.setAttribute('src', apiUrl + id);
-    document.body.appendChild(frame); 
-}
+/*JSHint Count = 0*/
 
 /// <disable>JS2076.IdentifierIsMiscased,JS3056.DeclareVariablesOnceOnly,JS3092.DeclarePropertiesBeforeUse,JS2032.PlaceLiteralsOnRightSideInComparisons,JS3057.AvoidImplicitTypeCoercion,JS3054.NotAllCodePathsReturnValue</disable>
 /// <dictionary target='comment'>maqutility</dictionary>
@@ -600,9 +193,11 @@ if ("undefined" === typeof oGridConstants) {
     };
 }
 var MAQUtility;
-(function (MAQUtility) {
+(function(MAQUtility) {
     function getParents(oNode, sClassSelector) {
-        var aParents = [], oCurrentNode = oNode.parentNode, oTempNode;
+        var aParents = [],
+            oCurrentNode = oNode.parentNode,
+            oTempNode;
         while (oCurrentNode !== document) {
             oTempNode = oCurrentNode;
             if (!sClassSelector || !sClassSelector.length || (-1 < oTempNode.className.indexOf(sClassSelector))) {
@@ -613,6 +208,7 @@ var MAQUtility;
         return aParents;
     }
     MAQUtility.getParents = getParents;
+
     function applyStyleToObject(oNode, oStyleObject) {
         var oStyles, iCounter;
         if (typeof oStyleObject === "undefined") {
@@ -622,12 +218,12 @@ var MAQUtility;
         for (iCounter; iCounter < oStyles.length; iCounter += 1) {
             try {
                 oNode.style[oStyles[iCounter]] = oStyleObject[oStyles[iCounter]];
-            } catch (exception) {
-            }
+            } catch (exception) {}
         }
         return;
     }
     MAQUtility.applyStyleToObject = applyStyleToObject;
+
     function hasClass(oElement, sName) {
         if (oElement && oElement.className) {
             return new RegExp("(\\s|^)" + sName + "(\\s|$)").test(oElement.className);
@@ -635,6 +231,7 @@ var MAQUtility;
         return;
     }
     MAQUtility.hasClass = hasClass;
+
     function removeClass(oElement, sName) {
         var iIterator;
         if (oElement && oElement.length > 0) {
@@ -650,6 +247,7 @@ var MAQUtility;
         }
     }
     MAQUtility.removeClass = removeClass;
+
     function addClass(oElement, sName) {
         var iIterator;
         if (oElement && oElement.length > 1) {
@@ -665,47 +263,55 @@ var MAQUtility;
         }
     }
     MAQUtility.addClass = addClass;
+
     function sortBy(field, reverse, primer) {
-        var key = function (x) {
-            return primer ? primer(x[field]) : x[field];
-        }, time = function (x) {
-            if (x[field]) {
-                return Date.parse(x[field]);
-            }
-            return 0;
-        }, trimUSD = function (x) {
-            if (x[field] && x[field] !== oGridConstants.sNA) {
-                return parseInt(x[field].substring(1, x[field].length).split(",").join(""));
-            }
-            return 0;
-        }, trimSalesStage = function (x) {
-            if (x[field] && x[field] !== oGridConstants.sNA) {
-                var oStageInfo = x[field].split(" ");
-                return parseInt(oStageInfo[oStageInfo.length - 1].slice(0, oStageInfo[oStageInfo.length - 1].length - 1));
-            }
-            return 0;
-        }, stringConvert = function (x) {
-            if (x[field] && x[field] !== oGridConstants.sNA) {
-                return x[field].toString();
-            }
-            return 0;
-        }, parseInteger = function (x) {
-            if (x[field]) {
-                return parseInt(x[field]);
-            }
-            return 0;
-        }, parseDecimal = function (x) {
-            if (x[field]) {
-                return parseFloat(x[field]);
-            }
-            return 0;
-        }, parseString = function (x) {
-            if (x[field]) {
-                return x[field].toString();
-            }
-            return "";
-        };
-        return function (a, b) {
+        var key = function(x) {
+                return primer ? primer(x[field]) : x[field];
+            },
+            time = function(x) {
+                if (x[field]) {
+                    return Date.parse(x[field]);
+                }
+                return 0;
+            },
+            trimUSD = function(x) {
+                if (x[field] && x[field] !== oGridConstants.sNA) {
+                    return parseInt(x[field].substring(1, x[field].length).split(",").join(""));
+                }
+                return 0;
+            },
+            trimSalesStage = function(x) {
+                if (x[field] && x[field] !== oGridConstants.sNA) {
+                    var oStageInfo = x[field].split(" ");
+                    return parseInt(oStageInfo[oStageInfo.length - 1].slice(0, oStageInfo[oStageInfo.length - 1].length - 1));
+                }
+                return 0;
+            },
+            stringConvert = function(x) {
+                if (x[field] && x[field] !== oGridConstants.sNA) {
+                    return x[field].toString();
+                }
+                return 0;
+            },
+            parseInteger = function(x) {
+                if (x[field]) {
+                    return parseInt(x[field]);
+                }
+                return 0;
+            },
+            parseDecimal = function(x) {
+                if (x[field]) {
+                    return parseFloat(x[field]);
+                }
+                return 0;
+            },
+            parseString = function(x) {
+                if (x[field]) {
+                    return x[field].toString();
+                }
+                return "";
+            };
+        return function(a, b) {
             var iFirstValue, iSecondValue;
             if (primer === oGridConstants.sParseDate) {
                 iFirstValue = time(a), iSecondValue = time(b);
@@ -736,13 +342,14 @@ var MAQUtility;
         };
     }
     MAQUtility.sortBy = sortBy;
+
     function clone(oObject) {
         // Handle the 3 simple types, and null or undefined
-        var copy, len, i = 0, attribute;
+        var copy, len, i = 0,
+            attribute;
         if (oObject && oObject.length) {
             len = oObject.length;
-        }
-        ;
+        };
         if (null === oObject || "object" !== typeof oObject) {
             return oObject;
         }
@@ -779,10 +386,14 @@ var MAQUtility;
 
     // MAQUtility.applyFormatter: applies formatting to data
     function applyFormatter(sText, sFormatterName, oConfiguration, iIterator) {
-        if (typeof oConfiguration === "undefined") { oConfiguration = {}; }
-        if (typeof iIterator === "undefined") { iIterator = 0; }
+        if (typeof oConfiguration === "undefined") {
+            oConfiguration = {};
+        }
+        if (typeof iIterator === "undefined") {
+            iIterator = 0;
+        }
         if (sFormatterName) {
-            if (typeof (window[sFormatterName]) === 'function') {
+            if (typeof(window[sFormatterName]) === 'function') {
                 sText = window[sFormatterName](sText, oConfiguration, iIterator);
             } else if (typeof sFormatterName === 'function') {
                 sText = sFormatterName(sText, oConfiguration, iIterator);
@@ -790,8 +401,7 @@ var MAQUtility;
         }
         return sText;
     }
-    MAQUtility.applyFormatter = applyFormatter;
-    ;
+    MAQUtility.applyFormatter = applyFormatter;;
 })(MAQUtility || (MAQUtility = {}));
 /// <disable>JS2025.InsertSpaceBeforeCommentText</disable>
 
@@ -829,10 +439,15 @@ function thousandFormatter(sInput, iDecimalPlaces) {
             sTempValue = parseFloat(sInput.toFixed(iDecimalPlaces)).toString();
         }
     }
-    var aDigits = sTempValue.split("."), sIntegerDigits = aDigits[0], sFractionDigits = aDigits.length > 1 ? "." + aDigits[1] : "";
+    var aDigits = sTempValue.split("."),
+        sIntegerDigits = aDigits[0],
+        sFractionDigits = aDigits.length > 1 ? "." + aDigits[1] : "";
 
     // Converting thousand to M
-    var bConvert = false, kConvert = false, iTempValue = parseInt(sIntegerDigits), sCurrency = "";
+    var bConvert = false,
+        kConvert = false,
+        iTempValue = parseInt(sIntegerDigits),
+        sCurrency = "";
     if (iTempValue >= 1000000000) {
         sIntegerDigits = iTempValue / 1000000000;
         sCurrency = "B";
@@ -859,8 +474,7 @@ function thousandFormatter(sInput, iDecimalPlaces) {
     } else {
         return "0";
     }
-}
-;
+};
 
 // insertCommasOnly: Formats the number in comma separator format (x,xxx,xxx.xx).
 function insertCommasOnly(sInput, iDecimalPlaces) {
@@ -872,7 +486,8 @@ function insertCommasOnly(sInput, iDecimalPlaces) {
     if (!iDecimalPlaces || isNaN(iDecimalPlaces)) {
         iDecimalPlaces = 0; // Default value is 0
     }
-    var fTempValue = parseFloat(sInput), sTempValue = fTempValue.toString();
+    var fTempValue = parseFloat(sInput),
+        sTempValue = fTempValue.toString();
 
     if (-1 !== sTempValue.indexOf(".")) {
         var decimalLength = sTempValue.substring(sTempValue.indexOf(".") + 1).length;
@@ -880,7 +495,9 @@ function insertCommasOnly(sInput, iDecimalPlaces) {
             sTempValue = fTempValue.toFixed(iDecimalPlaces).toString();
         }
     }
-    var aDigits = sTempValue.split("."), sIntegerDigits = aDigits[0], sFractionDigits = aDigits.length > 1 ? "." + aDigits[1] : "";
+    var aDigits = sTempValue.split("."),
+        sIntegerDigits = aDigits[0],
+        sFractionDigits = aDigits.length > 1 ? "." + aDigits[1] : "";
 
     sIntegerDigits = sIntegerDigits.toString();
     var rPattern = /(\d+)(\d{3})/;
@@ -893,8 +510,7 @@ function insertCommasOnly(sInput, iDecimalPlaces) {
         return "0";
     }
     return sFinalValue;
-}
-;
+};
 
 // insertCommasOnlyWithOnePlace: Returns data with 1 decimal place in format (x,xxx,xxx.xx)
 function insertCommasOnlyWithOnePlace(sInput) {
@@ -921,8 +537,7 @@ function revenueFormatter(sInput, iDecimalPlaces) {
     }
     var sTempValue = thousandFormatter(sInput, iDecimalPlaces);
     return ((parseFloat(sTempValue) < 0) ? "-$" + sTempValue.substr(1) : "$" + sTempValue);
-}
-;
+};
 
 // roundNoDecimalPercent: Formats the number with percentage and removes decimal places (xx%).
 function roundNoDecimalPercent(sCellValue) {
@@ -930,8 +545,7 @@ function roundNoDecimalPercent(sCellValue) {
         return Math.round(sCellValue) + "%";
     }
     return sCellValue;
-}
-;
+};
 
 // insertPercentages: Formats the number with percentage after multiplying by 100 (xx.xx%).
 function insertPercentages(sCellValue, iDecimalPlaces) {
@@ -946,8 +560,7 @@ function insertPercentages(sCellValue, iDecimalPlaces) {
     sCellValue = sCellValue * 100;
     var sTempValue = insertCommasOnly(sCellValue, iDecimalPlaces);
     return sTempValue + "%";
-}
-;
+};
 
 // insertPercentageOnly: Formats the number with percentage (xx.xx%).
 function insertPercentageOnly(sCellValue, iDecimalPlaces) {
@@ -961,8 +574,7 @@ function insertPercentageOnly(sCellValue, iDecimalPlaces) {
     }
     var sTempValue = insertCommasOnly(sCellValue, iDecimalPlaces);
     return sTempValue + "%";
-}
-;
+};
 
 // insertPercentageWithThousandFormatter: Returns data with decimal place in format x.xK/M/B%
 function insertPercentageWithThousandFormatter(sInput, iDecimalPlaces) {
@@ -973,8 +585,7 @@ function insertPercentageWithThousandFormatter(sInput, iDecimalPlaces) {
     } else {
         return thousandFormatter(sInput, iDecimalPlaces) + "%";
     }
-}
-;
+};
 
 // insertPercentageWithThousandFormatter: Returns data with decimal place in format x.xK/M/B%
 function insertPercentageWithThousandFormatterOneDecimal(sInput, iDecimalPlaces) {
@@ -985,8 +596,7 @@ function insertPercentageWithThousandFormatterOneDecimal(sInput, iDecimalPlaces)
     } else {
         return thousandFormatter(sInput, 1) + "%";
     }
-}
-;
+};
 
 // insertPercentageWithThousandFormatter: Returns data with decimal place in format for tile x.xK/M/B%
 function insertPercentageWithThousandFormatterForTile(sInput, iDecimalPlaces) {
@@ -997,8 +607,7 @@ function insertPercentageWithThousandFormatterForTile(sInput, iDecimalPlaces) {
     } else {
         return thousandFormatter(sInput, 1) + "<span class='tileUnitSymbol'>%</span>";
     }
-}
-;
+};
 
 // dateStringToMonthFormatter: Converts the date passed as string to mmm, yyyy format
 function dateStringToMonthFormatter(sInput) {
@@ -1048,15 +657,20 @@ function formatDateFunction(formatDate, formatString) {
         return formatString;
     }
     return "";
-}
-;
+};
 
 // customRevenueFormatter: Formats the number in revenue format and returns object with sign, value and currency ({"$","x,xx.xx","K"})
 function customRevenueFormatter(sInput, iDecimalPlaces) {
     if (0 === sInput) {
-        return { sign: "$", value: 0, currency: "" };
+        return {
+            sign: "$",
+            value: 0,
+            currency: ""
+        };
     } else if (isNaN(sInput) || !sInput) {
-        return { sign: "N/A" };
+        return {
+            sign: "N/A"
+        };
     }
 
     // Check for validity of decimal places parameter
@@ -1080,10 +694,15 @@ function customRevenueFormatter(sInput, iDecimalPlaces) {
             sTempValue = sInput.toFixed(iDecimalPlaces).toString();
         }
     }
-    var aDigits = sTempValue.split("."), sIntegerDigits = aDigits[0], sFractionDigits = aDigits.length > 1 ? "." + aDigits[1] : "";
+    var aDigits = sTempValue.split("."),
+        sIntegerDigits = aDigits[0],
+        sFractionDigits = aDigits.length > 1 ? "." + aDigits[1] : "";
 
     // Converting thousand to M
-    var bConvert = false, kConvert = false, iTempValue = parseInt(sIntegerDigits), sCurrency = "";
+    var bConvert = false,
+        kConvert = false,
+        iTempValue = parseInt(sIntegerDigits),
+        sCurrency = "";
     if (iTempValue >= 1000000000) {
         sIntegerDigits = iTempValue / 1000000000;
         sCurrency = "B";
@@ -1105,16 +724,25 @@ function customRevenueFormatter(sInput, iDecimalPlaces) {
     while (rPattern.test(sIntegerDigits)) {
         sIntegerDigits = sIntegerDigits.replace(rPattern, "$1" + "," + "$2");
     }
-    return { sign: ((fTempValue < 0) ? "-$" : "$"), value: sIntegerDigits + sFractionDigits, currency: sCurrency };
-}
-;
+    return {
+        sign: ((fTempValue < 0) ? "-$" : "$"),
+        value: sIntegerDigits + sFractionDigits,
+        currency: sCurrency
+    };
+};
 
 // customRevenueFormatter: Formats the number in revenue format and returns object with sign, value and currency ({"-","x,xx.xx","K"})
 function customThousandFormatter(sInput, iDecimalPlaces) {
     if (0 === sInput) {
-        return { sign: "", value: "0", currency: "" };
+        return {
+            sign: "",
+            value: "0",
+            currency: ""
+        };
     } else if (isNaN(sInput) || !sInput) {
-        return { sign: "N/A" };
+        return {
+            sign: "N/A"
+        };
     }
 
     // Check for validity of decimal places parameter
@@ -1138,10 +766,15 @@ function customThousandFormatter(sInput, iDecimalPlaces) {
             sTempValue = parseFloat(sInput).toFixed(iDecimalPlaces).toString();
         }
     }
-    var aDigits = sTempValue.split("."), sIntegerDigits = aDigits[0], sFractionDigits = aDigits.length > 1 ? "." + aDigits[1] : "";
+    var aDigits = sTempValue.split("."),
+        sIntegerDigits = aDigits[0],
+        sFractionDigits = aDigits.length > 1 ? "." + aDigits[1] : "";
 
     // Converting thousand to M
-    var bConvert = false, kConvert = false, iTempValue = parseInt(sIntegerDigits), sCurrency = "";
+    var bConvert = false,
+        kConvert = false,
+        iTempValue = parseInt(sIntegerDigits),
+        sCurrency = "";
     if (iTempValue >= 1000000000) {
         sIntegerDigits = iTempValue / 1000000000;
         sCurrency = "B";
@@ -1163,16 +796,26 @@ function customThousandFormatter(sInput, iDecimalPlaces) {
     while (rPattern.test(sIntegerDigits)) {
         sIntegerDigits = sIntegerDigits.replace(rPattern, "$1" + "," + "$2");
     }
-    return { sign: ((fTempValue < 0) ? "-" : ""), value: sIntegerDigits + sFractionDigits, currency: sCurrency };
-}
-;
+    return {
+        sign: ((fTempValue < 0) ? "-" : ""),
+        value: sIntegerDigits + sFractionDigits,
+        currency: sCurrency
+    };
+};
 
 function customHighPercentFormatter(sInput, iDecimalPlaces) {
-    var rPattern = /(\d+)(\d{3})/, sTempValue, bConvert, kConvert, iTempValue, sCurrency, decimalLength, fTempValue;
+    var rPattern = /(\d+)(\d{3})/,
+        sTempValue, bConvert, kConvert, iTempValue, sCurrency, decimalLength, fTempValue;
     if (0 === sInput) {
-        return { sign: "", value: 0, currency: "" };
+        return {
+            sign: "",
+            value: 0,
+            currency: ""
+        };
     } else if (isNaN(sInput) || !sInput) {
-        return { sign: "N/A" };
+        return {
+            sign: "N/A"
+        };
     }
 
     // Check for validity of decimal places parameter
@@ -1196,7 +839,9 @@ function customHighPercentFormatter(sInput, iDecimalPlaces) {
             sTempValue = sInput.toFixed(iDecimalPlaces).toString();
         }
     }
-    var aDigits = sTempValue.split("."), sIntegerDigits = aDigits[0], sFractionDigits = aDigits.length > 1 ? "." + aDigits[1] : "";
+    var aDigits = sTempValue.split("."),
+        sIntegerDigits = aDigits[0],
+        sFractionDigits = aDigits.length > 1 ? "." + aDigits[1] : "";
 
     // Converting thousand to M
     bConvert = false, kConvert = false, iTempValue = parseInt(sIntegerDigits), sCurrency = "";
@@ -1220,13 +865,19 @@ function customHighPercentFormatter(sInput, iDecimalPlaces) {
     while (rPattern.test(sIntegerDigits)) {
         sIntegerDigits = sIntegerDigits.replace(rPattern, "$1" + "," + "$2");
     }
-    return { sign: ((fTempValue < 0) ? "-" : ""), value: sIntegerDigits + sFractionDigits, currency: sCurrency };
-}
-;
+    return {
+        sign: ((fTempValue < 0) ? "-" : ""),
+        value: sIntegerDigits + sFractionDigits,
+        currency: sCurrency
+    };
+};
 
 // parseCustomBarChart: Renders bar chart and corresponding cell value
 function parseCustomBarChart(cellValue, oRowJsonObject, oFormatterOptions) {
-    var fMax = 1, sField, sNumberFormatter, fPercentValue = 0, sReturnValue, sBgColor, funFormatter, sCustomBarChartTemplate = "<div class='CustomerBarChartValue'>{2}</div><div style='width:{a}px' class='CustomerBarChart_Container'><div class='CustomerBarChart_{0}' style='width:{1}%; height:20px {3}'></div></div>", fParentWidth = 0;
+    var fMax = 1,
+        sField, sNumberFormatter, fPercentValue = 0,
+        sReturnValue, sBgColor, funFormatter, sCustomBarChartTemplate = "<div class='CustomerBarChartValue'>{2}</div><div style='width:{a}px' class='CustomerBarChart_Container'><div class='CustomerBarChart_{0}' style='width:{1}%; height:20px {3}'></div></div>",
+        fParentWidth = 0;
 
     if (oFormatterOptions) {
         fMax = oFormatterOptions.maxValue;
@@ -1401,6 +1052,7 @@ if ("undefined" === typeof oGridConstants) {
 }
 MAQ.gridName = [];
 MAQ.gridObject = [];
+
 function newRecords(oElement, sGridName) {
     if (oElement) {
         if (!oElement.getAttribute("data-pageId")) {
@@ -1408,9 +1060,11 @@ function newRecords(oElement, sGridName) {
         }
         if (oElement.getAttribute("data-pageId")) {
             pageid = oElement.getAttribute('data-pageid');
-            if(document.getElementsByClassName("ListOptionContainer") && document.getElementsByClassName("ListOptionContainer")[0]) 
+            if (document.getElementsByClassName("ListOptionContainer") && document.getElementsByClassName("ListOptionContainer")[0])
                 document.getElementsByClassName("ListOptionContainer")[0].value = pageid;
-            var iGridObjectPosition = MAQ.gridName.indexOf(sGridName), iCurrentPage = parseInt(oElement.getAttribute("data-pageId")), iLastPage = parseInt(MAQ.gridObject[iGridObjectPosition].totalPages) + 1;
+            var iGridObjectPosition = MAQ.gridName.indexOf(sGridName),
+                iCurrentPage = parseInt(oElement.getAttribute("data-pageId")),
+                iLastPage = parseInt(MAQ.gridObject[iGridObjectPosition].totalPages) + 1;
             MAQUtility.addClass(oElement, "SelectedPage");
             if (iCurrentPage) {
                 MAQ.getPage(iCurrentPage, iLastPage, MAQ.gridObject[iGridObjectPosition]);
@@ -1418,17 +1072,23 @@ function newRecords(oElement, sGridName) {
         }
     }
 }
-MAQ.getAdjustedRowChunk = function (inputData, width) {
+MAQ.getAdjustedRowChunk = function(inputData, width) {
     return '<div class="jsonGridOverflow" title="' + inputData + '" style="width: ' + width + 'px;">' + inputData + "</div>";
 };
-MAQ.getAdjustedRowChunkAndToolTip = function (inputData, width) {
+MAQ.getAdjustedRowChunkAndToolTip = function(inputData, width) {
     width = width || "100";
     width = width.replace("%", "").replace("px", "");
     return '<span class="jsonGridOverflow" title="' + inputData + '" style="width: ' + (width - 15 >= 15 ? width - 15 : 15) + 'px;">' + inputData + "</span>";
 };
-MAQ.setViewRecords = function (oCurrentGridConfiguration) {
+MAQ.setViewRecords = function(oCurrentGridConfiguration) {
     /// <disable>JS3058</disable>
-    var oGridElement = document.getElementById(oCurrentGridConfiguration.gridName), oViewRecords = document.getElementById(oCurrentGridConfiguration.gridName + "_ViewRecords"), iCurrentPage = (parseInt(oCurrentGridConfiguration.currentPage) || 0) + 1, iLastPage = (parseInt(oCurrentGridConfiguration.totalPages) || 0) + 1, iIterator, iStartIndex = 1, oElementDropDown = oGridElement.querySelector(".ListOption[data-pageId='" + iCurrentPage + "']"), iTotalPages = 0;
+    var oGridElement = document.getElementById(oCurrentGridConfiguration.gridName),
+        oViewRecords = document.getElementById(oCurrentGridConfiguration.gridName + "_ViewRecords"),
+        iCurrentPage = (parseInt(oCurrentGridConfiguration.currentPage) || 0) + 1,
+        iLastPage = (parseInt(oCurrentGridConfiguration.totalPages) || 0) + 1,
+        iIterator, iStartIndex = 1,
+        oElementDropDown = oGridElement.querySelector(".ListOption[data-pageId='" + iCurrentPage + "']"),
+        iTotalPages = 0;
 
     MAQUtility.removeClass(oGridElement.querySelectorAll(".PageListItem"), "SelectedPage");
     MAQUtility.removeClass(oGridElement.querySelectorAll(".ListOption"), "SelectedPage");
@@ -1453,13 +1113,16 @@ MAQ.setViewRecords = function (oCurrentGridConfiguration) {
 };
 
 // Generate page list to be displayed in pagination control
-MAQ.generatePageList = function (oCurrentGridConfiguration, iCurrentPage, iTotalPages) {
-    var oGridElement = document.getElementById(oCurrentGridConfiguration.container), oPage, oPageList = oGridElement.querySelector(".ViewRecordDiv > div"), iIterator = 0, iStartIndex = 1;
+MAQ.generatePageList = function(oCurrentGridConfiguration, iCurrentPage, iTotalPages) {
+    var oGridElement = document.getElementById(oCurrentGridConfiguration.container),
+        oPage, oPageList = oGridElement.querySelector(".ViewRecordDiv > div"),
+        iIterator = 0,
+        iStartIndex = 1;
 
     // Change page numbers
     if (oPageList) {
         // Clear existing page list
-        oPageList.innerHTML = "";
+        $(oPageList).html("");
         iStartIndex = (((iTotalPages - 4) > 0) && iCurrentPage >= (iTotalPages - 4)) ? iTotalPages - 4 : iCurrentPage;
         iStartIndex = iTotalPages <= 5 ? 1 : iStartIndex;
         for (iIterator = iStartIndex; iIterator <= iTotalPages; iIterator++) {
@@ -1476,8 +1139,11 @@ MAQ.generatePageList = function (oCurrentGridConfiguration, iCurrentPage, iTotal
         }
     }
 };
-MAQ.getPage = function (iCurrentPageNum, iLastPageNum, oCurrentGridConfiguration) {
-    var iCurrentPage = iCurrentPageNum, iLastPage = iLastPageNum, oFirst = document.getElementById(oCurrentGridConfiguration.gridName + "_First"), oLast = document.getElementById(oCurrentGridConfiguration.gridName + "_Last");
+MAQ.getPage = function(iCurrentPageNum, iLastPageNum, oCurrentGridConfiguration) {
+    var iCurrentPage = iCurrentPageNum,
+        iLastPage = iLastPageNum,
+        oFirst = document.getElementById(oCurrentGridConfiguration.gridName + "_First"),
+        oLast = document.getElementById(oCurrentGridConfiguration.gridName + "_Last");
     if (iCurrentPage <= 1) {
         MAQ.goFirst(oFirst, oCurrentGridConfiguration.gridName);
     } else if (iCurrentPage >= iLastPage) {
@@ -1492,8 +1158,9 @@ MAQ.getPage = function (iCurrentPageNum, iLastPageNum, oCurrentGridConfiguration
         MAQ.setViewRecords(oCurrentGridConfiguration);
     }
 };
-MAQ.populateGrid = function (oCurrentGridConfiguration) {
-    var htmlGridObject = oCurrentGridConfiguration.gridObject, numberOfRows, rowCounter, iRowsRight;
+MAQ.populateGrid = function(oCurrentGridConfiguration) {
+    var htmlGridObject = oCurrentGridConfiguration.gridObject,
+        numberOfRows, rowCounter, iRowsRight;
     if (htmlGridObject) {
         numberOfRows = oCurrentGridConfiguration.tblBody.rows.length;
         for (rowCounter = 0; rowCounter < numberOfRows; rowCounter += 1) {
@@ -1508,23 +1175,23 @@ MAQ.populateGrid = function (oCurrentGridConfiguration) {
         oCurrentGridConfiguration.callBackFunc && oCurrentGridConfiguration.callBackFunc();
     }
 };
-MAQ.disablePrev = function (sGridName) {
+MAQ.disablePrev = function(sGridName) {
     var previous = document.getElementById(sGridName + "_Prev");
     MAQUtility.addClass(previous, "click-disabled");
 };
-MAQ.enablePrev = function (sGridName) {
+MAQ.enablePrev = function(sGridName) {
     var previous = document.getElementById(sGridName + "_Prev");
     MAQUtility.removeClass(previous, "click-disabled");
 };
-MAQ.disableNext = function (sGridName) {
+MAQ.disableNext = function(sGridName) {
     var next = document.getElementById(sGridName + "_Next");
     MAQUtility.addClass(next, "click-disabled");
 };
-MAQ.enableNext = function (sGridName) {
+MAQ.enableNext = function(sGridName) {
     var next = document.getElementById(sGridName + "_Next");
     MAQUtility.removeClass(next, "click-disabled");
 };
-MAQ.goLast = function (oElement, sGridName) {
+MAQ.goLast = function(oElement, sGridName) {
     var gridObjectPosition, oCurrentGridConfiguration;
     if (!MAQUtility.hasClass(oElement, "click-disabled")) {
         if (MAQ.gridName.length) {
@@ -1541,7 +1208,7 @@ MAQ.goLast = function (oElement, sGridName) {
         }
     }
 };
-MAQ.goFirst = function (oElement, sGridName) {
+MAQ.goFirst = function(oElement, sGridName) {
     var gridObjectPosition, oCurrentGridConfiguration;
     if (!MAQUtility.hasClass(oElement, "click-disabled")) {
         if (MAQ.gridName.length) {
@@ -1559,7 +1226,7 @@ MAQ.goFirst = function (oElement, sGridName) {
         }
     }
 };
-MAQ.goPrevious = function (oElement, sGridName) {
+MAQ.goPrevious = function(oElement, sGridName) {
     var gridObjectPosition, oCurrentGridConfiguration;
     if (!MAQUtility.hasClass(oElement, "click-disabled")) {
         if (MAQ.gridName.length > 0) {
@@ -1567,7 +1234,7 @@ MAQ.goPrevious = function (oElement, sGridName) {
             if (-1 < gridObjectPosition) {
                 oCurrentGridConfiguration = MAQ.gridObject[gridObjectPosition];
                 pageid = oCurrentGridConfiguration.currentPage;
-                if(document.getElementsByClassName("ListOptionContainer") && document.getElementsByClassName("ListOptionContainer")[0]) 
+                if (document.getElementsByClassName("ListOptionContainer") && document.getElementsByClassName("ListOptionContainer")[0])
                     document.getElementsByClassName("ListOptionContainer")[0].value = pageid;
                 oCurrentGridConfiguration.currentPage = parseInt(oCurrentGridConfiguration.currentPage.toString()) - 1;
                 MAQ.setViewRecords(oCurrentGridConfiguration);
@@ -1584,7 +1251,7 @@ MAQ.goPrevious = function (oElement, sGridName) {
         }
     }
 };
-MAQ.goNext = function (oElement, sGridName) {
+MAQ.goNext = function(oElement, sGridName) {
     var gridObjectPosition, oCurrentGridConfiguration;
     if (!MAQUtility.hasClass(oElement, "click-disabled")) {
         if (MAQ.gridName.length > 0) {
@@ -1593,7 +1260,7 @@ MAQ.goNext = function (oElement, sGridName) {
                 oCurrentGridConfiguration = MAQ.gridObject[gridObjectPosition];
                 oCurrentGridConfiguration.currentPage = parseInt(oCurrentGridConfiguration.currentPage.toString()) + 1;
                 pageid = oCurrentGridConfiguration.currentPage + 1;
-                if(document.getElementsByClassName("ListOptionContainer") && document.getElementsByClassName("ListOptionContainer")[0]) 
+                if (document.getElementsByClassName("ListOptionContainer") && document.getElementsByClassName("ListOptionContainer")[0])
                     document.getElementsByClassName("ListOptionContainer")[0].value = pageid;
                 MAQ.setViewRecords(oCurrentGridConfiguration);
                 if (!oCurrentGridConfiguration.serverGrid.enabled) {
@@ -1624,8 +1291,9 @@ function isNumber(event, oElement, sGridName) {
 }
 
 // Navigate to page entered in text box
-MAQ.goToPage = function (iCharCode, oElement, sGridName) {
-    var iCurrentPage, iGridIndex, iLastPage = 0, oCurrentGridConfig;
+MAQ.goToPage = function(iCharCode, oElement, sGridName) {
+    var iCurrentPage, iGridIndex, iLastPage = 0,
+        oCurrentGridConfig;
     if (oElement && oElement.value) {
         iCurrentPage = parseInt(oElement.value);
         if (iCharCode === 13 && iCurrentPage) {
@@ -1640,8 +1308,13 @@ MAQ.goToPage = function (iCharCode, oElement, sGridName) {
         }
     }
 };
-MAQ.sortDataWithinGroup = function (oGridConfiguration, sFieldName, sSortFlag, sSortType) {
-    var iCount = 0, iTotal = oGridConfiguration.groupedRowHeader.groupHeaderName.length, iInnerCount = 0, iInnerTotal = oGridConfiguration.data.length, arrTemp = [], arrSortedMerged = [];
+MAQ.sortDataWithinGroup = function(oGridConfiguration, sFieldName, sSortFlag, sSortType) {
+    var iCount = 0,
+        iTotal = oGridConfiguration.groupedRowHeader.groupHeaderName.length,
+        iInnerCount = 0,
+        iInnerTotal = oGridConfiguration.data.length,
+        arrTemp = [],
+        arrSortedMerged = [];
     if (oGridConfiguration) {
         for (iCount = 0; iCount < iTotal; iCount++) {
             arrTemp = [];
@@ -1660,11 +1333,13 @@ String.prototype.replaceAll = function(search, replacement) {
     var target = this;
     return target.replace(new RegExp(search, 'g'), replacement);
 };
-MAQ.sortJsonGrid = function (cellObject, sGridName, fieldName) {
-    var gridObjectPosition, sortOrder, sortFlag, oCurrentGridConfiguration, columnCounter, sortType = String, sortKey = "", oSortIndicators, iCount, oArrow;
+MAQ.sortJsonGrid = function(cellObject, sGridName, fieldName) {
+    var gridObjectPosition, sortOrder, sortFlag, oCurrentGridConfiguration, columnCounter, sortType = String,
+        sortKey = "",
+        oSortIndicators, iCount, oArrow;
     if (MAQ.gridName.length > 0) {
         pageid = 1;
-        if(document.getElementsByClassName("ListOptionContainer") && document.getElementsByClassName("ListOptionContainer")[0]) 
+        if (document.getElementsByClassName("ListOptionContainer") && document.getElementsByClassName("ListOptionContainer")[0])
             document.getElementsByClassName("ListOptionContainer")[0].value = 1;
         gridObjectPosition = MAQ.gridName.indexOf(sGridName);
         if (-1 < gridObjectPosition) {
@@ -1716,12 +1391,12 @@ MAQ.sortJsonGrid = function (cellObject, sGridName, fieldName) {
                     MAQUtility.addClass(oSortIndicators[iCount], "itemHide");
                 }
                 MAQUtility.removeClass(document.querySelector("#" + sGridName + "Head .jsonGridHeaderAlternate"), "jsonGridHeaderAlternate");
-                oArrow = cellObject.querySelector("." + fieldName.replaceAll(' ', '_') + "Hand");
+                oArrow = cellObject.querySelector("." + fieldName.replace(/[!\"#$%&'\(\)\*\+,\.\/:;<=>\?\@\[\\\]\^`\{\|\}~ ]/g, '_') + "Hand");
                 if ("asc" === cellObject.getAttribute("sortorder")) {
-                    oArrow.innerHTML = '<span class="desc"></span>';
+                    $(oArrow).html('<span class="desc"></span>');
                     MAQUtility.removeClass(oArrow, "itemHide");
                 } else {
-                    oArrow.innerHTML = '<span class="asc"></span>';
+                    $(oArrow).html('<span class="asc"></span>');
                     MAQUtility.removeClass(oArrow, "itemHide");
                 }
                 MAQUtility.addClass(oArrow.parentNode, "jsonGridHeaderAlternate");
@@ -1737,8 +1412,24 @@ MAQ.sortJsonGrid = function (cellObject, sGridName, fieldName) {
         }
     }
 };
-MAQ.CreatePaginationControl = function (GridConfiguration) {
-    var paginationSpaceRow = GridConfiguration.tblFoot.insertRow(0), row = GridConfiguration.tblFoot.insertRow(1), rightRow, leftGrid, rightGrid, rightSpaceCell, spaceCell = paginationSpaceRow.insertCell(0), cell = row.insertCell(0), oPaginationContainer = document.createElement("div"), oPreviousDiv = document.createElement("div"), oViewRecords = document.createElement("div"), oNextDiv = document.createElement("div"), oLabel = document.createElement("div"), oDropDownContainer = document.createElement("div"), oTotalPagesLabel = document.createElement("div"), oPageList = document.createElement("div"), iIterator, oPage, oListOptionContainerParent = document.createElement("div"), oListOptionContainer, oListOption, oSelectedElement, iDropDownWidth = 0, iCurrentPage = GridConfiguration.currentPage + 1, iLastPage = parseInt(GridConfiguration.totalPages) + 1, iTotalPages = 0;
+MAQ.CreatePaginationControl = function(GridConfiguration) {
+    var paginationSpaceRow = GridConfiguration.tblFoot.insertRow(0),
+        row = GridConfiguration.tblFoot.insertRow(1),
+        rightRow, leftGrid, rightGrid, rightSpaceCell, spaceCell = paginationSpaceRow.insertCell(0),
+        cell = row.insertCell(0),
+        oPaginationContainer = document.createElement("div"),
+        oPreviousDiv = document.createElement("div"),
+        oViewRecords = document.createElement("div"),
+        oNextDiv = document.createElement("div"),
+        oLabel = document.createElement("div"),
+        oDropDownContainer = document.createElement("div"),
+        oTotalPagesLabel = document.createElement("div"),
+        oPageList = document.createElement("div"),
+        iIterator, oPage, oListOptionContainerParent = document.createElement("div"),
+        oListOptionContainer, oListOption, oSelectedElement, iDropDownWidth = 0,
+        iCurrentPage = GridConfiguration.currentPage + 1,
+        iLastPage = parseInt(GridConfiguration.totalPages) + 1,
+        iTotalPages = 0;
     oListOptionContainer = (iLastPage > oGridConstants.iDropDownLimit) ? document.createElement("input") : document.createElement("select");
     oTotalPagesLabel.innerText = " of " + insertCommasOnly(iLastPage, 0);
     MAQUtility.addClass(oTotalPagesLabel, "jsonFooterLabel totalPagesLabel");
@@ -1772,15 +1463,15 @@ MAQ.CreatePaginationControl = function (GridConfiguration) {
     if (!GridConfiguration.isWin8App) {
         // Disable previous only if current page is 0 i.e., first page
         if (0 === GridConfiguration.currentPage) {
-            oPreviousDiv.innerHTML = '<span id="' + GridConfiguration.gridName + '_Prev" class="prev cur-pointer click-disabled" active="1" onclick="MAQ.goPrevious(this,\'' + GridConfiguration.gridName + '\')"><</span>';
+            $(oPreviousDiv).html('<span id="' + GridConfiguration.gridName + '_Prev" class="prev cur-pointer click-disabled" active="1" onclick="MAQ.goPrevious(this,\'' + GridConfiguration.gridName + '\')"><</span>');
         } else {
-            oPreviousDiv.innerHTML = '<span id="' + GridConfiguration.gridName + '_Prev" class="prev cur-pointer" active="1" onclick="MAQ.goPrevious(this,\'' + GridConfiguration.gridName + '\')"><</span>';
+            $(oPreviousDiv).html('<span id="' + GridConfiguration.gridName + '_Prev" class="prev cur-pointer" active="1" onclick="MAQ.goPrevious(this,\'' + GridConfiguration.gridName + '\')"><</span>');
         }
         if (iLastPage - 1 !== GridConfiguration.currentPage) {
-            oNextDiv.innerHTML = '<span id="' + GridConfiguration.gridName + '_Next" class="next cur-pointer" active="0" onclick="MAQ.goNext(this,\'' + GridConfiguration.gridName + '\')">></span>';
+            $(oNextDiv).html('<span id="' + GridConfiguration.gridName + '_Next" class="next cur-pointer" active="0" onclick="MAQ.goNext(this,\'' + GridConfiguration.gridName + '\')">></span>');
         }
     } else {
-        MSApp.execUnsafeLocalFunction(function () {
+        MSApp.execUnsafeLocalFunction(function() {
             if (0 === GridConfiguration.currentPage) {
                 WinJS.Utilities.setInnerHTML(oPreviousDiv, '<span id="' + GridConfiguration.gridName + '_Prev" class="prev cur-pointer click-disabled" active="1" width="24" onclick="MAQ.goPrevious(this,\'' + GridConfiguration.gridName + '\')"><</span>');
             } else {
@@ -1814,7 +1505,7 @@ MAQ.CreatePaginationControl = function (GridConfiguration) {
         if (!GridConfiguration.isWin8App) {
             oViewRecords.appendChild(oPageList);
         } else {
-            MSApp.execUnsafeLocalFunction(function () {
+            MSApp.execUnsafeLocalFunction(function() {
                 WinJS.Utilities.setInnerHTML(oViewRecords, oPageList.innerHTML);
             });
         }
@@ -1854,8 +1545,12 @@ MAQ.CreatePaginationControl = function (GridConfiguration) {
     }
 };
 
-MAQ.setDrillDown = function (sCellValue, iCurrentRow, oGridConfiguration, bEndRow) {
-    var oDrillCellContainer = document.createElement("div"), oDrillCell = document.createElement("div"), iDrillIterator, iDrillDownCounter = 0, oRow, oDrillObject = [], oRowRight, level;
+MAQ.setDrillDown = function(sCellValue, iCurrentRow, oGridConfiguration, bEndRow) {
+    var oDrillCellContainer = document.createElement("div"),
+        oDrillCell = document.createElement("div"),
+        iDrillIterator, iDrillDownCounter = 0,
+        oRow, oDrillObject = [],
+        oRowRight, level;
     MAQUtility.addClass(oDrillCell, "DrillExpandCell");
     MAQUtility.addClass(oDrillCell, "DrillExpandIcon");
     MAQUtility.addClass(oDrillCell, "HandIcon");
@@ -1905,11 +1600,24 @@ MAQ.setDrillDown = function (sCellValue, iCurrentRow, oGridConfiguration, bEndRo
     } else {
         oDrillCell.setAttribute("colspan", oGridConfiguration.columnHeader.length + iDrillDownCounter);
     }
-    return oDrillCellContainer.innerHTML + sCellValue;
+    return $(oDrillCellContainer).html() + sCellValue;
 };
-MAQ.CreateHTMLTableRow = function (GridConfiguration) {
+MAQ.CreateHTMLTableRow = function(GridConfiguration) {
     /// <disable>JS3058</disable>
-    var startIndex, endIndex, cell = null, cellCounter, drillCounter = 0, numberOfColumns = GridConfiguration.columnHeader.length, oCurrentObject = this, sIsNegativeLevel = "0", iInnerCounter = 0, iEndIndex, iCounter, row, iCount, iTotal, fMaxValue, fCurrent, sFieldName, cellBlank, innerRow, staticRow, iGroupedRowIndex = 0, iTotalGroupedRows = 0, iCurrentRowIndex = 0, bIsGroupedRow = (GridConfiguration.groupedRows && GridConfiguration.groupedRowHeader && GridConfiguration.groupedRowHeader.data), oGroupHeaderRow, sGroupHeaderChunk, oFormatterOptions = {}, iCellCounter, iCellCounterRight, oRowRight, sReturnValue, oStaticHeader, sStaticColumnName, leftGrid, rightGrid, oConfig = {}, sHeaderName = "", iHeaderIndex = 0;
+    var startIndex, endIndex, cell = null,
+        cellCounter, drillCounter = 0,
+        numberOfColumns = GridConfiguration.columnHeader.length,
+        oCurrentObject = this,
+        sIsNegativeLevel = "0",
+        iInnerCounter = 0,
+        iEndIndex, iCounter, row, iCount, iTotal, fMaxValue, fCurrent, sFieldName, cellBlank, innerRow, staticRow, iGroupedRowIndex = 0,
+        iTotalGroupedRows = 0,
+        iCurrentRowIndex = 0,
+        bIsGroupedRow = (GridConfiguration.groupedRows && GridConfiguration.groupedRowHeader && GridConfiguration.groupedRowHeader.data),
+        oGroupHeaderRow, sGroupHeaderChunk, oFormatterOptions = {},
+        iCellCounter, iCellCounterRight, oRowRight, sReturnValue, oStaticHeader, sStaticColumnName, leftGrid, rightGrid, oConfig = {},
+        sHeaderName = "",
+        iHeaderIndex = 0;
     if (GridConfiguration.serverGrid.enabled) {
         startIndex = 0;
     } else {
@@ -1932,7 +1640,10 @@ MAQ.CreateHTMLTableRow = function (GridConfiguration) {
     if ("undefined" !== GridConfiguration.inPlaceGrid.parentContainer && GridConfiguration.inPlaceGrid.parentContainer) {
         var parentBodyContainer = document.getElementById(GridConfiguration.inPlaceGrid.parentContainer).getElementsByTagName("tbody")[0];
         GridConfiguration.tblBody = parentBodyContainer;
-        var appendAfterRowID = (GridConfiguration.gridName.substr(0, GridConfiguration.gridName.lastIndexOf("_")) || ""), insert = document.querySelector("#" + GridConfiguration.inPlaceGrid.parentContainer + " #" + appendAfterRowID), iParentRowID = insert.id, insertRowAt = MAQ.getChildPosition(insert, parentBodyContainer);
+        var appendAfterRowID = (GridConfiguration.gridName.substr(0, GridConfiguration.gridName.lastIndexOf("_")) || ""),
+            insert = document.querySelector("#" + GridConfiguration.inPlaceGrid.parentContainer + " #" + appendAfterRowID),
+            iParentRowID = insert.id,
+            insertRowAt = MAQ.getChildPosition(insert, parentBodyContainer);
     }
     for (this.rowPosition = startIndex; this.rowPosition < endIndex; this.rowPosition += 1) {
         iCellCounter = 0;
@@ -1957,7 +1668,7 @@ MAQ.CreateHTMLTableRow = function (GridConfiguration) {
                 // Append static header after level 0 is encountered
                 if (oStaticHeader.staticHeader[iInnerCounter][sStaticColumnName] === GridConfiguration.data[this.rowPosition][sStaticColumnName]) {
                     staticRow = GridConfiguration.tblBody.insertRow(-1);
-                    staticRow.innerHTML = "<td colspan=" + numberOfColumns + " class=" + oStaticHeader.staticHeader[iInnerCounter].className + ">" + oStaticHeader.staticHeader[iInnerCounter].columnText + "</td>";
+                    $(staticRow).html("<td colspan=" + numberOfColumns + " class=" + oStaticHeader.staticHeader[iInnerCounter].className + ">" + oStaticHeader.staticHeader[iInnerCounter].columnText + "</td>");
                     MAQUtility.addClass(staticRow, "GridRow");
                 }
             } else if ((iCounter) < (endIndex - 1) && oStaticHeader.enabled && "-1" === oStaticHeader.staticHeader[iInnerCounter][sStaticColumnName]) {
@@ -1965,7 +1676,7 @@ MAQ.CreateHTMLTableRow = function (GridConfiguration) {
                 if (oStaticHeader.staticHeader[iInnerCounter][sStaticColumnName] === GridConfiguration.data[++iCounter][sStaticColumnName] && "1" !== sIsNegativeLevel) {
                     sIsNegativeLevel = "1";
                     staticRow = GridConfiguration.tblBody.insertRow(-1);
-                    staticRow.innerHTML = "<td colspan=" + numberOfColumns + " class=" + oStaticHeader.staticHeader[iInnerCounter].className + ">" + oStaticHeader.staticHeader[iInnerCounter].columnText + "</td>";
+                    $(staticRow).html("<td colspan=" + numberOfColumns + " class=" + oStaticHeader.staticHeader[iInnerCounter].className + ">" + oStaticHeader.staticHeader[iInnerCounter].columnText + "</td>");
                     MAQUtility.addClass(staticRow, "GridRow");
                 }
             }
@@ -1981,13 +1692,13 @@ MAQ.CreateHTMLTableRow = function (GridConfiguration) {
                 }
                 sHeaderName = GridConfiguration.data[iCounter]["groupHeaderName"];
                 iHeaderIndex = 0;
-                GridConfiguration.groupedRowHeader.data.forEach(function (element) {
+                GridConfiguration.groupedRowHeader.data.forEach(function(element) {
                     if (element.name === sHeaderName) {
                         iHeaderIndex = GridConfiguration.groupedRowHeader.data.indexOf(element);
                     }
                 });
                 oGroupHeaderRow = GridConfiguration.tblBody.insertRow(iCurrentRowIndex);
-                oGroupHeaderRow.innerHTML = "<td colspan=" + numberOfColumns + " class='" + GridConfiguration.groupedRowHeader.data[iHeaderIndex].headerClassName + "'>" + GridConfiguration.groupedRowHeader.data[iHeaderIndex].columnText + "</td>";
+                $(oGroupHeaderRow).html("<td colspan=" + numberOfColumns + " class='" + GridConfiguration.groupedRowHeader.data[iHeaderIndex].headerClassName + "'>" + GridConfiguration.groupedRowHeader.data[iHeaderIndex].columnText + "</td>");
                 MAQUtility.addClass(oGroupHeaderRow, "GroupHeaderRow");
                 if (GridConfiguration.groupedRowHeader.data[iHeaderIndex].style) {
                     MAQ.applyStyleToObject(oGroupHeaderRow, GridConfiguration.groupedRowHeader.data[iHeaderIndex].style);
@@ -2144,9 +1855,9 @@ MAQ.CreateHTMLTableRow = function (GridConfiguration) {
 
             // Format cell for drill down end
             if (!GridConfiguration.isWin8App) {
-                cell.innerHTML = sReturnValue;
+                $(cell).html(sReturnValue);
             } else {
-                MSApp.execUnsafeLocalFunction(function () {
+                MSApp.execUnsafeLocalFunction(function() {
                     WinJS.Utilities.setInnerHTML(cell, sReturnValue);
                 });
             }
@@ -2230,9 +1941,9 @@ MAQ.CreateHTMLTableRow = function (GridConfiguration) {
                 }
 
                 if (!GridConfiguration.isWin8App) {
-                    cell.innerHTML = sReturnValue;
+                    $(cell).html(sReturnValue);
                 } else {
-                    MSApp.execUnsafeLocalFunction(function () {
+                    MSApp.execUnsafeLocalFunction(function() {
                         WinJS.Utilities.setInnerHTML(cell, sReturnValue);
                     });
                 }
@@ -2247,8 +1958,17 @@ MAQ.CreateHTMLTableRow = function (GridConfiguration) {
     }
 };
 
-MAQ.CreateHTMLTableWithHeader = function (GridConfiguration) {
-    var tHead = GridConfiguration.tblHead, row = "", cell = null, iLoopCounter, drillCounter = 0, iParentCounter = 0, numberOfHeaderColumns = GridConfiguration.columnHeader.length, iParentHeaderCount = GridConfiguration.headerTemplate.length, oRowRight, oHeaderRight, iGroupEnd, arrCurrentGroup = [], iCellCounter = 0, iCellCounterRight = 0;
+MAQ.CreateHTMLTableWithHeader = function(GridConfiguration) {
+    var tHead = GridConfiguration.tblHead,
+        row = "",
+        cell = null,
+        iLoopCounter, drillCounter = 0,
+        iParentCounter = 0,
+        numberOfHeaderColumns = GridConfiguration.columnHeader.length,
+        iParentHeaderCount = GridConfiguration.headerTemplate.length,
+        oRowRight, oHeaderRight, iGroupEnd, arrCurrentGroup = [],
+        iCellCounter = 0,
+        iCellCounterRight = 0;
     row = tHead.insertRow(-1);
     if (GridConfiguration.fixedHeaderEnd) {
         oHeaderRight = GridConfiguration.tblHeadRight;
@@ -2265,7 +1985,7 @@ MAQ.CreateHTMLTableWithHeader = function (GridConfiguration) {
             }
         }
         cell.setAttribute("colspan", GridConfiguration.headerTemplate[iParentCounter].colspan || 1);
-        cell.innerHTML = GridConfiguration.headerTemplate[iParentCounter].columnText || "";
+        $(cell).html(GridConfiguration.headerTemplate[iParentCounter].columnText || "");
         cell.setAttribute("dataID", GridConfiguration.headerTemplate[iParentCounter].dataID || "parent");
         cell.setAttribute("onclick", GridConfiguration.headerTemplate[iParentCounter].onclick || "");
         MAQUtility.addClass(cell, "jsonGridParentHeader");
@@ -2283,7 +2003,7 @@ MAQ.CreateHTMLTableWithHeader = function (GridConfiguration) {
     }
     iCellCounter = 0;
     iCellCounterRight = 0;
-    for (iLoopCounter = 0; iLoopCounter < (numberOfHeaderColumns) ; iLoopCounter += 1) {
+    for (iLoopCounter = 0; iLoopCounter < (numberOfHeaderColumns); iLoopCounter += 1) {
         if (GridConfiguration.fixedHeaderEnd && parseInt(GridConfiguration.fixedHeaderEnd) <= iLoopCounter) {
             cell = oRowRight.insertCell(iCellCounterRight++);
         } else {
@@ -2330,23 +2050,23 @@ MAQ.CreateHTMLTableWithHeader = function (GridConfiguration) {
         if (GridConfiguration.columnHeader[iLoopCounter].name === GridConfiguration.gridSort.sortby && GridConfiguration.columnHeader[iLoopCounter].sortable) {
             MAQUtility.addClass(cell, "jsonGridHeaderAlternate");
             MAQUtility.addClass(document.querySelectorAll("#" + GridConfiguration.container + " .SortIndicator"), "itemHide");
-            cell.innerHTML = "<span class='ColumnText'>" + GridConfiguration.columnHeader[iLoopCounter].columnText + "</span>";
+            $(cell).html("<span class='ColumnText'>" + GridConfiguration.columnHeader[iLoopCounter].columnText + "</span>");
             if (GridConfiguration.gridSort.sortorder === "asc") {
-                cell.innerHTML += "<span class='SortIndicator " + GridConfiguration.columnHeader[iLoopCounter].name.replaceAll(' ', '_') + "Hand'>" + '<span class="asc"></span>' + "</span>";
+                $(cell).append("<span class='SortIndicator " + GridConfiguration.columnHeader[iLoopCounter].name.replace(/[!\"#$%&'\(\)\*\+,\.\/:;<=>\?\@\[\\\]\^`\{\|\}~ ]/g, '_') + "Hand'>" + '<span class="asc"></span>' + "</span>");
             } else {
-                cell.innerHTML += "<span class='SortIndicator " + GridConfiguration.columnHeader[iLoopCounter].name.replaceAll(' ', '_') + "Hand'>" + '<span class="desc"></span>' + "</span>";
+                $(cell).append("<span class='SortIndicator " + GridConfiguration.columnHeader[iLoopCounter].name.replace(/[!\"#$%&'\(\)\*\+,\.\/:;<=>\?\@\[\\\]\^`\{\|\}~ ]/g, '_') + "Hand'>" + '<span class="desc"></span>' + "</span>");
             }
         } else if (GridConfiguration.columnHeader[iLoopCounter].sortable) {
-            cell.innerHTML = "<span class='ColumnText'>" + GridConfiguration.columnHeader[iLoopCounter].columnText + "</span>";
+            $(cell).html("<span class='ColumnText'>" + GridConfiguration.columnHeader[iLoopCounter].columnText + "</span>");
             if (GridConfiguration.columnHeader[iLoopCounter].sortable) {
-                cell.innerHTML += "<span class='itemHide SortIndicator " + GridConfiguration.columnHeader[iLoopCounter].name.replaceAll(' ', '_') + "Hand'>" + '<span class="asc"></span>' + "</span>";
+                $(cell).append("<span class='itemHide SortIndicator " + GridConfiguration.columnHeader[iLoopCounter].name.replace(/[!\"#$%&'\(\)\*\+,\.\/:;<=>\?\@\[\\\]\^`\{\|\}~ ]/g, '_') + "Hand'>" + '<span class="asc"></span>' + "</span>");
             }
         } else {
-            cell.innerHTML = "<span class='ColumnText'>" + GridConfiguration.columnHeader[iLoopCounter].columnText + "</span>";
+            $(cell).html("<span class='ColumnText'>" + GridConfiguration.columnHeader[iLoopCounter].columnText + "</span>");
         }
     }
 };
-MAQ.applyStyleToObject = function (oGridObject, oStyleObject) {
+MAQ.applyStyleToObject = function(oGridObject, oStyleObject) {
     var oStyles, iCounter;
     if (typeof oStyleObject === "undefined") {
         return;
@@ -2355,12 +2075,11 @@ MAQ.applyStyleToObject = function (oGridObject, oStyleObject) {
     for (iCounter; iCounter < oStyles.length; iCounter += 1) {
         try {
             oGridObject.style[oStyles[iCounter]] = oStyleObject[oStyles[iCounter]];
-        } catch (e) {
-        }
+        } catch (e) {}
     }
 };
 
-MAQ.CreateHTMLTable = function (GridConfiguration) {
+MAQ.CreateHTMLTable = function(GridConfiguration) {
     var gridContainer, grid, oRightGrid, oContainerDiv;
     if (GridConfiguration.fixedHeaderEnd) {
         gridContainer = document.createElement("div");
@@ -2368,7 +2087,7 @@ MAQ.CreateHTMLTable = function (GridConfiguration) {
     }
     grid = document.createElement("table");
     grid.setAttribute("id", GridConfiguration.gridName);
-    if ("string" === typeof (GridConfiguration.container)) {
+    if ("string" === typeof(GridConfiguration.container)) {
         grid.setAttribute("class", "jsonGrid");
     } else {
         grid.setAttribute("class", "InnerJsonGrid");
@@ -2399,8 +2118,14 @@ MAQ.CreateHTMLTable = function (GridConfiguration) {
     return (GridConfiguration.fixedHeaderEnd) ? gridContainer : grid;
 };
 
-MAQ.CreateLegends = function (oGridConfiguration) {
-    var sGridContainer, oLegendContainer = document.createElement("div"), oLegendSectionCover = document.createElement("div"), oLegendTitleSection = document.createElement("div"), oLegendTitleLabel = document.createElement("div"), oLegendSection = document.createElement("div"), oLegendSpace, oLegendLabel, oLegendIndicator, oLegendDivision, iIterator = 0, oData;
+MAQ.CreateLegends = function(oGridConfiguration) {
+    var sGridContainer, oLegendContainer = document.createElement("div"),
+        oLegendSectionCover = document.createElement("div"),
+        oLegendTitleSection = document.createElement("div"),
+        oLegendTitleLabel = document.createElement("div"),
+        oLegendSection = document.createElement("div"),
+        oLegendSpace, oLegendLabel, oLegendIndicator, oLegendDivision, iIterator = 0,
+        oData;
     MAQUtility.addClass(oLegendContainer, "LegendContainer");
     MAQUtility.addClass(oLegendSection, "LegendSection");
     if (oGridConfiguration.legends && oGridConfiguration.legends.legendTemplate) {
@@ -2437,9 +2162,9 @@ MAQ.CreateLegends = function (oGridConfiguration) {
     }
     oGridConfiguration.containerObject.appendChild(oLegendContainer);
 };
-MAQ.JsonGrid = function (gridConfigurationOptions) {
+MAQ.JsonGrid = function(gridConfigurationOptions) {
     var oAttribute, tBody, checkKeys, bodyContainer, innerTable, indexPositionOfCurrentGrid, iIterator, iColumnIterator, iCount, iTotal, oTableBody, iColumnHeaderLength, iDataLength, iMargin, oAttributeObject, nCurrentValue, nCurrentColumn;
-    if (typeof (gridConfigurationOptions.container) === "string") {
+    if (typeof(gridConfigurationOptions.container) === "string") {
         this.containerObject = document.getElementById(gridConfigurationOptions.container);
 
         // Append data if grid already exists
@@ -2636,7 +2361,7 @@ MAQ.JsonGrid = function (gridConfigurationOptions) {
 
             // Add scroll handler if grid supports scrolling and Server Side is enabled.
             if (this.gridOptions.scrolling.enabled) {
-                this.gridOptions.containerObject.addEventListener("scroll", function (oEvent) {
+                this.gridOptions.containerObject.addEventListener("scroll", function(oEvent) {
                     MAQ.handleGridScroll(oEvent.currentTarget);
                 }, false);
             }
@@ -2711,6 +2436,11 @@ MAQ.JsonGrid = function (gridConfigurationOptions) {
             }
         }
 
+        if (0 === this.gridOptions.totalPages) {
+            $('.DataDiv').css('height', '100%');
+        } else {
+            $('.DataDiv').css('height', 'calc(100% - 35px)');
+        }
         // Create Pagination if grid supports pagination
         if (this.gridOptions.pagination.paginate) {
             new MAQ.CreateHTMLTableWithHeader(this.gridOptions);
@@ -2743,7 +2473,7 @@ MAQ.JsonGrid = function (gridConfigurationOptions) {
             MAQ.gridObject.push(this.gridOptions);
         }
     }
-    
+
     //Pagination issue fix
     var selectedElement = document.getElementsByClassName("ListOptionContainer")[0];
     if (undefined !== selectedElement) {
@@ -2757,25 +2487,26 @@ MAQ.JsonGrid = function (gridConfigurationOptions) {
     return true;
 };
 
-function jumpTo(index) {    
-    if(document.getElementsByClassName('ListOptionContainer') && document.getElementsByClassName('ListOptionContainer')[index] && document.getElementsByClassName('ListOptionContainer')[index].options){
+function jumpTo(index) {
+    if (document.getElementsByClassName('ListOptionContainer') && document.getElementsByClassName('ListOptionContainer')[index] && document.getElementsByClassName('ListOptionContainer')[index].options) {
         pageid = document.getElementsByClassName('ListOptionContainer')[index].options.selectedIndex + 1;
         var totalPages = document.getElementsByClassName('totalPagesLabel')[index].innerHTML;
-        totalPages.substring(totalPages.indexOf('of') + 2 , totalPages.length).trim();
+        totalPages.substring(totalPages.indexOf('of') + 2, totalPages.length).trim();
         var oElemJumpTo = document.getElementsByClassName('ListOptionContainer')[index].options[document.getElementsByClassName('ListOptionContainer')[index].options.selectedIndex];
-        if(pageid > totalPages){
+        if (pageid > totalPages) {
             pageid = totalPages;
             document.getElementsByClassName('ListOptionContainer')[index].value = pageid;
             oElemJumpTo = document.getElementsByClassName('ListOptionContainer')[index].options[pageid - 1];
         }
         newRecords(oElemJumpTo, $(document.getElementsByClassName('ListOptionContainer')[index]).parents('table').attr('id'));
-    } else{
+    } else {
         pageid = document.getElementsByClassName('ListOptionContainer')[0].value;
     }
 }
 // Function to create and update hidden chunk (this will be called only in case of server side grid)
-MAQ.createHiddenChunk = function (gridOptions) {
-    var sContainer = gridOptions.container, oHiddenContainer = document.getElementById(sContainer + "_hidden");
+MAQ.createHiddenChunk = function(gridOptions) {
+    var sContainer = gridOptions.container,
+        oHiddenContainer = document.getElementById(sContainer + "_hidden");
     if (oHiddenContainer) {
         gridOptions.currentPage = parseInt(oHiddenContainer.getAttribute("data-currentPage"));
         gridOptions.totalPages = parseInt(oHiddenContainer.getAttribute("data-totalPages"));
@@ -2798,8 +2529,9 @@ MAQ.createHiddenChunk = function (gridOptions) {
 };
 
 // Function to send service request in case of server side grid
-MAQ.callService = function (gridOptions) {
-    var oHiddenContainer = document.getElementById(gridOptions.container + "_hidden"), sCallBack = gridOptions.serverGrid.sendRequestFunction;
+MAQ.callService = function(gridOptions) {
+    var oHiddenContainer = document.getElementById(gridOptions.container + "_hidden"),
+        sCallBack = gridOptions.serverGrid.sendRequestFunction;
 
     // Properties to be sent in request
     var oParameters = {
@@ -2813,14 +2545,14 @@ MAQ.callService = function (gridOptions) {
     if (sCallBack && typeof window[sCallBack] === oGridConstants.sFunction) {
         if (gridOptions.pagination.paginate) {
             // Empty the container before fetching next set of data in case of server side pagination
-            document.getElementById(gridOptions.container).innerHTML = "";
+            $('#' + gridOptions.container).html("");
         }
         window[sCallBack](oParameters);
     }
 };
 
 // Function to add scroll handler
-MAQ.handleGridScroll = function (oCurrentElement) {
+MAQ.handleGridScroll = function(oCurrentElement) {
     var oHiddenContainer, gridOptions, sRequestPending, iMaxPageNumber, iCurrentPage, iGridObjectPosition = MAQ.gridName.indexOf(oCurrentElement.id + "_Grid");
     if (-1 < iGridObjectPosition) {
         gridOptions = MAQ.gridObject[iGridObjectPosition];
@@ -2839,8 +2571,9 @@ MAQ.handleGridScroll = function (oCurrentElement) {
 };
 
 // Function to append data to existing grid on scroll
-MAQ.appendDataToGrid = function (gridOptions) {
-    var oHiddenContainer = document.getElementById(gridOptions.container + "_hidden"), oGridConfigurationOptions, iGridObjectPosition = MAQ.gridName.indexOf(gridOptions.container + "_Grid");
+MAQ.appendDataToGrid = function(gridOptions) {
+    var oHiddenContainer = document.getElementById(gridOptions.container + "_hidden"),
+        oGridConfigurationOptions, iGridObjectPosition = MAQ.gridName.indexOf(gridOptions.container + "_Grid");
     if (-1 < iGridObjectPosition) {
         oGridConfigurationOptions = MAQ.gridObject[iGridObjectPosition];
         oGridConfigurationOptions.data = gridOptions.data;
@@ -2849,8 +2582,15 @@ MAQ.appendDataToGrid = function (gridOptions) {
     }
 };
 
-MAQ.drillDown = function (oObject, sCallBack, sContainer) {
-    var iGridObjectPosition = MAQ.gridName.indexOf(sContainer + "_Grid"), bAccordion = MAQ.gridObject[iGridObjectPosition].drillDown.accordion, oDrillSet = {}, oDrillIconSet = {}, oReferencedCell, oReferencedRow = oObject.parentNode.parentNode.nextSibling, bIsExpanded = "1" === oObject.getAttribute("data-expanded") ? true : false, iCount = 0, iTotal = 0;
+MAQ.drillDown = function(oObject, sCallBack, sContainer) {
+    var iGridObjectPosition = MAQ.gridName.indexOf(sContainer + "_Grid"),
+        bAccordion = MAQ.gridObject[iGridObjectPosition].drillDown.accordion,
+        oDrillSet = {},
+        oDrillIconSet = {},
+        oReferencedCell, oReferencedRow = oObject.parentNode.parentNode.nextSibling,
+        bIsExpanded = "1" === oObject.getAttribute("data-expanded") ? true : false,
+        iCount = 0,
+        iTotal = 0;
     if (oReferencedRow && "undefined" !== typeof oReferencedRow) {
         oReferencedCell = oReferencedRow.childNodes[0];
     }
@@ -2882,7 +2622,7 @@ MAQ.drillDown = function (oObject, sCallBack, sContainer) {
 };
 
 // Function to calculate max and min
-MAQ.calculateMinMax = function (gridOptions, iStartIndex, iEndIndex) {
+MAQ.calculateMinMax = function(gridOptions, iStartIndex, iEndIndex) {
     var iColumnIncludedLength, iColumnIterator, nMax, nCurrentValue, nMin, nCurrentColumn, iIterator;
     iColumnIncludedLength = gridOptions.dataConfiguration.columnsIncluded.length;
     for (iColumnIterator = 0; iColumnIterator < iColumnIncludedLength; iColumnIterator++) {
@@ -2930,14 +2670,15 @@ MAQ.calculateMinMax = function (gridOptions, iStartIndex, iEndIndex) {
     }
     return gridOptions;
 };
-MAQ.getChildPosition = function (oChildNode, oParentNode) {
-    var index = -1, iCount, iTotal = oParentNode.querySelectorAll(oChildNode.tagName).length, aTrs = oParentNode.querySelectorAll(oChildNode.tagName);
+MAQ.getChildPosition = function(oChildNode, oParentNode) {
+    var index = -1,
+        iCount, iTotal = oParentNode.querySelectorAll(oChildNode.tagName).length,
+        aTrs = oParentNode.querySelectorAll(oChildNode.tagName);
     for (iCount = 0; iCount < iTotal; iCount++) {
         var oCurrentNode = aTrs[iCount];
         if (oChildNode === oCurrentNode) {
             index = iCount;
             return index;
-            break;
         }
     }
 };
