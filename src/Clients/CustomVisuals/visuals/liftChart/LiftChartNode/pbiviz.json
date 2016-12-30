@@ -2,7 +2,7 @@
   "visual": {
     "name": "Lift Chart",
     "displayName": "Lift Chart",
-    "guid": "PBI_CV_309E6B47_39A5_4681_808F_132AFB230860",
+    "guid": "PBI_CV_0C8159C4_5413_4262_A0E1_4E0CEF5FFC65",
     "visualClassName": "Visual",
     "version": "1.0.0",
     "description": "Lift chart is used to show the lift data with respect to ideal data",
