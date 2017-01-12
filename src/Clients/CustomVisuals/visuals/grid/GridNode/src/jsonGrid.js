@@ -35,10 +35,10 @@ function myMAQlibrary(dWagon, gridFormatters) {
     for (jCount = 0; jCount < dWagon.table.rows.length; jCount++) {
         obj = {};
         for (iCount = 0; iCount < dWagon.table.columns.length; iCount++) {
-            var col = dWagon.table.columns[iCount].queryName;
-            var name = col.substring(col.indexOf('.') + 1, col.length);
+            var col = dWagon.table.columns[iCount].queryName.replaceAll('"', '\'');
+            var name = col.substring(col.indexOf('.') + 1, col.length).replaceAll('"', '\'');
             if (col.lastIndexOf(')') === (col.length - 1)) {
-                name = col.substring(col.indexOf('.') + 1, col.lastIndexOf(')'));
+                name = col.substring(col.indexOf('.') + 1, col.lastIndexOf(')')).replaceAll('"', '\'');
             }
             obj[name] = dWagon.table.rows[jCount][iCount];
         }
@@ -49,11 +49,11 @@ function myMAQlibrary(dWagon, gridFormatters) {
     config.columnHeader = [];
     for (iCount = 0; iCount < dWagon.table.columns.length; iCount++) {
         obj = {};
-        obj.columnText = dWagon.table.columns[iCount].displayName;
-        var col = dWagon.table.columns[iCount].queryName;
+        obj.columnText = dWagon.table.columns[iCount].displayName.replaceAll('"', '\'');
+        var col = dWagon.table.columns[iCount].queryName.replaceAll('"', '\'');
         obj.name = col.substring(col.indexOf('.') + 1, col.length);
         if (col.lastIndexOf(')') === (col.length - 1)) {
-            obj.name = col.substring(col.indexOf('.') + 1, col.lastIndexOf(')'));
+            obj.name = col.substring(col.indexOf('.') + 1, col.lastIndexOf(')')).replaceAll('"', '\'');
         }
         obj.sortable = true;
         obj.sortType = "parseString";
@@ -67,10 +67,10 @@ function myMAQlibrary(dWagon, gridFormatters) {
                 }
                 break;
         }
-        var col = dWagon.table.columns[iCount].queryName;
-        obj.sortKey = col.substring(col.indexOf('.') + 1, col.length);
+        var col = dWagon.table.columns[iCount].queryName.replaceAll('"', '\'');
+        obj.sortKey = col.substring(col.indexOf('.') + 1, col.length).replaceAll('"', '\'');
         if (col.lastIndexOf(')') === (col.length - 1)) {
-            obj.sortKey = col.substring(col.indexOf('.') + 1, col.lastIndexOf(')'));
+            obj.sortKey = col.substring(col.indexOf('.') + 1, col.lastIndexOf(')')).replaceAll('"', '\'');
         }
         obj.headerClassName = "TableHeader";
         obj.formatter = "";
@@ -81,7 +81,7 @@ function myMAQlibrary(dWagon, gridFormatters) {
     }
     var col = dWagon.table.columns[0].queryName;
     var gridSort = {
-        "sortby": col.substring(col.indexOf('.') + 1, col.length),
+        "sortby": col.substring(col.indexOf('.') + 1, col.length).replaceAll('"', '\''),
         "sortorder": "asc",
         "sortType": "parseString"
     };
@@ -93,7 +93,7 @@ function myMAQlibrary(dWagon, gridFormatters) {
             sortKey = dWagon.table.columns.length;
         sortKey--;
         col = dWagon.table.columns[sortKey].queryName;
-        gridSort.sortby = col.substring(col.indexOf('.') + 1, col.length);
+        gridSort.sortby = col.substring(col.indexOf('.') + 1, col.length).replaceAll('"', '\'');
     } else {
         sortKey = 0;
     }
@@ -1391,7 +1391,7 @@ MAQ.sortJsonGrid = function(cellObject, sGridName, fieldName) {
                     MAQUtility.addClass(oSortIndicators[iCount], "itemHide");
                 }
                 MAQUtility.removeClass(document.querySelector("#" + sGridName + "Head .jsonGridHeaderAlternate"), "jsonGridHeaderAlternate");
-                oArrow = cellObject.querySelector("." + fieldName.replace(/[!\"#$%&'\(\)\*\+,\.\/:;<=>\?\@\[\\\]\^`\{\|\}~ ]/g, '_') + "Hand");
+                oArrow = cellObject.querySelector(".sort" + fieldName.replace(/[!\"#$%&'\(\)\*\+,\.\/:;<=>\?\@\[\\\]\^`\{\|\}~ ]/g, '_') + "Hand");
                 if ("asc" === cellObject.getAttribute("sortorder")) {
                     $(oArrow).html('<span class="desc"></span>');
                     MAQUtility.removeClass(oArrow, "itemHide");
@@ -2052,14 +2052,14 @@ MAQ.CreateHTMLTableWithHeader = function(GridConfiguration) {
             MAQUtility.addClass(document.querySelectorAll("#" + GridConfiguration.container + " .SortIndicator"), "itemHide");
             $(cell).html("<span class='ColumnText'>" + GridConfiguration.columnHeader[iLoopCounter].columnText + "</span>");
             if (GridConfiguration.gridSort.sortorder === "asc") {
-                $(cell).append("<span class='SortIndicator " + GridConfiguration.columnHeader[iLoopCounter].name.replace(/[!\"#$%&'\(\)\*\+,\.\/:;<=>\?\@\[\\\]\^`\{\|\}~ ]/g, '_') + "Hand'>" + '<span class="asc"></span>' + "</span>");
+                $(cell).append("<span class='SortIndicator sort" + GridConfiguration.columnHeader[iLoopCounter].name.replace(/[!\"#$%&'\(\)\*\+,\.\/:;<=>\?\@\[\\\]\^`\{\|\}~ ]/g, '_') + "Hand'>" + '<span class="asc"></span>' + "</span>");
             } else {
-                $(cell).append("<span class='SortIndicator " + GridConfiguration.columnHeader[iLoopCounter].name.replace(/[!\"#$%&'\(\)\*\+,\.\/:;<=>\?\@\[\\\]\^`\{\|\}~ ]/g, '_') + "Hand'>" + '<span class="desc"></span>' + "</span>");
+                $(cell).append("<span class='SortIndicator sort" + GridConfiguration.columnHeader[iLoopCounter].name.replace(/[!\"#$%&'\(\)\*\+,\.\/:;<=>\?\@\[\\\]\^`\{\|\}~ ]/g, '_') + "Hand'>" + '<span class="desc"></span>' + "</span>");
             }
         } else if (GridConfiguration.columnHeader[iLoopCounter].sortable) {
             $(cell).html("<span class='ColumnText'>" + GridConfiguration.columnHeader[iLoopCounter].columnText + "</span>");
             if (GridConfiguration.columnHeader[iLoopCounter].sortable) {
-                $(cell).append("<span class='itemHide SortIndicator " + GridConfiguration.columnHeader[iLoopCounter].name.replace(/[!\"#$%&'\(\)\*\+,\.\/:;<=>\?\@\[\\\]\^`\{\|\}~ ]/g, '_') + "Hand'>" + '<span class="asc"></span>' + "</span>");
+                $(cell).append("<span class='itemHide SortIndicator sort" + GridConfiguration.columnHeader[iLoopCounter].name.replace(/[!\"#$%&'\(\)\*\+,\.\/:;<=>\?\@\[\\\]\^`\{\|\}~ ]/g, '_') + "Hand'>" + '<span class="asc"></span>' + "</span>");
             }
         } else {
             $(cell).html("<span class='ColumnText'>" + GridConfiguration.columnHeader[iLoopCounter].columnText + "</span>");
