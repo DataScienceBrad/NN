@@ -1,5 +1,6 @@
 /*JSHint Count = 0*/
 function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
+
     var isOverlapped = false, totalWindowWidth = 0;
     if (liftFormatters.markerWidth < 0) {
         liftFormatters.markerWidth = 1;
@@ -80,17 +81,18 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
             "enabled": liftFormatters.legendValues,
             "enableClick": liftFormatters.enableLegendClick,
             "align": "center",
-            "verticalAlign": "bottom",
-            "verticalAlignLegend": false,
+            "verticalAlign": "top",
+            "verticalAlignLegend": true,
             "layout": "horizontal",
             "floating": false,
             "borderStyle": "",
-            "borderWidth": 1,
+            "borderWidth": 0,
             "borderRadius": 2,
             "symbolWidth": 10,
             "symbolPadding": 3,
             "individualDistance": 10,
             "lineHeight": 5,
+            "symbolRadius": 30,
             "style": {
                 "fill": "#444444",
                 "fontSize": "12px",
@@ -242,7 +244,7 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
     for (iCount = 0; iCount < dWagon.metadata.columns.length; iCount++) {
         keys = Object.keys(dWagon.metadata.columns[iCount].roles);
         for (jCount = 0; jCount < keys.length; jCount++) {
-            if ('category' === keys[jCount] || typeof(dWagon.table.rows[0][iCount]) === 'number') {
+            if ('category' === keys[jCount] || typeof (dWagon.table.rows[0][iCount]) === 'number') {
                 roles[keys[jCount]].push(iCount);
             }
         }
@@ -257,7 +259,7 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
         sectionHeader = dWagon.table.columns[roles.category[0]].displayName;
     }
     for (iCount = 0; iCount < roles.measure.length; iCount++) {
-        if (typeof(dWagon.table.rows[0][roles.measure[iCount]]) === 'number') {
+        if (typeof (dWagon.table.rows[0][roles.measure[iCount]]) === 'number') {
             obj = {
                 name: dWagon.table.columns[roles.measure[iCount]].displayName,
                 data: []
@@ -274,7 +276,7 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
     }
     liftConfig.series = data;
     for (legendName = 0; legendName < dWagon.categorical.values.length; legendName++) {
-        if(liftConfig.series[legendName])
+        if (liftConfig.series[legendName])
             liftConfig.series[legendName].name = dWagon.categorical.values[legendName].source.displayName;
         liftConfig.series[legendName].enabled = powerbi.extensibility.visual.PBI_CV_0C8159C4_5413_4262_A0E1_4E0CEF5FFC65.Visual.getLegendEnable()[legendName];
     }
@@ -312,7 +314,7 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
             // Handle Object
             if (obj instanceof Object) {
                 copy = {};
-                Object.keys(obj).forEach(function(attr) {
+                Object.keys(obj).forEach(function (attr) {
                     copy[attr] = clone(obj[attr]);
                 });
                 return copy;
@@ -326,18 +328,18 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
             MAQ.utils = {};
         }
         MAQ.utils.clone = clone;
-        MAQ.utils.isNumber = function(fNumber) {
+        MAQ.utils.isNumber = function (fNumber) {
             'use strict';
             return !isNaN(parseFloat(fNumber)) && isFinite(fNumber);
         };
-        MAQ.utils.getTextDim = function(sText, oStyle, chartConfigOptions) {
+        MAQ.utils.getTextDim = function (sText, oStyle, chartConfigOptions) {
             'use strict';
             var oAttr = {
-                    x: 10,
-                    y: 10,
-                    text: sText,
-                    style: oStyle
-                },
+                x: 10,
+                y: 10,
+                text: sText,
+                style: oStyle
+            },
                 oText = MAQ.createSVGElement(chartConfigOptions.svgNS, 'text', oAttr),
                 oDim;
             chartConfigOptions.svgELE.appendChild(oText);
@@ -345,7 +347,7 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
             chartConfigOptions.svgELE.removeChild(oText);
             return oDim;
         };
-        MAQ.utils.getMultiLineSVGText = function(sSvgNS, oChartRoot, sText, oTextAttr, maxChars, iData) {
+        MAQ.utils.getMultiLineSVGText = function (sSvgNS, oChartRoot, sText, oTextAttr, maxChars, iData) {
             'use strict';
             var sTextItem, iDy = 0,
                 iLineSpacing = 0,
@@ -379,7 +381,7 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
                 }
             }
             //**Create the multiline text SVG**//
-            Object.keys(sTexts).forEach(function(sTextKey) {
+            Object.keys(sTexts).forEach(function (sTextKey) {
                 sTextItem = MAQ.utils.getTextDim(sTexts[sTextKey], oTextAttr.style || {}, {
                     svgNS: sSvgNS,
                     svgELE: oChartRoot
@@ -404,7 +406,7 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
             MAQ.addAttr(oTextGrp, 'transform', 'matrix(1 0 0 1 ' + (iSignX * iMaxWidth + iOffsetX) + ' ' + iSignY * iTotalHeight / 2 + ')');
             return oTextGrp;
         };
-        MAQ.utils.isSafe = function(literalToCheck) {
+        MAQ.utils.isSafe = function (literalToCheck) {
             'use strict';
             if (!literalToCheck) {
                 return false;
@@ -415,7 +417,7 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
            pivotArray: Performs a matrix transpose style tranformation
            @param {arr} 2D array to be pivoted
          */
-        MAQ.utils.pivotArray = function(arr) {
+        MAQ.utils.pivotArray = function (arr) {
             'use strict';
             //return if the passed array is not 2D
             if (!('[object Array]' === Object.prototype.toString.call(arr) && '[object Array]' === Object.prototype.toString.call(arr[0]))) {
@@ -438,7 +440,7 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
            toLinear: Converts a 2D array into 1D array
            @param {arr} 2D array to be convert
          */
-        MAQ.utils.toLinear = function(arr) {
+        MAQ.utils.toLinear = function (arr) {
             'use strict';
             //return if the passed array is not 2D
             if (!('[object Array]' === Object.prototype.toString.call(arr) && '[object Array]' === Object.prototype.toString.call(arr[0]))) {
@@ -453,7 +455,7 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
             return linearArr;
         };
         MAQ.utils.formatters = {
-            trimText: function(sInput) {
+            trimText: function (sInput) {
                 'use strict';
                 if (sInput.length >= 13) {
                     sInput = sInput.substring(0, 9) + '...';
@@ -465,7 +467,7 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
               @param {sInput} number to be formatted
               @param {iDecimalPlace} number to decimal values to be shown
               */
-            insertCommas: function(sInput, iDecimalPlaces) {
+            insertCommas: function (sInput, iDecimalPlaces) {
                 'use strict';
                 if (0 === parseFloat(sInput)) {
                     return '0';
@@ -496,7 +498,7 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
                 }
                 return sIntegerDigits + sFractionDigits;
             },
-            addPercent: function(sInput, iDecimalPlaces) {
+            addPercent: function (sInput, iDecimalPlaces) {
                 'use strict';
                 if (0 === parseFloat(sInput)) {
                     return '0%';
@@ -514,7 +516,7 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
               @param {sInput} number to be formatted
               @param {iDecimalPlace} number to decimal values to be shown
               */
-            scaleFormatter: function(sInput, iDecimalPlaces) {
+            scaleFormatter: function (sInput, iDecimalPlaces) {
                 'use strict';
                 //TODO: Add trillion data formatter also
                 if (0 === parseFloat(sInput)) {
@@ -569,7 +571,7 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
                 }
                 return (fTempValue < 0 ? '-' : '') + sIntegerDigits + sFractionDigits + sCurrency;
             },
-            revenueFormatter: function(sInput, iDecimalPlaces) {
+            revenueFormatter: function (sInput, iDecimalPlaces) {
                 'use strict';
                 if (0 === parseFloat(sInput)) {
                     return '$0';
@@ -601,7 +603,7 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
             /*
              * initStyles: adds the MAQcharts style tag to the document head and sets isInitialized to true
              */
-            initStyles: function() {
+            initStyles: function () {
                 'use strict';
                 if (this.isInitialized) {
                     return this.styleTag;
@@ -622,7 +624,7 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
             /*
              * removeStyles: removes the MAQcharts style tag to the document head and sets isInitialized to false
              */
-            removeStyles: function() {
+            removeStyles: function () {
                 'use strict';
                 if (!this.isInitialized) {
                     return;
@@ -637,7 +639,7 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
              * @param {selector}: the CSS selector to add the styles to
              * @param {rule}: the CSS rules separated by semicolon
              */
-            addRule: function(selector, rule) {
+            addRule: function (selector, rule) {
                 'use strict';
                 //if selector already exists in styles then return to avoid duplicate rules
                 if (undefined !== this.rules[selector]) {
@@ -663,7 +665,7 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
              * jsonToRule: converts a json string or object to semicolon separated css rules
              * @param {sJson}: the CSS rules in json string or object form
              */
-            jsonToRule: function(sJson) {
+            jsonToRule: function (sJson) {
                 'use strict';
                 var oJson, rule = '',
                     key;
@@ -673,7 +675,7 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
                     //else assume it is an Object
                     oJson = sJson;
                 }
-                Object.keys(oJson).forEach(function(key) {
+                Object.keys(oJson).forEach(function (key) {
                     rule += key + ':' + oJson[key] + ';';
                 });
                 return rule;
@@ -683,7 +685,7 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
              * @param {oElements}: array of elements or a single element on which class has to be added
              * @param {sClass}: the class to be added
              */
-            addClass: function(oElements, sClass) {
+            addClass: function (oElements, sClass) {
                 'use strict';
                 if (!oElements) {
                     return;
@@ -718,7 +720,7 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
              * @param {oElements}: array of elements or a single element from which class has to be removed
              * @param {sClass}: the class to be removed
              */
-            removeClass: function(oElements, sClass) {
+            removeClass: function (oElements, sClass) {
                 'use strict';
                 if (!oElements) {
                     return;
@@ -751,7 +753,7 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
         MAQ.charts: Take config from user and call to chart rendering functions
         @param {chartConfigOptions} User configuration
         */
-        MAQ.charts = function(chartConfigOptions) {
+        MAQ.charts = function (chartConfigOptions) {
             'use strict';
             var x, sResult, oTreemapOptions, oToolTip, oTTStyle, self;
             this.chartOptions = {
@@ -836,7 +838,7 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
                             dx: 0,
                             dy: 0
                         },
-                        onDisplayAreaChange: function() {
+                        onDisplayAreaChange: function () {
                             return;
                         }
                     },
@@ -1142,7 +1144,7 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
             };
             /* Copy configuration parameters */
             self = this;
-            Object.keys(chartConfigOptions).forEach(function(x) {
+            Object.keys(chartConfigOptions).forEach(function (x) {
                 MAQ.mergeObjects(x, self.chartOptions, chartConfigOptions);
             });
             /* Validate Important Options */
@@ -1204,7 +1206,7 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
         @param {chartConfigOptions} user configuration parameters
         @param (inData) to specify whether data values are in data object
         */
-        MAQ.validateDirectSeriesColor = function(chartConfigOptions, inData) {
+        MAQ.validateDirectSeriesColor = function (chartConfigOptions, inData) {
             'use strict';
             var iCount, arrColor, iColorLength, iSeriesLength, iLine, iBar, legendColor = [],
                 arrTempColorSeries = [],
@@ -1282,7 +1284,7 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
         MAQ.validateOptions: Validates configuration parameter passed by user
         @param {chartConfigOptions} user configuration parameters
         */
-        MAQ.validateOptions = function(chartConfigOptions) {
+        MAQ.validateOptions = function (chartConfigOptions) {
             'use strict';
             if (!chartConfigOptions.chart.renderTo) {
                 return 'Provide an ID of element to render chart.';
@@ -1322,7 +1324,7 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
         @param {sAnimateValue} value to set for the property
         @param {iDuration} duration of animation
         */
-        MAQ.animateElement = function(oELE, sPropertyToAnimate, sAnimateValue, iDuration) {
+        MAQ.animateElement = function (oELE, sPropertyToAnimate, sAnimateValue, iDuration) {
             'use strict';
             var currentVal = oELE.getAttributeNS(null, sPropertyToAnimate),
                 increment, counter, process;
@@ -1333,7 +1335,7 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
             iDuration = iDuration / 3.5;
             increment = (sAnimateValue - currentVal) / iDuration;
             counter = 1;
-            process = setInterval(function() {
+            process = setInterval(function () {
                 currentVal += increment;
                 MAQ.addAttr(oELE, sPropertyToAnimate, currentVal);
                 if (counter >= iDuration) {
@@ -1349,7 +1351,7 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
         @param {sAnimateValue} value to set for the property
         @param {iDuration} duration of animation
         */
-        MAQ.animateClipElement = function(oELE, sPropertyToAnimate, sAnimateValue, iDuration) {
+        MAQ.animateClipElement = function (oELE, sPropertyToAnimate, sAnimateValue, iDuration) {
             'use strict';
             if (null !== document.getElementById(oELE)) {
                 var currentVal = document.getElementById(oELE).getAttribute(sPropertyToAnimate),
@@ -1364,7 +1366,7 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
                 iDuration = iDuration / 3.5;
                 increment = (sAnimateValue - currentVal) / iDuration;
                 counter = 1;
-                process = setInterval(function() {
+                process = setInterval(function () {
                     if (null !== document.getElementById(oELE)) {
                         currentVal += increment;
                         document.getElementById(oELE).setAttribute(sPropertyToAnimate, currentVal);
@@ -1382,7 +1384,7 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
         @param {oDest} destination object
         @param {oSource} source object
         */
-        MAQ.mergeObjects = function(x, oDest, oSource) {
+        MAQ.mergeObjects = function (x, oDest, oSource) {
             'use strict';
             var copy, attr;
             if (typeof oSource[x] === 'string' || typeof oSource[x] === 'number') {
@@ -1400,7 +1402,7 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
             }
             if (oDest[x] instanceof Object) {
                 attr = null;
-                Object.keys(oSource[x]).forEach(function(attr) {
+                Object.keys(oSource[x]).forEach(function (attr) {
                     if (oDest[x].hasOwnProperty(attr)) {
                         if (typeof oSource[x][attr] !== 'object') {
                             oDest[x][attr] = oSource[x][attr];
@@ -1437,7 +1439,7 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
         MAQ.computeStrokeDashStyle: Returns SVG value of stroke-dash for a user-friendly name
         @param {sDashType} user friendly stroke-dash name
         */
-        MAQ.computeStrokeDashStyle = function(sDashType) {
+        MAQ.computeStrokeDashStyle = function (sDashType) {
             'use strict';
             var sStrokeDashValue = '',
                 oDash = {
@@ -1464,7 +1466,7 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
         @param {sAttrName} attribute name
         @param {sAttrValue} attribute value
         */
-        MAQ.addAttr = function(oELE, sAttrName, sAttrValue) {
+        MAQ.addAttr = function (oELE, sAttrName, sAttrValue) {
             'use strict';
             if (oELE) {
                 oELE.setAttribute(sAttrName, sAttrValue);
@@ -1475,7 +1477,7 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
         @param {oELE} input object
         @param {oStyle} style object containing styling properties
         */
-        MAQ.applyStyle = function(oELE, oStyle) {
+        MAQ.applyStyle = function (oELE, oStyle) {
             'use strict';
             if (oStyle && typeof oStyle === 'object') {
                 var oStyleColl = Object.keys(oStyle),
@@ -1491,7 +1493,7 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
         @param {chartConfigOptions} user configuration parameters
         @param {oMargin} margin array
         */
-        MAQ.applyMargin = function(chartConfigOptions, oMargin) {
+        MAQ.applyMargin = function (chartConfigOptions, oMargin) {
             'use strict';
             if (oMargin.length <= 1 || oMargin.length > 4 || oMargin.length === 3) {
                 /*Condition Change*/
@@ -1515,7 +1517,7 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
         @param {sText} data to be formatted
         @param {sFormatterName} formatter function/ function name
         */
-        MAQ.applyFormatter = function(sText, sFormatterName) {
+        MAQ.applyFormatter = function (sText, sFormatterName) {
             'use strict';
             if (sFormatterName) {
                 if (typeof window[sFormatterName] === 'function') {
@@ -1532,7 +1534,7 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
         MAQ.removeAllChildren: removes all child nodes
         @param {oELE} input object
         */
-        MAQ.removeAllChildren = function(oELE) {
+        MAQ.removeAllChildren = function (oELE) {
             'use strict';
             while (oELE.hasChildNodes()) {
                 oELE.removeChild(oELE.lastChild);
@@ -1545,7 +1547,7 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
         @param {min} user's minimum value
         @param {max} user's maximum value
         */
-        MAQ.getMinMax = function(oDataArray, min, max, fieldName) {
+        MAQ.getMinMax = function (oDataArray, min, max, fieldName) {
             'use strict';
             var iDataArrayLength = oDataArray.length,
                 iDataCounter = 0,
@@ -1594,7 +1596,7 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
         @param {iMax} maximum value
         @param {iNumberOfAxis} # of axis on X or Y axis
         */
-        MAQ.getNormalized_Min_Max_Interval = function(iMin, iMax, iNumberOfAxis) {
+        MAQ.getNormalized_Min_Max_Interval = function (iMin, iMax, iNumberOfAxis) {
             'use strict';
             var iOgMax = iMax,
                 iOgMin = iMin,
@@ -1688,7 +1690,7 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
         MAQ.getObjectDimension: Returns SVG element dimensions like x, y, width and height
         @param {oELE} SVG element
         */
-        MAQ.getObjectDimension = function(oELE) {
+        MAQ.getObjectDimension = function (oELE) {
             'use strict';
             if (oELE) {
                 var oMDim = {};
@@ -1705,7 +1707,7 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
         MAQ.createSVGDoc: Creates SVG document to hold the chart content
         @param {chartConfigOptions} user configuration parameters
         */
-        MAQ.createSVGDoc = function(chartConfigOptions) {
+        MAQ.createSVGDoc = function (chartConfigOptions) {
             'use strict';
             chartConfigOptions.container.style.position = 'relative';
             var svgELE = document.createElementNS(chartConfigOptions.svgNS, 'svg');
@@ -1767,7 +1769,7 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
         @param {sELEName} SVG element name
         @param {oAttr} attibute object consisting of attributes and style object
         */
-        MAQ.createSVGElement = function(nameSpace, sELEName, oAttr) {
+        MAQ.createSVGElement = function (nameSpace, sELEName, oAttr) {
             'use strict';
             var oSVGELE = document.createElementNS(nameSpace, sELEName);
             if (undefined !== oAttr) {
@@ -1797,7 +1799,7 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
         MAQ.drawChartTitle: Renders chart title
         @param {chartConfigOptions} user configuration parameters
         */
-        MAQ.drawChartTitle = function(chartConfigOptions) {
+        MAQ.drawChartTitle = function (chartConfigOptions) {
             'use strict';
             var oTitle = chartConfigOptions.title;
             if (oTitle && oTitle.text) {
@@ -1869,11 +1871,10 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
                 oParam.config.availWidth = 0 === oParam.config.svgELE.clientWidth ? 0 === oParam.config.container.clientWidth ? parseInt(oParam.config.svgELE.style.width, 10) : oParam.config.container.clientWidth : oParam.config.svgELE.clientWidth;
                 oParam.config.availHeight = 0 === oParam.config.svgELE.clientHeight ? 0 === oParam.config.container.clientHeight ? parseInt(oParam.config.svgELE.style.height, 10) : oParam.config.container.clientHeight : oParam.config.svgELE.clientHeight;
             }
-            /*
-                  Added code segemnt to fix chart shift issue (on click of legends)
-              */
+            // Added code segemnt to fix chart shift issue (on click of legends)
             oParam.config.availX = 0;
             oParam.config.availY = 0;
+
             MAQ.drawChartTitle(oParam.config);
             switch (oParam.config.chart.type.toLowerCase()) {
                 case 'lift':
@@ -2056,7 +2057,7 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
                         iLen, i, tempValue;
                     switch (sChartType.toLowerCase()) {
                         default: oToolTip.innerHTML = document.querySelector(".MAQCharts-RangeSelector").querySelectorAll('text')[oParam.seriesIndex].innerHTML;
-                        break;
+                            break;
                     }
                 }
             } else {
@@ -2072,11 +2073,12 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
                 fTopCordinate = oCord.y + 10;
             }
             var fLeftCordinate = oCord.x - oToolTip.clientWidth - 10;
+            var leftScroll = $('#liftVisual.visual').scrollLeft();
             if (fLeftCordinate <= 10) {
-                fLeftCordinate = oCord.x + 10;
+                fLeftCordinate = leftScroll + oCord.x + 10;
             }
             oToolTip.style.top = fTopCordinate + 'px';
-            oToolTip.style.left = fLeftCordinate + 'px';
+            oToolTip.style.left = leftScroll + fLeftCordinate + 'px';
         }
         function hideToolTip(evt, oParam) {
             'use strict';
@@ -2114,7 +2116,7 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
          * @param {bShow} whether to show or hide
          * **NOTE: Currently only supported for line charts
          */
-        MAQ.showHideStaticTooltips = function(oParam, bShow) {
+        MAQ.showHideStaticTooltips = function (oParam, bShow) {
             'use strict';
             if ('line' !== oParam.config.chart.type.toLowerCase()) {
                 console.log('Static tooltips are only supported for line charts.');
@@ -2127,7 +2129,7 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
             //find static tooltip class under plot Options group
             //apply display none to all the static tooltip groups
             if (oGrpTooltips && oGrpTooltips.length > 0) {
-                Object.keys(oGrpTooltips).forEach(function(oGrp) {
+                Object.keys(oGrpTooltips).forEach(function (oGrp) {
                     MAQ.addAttr(oGrpTooltips[oGrp], 'display', 'none');
                 });
             }
@@ -2141,7 +2143,7 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
         MAQ.drawLegend: Renders chart legend title
         @param {chartConfigOptions} user configuration parameters
         */
-        MAQ.drawLegend = function(chartConfigOptions) {
+        MAQ.drawLegend = function (chartConfigOptions) {
             'use strict';
             var oLegend = chartConfigOptions.legend,
                 oLegStyle, oChartStyle, oLegCStyle, oChartCStyle, sRectRule, sRectCRule, sTextRule, sTextCRule, sChartRule, sChartCRule, obj;
@@ -2153,7 +2155,8 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
                         iPadding = 4,
                         oDim, iSeriesLen = chartConfigOptions.series.length,
                         oAttr = {
-                            class: 'MAQCharts-legend'
+                            class: 'MAQCharts-legend',
+                            id: 'legend'
                         },
                         oGrpLegend = MAQ.createSVGElement(chartConfigOptions.svgNS, 'g', oAttr),
                         customOrder = chartConfigOptions.legend.customOrder;
@@ -2303,6 +2306,7 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
                             MAQ.addEventListener(oRectELE, 'click', redrawChart, oParam);
                             MAQ.addEventListener(oTextELE, 'click', redrawChart, oParam);
                         }
+
                         if (chartConfigOptions.legend.hover.enabled && isSeriesEnabled(chartConfigOptions.series, customOrder[iSCounter])) {
                             MAQ.addEventListener(oRectELE, 'mouseover', applyLegendHover, oParam);
                             MAQ.addEventListener(oTextELE, 'mouseover', applyLegendHover, oParam);
@@ -2424,7 +2428,7 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
         MAQ.drawYAxisTitle: Renders X-axis title
         @param {chartConfigOptions} user configuration parameters
         */
-        MAQ.drawYAxisTitle = function(chartConfigOptions) {
+        MAQ.drawYAxisTitle = function (chartConfigOptions) {
             'use strict';
             var oYAxis = chartConfigOptions.yAxis,
                 count, oAttr, oGrpELE, axis, oTitleObj, oDim = null;
@@ -2538,7 +2542,7 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
         MAQ.drawXAxisTitle: Renders X-axis title
         @param {chartConfigOptions} user configuration parameters
         */
-        MAQ.drawXAxisTitle = function(chartConfigOptions) {
+        MAQ.drawXAxisTitle = function (chartConfigOptions) {
             'use strict';
             var oXAxis = chartConfigOptions.xAxis;
             var oTitleObj, oAttr, oGrpELE, oDim = null;
@@ -2633,7 +2637,7 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
         @param {sBigData} biggest data in the axis label set
         @param {bFlag} flag to decide xAxis or yAxis
         */
-        MAQ.getAxisSpacing = function(chartConfigOptions, oAxis, sBigData, bFlag) {
+        MAQ.getAxisSpacing = function (chartConfigOptions, oAxis, sBigData, bFlag) {
             'use strict';
             var oAxisLabel = oAxis.labels,
                 fSpacing, oAttr, oText, oDimAxis;
@@ -2689,7 +2693,7 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
         MAQ.drawAxis: Renders both the axes
         @param {chartConfigOptions} user configuration parameters
         */
-        MAQ.drawAxis = function(chartConfigOptions) {
+        MAQ.drawAxis = function (chartConfigOptions) {
             'use strict';
             var iCounter = 0,
                 iLength = 0,
@@ -2706,6 +2710,8 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
                 xAxisSeriesLength = 0,
                 yAxisSeriesLength = 0,
                 yAxisLimit = 0;
+
+            xAxisSeriesLength = xAxisSeries.length;
             var oAttr = {
                 class: 'MAQCharts-chartArea',
                 transform: 'translate(' + chartConfigOptions.availX + ',' + chartConfigOptions.availY + ')'
@@ -2714,75 +2720,25 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
             chartConfigOptions.svgELE.appendChild(oChartContainerGroup);
             var oDataInfo = null,
                 oNormalizedData, iStart, iInterval, oTimelineData, temp, oGridAreaGrpELE, iNumberOfGridLines, oGrpYAxis, oGrpYAxisLblNTick, oAttrYAxis, oYAxisLine, intervalHeight, oAttrTick;
-            //Funnel Chart variables
-            var fTotalInterval, oSeries = chartConfigOptions.series,
-                fdelta, fConnectorHeight, fFunnelGap, fTubeHeight;
-            /* Compute Space for X-Axis Labels */
-            if (sChartType === 'bar') {
-                xAxisSeries = yAxisSeries.slice(0);
-                if (iglobalCounter === 0) {
-                    ioriginalyAxisLength = chartConfigOptions.yAxis.labels.series.length;
-                    ioriginalxAxisLength = chartConfigOptions.xAxis.labels.series.length;
-                    iglobalCounter += 1;
-                }
-            }
-            /*Condition Change*/
-            if (xAxisSeries.length <= 0) {
-                iLength = chartConfigOptions.series[0].data.length;
-                oTimelineData = chartConfigOptions.series[0].timeline;
-                for (iCounter = 0; iCounter < iLength; iCounter += 1) {
-                    if (chartConfigOptions.isTimeLineChart) {
-                        xAxisSeries[iCounter] = MAQ.formatDate(new Date(oTimelineData[iCounter]), 'mmm dd');
-                    } else {
-                        xAxisSeries[iCounter] = iCounter + 1;
-                    }
-                }
-            }
+
             /* Compute Space for Y-Axis Labels */
             iLength = yAxis.numberOfGridLines;
             oNormalizedData = chartConfigOptions.plotOptions[sChartType].normalizedData;
             if (iLength !== (oNormalizedData.max - oNormalizedData.min) / oNormalizedData.interval) {
                 iLength += 1;
             }
-            if ('funnel' !== sChartType) {
-                iStart = oNormalizedData.min;
-                iInterval = oNormalizedData.interval;
-                for (iCounter = 0; iCounter <= iLength; iCounter += 1) {
-                    yAxisSeries[iCounter] = iStart;
-                    iStart += iInterval;
-                    iStart = Math.round(iStart * 100) / 100;
-                }
-            } else {
-                for (iCounter = 0; iCounter < chartConfigOptions.series.length; iCounter += 1) {
-                    yAxisSeries[iCounter] = chartConfigOptions.series[iCounter].name;
-                }
+            iStart = oNormalizedData.min;
+            iInterval = oNormalizedData.interval;
+            for (iCounter = 0; iCounter <= iLength; iCounter += 1) {
+                yAxisSeries[iCounter] = iStart;
+                iStart += iInterval;
+                iStart = Math.round(iStart * 100) / 100;
             }
             xAxisSeriesLength = xAxisSeries.length;
             if (chartConfigOptions.useFullXAxis.indexOf(sChartType) > -1) {
                 xAxisSeriesLength -= 1;
             }
             yAxisSeriesLength = iLength;
-            if (sChartType === 'bar') {
-                temp = [];
-                temp = xAxisSeries.slice();
-                xAxisSeries = yAxisSeries.slice(0);
-                yAxisSeries = temp.slice(0);
-                chartConfigOptions.yAxis.labels.series = yAxisSeries;
-                iNumberOfGridLines = yAxis.numberOfGridLines;
-                yAxis.numberOfGridLines = iNumberOfGridLines;
-                xAxisSeries = xAxisSeries.slice(0, iNumberOfGridLines + 1);
-                xAxisSeriesLength = xAxisSeries.length;
-                if (chartConfigOptions.plotOptions.bar.pushBlankSeries) {
-                    yAxisSeriesLength = yAxisSeries.length;
-                    yAxisSeries.push('');
-                } else {
-                    yAxisSeriesLength = yAxisSeries.length > 0 ? yAxisSeries.length - 1 : 0;
-                }
-                yAxisSeries.reverse();
-                yAxisLimit = 1;
-                xAxis.shiftStartBy = 0;
-                xAxisSeriesLength -= 1;
-            }
             oDataInfo = MAQ.getMinMax(xAxisSeries, '', '');
             sBigData = oDataInfo.max;
             bottomSpacing = MAQ.getAxisSpacing(chartConfigOptions, xAxis, sBigData, true);
@@ -2829,127 +2785,8 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
                 stroke: yAxis.tickColor,
                 'stroke-width': yAxis.tickHeight
             };
-            var oAttrGridLine = {
-                x: oAttrYAxis.x1,
-                y: oAttrYAxis.y1,
-                x1: oAttrYAxis.x1,
-                y1: oAttrYAxis.y1,
-                x2: chartConfigOptions.availWidth + oAttrYAxis.x1 - leftSpacing,
-                y2: oAttrYAxis.y1,
-                width: chartConfigOptions.availWidth - leftSpacing,
-                height: intervalHeight,
-                fill: 'transparent',
-                stroke: yAxis.gridLineColor,
-                'stroke-dasharray': MAQ.computeStrokeDashStyle(yAxis.gridLineDashStyle),
-                'stroke-width': yAxis.gridLineWidth
-            };
-            var oGridLine;
-            var sGridType = 'line';
-            if (yAxis.alternateGridColor) {
-                sGridType = 'rect';
-                oAttrGridLine.stroke = 'transparent';
-                oAttrGridLine['stroke-width'] = 0;
-                oAttrGridLine.fill = yAxis.alternateGridColor;
-            }
-            if (yAxis.tickPosition === 'onaxis') {
-                oAttrTick.x1 = oAttrTick.x1 - yAxis.tickWidth / 2;
-            } else if (yAxis.tickPosition === 'outside') {
-                oAttrTick.x1 = oAttrTick.x1 - yAxis.tickWidth;
-            }
-            oAttrTick.x2 = oAttrTick.x1 + yAxis.tickWidth;
-            var oAttrLabel = {
-                x: oAttrTick.x1 - yAxis.labelSpacing,
-                y: oAttrTick.y1,
-                text: '',
-                dx: yAxisLabel.x,
-                dy: yAxisLabel.y,
-                'text-anchor': 'end',
-                style: yAxis.labels.style
-            };
-            var oLabel;
-            var oTick;
-            switch (yAxis.labels.align) {
-                case 'left':
-                    oAttrLabel.x -= leftSpacing - yAxis.labelSpacing;
-                    oAttrLabel['text-anchor'] = 'start';
-                    break;
-                case 'center':
-                    oAttrLabel.x -= leftSpacing / 2;
-                    oAttrLabel['text-anchor'] = 'middle';
-                    break;
-            }
-            var bSkipPlot = false;
-            if (yAxis.skipInterval < 0) {
-                yAxis.skipInterval = 0;
-            }
-            var iSkipInterval = yAxis.skipInterval,
-                oLabelDim;
-            if (yAxisLabel.rotation) {
-                oAttrLabel.transform = 'rotate( ' + yAxisLabel.rotation + ' ' + oAttrLabel.x + ',' + oAttrLabel.y + ')';
-            }
-            chartConfigOptions.availY += oAttrGridLine.y1;
-            chartConfigOptions.availHeight = intervalHeight * yAxisSeriesLength;
-            chartConfigOptions.plotIntervalHeight = intervalHeight;
-            if ('funnel' === sChartType) {
-                fTotalInterval = chartConfigOptions.availHeight / oSeries.length;
-                fdelta = fTotalInterval * 0.2 / (oSeries.length - 1);
-                fConnectorHeight = fdelta + fTotalInterval * 0.2;
-                //funnelGap = 0.2% of TotalInterval + portion of the extra funnelGap as gaps are 1 less than length
-                fFunnelGap = fTotalInterval * 0.05 * oSeries.length / (oSeries.length - 1);
-                fdelta += fTotalInterval * 0.05 / (oSeries.length - 1);
-                fTubeHeight = (chartConfigOptions.availHeight - fConnectorHeight * (oSeries.length - 1)) / oSeries.length - 2 * fFunnelGap;
-                oAttrGridLine['stroke-width'] = fTubeHeight + 2 * fFunnelGap;
-                var tempValue = oAttrGridLine.y1 + fTubeHeight / 2 + 2 * fFunnelGap;
-                oAttrGridLine.y = tempValue;
-                oAttrGridLine.y1 = tempValue;
-                oAttrGridLine.y2 = tempValue;
-                oAttrTick.y1 = tempValue;
-                oAttrLabel.y = tempValue;
-                oAttrTick.y2 = tempValue;
-            }
-            for (iCounter = yAxisSeriesLength; yAxisLimit <= iCounter; iCounter -= 1) {
-                if (bSkipPlot) {
-                    iSkipInterval -= 1;
-                } else {
-                    oGridLine = MAQ.createSVGElement(chartConfigOptions.svgNS, sGridType, oAttrGridLine);
-                    oTick = MAQ.createSVGElement(chartConfigOptions.svgNS, 'line', oAttrTick);
-                    if (sGridType === 'rect') {
-                        if (iCounter > 0) {
-                            if (iCounter % 2 === 0) {
-                                oGridAreaGrpELE.appendChild(oGridLine);
-                            }
-                        }
-                    } else {
-                        oGridAreaGrpELE.appendChild(oGridLine);
-                    }
-                    oGrpYAxisLblNTick.appendChild(oTick);
-                    if (yAxisLabel.enabled) {
-                        oAttrLabel.text = yAxisSeries[iCounter];
-                        oAttrLabel.text = MAQ.applyFormatter(oAttrLabel.text, yAxisLabel.formatter);
-                        oLabel = MAQ.createSVGElement(chartConfigOptions.svgNS, 'text', oAttrLabel);
-                        oGrpYAxisLblNTick.appendChild(oLabel);
-                        oLabelDim = MAQ.getObjectDimension(oLabel);
-                        MAQ.addAttr(oLabel, 'y', oAttrLabel.y + oLabelDim.height / 4);
-                    }
-                    bSkipPlot = true;
-                }
-                if (iSkipInterval === 0) {
-                    iSkipInterval = yAxis.skipInterval;
-                    if (iCounter + 1 > Math.floor(yAxis.skipInterval / 2)) {
-                        bSkipPlot = false;
-                    }
-                }
-                if ('funnel' === sChartType) {
-                    oAttrTick.y2 += fTubeHeight + 2 * fFunnelGap + fConnectorHeight;
-                } else {
-                    oAttrTick.y2 += intervalHeight;
-                }
-                oAttrGridLine.y = oAttrTick.y2;
-                oAttrGridLine.y1 = oAttrTick.y2;
-                oAttrGridLine.y2 = oAttrTick.y2;
-                oAttrTick.y1 = oAttrTick.y2;
-                oAttrLabel.y = oAttrTick.y2;
-            }
+
+            /* Compute Space for X-Axis Labels */
             /* Plot X-Axis, X-Axis-Ticks, and X-Axis-Labels */
             var oAttrXAxis = {
                 x1: oAttrYAxis.x1,
@@ -3087,41 +2924,47 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
                         }
                     } else {
                         oXAxisGridAreaGrpELE.appendChild(oGridLine);
-                    }                    
-                    oGrpXAxisLblNTick.appendChild(oTick);
-                    if (xAxisLabel.enabled) {
-                        iPrevX = oAttrLabel.x;
-                        oAttrLabel.text = xAxisSeries[iCounter];
-                        oAttrLabel.text = MAQ.applyFormatter(oAttrLabel.text, xAxisLabel.formatter);
-                        /* Code for clipping the text to specified number of characters */
-                        sTempText = oAttrLabel.text;
-                        if (!xAxisLabel.formatter && sTempText.length > iNumOfCharsAllowed) {
-                            oAttrLabel.text = oAttrLabel.text.substring(0, Math.max(iNumOfCharsAllowed - 3, 2)) + '...';
-                            oAttrLabel.x = oAttrLabel.x + (20 * iCounter);
-                            totalWindowWidth = oAttrLabel.x;
-                            isOverlapped = true;
-                        }
-                        if (xAxisLabel.rotation) {
-                            oAttrLabel.transform = 'rotate(' + xAxisLabel.rotation + ' ' + oAttrLabel.x + ',' + oAttrLabel.y + ')';
-                        }
-                        oLabel = MAQ.createSVGElement(chartConfigOptions.svgNS, 'text', oAttrLabel);
-                        oGrpXAxisLblNTick.appendChild(oLabel);
-                        oDim = MAQ.getObjectDimension(oLabel);
-                        MAQ.addAttr(oLabel, 'y', oAttrLabel.y + oDim.height / 2);
-                        if (xAxisLabel.staggerLines && !xAxisLabel.rotation) {
-                            if (iCounter % 2 !== 0) {
-                                MAQ.addAttr(oLabel, 'y', oAttrLabel.y + oDim.height * 2);
-                            }
-                        }
-                        oParam = {
-                            value: sTempText,
-                            config: chartConfigOptions,
-                            type: 'axis'
-                        };
-                        oToolTip = chartConfigOptions.tooltipDiv;
-                        MAQ.addEventListener(oLabel, 'mouseover', showToolTip, oParam);
-                        MAQ.addEventListener(oLabel, 'mouseout', hideToolTip, oToolTip);
                     }
+                    oGrpXAxisLblNTick.appendChild(oTick);
+                    iPrevX = oAttrLabel.x;
+                    oAttrLabel.text = xAxisSeries[iCounter];
+                    oAttrLabel.text = MAQ.applyFormatter(oAttrLabel.text, xAxisLabel.formatter);
+                    /* Code for clipping the text to specified number of characters */
+                    sTempText = oAttrLabel.text;
+                    if (!xAxisLabel.formatter && sTempText.length > iNumOfCharsAllowed) {
+                        oAttrLabel.text = oAttrLabel.text.substring(0, Math.max(iNumOfCharsAllowed - 3, 2)) + '...';
+                        oAttrLabel.x = oAttrLabel.x + (20 * iCounter);
+                        totalWindowWidth = oAttrLabel.x;
+                        isOverlapped = true;
+                    }
+                    if (!xAxisLabel.enabled) {
+                        oAttrLabel.text = "";
+                    }
+                    totalWindowWidth = oAttrLabel.x;
+                    if (xAxisLabel.rotation) {
+                        oAttrLabel.transform = 'rotate(' + xAxisLabel.rotation + ' ' + oAttrLabel.x + ',' + oAttrLabel.y + ')';
+                    }
+                    oLabel = MAQ.createSVGElement(chartConfigOptions.svgNS, 'text', oAttrLabel);
+                    oGrpXAxisLblNTick.appendChild(oLabel);
+                    oDim = MAQ.getObjectDimension(oLabel);
+                    MAQ.addAttr(oLabel, 'y', oAttrLabel.y + oDim.height / 2);
+                    if (xAxisLabel.staggerLines && !xAxisLabel.rotation) {
+                        if (iCounter % 2 !== 0) {
+                            MAQ.addAttr(oLabel, 'y', oAttrLabel.y + oDim.height * 2);
+                        }
+                    }
+                    oParam = {
+                        value: sTempText,
+                        config: chartConfigOptions,
+                        type: 'axis'
+                    };
+                    oToolTip = chartConfigOptions.tooltipDiv;
+                    MAQ.addEventListener(oLabel, 'mouseover', showToolTip, oParam);
+                    MAQ.addEventListener(oLabel, 'mouseout', hideToolTip, oToolTip);
+                    if (!xAxisLabel.enabled) {
+                        oAttrLabel.text = "";
+                    }
+                    //}
                     bSkipPlot = true;
                 }
                 if (iSkipInterval === 0) {
@@ -3152,21 +2995,201 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
                 oAttrLabel.x = oAttrTick.x1;
                 oAttrTick.x2 = oAttrTick.x1;
             }
+            /*Condition Change*/
+            if (xAxisSeries.length <= 0) {
+                iLength = chartConfigOptions.series[0].data.length;
+                oTimelineData = chartConfigOptions.series[0].timeline;
+                for (iCounter = 0; iCounter < iLength; iCounter += 1) {
+                    if (chartConfigOptions.isTimeLineChart) {
+                        xAxisSeries[iCounter] = MAQ.formatDate(new Date(oTimelineData[iCounter]), 'mmm dd');
+                    } else {
+                        xAxisSeries[iCounter] = iCounter + 1;
+                    }
+                }
+            }
+            oAttr = {
+                class: 'MAQCharts-yAxis-gridArea'
+            };
+            oGridAreaGrpELE = MAQ.createSVGElement(chartConfigOptions.svgNS, 'g', oAttr);
+            oAttr = {
+                class: 'MAQCharts-yAxis'
+            };
+            oGrpYAxis = MAQ.createSVGElement(chartConfigOptions.svgNS, 'g', oAttr);
+            oChartContainerGroup.appendChild(oGrpYAxis);
+            oAttr = {
+                class: 'MAQCharts-yAxis-Grid-Labels-Ticks'
+            };
+            oGrpYAxisLblNTick = MAQ.createSVGElement(chartConfigOptions.svgNS, 'g', oAttr);
+            oChartContainerGroup.appendChild(oGrpYAxisLblNTick);
+            chartConfigOptions.yLabels = oGrpYAxisLblNTick;
+            oGrpYAxisLblNTick.appendChild(oGridAreaGrpELE);
+            oAttrYAxis = {
+                x1: 0 + leftSpacing,
+                y1: 0,
+                x2: 0 + leftSpacing,
+                y2: chartConfigOptions.availHeight - bottomSpacing,
+                stroke: chartConfigOptions.yAxis.lineColor,
+                'stroke-width': yAxis.lineWidth
+            };
+            oAttrYAxis.y2 += oAttrYAxis.y1;
+            oYAxisLine = MAQ.createSVGElement(chartConfigOptions.svgNS, 'line', oAttrYAxis);
+            oGrpYAxis.appendChild(oYAxisLine);
+            if (yAxis.shiftStartBy > 0) {
+                oAttrYAxis.y1 += yAxis.shiftStartBy;
+            }
+            intervalHeight = (oAttrYAxis.y2 - oAttrYAxis.y1) / yAxisSeriesLength;
+            oAttrTick = {
+                x1: oAttrYAxis.x1,
+                y1: oAttrYAxis.y1,
+                x2: oAttrYAxis.x1 + yAxis.tickWidth,
+                y2: oAttrYAxis.y1,
+                stroke: yAxis.tickColor,
+                'stroke-width': yAxis.tickHeight
+            };
+            //Y-axis gridlines
+            oGrpYAxisLblNTick = MAQ.createSVGElement(chartConfigOptions.svgNS, 'g', oAttr);
+            oChartContainerGroup.appendChild(oGrpYAxisLblNTick);
+            chartConfigOptions.yLabels = oGrpYAxisLblNTick;
+            oGrpYAxisLblNTick.appendChild(oGridAreaGrpELE);
+            oAttrYAxis = {
+                x1: 0 + leftSpacing,
+                y1: 0,
+                x2: 0 + leftSpacing,
+                y2: chartConfigOptions.availHeight - bottomSpacing,
+                stroke: chartConfigOptions.yAxis.lineColor,
+                'stroke-width': yAxis.lineWidth
+            };
+            oAttrYAxis.y2 += oAttrYAxis.y1;
+            oYAxisLine = MAQ.createSVGElement(chartConfigOptions.svgNS, 'line', oAttrYAxis);
+            oGrpYAxis.appendChild(oYAxisLine);
+            if (yAxis.shiftStartBy > 0) {
+                oAttrYAxis.y1 += yAxis.shiftStartBy;
+            }
+            intervalHeight = (oAttrYAxis.y2 - oAttrYAxis.y1) / yAxisSeriesLength;
+            oAttrTick = {
+                x1: oAttrYAxis.x1,
+                y1: oAttrYAxis.y1,
+                x2: oAttrYAxis.x1 + yAxis.tickWidth,
+                y2: oAttrYAxis.y1,
+                stroke: yAxis.tickColor,
+                'stroke-width': yAxis.tickHeight
+            };
+            chartConfigOptions.availWidth = totalWindowWidth;
+            var oAttrGridLine = {
+                x: oAttrYAxis.x1,
+                y: oAttrYAxis.y1,
+                x1: oAttrYAxis.x1,
+                y1: oAttrYAxis.y1,
+                x2: chartConfigOptions.availWidth + oAttrYAxis.x1 - leftSpacing,
+                y2: oAttrYAxis.y1,
+                width: chartConfigOptions.availWidth - leftSpacing,
+                height: intervalHeight,
+                fill: 'transparent',
+                stroke: yAxis.gridLineColor,
+                'stroke-dasharray': MAQ.computeStrokeDashStyle(yAxis.gridLineDashStyle),
+                'stroke-width': yAxis.gridLineWidth
+            };
+            var oGridLine;
+            var sGridType = 'line';
+            if (yAxis.alternateGridColor) {
+                sGridType = 'rect';
+                oAttrGridLine.stroke = 'transparent';
+                oAttrGridLine['stroke-width'] = 0;
+                oAttrGridLine.fill = yAxis.alternateGridColor;
+            }
+            if (yAxis.tickPosition === 'onaxis') {
+                oAttrTick.x1 = oAttrTick.x1 - yAxis.tickWidth / 2;
+            } else if (yAxis.tickPosition === 'outside') {
+                oAttrTick.x1 = oAttrTick.x1 - yAxis.tickWidth;
+            }
+            oAttrTick.x2 = oAttrTick.x1 + yAxis.tickWidth;
+            var oAttrLabel = {
+                x: oAttrTick.x1 - yAxis.labelSpacing,
+                y: oAttrTick.y1,
+                text: '',
+                dx: yAxisLabel.x,
+                dy: yAxisLabel.y,
+                'text-anchor': 'end',
+                style: yAxis.labels.style
+            };
+            var oLabel;
+            var oTick;
+            switch (yAxis.labels.align) {
+                case 'left':
+                    oAttrLabel.x -= leftSpacing - yAxis.labelSpacing;
+                    oAttrLabel['text-anchor'] = 'start';
+                    break;
+                case 'center':
+                    oAttrLabel.x -= leftSpacing / 2;
+                    oAttrLabel['text-anchor'] = 'middle';
+                    break;
+            }
+            var bSkipPlot = false;
+            if (yAxis.skipInterval < 0) {
+                yAxis.skipInterval = 0;
+            }
+            var iSkipInterval = yAxis.skipInterval,
+                oLabelDim;
+            if (yAxisLabel.rotation) {
+                oAttrLabel.transform = 'rotate( ' + yAxisLabel.rotation + ' ' + oAttrLabel.x + ',' + oAttrLabel.y + ')';
+            }
+            chartConfigOptions.availY += oAttrGridLine.y1;
+            chartConfigOptions.availHeight = intervalHeight * yAxisSeriesLength;
+            chartConfigOptions.plotIntervalHeight = intervalHeight;
+            for (iCounter = yAxisSeriesLength; yAxisLimit <= iCounter; iCounter -= 1) {
+                if (bSkipPlot) {
+                    iSkipInterval -= 1;
+                } else {
+                    oGridLine = MAQ.createSVGElement(chartConfigOptions.svgNS, sGridType, oAttrGridLine);
+                    oTick = MAQ.createSVGElement(chartConfigOptions.svgNS, 'line', oAttrTick);
+                    if (sGridType === 'rect') {
+                        if (iCounter > 0) {
+                            if (iCounter % 2 === 0) {
+                                oGridAreaGrpELE.appendChild(oGridLine);
+                            }
+                        }
+                    } else {
+                        oGridAreaGrpELE.appendChild(oGridLine);
+                    }
+                    oGrpYAxisLblNTick.appendChild(oTick);
+                    if (yAxisLabel.enabled) {
+                        oAttrLabel.text = yAxisSeries[iCounter];
+                        oAttrLabel.text = MAQ.applyFormatter(oAttrLabel.text, yAxisLabel.formatter);
+                        oLabel = MAQ.createSVGElement(chartConfigOptions.svgNS, 'text', oAttrLabel);
+                        oGrpYAxisLblNTick.appendChild(oLabel);
+                        oLabelDim = MAQ.getObjectDimension(oLabel);
+                        MAQ.addAttr(oLabel, 'y', oAttrLabel.y + oLabelDim.height / 4);
+                    }
+                    bSkipPlot = true;
+                }
+                if (iSkipInterval === 0) {
+                    iSkipInterval = yAxis.skipInterval;
+                    if (iCounter + 1 > Math.floor(yAxis.skipInterval / 2)) {
+                        bSkipPlot = false;
+                    }
+                }
+                oAttrTick.y2 += intervalHeight;
+                oAttrGridLine.y = oAttrTick.y2;
+                oAttrGridLine.y1 = oAttrTick.y2;
+                oAttrGridLine.y2 = oAttrTick.y2;
+                oAttrTick.y1 = oAttrTick.y2;
+                oAttrLabel.y = oAttrTick.y2;
+            }
         };
         /*
         MAQ.createLineChart: Renders line chart
         @param {chartConfigOptions} user configuration parameters
         */
-        MAQ.createLineChart = function(chartConfigOptions) {
+        MAQ.createLineChart = function (chartConfigOptions) {
             'use strict';
             MAQ.drawLegend(chartConfigOptions);
             MAQ.drawXAxisTitle(chartConfigOptions);
             MAQ.drawYAxisTitle(chartConfigOptions);
             MAQ.applyMargin(chartConfigOptions, chartConfigOptions.chart.margin);
             var oDataInfo = {
-                    min: 0,
-                    max: 1
-                },
+                min: 0,
+                max: 1
+            },
                 oSeries = chartConfigOptions.series,
                 clipPathNode = '',
                 clipPathID = '',
@@ -3292,7 +3315,7 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
                         for (iCounter = 0; iCounter < iLength; iCounter += 1) {
                             xVal = iXcord;
                             if (isOverlapped) {
-                               xVal = iXcord + (20 * iCounter);
+                                xVal = iXcord + (20 * iCounter);
                             }
                             height = iHeightFactor * Math.abs(oDataArray.data[iCounter]);
                             iYcord = iZeroAxis - height;
@@ -3389,8 +3412,10 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
         MAQ.createLiftChart: Renders lift chart
         @param {chartConfigOptions} user configuration parameters
         */
-        MAQ.createLiftChart = function(chartConfigOptions) {
+        MAQ.createLiftChart = function (chartConfigOptions) {
             'use strict';
+            chartConfigOptions.availHeight -= 20;
+            chartConfigOptions.availWidth -= 20;
             chartConfigOptions.isLiftChart = true;
             chartConfigOptions.chart.type = 'line';
             var originalWidth = chartConfigOptions.availWidth;
@@ -3401,22 +3426,25 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
             chartConfigOptions.originalSVGELE = oSVGELE;
             /* ------------------------ NAVIGATOR AREA START ------------------------- */
             var oGrpNavigatorAttr = {
-                    class: 'MAQCharts-TimeLineNavigator'
-                },
+                class: 'MAQCharts-TimeLineNavigator'
+            },
                 oGrpNavigator = MAQ.createSVGElement(chartConfigOptions.svgNS, 'g', oGrpNavigatorAttr);
             chartConfigOptions.svgELE.appendChild(oGrpNavigator);
             var fNavigatorX = chartConfigOptions.availX,
                 fNavigatorY = chartConfigOptions.availY,
-                fNavigatorWidth = Math.floor(chartConfigOptions.availWidth),
+                fNavigatorWidth = chartConfigOptions.availWidth,
                 fNavigatorHeight = chartConfigOptions.availHeight,
                 oGrpRangeSelectorAttr = {
                     class: 'MAQCharts-RangeSelector',
                     transform: 'translate(' + fNavigatorX + ',' + fNavigatorY + ')'
                 },
                 oGrpRangeSelector = MAQ.createSVGElement(chartConfigOptions.svgNS, 'g', oGrpRangeSelectorAttr);
-            if(isOverlapped) {
+            if (fNavigatorWidth < 0 || fNavigatorHeight < 0) {
+                return;
+            }
+            if (isOverlapped) {
                 fNavigatorWidth = totalWindowWidth - 30;
-            }    
+            }
             oGrpNavigator.appendChild(oGrpRangeSelector);
             fNavigatorX = 0;
             fNavigatorY = 0;
@@ -3432,11 +3460,9 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
             };
             // Relative positioning for X Axis
             var XManger = 0;
-            // Relative positioning for width 
+            // Relative positioning for width
             var widthManger = 0;
-            if(isOverlapped){
-                window.innerWidth = totalWindowWidth - 20;
-            }
+            var x2 = 0, intersectionPoints;
             if (window.redrawMarker == true) {
                 if (window.blobWidth == undefined || window.blolOldWidth == undefined) {
                     oRectAttr.width = .10 * Math.max(document.documentElement.clientWidth, window.innerWidth);
@@ -3450,20 +3476,32 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
                     }
                     else {
                         widthManger = (window.previousX * Math.max(document.documentElement.clientWidth, window.innerWidth));
-                        widthManger = widthManger / window.blolOldWidth;
-                        oRectAttr.x = widthManger;
+                        oRectAttr.x = widthManger / window.blolOldWidth;
                     }
                 } else {
-                    if(window.previousX == undefined) {
+                    if (window.previousX == undefined) {
                         oRectAttr.x = 0;
                     }
                     else {
                         widthManger = (window.previousX * Math.max(document.documentElement.clientWidth, window.innerWidth));
-                        widthManger = widthManger / window.blolOldWidth;
-                        oRectAttr.x = widthManger;
+                        oRectAttr.x = widthManger / window.blolOldWidth;
                     }
                 }
             }
+            if (!isOverlapped) {
+                if (oRectAttr.x + oRectAttr.width >= chartConfigOptions.availWidth) {
+                    oRectAttr.x = chartConfigOptions.availWidth - oRectAttr.width;
+                }
+            }
+            else {
+                if (oRectAttr.x + oRectAttr.width >= Math.max(document.documentElement.clientWidth, window.innerWidth)) {
+                    oRectAttr.x = Math.max(document.documentElement.clientWidth, window.innerWidth) - oRectAttr.width;
+                }
+            }
+
+            window.blolOldWidth = Math.max(document.documentElement.clientWidth, window.innerWidth);
+            window.previousX = oRectAttr.x;
+            window.blobWidth = oRectAttr.width;
             var oLineLeftAttr = {
                 x1: oRectAttr.x,
                 y1: oRectAttr.y,
@@ -3500,6 +3538,7 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
                 'stroke-width': 4,
                 'stroke-dasharray': chartConfigOptions.plotOptions.lift.dragLineStyle
             };
+
             var oExpandedLeftAttr = {
                 r: 10,
                 fill: chartConfigOptions.plotOptions.lift.dragCircleFill,
@@ -3556,7 +3595,7 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
                 opacity: chartConfigOptions.plotOptions.lift.dragAreaOpacity
             };
             oDimmerAttr.d = ' M ' + fNavigatorX + ',' + (fNavigatorHeight + fNavigatorY) + ' L ' + fNavigatorX + ',' + fNavigatorY + ' L ' + oRectAttr.x + ',' + oRectAttr.y + ' L ' + oRectAttr.x + ',' + (oRectAttr.y + oRectAttr.height) + ' L ' + (oRectAttr.x + oRectAttr.width) + ',' + (oRectAttr.y + oRectAttr.height) + ' L ' + (oRectAttr.x + oRectAttr.width) + ',' + oRectAttr.y + ' L ' + (fNavigatorX + fNavigatorWidth) + ',' + oRectAttr.y + ' L ' + (fNavigatorX + fNavigatorWidth) + ',' + (fNavigatorHeight + fNavigatorY) + ' Z';
-            if(isOverlapped) {
+            if (isOverlapped) {
                 oDimmerAttr.d = ' M ' + fNavigatorX + ',' + (fNavigatorHeight + fNavigatorY) + ' L ' + fNavigatorX + ',' + fNavigatorY + ' L ' + oRectAttr.x + ',' + oRectAttr.y + ' L ' + oRectAttr.x + ',' + (oRectAttr.y + oRectAttr.height) + ' L ' + (oRectAttr.x + oRectAttr.width) + ',' + (oRectAttr.y + oRectAttr.height) + ' L ' + (oRectAttr.x + oRectAttr.width) + ',' + oRectAttr.y + ' L ' + (totalWindowWidth + 20) + ',' + oRectAttr.y + ' L ' + (totalWindowWidth + 30) + ',' + (fNavigatorHeight + fNavigatorY) + ' Z';
             }
             var oRect = MAQ.createSVGElement(chartConfigOptions.svgNS, 'rect', oRectAttr),
@@ -3611,10 +3650,19 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
                     y: oIntersectionPointsAttr.circleY[iCounter],
                     dx: chartConfigOptions.plotOptions.lift.intersectionMarker.dx,
                     dy: chartConfigOptions.plotOptions.lift.intersectionMarker.dy,
-                    text: oIntersectionPointsAttr.values[iCounter] + '%',
+                    text: oIntersectionPointsAttr.values[iCounter],
                     style: chartConfigOptions.plotOptions.lift.intersectionMarker.fontStyle,
                     'text-anchor': 'middle'
                 };
+                if (isNaN(oIntersectionPointsAttr.circleX[iCounter]) || isNaN(oIntersectionPointsAttr.circleY[iCounter])) {
+                    continue;
+                }
+                if (isNaN(oCircleTextsAttr[iCounter].text)) {
+                    oCircleTextsAttr[iCounter].text = '-';
+                }
+                else {
+                    oCircleTextsAttr[iCounter].text += '%';
+                }
                 if (!isNaN(oIntersectionPointsAttr.circleX[iCounter]) && !isNaN(oIntersectionPointsAttr.circleY[iCounter])) {
                     oIntersectionCircles[iCounter] = MAQ.createSVGElement(chartConfigOptions.svgNS, 'circle', oIntersectionMarkersAttr[iCounter]);
                     oCircleTexts[iCounter] = MAQ.createSVGElement(chartConfigOptions.svgNS, 'text', oCircleTextsAttr[iCounter]);
@@ -3672,7 +3720,8 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
             //mouse up event
             MAQ.addEventListener(oGrpNavigator, 'mouseup', stretcherMouseUp, oParam);
             MAQ.addEventListener(oGrpNavigator, 'mouseup', navigatorMouseUp, oParam);
-            MAQ.addEventListener(oGrpNavigator, 'mouseout', navigatorMouseUp, oParam); /* ------------------------ NAVIGATOR AREA END ------------------------- */
+            MAQ.addEventListener(oGrpNavigator, 'mouseout', navigatorMouseUp, oParam);
+            /* ------------------------ NAVIGATOR AREA END ------------------------- */
         };
         /*
         MAQ.getAnimationConfigurations: Fetch the configuration for animation
@@ -3751,14 +3800,14 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
         @param {sFunctionName} function name
         @param {oParam} parameters object
         */
-        MAQ.addEventListener = function(oELE, sEventName, sFunctionName, oParam) {
+        MAQ.addEventListener = function (oELE, sEventName, sFunctionName, oParam) {
             'use strict';
             if ('string' === typeof sFunctionName && 'function' === typeof window[sFunctionName]) {
-                oELE.addEventListener(sEventName, function(event) {
+                oELE.addEventListener(sEventName, function (event) {
                     window[sFunctionName](event, oParam);
                 }, true);
             } else if ('function' === typeof sFunctionName) {
-                oELE.addEventListener(sEventName, function(event) {
+                oELE.addEventListener(sEventName, function (event) {
                     sFunctionName(event, oParam);
                 }, true);
             } else {
@@ -3772,9 +3821,9 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
         @param {sFunctionName} function name
         @param {oParam} parameters object
         */
-        MAQ.removeEventListener = function(oELE, sEventName, sFunctionName, oParam) {
+        MAQ.removeEventListener = function (oELE, sEventName, sFunctionName, oParam) {
             'use strict';
-            oELE.removeEventListener(sEventName, function(event) {
+            oELE.removeEventListener(sEventName, function (event) {
                 window[sFunctionName](event, oParam);
             }, true);
         };
@@ -3784,11 +3833,11 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
         @param {oCalCord} Calculated coordinates
         @param {fInterval} step interval on x axis
         */
-        MAQ.getDataIndexPosition = function(oSVGCord, oCalCord, fInterval) {
+        MAQ.getDataIndexPosition = function (oSVGCord, oCalCord, fInterval) {
             'use strict';
             var fPt1 = oSVGCord.x - fInterval,
                 fPt2 = oSVGCord.x + fInterval,
-                oFilterData = oCalCord.filter(function(x) {
+                oFilterData = oCalCord.filter(function (x) {
                     return x > fPt1 && x < fPt2;
                 });
             if (oFilterData.length === 1) {
@@ -3807,7 +3856,7 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
         MAQ.getMax: Gets maximum value
         @param {array} array of values
         */
-        MAQ.getMax = function(array) {
+        MAQ.getMax = function (array) {
             'use strict';
             return Math.max.apply(Math, array);
         };
@@ -3815,7 +3864,7 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
         MAQ.showToolTip: Gets maximum value
         @param {array} array of values
         */
-        MAQ.getMin = function(array) {
+        MAQ.getMin = function (array) {
             'use strict';
             return Math.min.apply(Math, array);
         };
@@ -3823,7 +3872,7 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
         MAQ.arraySum: Gets sum of values
         @param {array} array of values
         */
-        MAQ.arraySum = function(array) {
+        MAQ.arraySum = function (array) {
             'use strict';
             var i = 0,
                 L, sum = 0;
@@ -3858,40 +3907,43 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
                 var iCurrX = parseFloat(oCurrentElement.x.baseVal.value + iMouseXDiff);
                 if (iCurrX >= oParam.x && iCurrX <= oParam.maxX - oCurrentElement.width.baseVal.value) {
                     oCurrentElement.x.baseVal.value = iCurrX;
-                    if (oParam.config.isTimeLineChart) {
-                        oParam.expanderLeft.x.baseVal.value += iMouseXDiff;
-                        oParam.expanderRight.x.baseVal.value += iMouseXDiff;
-                        MAQ.addAttr(oParam.clipLeft, 'd', MAQ.getTriangleCoords(oParam.expanderLeft.x.baseVal.value + oParam.expanderLeft.width.baseVal.value, oParam.expanderLeft.y.baseVal.value + oParam.expanderLeft.height.baseVal.value / 2, -1 * Math.min(20, oParam.height)));
-                        MAQ.addAttr(oParam.clipRight, 'd', MAQ.getTriangleCoords(oParam.expanderRight.x.baseVal.value, oParam.expanderRight.y.baseVal.value + oParam.expanderRight.height.baseVal.value / 2, Math.min(20, oParam.height)));
-                    } else if (oParam.config.isLiftChart) {
-                        oParam.lineLeft.x1.baseVal.value += iMouseXDiff;
-                        oParam.lineLeft.x2.baseVal.value += iMouseXDiff;
-                        oParam.lineRight.x1.baseVal.value += iMouseXDiff;
-                        oParam.lineRight.x2.baseVal.value += iMouseXDiff;
-                        oParam.lineTop.x1.baseVal.value += iMouseXDiff;
-                        oParam.lineTop.x2.baseVal.value += iMouseXDiff;
-                        oParam.lineBottom.x1.baseVal.value += iMouseXDiff;
-                        oParam.lineBottom.x2.baseVal.value += iMouseXDiff;
-                        oParam.expanderLeft.cx.baseVal.value += iMouseXDiff;
-                        oParam.expanderLeftBottom.cx.baseVal.value += iMouseXDiff;
-                        oParam.expanderRight.cx.baseVal.value += iMouseXDiff;
-                        oParam.expanderRightBottom.cx.baseVal.value += iMouseXDiff;
-                        MAQ.addAttr(oParam.leftTopTri, 'd', MAQ.getTriangleCoords(oParam.expanderLeft.cx.baseVal.value, oParam.expanderLeft.cy.baseVal.value, oParam.expanderLeft.r.baseVal.value));
-                        MAQ.addAttr(oParam.leftBottomTri, 'd', MAQ.getTriangleCoords(oParam.expanderLeftBottom.cx.baseVal.value, oParam.expanderLeftBottom.cy.baseVal.value, oParam.expanderLeftBottom.r.baseVal.value));
-                        MAQ.addAttr(oParam.rightTopTri, 'd', MAQ.getTriangleCoords(oParam.expanderRight.cx.baseVal.value, oParam.expanderRight.cy.baseVal.value, -oParam.expanderRight.r.baseVal.value));
-                        MAQ.addAttr(oParam.rightBottomTri, 'd', MAQ.getTriangleCoords(oParam.expanderRightBottom.cx.baseVal.value, oParam.expanderRightBottom.cy.baseVal.value, -oParam.expanderRightBottom.r.baseVal.value));
-                        /*Create intersection circles*/
-                        var oIntersectionPointsAttr = MAQ.getIntersectionPoints(oParam.config, oParam.navigator.x.baseVal.value + oParam.navigator.width.baseVal.value),
-                            iCounter;
-                        for (iCounter = 0; iCounter < oParam.config.series.length; iCounter += 1) {
-                            if (isSeriesEnabled(oParam.config.series, iCounter)) {
-                                oParam.intersectionCircles[iCounter].cx.baseVal.value = oIntersectionPointsAttr.circleX[iCounter];
-                                oParam.intersectionCircles[iCounter].cy.baseVal.value = oIntersectionPointsAttr.circleY[iCounter];
-                                MAQ.addAttr(oParam.circleTexts[iCounter], 'x', oIntersectionPointsAttr.circleX[iCounter]);
-                                MAQ.addAttr(oParam.circleTexts[iCounter], 'y', oIntersectionPointsAttr.circleY[iCounter]);
+                    oParam.lineLeft.x1.baseVal.value += iMouseXDiff;
+                    oParam.lineLeft.x2.baseVal.value += iMouseXDiff;
+                    oParam.lineRight.x1.baseVal.value += iMouseXDiff;
+                    oParam.lineRight.x2.baseVal.value += iMouseXDiff;
+                    oParam.lineTop.x1.baseVal.value += iMouseXDiff;
+                    oParam.lineTop.x2.baseVal.value += iMouseXDiff;
+                    oParam.lineBottom.x1.baseVal.value += iMouseXDiff;
+                    oParam.lineBottom.x2.baseVal.value += iMouseXDiff;
+                    oParam.expanderLeft.cx.baseVal.value += iMouseXDiff;
+                    oParam.expanderLeftBottom.cx.baseVal.value += iMouseXDiff;
+                    oParam.expanderRight.cx.baseVal.value += iMouseXDiff;
+                    oParam.expanderRightBottom.cx.baseVal.value += iMouseXDiff;
+                    MAQ.addAttr(oParam.leftTopTri, 'd', MAQ.getTriangleCoords(oParam.expanderLeft.cx.baseVal.value, oParam.expanderLeft.cy.baseVal.value, oParam.expanderLeft.r.baseVal.value));
+                    MAQ.addAttr(oParam.leftBottomTri, 'd', MAQ.getTriangleCoords(oParam.expanderLeftBottom.cx.baseVal.value, oParam.expanderLeftBottom.cy.baseVal.value, oParam.expanderLeftBottom.r.baseVal.value));
+                    MAQ.addAttr(oParam.rightTopTri, 'd', MAQ.getTriangleCoords(oParam.expanderRight.cx.baseVal.value, oParam.expanderRight.cy.baseVal.value, -oParam.expanderRight.r.baseVal.value));
+                    MAQ.addAttr(oParam.rightBottomTri, 'd', MAQ.getTriangleCoords(oParam.expanderRightBottom.cx.baseVal.value, oParam.expanderRightBottom.cy.baseVal.value, -oParam.expanderRightBottom.r.baseVal.value));
+                    /*Create intersection circles*/
+                    var oIntersectionPointsAttr = MAQ.getIntersectionPoints(oParam.config, oParam.navigator.x.baseVal.value + oParam.navigator.width.baseVal.value),
+                        iCounter;
+                    for (iCounter = 0; iCounter < oParam.config.series.length; iCounter += 1) {
+                        if (isSeriesEnabled(oParam.config.series, iCounter)) {
+                            oParam.intersectionCircles[iCounter].cx.baseVal.value = oIntersectionPointsAttr.circleX[iCounter];
+                            window.x2 = oParam.intersectionCircles[iCounter].cx.baseVal.value;
+                            if (isNaN(oIntersectionPointsAttr.circleY[iCounter])) {
+                                continue;
+                            }
+                            oParam.intersectionCircles[iCounter].cy.baseVal.value = oIntersectionPointsAttr.circleY[iCounter];
+                            MAQ.addAttr(oParam.circleTexts[iCounter], 'x', oIntersectionPointsAttr.circleX[iCounter]);
+                            MAQ.addAttr(oParam.circleTexts[iCounter], 'y', oIntersectionPointsAttr.circleY[iCounter]);
+                            if (isNaN(oIntersectionPointsAttr.values[iCounter])) {
+                                MAQ.addAttr(oParam.circleTexts[iCounter], 'text', '-');
+                                oParam.circleTexts[iCounter].innerHTML = '-'; /*for chrome*/
+                                oParam.circleTexts[iCounter].textContent = '-'; /*for IE*/
+                            }
+                            else {
                                 MAQ.addAttr(oParam.circleTexts[iCounter], 'text', oIntersectionPointsAttr.values[iCounter] + '%');
-                                oParam.circleTexts[iCounter].innerHTML = oIntersectionPointsAttr.values[iCounter] + '%';
-                                /*for chrome*/
+                                oParam.circleTexts[iCounter].innerHTML = oIntersectionPointsAttr.values[iCounter] + '%'; /*for chrome*/
                                 oParam.circleTexts[iCounter].textContent = oIntersectionPointsAttr.values[iCounter] + '%'; /*for IE*/
                             }
                         }
@@ -3904,14 +3956,15 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
                     window.variantWidth = document.querySelector(".MAQCharts-RangeSelector").querySelector('rect').width.animVal.value;
                     window.backer = document.documentElement.clientWidth;
                     var oRectAttr = {
-                        x: oCurrentElement.x.baseVal.value,
+                        x: oCurrentElement.x.baseVal.value, //white
                         y: oCurrentElement.y.baseVal.value,
                         width: oCurrentElement.width.baseVal.value,
                         height: oCurrentElement.height.baseVal.value
                     };
-                    if(isOverlapped) {
+                    if (isOverlapped) {
                         oParam.width = totalWindowWidth - 20;
                     }
+                    window.blobWidth = oRectAttr.width;
                     var sDattr = ' M ' + oParam.x + ',' + (oParam.height + oParam.y) + ' L ' + oParam.x + ',' + oParam.y + ' L ' + oRectAttr.x + ',' + oRectAttr.y + ' L ' + oRectAttr.x + ',' + (oRectAttr.y + oRectAttr.height) + ' L ' + (oRectAttr.x + oRectAttr.width) + ',' + (oRectAttr.y + oRectAttr.height) + ' L ' + (oRectAttr.x + oRectAttr.width) + ',' + oRectAttr.y + ' L ' + (oParam.x + oParam.width) + ',' + oRectAttr.y + ' L ' + (oParam.x + oParam.width) + ',' + (oParam.height + oParam.y) + ' Z';
                     MAQ.addAttr(oParam.dimmer, 'd', sDattr);
                     iCurrentNavigatorX = event.clientX;
@@ -4023,14 +4076,23 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
                             iCounter;
                         for (iCounter = 0; iCounter < oParam.config.series.length; iCounter += 1) {
                             if (isSeriesEnabled(oParam.config.series, iCounter)) {
+                                if (isNaN(oIntersectionPointsAttr.circleX[iCounter]) || isNaN(oIntersectionPointsAttr.circleX[iCounter])) {
+                                    continue;
+                                }
                                 oParam.intersectionCircles[iCounter].cx.baseVal.value = oIntersectionPointsAttr.circleX[iCounter];
                                 oParam.intersectionCircles[iCounter].cy.baseVal.value = oIntersectionPointsAttr.circleY[iCounter];
                                 MAQ.addAttr(oParam.circleTexts[iCounter], 'x', oIntersectionPointsAttr.circleX[iCounter]);
                                 MAQ.addAttr(oParam.circleTexts[iCounter], 'y', oIntersectionPointsAttr.circleY[iCounter]);
-                                MAQ.addAttr(oParam.circleTexts[iCounter], 'text', oIntersectionPointsAttr.values[iCounter] + '%');
-                                oParam.circleTexts[iCounter].innerHTML = oIntersectionPointsAttr.values[iCounter] + '%';
-                                /*for chrome*/
-                                oParam.circleTexts[iCounter].textContent = oIntersectionPointsAttr.values[iCounter] + '%'; /*for IE*/
+                                if (isNaN(oIntersectionPointsAttr.values[iCounter])) {
+                                    MAQ.addAttr(oParam.circleTexts[iCounter], 'text', '-');
+                                    oParam.circleTexts[iCounter].innerHTML = '-'; /*for chrome*/
+                                    oParam.circleTexts[iCounter].textContent = '-'; /*for IE*/
+                                }
+                                else {
+                                    MAQ.addAttr(oParam.circleTexts[iCounter], 'text', oIntersectionPointsAttr.values[iCounter] + '%');
+                                    oParam.circleTexts[iCounter].innerHTML = oIntersectionPointsAttr.values[iCounter] + '%'; /*for chrome*/
+                                    oParam.circleTexts[iCounter].textContent = oIntersectionPointsAttr.values[iCounter] + '%'; /*for IE*/
+                                }
                             }
                         }
                     }
@@ -4048,7 +4110,7 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
             window.blolblolXValue = document.querySelector(".MAQCharts-RangeSelector").querySelector('rect').width.animVal.value;
             var xQuery = document.querySelector(".MAQCharts-RangeSelector").querySelector('rect').x.animVal.value;
             window.previousX = xQuery;
-                    
+
             var sDattr = ' M ' + oParam.x + ',' + (oParam.height + oParam.y) + ' L ' + oParam.x + ',' + oParam.y + ' L ' + oRectAttr.x + ',' + oRectAttr.y + ' L ' + oRectAttr.x + ',' + (oRectAttr.y + oRectAttr.height) + ' L ' + (oRectAttr.x + oRectAttr.width) + ',' + (oRectAttr.y + oRectAttr.height) + ' L ' + (oRectAttr.x + oRectAttr.width) + ',' + oRectAttr.y + ' L ' + (oParam.x + oParam.width) + ',' + oRectAttr.y + ' L ' + (oParam.x + oParam.width) + ',' + (oParam.height + oParam.y) + ' Z';
             MAQ.addAttr(oParam.dimmer, 'd', sDattr);
             var rangeStart = oParam.config.plotOptions.timeline.rangeStart;
@@ -4103,7 +4165,7 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
         MAQ.getSeriesValidation: Validate waterfall chart data series
         @param {chartConfigOptions} user configuration parameters
         */
-        MAQ.getSeriesValidation = function(chartConfigOptions) {
+        MAQ.getSeriesValidation = function (chartConfigOptions) {
             'use strict';
             var oChartSeries = [],
                 jCount = 0,
@@ -4124,7 +4186,7 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
             }
             return oChartSeries;
         };
-        MAQ.getChartSeries = function(oLabelArray, chartConfigOptions) {
+        MAQ.getChartSeries = function (oLabelArray, chartConfigOptions) {
             'use strict';
             var oChartSeries = [],
                 jCount = 0;
@@ -4135,7 +4197,7 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
             }
             return oChartSeries;
         };
-        MAQ.getForecastMinMax = function(oDataArray, min, max, fieldName) {
+        MAQ.getForecastMinMax = function (oDataArray, min, max, fieldName) {
             'use strict';
             var oMergedDataArray = [];
             var jCount = 0,
@@ -4155,11 +4217,11 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
         function dynamicSort(property, flag) {
             'use strict';
             if (flag) {
-                return function(a, b) {
+                return function (a, b) {
                     return a[property] < b[property] ? -1 : a[property] > b[property] ? 1 : 0;
                 };
             } else {
-                return function(a, b) {
+                return function (a, b) {
                     return b[property] < a[property] ? -1 : b[property] > a[property] ? 1 : 0;
                 };
             }
@@ -4183,7 +4245,7 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
                 y: posy
             };
         }
-        MAQ.calculateAspectRatio = function(chartConfigOptions, iDimensionX, iDimensionY, iSum, iLastIndex) {
+        MAQ.calculateAspectRatio = function (chartConfigOptions, iDimensionX, iDimensionY, iSum, iLastIndex) {
             'use strict';
             var iDataCounter = 0,
                 oDataArray = chartConfigOptions.series.child,
@@ -4200,7 +4262,7 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
             }
             return Math.max(iCurrentDimensionX / iDimensionY, iDimensionY / iCurrentDimensionX);
         };
-        MAQ.plotArea = function(chartConfigOptions, iWidth, iHeight, numberOfValues, iDimension, a, b) {
+        MAQ.plotArea = function (chartConfigOptions, iWidth, iHeight, numberOfValues, iDimension, a, b) {
             'use strict';
             var iCounter = 0,
                 oContainerDiv = chartConfigOptions.container,
@@ -4284,7 +4346,7 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
                 MAQ.createTreemap(chartConfigOptions);
             }
         };
-        MAQ.calculateDimension = function(chartConfigOptions, iDimensionX, iDimensionY, iTotal, bFlag) {
+        MAQ.calculateDimension = function (chartConfigOptions, iDimensionX, iDimensionY, iTotal, bFlag) {
             'use strict';
             var iPrevAspectRatio = 0,
                 iLoopCounter = 0,
@@ -4316,7 +4378,7 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
                 MAQ.plotArea(chartConfigOptions, oContainerDiv.clientHeight, oContainerDiv.clientWidth, iLoopCounter, iCalcDimension, 'height', 'width');
             }
         };
-        MAQ.getTriangleCoords = function(cX, cY, r) {
+        MAQ.getTriangleCoords = function (cX, cY, r) {
             'use strict';
             var triCoords = {};
             triCoords.x1 = cX;
@@ -4327,14 +4389,20 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
             triCoords.y3 = cY;
             return 'M' + triCoords.x1 + ' ' + triCoords.y1 + ' L' + triCoords.x2 + ' ' + triCoords.y2 + ' L' + triCoords.x3 + ' ' + triCoords.y3 + ' Z';
         };
-        MAQ.getIntersectionPoints = function(config, xPos) {
+        MAQ.getIntersectionPoints = function (config, xPos) {
             'use strict';
             var fIndex = fIndex = xPos / config.plotIntervalWidth;
-            if(isOverlapped) {
+            if (isOverlapped) {
                 fIndex = xPos / (config.plotIntervalWidth + 20);
             }
-            var iLowerIndex = Math.floor(fIndex),
-                iHigerIndex = Math.ceil(fIndex),
+            var xLength = config.series[0].xPos.length;
+            for (var iCounter = 1; iCounter < config.series.length; iCounter++) {
+                if (xLength < config.series[iCounter].xPos.length) {
+                    xLength = config.series[iCounter].xPos.length;
+                }
+            }
+            var iLowerIndex = Math.min(Math.floor(fIndex), xLength - 1),
+                iHigerIndex = Math.min(Math.ceil(fIndex), xLength - 1),
                 delta = fIndex - iLowerIndex,
                 fLineLeftPointX = [],
                 fLineRightPointX = [],
@@ -4344,12 +4412,14 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
                 fLineRightValues = [],
                 intersectValue = [],
                 iCounter;
+            window.lowerIndex = iLowerIndex;
+            window.HigerIndex = iHigerIndex;
             for (iCounter = 0; iCounter < config.series.length; iCounter += 1) {
                 fLineLeftPointX[iCounter] = config.series[iCounter].xPos[iLowerIndex] - config.availXLift;
                 fLineRightPointX[iCounter] = config.series[iCounter].xPos[iHigerIndex] - config.availXLift;
-                if(isOverlapped) {
-                    fLineLeftPointX[iCounter] = fLineLeftPointX[iCounter] + (20* iLowerIndex);
-                    fLineRightPointX[iCounter] = fLineRightPointX[iCounter] + (20* iHigerIndex);
+                if (isOverlapped) {
+                    fLineLeftPointX[iCounter] = fLineLeftPointX[iCounter] + (20 * iLowerIndex);
+                    fLineRightPointX[iCounter] = fLineRightPointX[iCounter] + (20 * iHigerIndex);
                 }
                 fLineLeftPointY[iCounter] = config.series[iCounter].yPos[iLowerIndex] - config.availYLift;
                 fLineRightPointY[iCounter] = config.series[iCounter].yPos[iHigerIndex] - config.availYLift;
@@ -4377,7 +4447,7 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
                 higherIndex: iHigerIndex
             };
         };
-        MAQ.CreatePattern = function(chartConfigOptions, iID) {
+        MAQ.CreatePattern = function (chartConfigOptions, iID) {
             'use strict';
             var sPatID = '';
             if (undefined !== chartConfigOptions.plotOptions.pattern[iID] && '' !== chartConfigOptions.plotOptions.pattern[iID]) {
@@ -4451,7 +4521,7 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
             }
             return sPatID;
         };
-        MAQ.createMarker = function(oPlotOptions, oAttrs, svgNS) {
+        MAQ.createMarker = function (oPlotOptions, oAttrs, svgNS) {
             'use strict';
             var oMarker = oPlotOptions.marker;
             var oShape, sShape = oMarker.shape[(oMarker.markers.length - 1) % oMarker.shape.length],
@@ -4513,7 +4583,7 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
             oShape = MAQ.createSVGElement(svgNS, sShape, oMarkerAttr);
             return oShape;
         };
-        MAQ.createStaticTooltips = function(oConfig, iSelectedIndex, oAttrs, svgNS) {
+        MAQ.createStaticTooltips = function (oConfig, iSelectedIndex, oAttrs, svgNS) {
             'use strict';
             var iSeriesIndex = oConfig.tooltip.tooltips.length - 1;
             var oSeries = oConfig.series[iSeriesIndex];
@@ -4566,13 +4636,12 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
             }
         }
         MAQ.charts(liftConfig);
-        if(isOverlapped) {
-            $('#liftVisual.visual').css('height' , '103%');
-            $('#liftVisual.visual').css('overflow-x' , 'auto');
-            $('#liftVisual.visual').css('overflow-y' , 'hidden');
-            
-            $('#liftVisual.visual > svg').css('border' , '0px solid silver');
-            $('#liftVisual.visual > svg').css('width' , totalWindowWidth + 20 + 'px');
+        if (isOverlapped) {
+            $('#liftVisual.visual').css('height', '100%');
+            $('#liftVisual.visual').css('overflow-x', 'auto');
+            $('#liftVisual.visual').css('overflow-y', 'hidden');
+            $('#liftVisual.visual > svg').css('border', '0px solid silver');
+            $('#liftVisual.visual > svg').css('width', totalWindowWidth + 30 + 'px');
         }
     })(liftConfig);
 }
