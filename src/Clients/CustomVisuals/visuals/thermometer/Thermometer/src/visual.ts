@@ -13,6 +13,7 @@ module powerbi.extensibility.visual {
         private viewport: IViewport;
         private settings: any;
         private svg: d3.Selection<SVGElement>;
+        private mainGroup: d3.Selection<SVGElement>;
         private backCircle: d3.Selection<SVGElement>;
         private backRect: d3.Selection<SVGElement>;
         private fillCircle: d3.Selection<SVGElement>;
@@ -26,6 +27,10 @@ module powerbi.extensibility.visual {
 
         public static converter(dataView: DataView, colors: IDataColorPalette): ViewModel {
             var series = dataView.categorical.values;
+            var value:any = series[0].values[series[0].values.length - 1];
+            if (!(isFinite(value) && parseFloat(value) == value)) {
+                   return {value:0}
+                }
             return { value: series[0].values[series[0].values.length - 1] }
         }
 
@@ -35,14 +40,6 @@ module powerbi.extensibility.visual {
             this.viewport;
             let svg = this.svg = d3.select(options.element).append('svg').classed('Thermometer', true);
             options.element.setAttribute("id", "container");
-            var mainGroup = svg.append('g');
-            this.backRect = mainGroup.append('rect');
-            this.backCircle = mainGroup.append('circle');
-            this.fillRect = mainGroup.append('rect');
-            this.fillCircle = mainGroup.append('circle');
-            this.text = mainGroup.append('text');
-            this.tempMarkings = svg.append("g").attr("class", "y axis");
-
         }
 
         /** Update is called for data updates, resizes & formatting changes */
@@ -54,9 +51,9 @@ module powerbi.extensibility.visual {
             var dataView = options.dataViews[0];
             this.dataView = options.dataViews[0];
             this.data = Thermometer.converter(options.dataViews[0], null);
-            this.data.max = Thermometer.getValue(dataView, 'max', 100);
-            this.data.min = Thermometer.getValue(dataView, 'min', 0);
-            this.data.drawTickBar = Thermometer.getValue(dataView, 'tickBar', true);
+            this.data.max = Thermometer.getValue(this.dataView, 'max', 100);
+            this.data.min = Thermometer.getValue(this.dataView, 'min', 0);
+            this.data.drawTickBar = Thermometer.getValue(this.dataView, 'tickBar', true);
             // to handle value greater than max value
             if (this.data.value > this.data.max) {
                 this.data.max = Math.ceil(this.data.value);
@@ -64,7 +61,13 @@ module powerbi.extensibility.visual {
             if (this.data.value < this.data.min) {
                 this.data.min = Math.floor(this.data.value);
             }
-
+            if (this.data.min >= this.data.max) {
+                this.data.min = this.data.max-1;
+            }
+            if (this.dataView.metadata.objects && this.dataView.metadata.objects['config']) {
+                this.dataView.metadata.objects['config']['max'] = this.data.max;
+                this.dataView.metadata.objects['config']['min'] = this.data.min;
+            }
             var viewport = options.viewport;
             var height = viewport.height;
             var width = viewport.width;
@@ -75,6 +78,14 @@ module powerbi.extensibility.visual {
         }
 
         public draw(width: number, height: number, duration: number) {
+            this.svg.selectAll("*").remove();
+            this.mainGroup = this.svg.append('g');
+            this.backRect = this.mainGroup.append('rect');
+            this.backCircle = this.mainGroup.append('circle');
+            this.fillRect = this.mainGroup.append('rect');
+            this.fillCircle = this.mainGroup.append('circle');
+            this.text = this.mainGroup.append('text');
+            this.tempMarkings = this.svg.append("g").attr("class", "y axis");
             var radius = height * 0.1;
             var padding = radius * 0.25;
             this.drawBack(width, height, radius);
@@ -82,7 +93,7 @@ module powerbi.extensibility.visual {
             this.drawTicks(width, height, radius, padding);
             this.drawText(width, height, radius, padding);
             d3.select("#y axis").remove();
-            
+
         }
 
         public drawBack(width: number, height: number, radius: number) {
@@ -118,11 +129,28 @@ module powerbi.extensibility.visual {
 
             var min = this.data.min;
             var max = this.data.max;
-            var value = this.data.value > max ? max : this.data.value;
-
+            var value: any = this.data.value > max ? max : this.data.value;
+            //check if value is a number 
+            if (!(isFinite(value) && parseFloat(value) == value)) {
+                var date = Date.parse(value);
+                if (!isNaN(date)) {
+                    this.data.value = 0;
+                    this.data.max = Thermometer.getValue(this.dataView, 'max', 100);
+                    this.data.min = Thermometer.getValue(this.dataView, 'min', 0);
+                }
+                min = 0;
+                max = 100;
+                value = 0;
+           }
+            
             var percentage = (ZeroValue - padding) * ((value - min) / (max - min))
-
             var rectHeight = height - radius;
+            if (isNaN(rectHeight)) {
+                rectHeight = 0;
+            }
+            if (isNaN(percentage)) {
+                percentage = 0;
+            }
             this.fillCircle.attr({
                 'cx': width / 2,
                 'cy': rectHeight,
@@ -130,47 +158,49 @@ module powerbi.extensibility.visual {
             }).style({
                     'fill': fill
                 });
-
-            this.fillRect
-                .style({
-                    'fill': fill
-                })
-                .attr({
-                    'x': (width - fillWidth) / 2,
-                    'width': fillWidth,
-                })
-                .attr({
-                    'y': ZeroValue - percentage,
-                    'height': rectHeight - ZeroValue + percentage
-                })
+            if (rectHeight !== 0 && percentage !== 0) {
+                this.fillRect
+                    .style({
+                        'fill': fill
+                    })
+                    .attr({
+                        'x': (width - fillWidth) / 2,
+                        'width': fillWidth,
+                    })
+                    .attr({
+                        'y': ZeroValue - percentage,
+                        'height': rectHeight - ZeroValue + percentage
+                    });
+            }
+            
         }
 
         private drawTicks(width: number, height: number, radius: number, padding: number) {
-                d3.select(".y.axis").attr("visibility", "visible");
-                var y, yAxis;
-                var postFix = Thermometer.getValue(this.dataView, 'postfix', '');
-                console.log(postFix);
-                y = d3.scale.linear().range([height - (radius * 2) - padding, padding]);
-                yAxis = d3.svg.axis().scale(y).ticks(6).orient("right");
-                y.domain([this.data.min, this.data.max]);
-                this.tempMarkings
-                    .attr("transform", "translate(" + ((width + radius) / 2 + (radius * 0.15)) + ",0)")
-                    .style({
-                        'font-size': (radius * 0.03) + 'em',
-                        'font-family': 'Segoe UI',
-                        'stroke': 'none',
-                        'fill': '#333'
-                    })
-                    .call(yAxis);
-                this.tempMarkings.selectAll('.axis line, .axis path').style({ 'stroke': '#333', 'fill': 'none' });
-                for(var iCount = 0; iCount < document.querySelectorAll('.axis text').length; iCount++) {
-                    document.querySelectorAll('.axis text')[iCount].innerHTML = document.querySelectorAll('.axis text')[iCount].innerHTML + ' ' + postFix;
-                }
-
-                if (!this.data.drawTickBar) {
-                    d3.select(".y.axis").attr("visibility", "hidden");
-                }
-       }
+            d3.select(".y.axis").attr("visibility", "visible");
+            var y, yAxis;
+            var postFix = Thermometer.getValue(this.dataView, 'postfix', '');
+            y = d3.scale.linear().range([height - (radius * 2) - padding, padding]);
+            yAxis = d3.svg.axis().scale(y).ticks(6).orient("right");
+            y.domain([this.data.min, this.data.max]);
+           
+            this.tempMarkings
+                .attr("transform", "translate(" + ((width + radius) / 2 + (radius * 0.15)) + ",0)")
+                .style({
+                    'font-size': (radius * 0.03) + 'em',
+                    'font-family': 'Segoe UI',
+                    'stroke': 'none',
+                    'fill': '#333'
+                })
+                .call(yAxis);
+            this.tempMarkings.selectAll('.axis line, .axis path').style({ 'stroke': '#333', 'fill': 'none' });
+            for (var iCount = 0; iCount < document.querySelectorAll('.axis text').length; iCount++) {
+                document.querySelectorAll('.axis text')[iCount].innerHTML = document.querySelectorAll('.axis text')[iCount].innerHTML + ' ' + postFix;
+            }
+            if (!this.data.drawTickBar) {
+                d3.select(".y.axis").attr("visibility", "hidden");
+            }
+            
+        }
 
         private drawText(width: number, height: number, radius: number, padding: number) {
             this.text
@@ -196,8 +226,8 @@ module powerbi.extensibility.visual {
                         properties: {
                             fill: Thermometer.getFill(dataView, 'fill'),
                             border: Thermometer.getFill(dataView, 'border'),
-                            max: Thermometer.getValue<number>(dataView, 'max', 100),
-                            min: Thermometer.getValue<number>(dataView, 'min', 0),
+                            max: Thermometer.getValue<number>(dataView, 'max', this.data.max),
+                            min: Thermometer.getValue<number>(dataView, 'min', this.data.min),
                             tickBar: Thermometer.getValue<boolean>(dataView, 'tickBar', true),
                             fontColor: Thermometer.getFill(dataView, 'fontColor'),
                             postfix: Thermometer.getValue<string>(dataView, 'postfix', '')
