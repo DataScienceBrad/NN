@@ -276,9 +276,10 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
     }
     liftConfig.series = data;
     for (legendName = 0; legendName < dWagon.categorical.values.length; legendName++) {
-        if (liftConfig.series[legendName])
+        if (liftConfig.series[legendName]) {
             liftConfig.series[legendName].name = dWagon.categorical.values[legendName].source.displayName;
-        liftConfig.series[legendName].enabled = powerbi.extensibility.visual.PBI_CV_0C8159C4_5413_4262_A0E1_4E0CEF5FFC65.Visual.getLegendEnable()[legendName];
+            liftConfig.series[legendName].enabled = powerbi.extensibility.visual.PBI_CV_0C8159C4_5413_4262_A0E1_4E0CEF5FFC65.Visual.getLegendEnable()[legendName];
+        }
     }
     (function mike(liftConfig) {
         /*jslint white: true, devel:true, browser: true, this:true, for:true  */
