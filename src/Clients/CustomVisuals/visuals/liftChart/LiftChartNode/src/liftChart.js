@@ -4396,6 +4396,8 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
             if (isOverlapped) {
                 fIndex = xPos / (config.plotIntervalWidth + 20);
             }
+            if (0 === config.series.length)
+                return;
             var xLength = config.series[0].xPos.length;
             for (var iCounter = 1; iCounter < config.series.length; iCounter++) {
                 if (xLength < config.series[iCounter].xPos.length) {
