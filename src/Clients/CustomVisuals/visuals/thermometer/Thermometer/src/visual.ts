@@ -26,14 +26,18 @@ module powerbi.extensibility.visual {
         private prevDataViewObjects: any = {};
 
         public static converter(dataView: DataView, colors: IDataColorPalette): ViewModel {
-            var series = dataView.categorical.values;
-            var value:any = series[0].values[series[0].values.length - 1];
-            if (!(isFinite(value) && parseFloat(value) == value)) {
-                   return {value:0}
+            if(dataView && dataView.categorical) {
+                var series = dataView.categorical.values;
+                if(series && 0 !== series.length) {
+                    var value:any = series[0].values[series[0].values.length - 1];
+                    if (!(isFinite(value) && parseFloat(value) == value)) {
+                        return {value:0}
+                    }
+                    return { value: series[0].values[series[0].values.length - 1] }
                 }
-            return { value: series[0].values[series[0].values.length - 1] }
+            }
+            return {value:0};
         }
-
 
         /** This is called once when the visual is initialially created */
         constructor(options: VisualConstructorOptions) {
