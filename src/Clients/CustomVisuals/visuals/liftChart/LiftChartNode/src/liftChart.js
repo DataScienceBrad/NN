@@ -2928,7 +2928,7 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
                     }
                     oGrpXAxisLblNTick.appendChild(oTick);
                     iPrevX = oAttrLabel.x;
-                    oAttrLabel.text = xAxisSeries[iCounter];
+                    oAttrLabel.text = xAxisSeries[iCounter] ? xAxisSeries[iCounter] : "";
                     oAttrLabel.text = MAQ.applyFormatter(oAttrLabel.text, xAxisLabel.formatter);
                     /* Code for clipping the text to specified number of characters */
                     sTempText = oAttrLabel.text;
@@ -4628,12 +4628,15 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
             if (typeof config.plotOptions.lift.onDisplayAreaChange === 'function') {
                 var circleCoordsStart = MAQ.getIntersectionPoints(config, start);
                 var circleCoordsEnd = MAQ.getIntersectionPoints(config, end);
-                var obj = {
-                    values: circleCoordsEnd.values,
-                    range: [
-                        circleCoordsStart.higherIndex,
-                        circleCoordsEnd.higherIndex
-                    ]
+                var obj;
+                if(circleCoordsStart &&circleCoordsEnd) {
+                    obj = {
+                        values: circleCoordsEnd.values,
+                        range: [
+                            circleCoordsStart.higherIndex,
+                            circleCoordsEnd.higherIndex
+                        ]
+                    }
                 };
                 config.plotOptions.lift.onDisplayAreaChange(obj);
             }
