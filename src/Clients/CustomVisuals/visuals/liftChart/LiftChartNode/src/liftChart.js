@@ -2928,10 +2928,7 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
                     }
                     oGrpXAxisLblNTick.appendChild(oTick);
                     iPrevX = oAttrLabel.x;
-                    oAttrLabel.text = xAxisSeries[iCounter];
-                    if(!xAxisSeries[iCounter]) {
-                        oAttrLabel.text = "";
-                    }
+                    oAttrLabel.text = xAxisSeries[iCounter] ? xAxisSeries[iCounter] : "";
                     oAttrLabel.text = MAQ.applyFormatter(oAttrLabel.text, xAxisLabel.formatter);
                     /* Code for clipping the text to specified number of characters */
                     sTempText = oAttrLabel.text;
