@@ -2,14 +2,14 @@
   "visual": {
     "name": "Grid",
     "displayName": "Grid",
-    "guid": "PBI_CV_309E6B47_39A5_4681_808F_132AFB230860",
+    "guid": "PBI_CV_309E6B47_39A5_4681_808F_132AFB230788",
     "visualClassName": "Grid",
-    "version": "1.0.0",
+    "version": "1.2.0",
     "description": "Grid with Pagination, Sorting and GET Rest API call functionality",
     "supportUrl": "https://github.com/maqsoftware/PowerBI-visuals/issues",
     "gitHubUrl": "https://github.com/maqsoftware/PowerBI-visuals/"
   },
-  "apiVersion": "1.1.0",
+  "apiVersion": "1.4.0",
   "author": {
     "name": "MAQ Software",
     "email": "sales@maqsoftware.com"

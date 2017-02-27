@@ -2,7 +2,7 @@
     "dataRoles": [{
         "displayName": "Values",
         "name": "Values",
-        "kind": 2
+        "kind": "Grouping"
     }],
     "dataViewMappings": [{
         "table": {
