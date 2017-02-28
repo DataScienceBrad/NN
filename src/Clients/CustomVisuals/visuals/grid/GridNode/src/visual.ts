@@ -1,9 +1,9 @@
 module powerbi.extensibility.visual {
 
     export class Grid implements IVisual {
-        private svg: d3.Selection < SVGElement > ;
+        private svg: d3.Selection < SVGAElement > ;
         private renderMAQVisual: any;
-        private xAxis: d3.Selection < SVGElement > ;
+        private xAxis: d3.Selection < SVGAElement > ;
         public dataView: DataView;
         private selectionManager: ISelectionManager;
         public host: IVisualHost;
@@ -19,9 +19,9 @@ module powerbi.extensibility.visual {
             this.selectionManager = options.host.createSelectionManager();
             this.viewport;
             this.target = options.element;
-            let svg = this.svg = d3.select(options.element).append('div')
+           let svg = this.svg = d3.select(options.element).append('div')
                 .classed('DataDiv', true)
-                .attr("id", "KPIGrid");            
+                .attr("id", "KPIGrid");          
         }
 
         /**

@@ -1,3 +1,4 @@
+MAQ = {};
 var scripts = document.querySelectorAll('script[src]');
 for (var i = 0; i < scripts.length; i++) {
     if (document.querySelectorAll('script[src]')[i] && document.querySelectorAll('script[src]')[i].src && 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js' === document.querySelectorAll('script[src]')[i].src) {
@@ -5,10 +6,7 @@ for (var i = 0; i < scripts.length; i++) {
         elem.parentNode.removeChild(elem);
     }
 }
-var script = document.createElement("SCRIPT");
-script.src = 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js';
-script.type = 'text/javascript';
-document.getElementsByTagName("head")[0].appendChild(script);
+
 function myMAQlibrary(dWagon, gridFormatters) {
     var consumeData = dWagon;
     var dataViewObj;
@@ -32,6 +30,15 @@ function myMAQlibrary(dWagon, gridFormatters) {
 
 
     var obj, data = [];
+
+    //This function will convert the date to a string(required format of date)
+    function CustomDate(date1) {
+        var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        var dateString = days[date1.getDay()] + ", " + months[date1.getMonth()] + " " + date1.getDate() + ", " + date1.getFullYear();
+        return dateString;
+    }
+
     for (jCount = 0; jCount < dWagon.table.rows.length; jCount++) {
         obj = {};
         for (iCount = 0; iCount < dWagon.table.columns.length; iCount++) {
@@ -40,7 +47,27 @@ function myMAQlibrary(dWagon, gridFormatters) {
             if (col.lastIndexOf(')') === (col.length - 1)) {
                 name = col.substring(col.indexOf('.') + 1, col.lastIndexOf(')')).replaceAll('"', '\'');
             }
-            obj[name] = dWagon.table.rows[jCount][iCount];
+
+            var value = dWagon.table.rows[jCount][iCount];
+            if (typeof (dWagon.table.rows[jCount][iCount]) == "object") {
+                if (value && value instanceof Date) {
+                    obj[name] = CustomDate(value);
+                }
+            }
+            else if (typeof (value) == "number") //check if it's a number
+            {
+                //Rounding decimal numbers to 2 places, if it is a floating number
+                if (value > Math.floor(value)) {
+                    obj[name] = value.toFixed(2);
+                }
+                else {  //when it's not a floating-point number
+                    obj[name] = dWagon.table.rows[jCount][iCount];
+                }
+            }
+            else //if it's other than date and number
+            {
+                obj[name] = dWagon.table.rows[jCount][iCount];
+            }
         }
         data.push(obj);
     }
@@ -57,12 +84,12 @@ function myMAQlibrary(dWagon, gridFormatters) {
         }
         obj.sortable = true;
         obj.sortType = "parseString";
-        switch (typeof(dWagon.table.rows[0][iCount])) {
+        switch (typeof (dWagon.table.rows[0][iCount])) {
             case 'number':
                 obj.sortType = "parseInteger";
                 break;
             case 'object':
-                if (dWagon.table.rows[iCount][0] instanceof Date) {
+                if (dWagon.table.rows[0][iCount] instanceof Date) {
                     obj.sortType = "parseDate";
                 }
                 break;
@@ -89,25 +116,40 @@ function myMAQlibrary(dWagon, gridFormatters) {
         sortOrder = gridFormatters.sortOrder;
     if (sortKey) {
         sortKey = parseInt(sortKey);
-        if (sortKey > dWagon.table.columns.length)
+        if (sortKey > dWagon.table.columns.length) //invalid sortkey with value more than no. of columns
+        {
             sortKey = dWagon.table.columns.length;
+            gridFormatters.sortKey = dWagon.table.columns.length;
+        }
+        else if (sortKey < 0) //invalid sortkey with value less than 0
+        {
+            sortKey = 1;
+            gridFormatters.sortKey = 1;
+        }
+        else
+            ;
         sortKey--;
         col = dWagon.table.columns[sortKey].queryName;
         gridSort.sortby = col.substring(col.indexOf('.') + 1, col.length).replaceAll('"', '\'');
-    } else {
+    } else { //when sort key is zero
         sortKey = 0;
+        gridFormatters.sortKey = 1;
+
     }
     if (sortOrder && ('asc' == sortOrder.toLowerCase() || 'desc' == sortOrder.toLowerCase())) {
         gridSort.sortorder = sortOrder.toLowerCase();
     } else {
         sortOrder = 'asc';
     }
-    switch (typeof(dWagon.table.rows[sortKey][sortKey])) {
+
+    switch (typeof (dWagon.table.rows[0][sortKey])) {
+
         case 'number':
-            gridSort.sortType = "parseInteger";
+            gridSort.sortType = "parseDecimal"; //to sort numeric data, be it integers or floating-point numbers.
             break;
         case 'object':
-            if (dWagon.table.rows[sortKey][0] instanceof Date) {
+
+            if (dWagon.table.rows[0][sortKey] instanceof Date) {
                 gridSort.sortType = "parseDate";
             }
             break;
@@ -131,15 +173,22 @@ function myMAQlibrary(dWagon, gridFormatters) {
 
 
     MAQ.JsonGrid(config);
-    d3.select('.DataDiv').style({ 'font-size': gridFormatters.fontSize + 'px'});
-    d3.select('.first').style({ 'width': gridFormatters.fontSize + 'px'});
-    d3.select('.next').style({ 'width': gridFormatters.fontSize + 'px'});
+    d3.select('.DataDiv').style({ 'font-size': gridFormatters.fontSize + 'px' });
+    d3.select('.first').style({ 'width': gridFormatters.fontSize + 'px' });
+    d3.select('.next').style({ 'width': gridFormatters.fontSize + 'px' });
     var apiUrl = gridFormatters.apiUrl;
     var columnNumber = gridFormatters.columnNumber;
     var isCustomRedirect = gridFormatters.isCustomRedirect;
 
-    if (columnNumber > dWagon.table.columns.length)
+    if (columnNumber > dWagon.table.columns.length) {
         columnNumber = dWagon.table.columns.length;
+        gridFormatters.columnNumber = dWagon.table.columns.length;
+    }
+    //To check if it is an invalid column number less than 1 and redirect it to 1.
+    else if (columnNumber < 1) {
+        columnNumber = 1;
+        gridFormatters.columnNumber = 1;
+    }
     if (isCustomRedirect && apiUrl && columnNumber) {
         loadJquery(apiUrl, columnNumber);
     }
@@ -150,7 +199,7 @@ function myMAQlibrary(dWagon, gridFormatters) {
         }
         $('.jsonGridRow:nth-child(' + columnNumber + ')').addClass('hyperLink');
         $('.jsonGridRow:nth-child(' + columnNumber + ')').unbind('click');
-        $('.jsonGridRow:nth-child(' + columnNumber + ')').click(function() {
+        $('.jsonGridRow:nth-child(' + columnNumber + ')').click(function () {
             sendRequest($(this).text(), apiUrl);
         });
     }
@@ -193,7 +242,7 @@ if ("undefined" === typeof oGridConstants) {
     };
 }
 var MAQUtility;
-(function(MAQUtility) {
+(function (MAQUtility) {
     function getParents(oNode, sClassSelector) {
         var aParents = [],
             oCurrentNode = oNode.parentNode,
@@ -218,7 +267,7 @@ var MAQUtility;
         for (iCounter; iCounter < oStyles.length; iCounter += 1) {
             try {
                 oNode.style[oStyles[iCounter]] = oStyleObject[oStyles[iCounter]];
-            } catch (exception) {}
+            } catch (exception) { }
         }
         return;
     }
@@ -265,53 +314,53 @@ var MAQUtility;
     MAQUtility.addClass = addClass;
 
     function sortBy(field, reverse, primer) {
-        var key = function(x) {
-                return primer ? primer(x[field]) : x[field];
-            },
-            time = function(x) {
+        var key = function (x) {
+            return primer ? primer(x[field]) : x[field];
+        },
+            time = function (x) {
                 if (x[field]) {
                     return Date.parse(x[field]);
                 }
                 return 0;
             },
-            trimUSD = function(x) {
+            trimUSD = function (x) {
                 if (x[field] && x[field] !== oGridConstants.sNA) {
                     return parseInt(x[field].substring(1, x[field].length).split(",").join(""));
                 }
                 return 0;
             },
-            trimSalesStage = function(x) {
+            trimSalesStage = function (x) {
                 if (x[field] && x[field] !== oGridConstants.sNA) {
                     var oStageInfo = x[field].split(" ");
                     return parseInt(oStageInfo[oStageInfo.length - 1].slice(0, oStageInfo[oStageInfo.length - 1].length - 1));
                 }
                 return 0;
             },
-            stringConvert = function(x) {
+            stringConvert = function (x) {
                 if (x[field] && x[field] !== oGridConstants.sNA) {
                     return x[field].toString();
                 }
                 return 0;
             },
-            parseInteger = function(x) {
+            parseInteger = function (x) {
                 if (x[field]) {
                     return parseInt(x[field]);
                 }
                 return 0;
             },
-            parseDecimal = function(x) {
+            parseDecimal = function (x) {
                 if (x[field]) {
                     return parseFloat(x[field]);
                 }
                 return 0;
             },
-            parseString = function(x) {
+            parseString = function (x) {
                 if (x[field]) {
                     return x[field].toString();
                 }
                 return "";
             };
-        return function(a, b) {
+        return function (a, b) {
             var iFirstValue, iSecondValue;
             if (primer === oGridConstants.sParseDate) {
                 iFirstValue = time(a), iSecondValue = time(b);
@@ -393,7 +442,7 @@ var MAQUtility;
             iIterator = 0;
         }
         if (sFormatterName) {
-            if (typeof(window[sFormatterName]) === 'function') {
+            if (typeof (window[sFormatterName]) === 'function') {
                 sText = window[sFormatterName](sText, oConfiguration, iIterator);
             } else if (typeof sFormatterName === 'function') {
                 sText = sFormatterName(sText, oConfiguration, iIterator);
@@ -1031,7 +1080,6 @@ function insertCompetitorByRevLossFormatter(sInput, iDecimalPlaces) {
 // Count without suppression: 292.
 // JS Cop count: 2; September 3, 2014.
 // Current JS Cop count: 2; September 8, 2014.
-var MAQ = {};
 var pageid;
 if ("undefined" === typeof oGridConstants) {
     var oGridConstants = {
@@ -1055,11 +1103,11 @@ MAQ.gridObject = [];
 
 function newRecords(oElement, sGridName) {
     if (oElement) {
-        if (!oElement.getAttribute("data-pageId")) {
+        if (!$(oElement).attr("data-pageId")) {
             oElement = oElement.childNodes[0];
         }
-        if (oElement.getAttribute("data-pageId")) {
-            pageid = oElement.getAttribute('data-pageid');
+        if ($(oElement).attr("data-pageId")) {
+            pageid = $(oElement).attr('data-pageid');
             if (document.getElementsByClassName("ListOptionContainer") && document.getElementsByClassName("ListOptionContainer")[0])
                 document.getElementsByClassName("ListOptionContainer")[0].value = pageid;
             var iGridObjectPosition = MAQ.gridName.indexOf(sGridName),
@@ -1072,15 +1120,15 @@ function newRecords(oElement, sGridName) {
         }
     }
 }
-MAQ.getAdjustedRowChunk = function(inputData, width) {
+MAQ.getAdjustedRowChunk = function (inputData, width) {
     return '<div class="jsonGridOverflow" title="' + inputData + '" style="width: ' + width + 'px;">' + inputData + "</div>";
 };
-MAQ.getAdjustedRowChunkAndToolTip = function(inputData, width) {
+MAQ.getAdjustedRowChunkAndToolTip = function (inputData, width) {
     width = width || "100";
     width = width.replace("%", "").replace("px", "");
     return '<span class="jsonGridOverflow" title="' + inputData + '" style="width: ' + (width - 15 >= 15 ? width - 15 : 15) + 'px;">' + inputData + "</span>";
 };
-MAQ.setViewRecords = function(oCurrentGridConfiguration) {
+MAQ.setViewRecords = function (oCurrentGridConfiguration) {
     /// <disable>JS3058</disable>
     var oGridElement = document.getElementById(oCurrentGridConfiguration.gridName),
         oViewRecords = document.getElementById(oCurrentGridConfiguration.gridName + "_ViewRecords"),
@@ -1113,7 +1161,7 @@ MAQ.setViewRecords = function(oCurrentGridConfiguration) {
 };
 
 // Generate page list to be displayed in pagination control
-MAQ.generatePageList = function(oCurrentGridConfiguration, iCurrentPage, iTotalPages) {
+MAQ.generatePageList = function (oCurrentGridConfiguration, iCurrentPage, iTotalPages) {
     var oGridElement = document.getElementById(oCurrentGridConfiguration.container),
         oPage, oPageList = oGridElement.querySelector(".ViewRecordDiv > div"),
         iIterator = 0,
@@ -1134,12 +1182,14 @@ MAQ.generatePageList = function(oCurrentGridConfiguration, iCurrentPage, iTotalP
             }
             MAQUtility.addClass(oPage, "PageListItem");
             oPage.setAttribute("data-pageId", iIterator);
-            oPage.setAttribute("onclick", "newRecords(this,'" + oCurrentGridConfiguration.gridName + "')");
+            oPage.addEventListener('click', function () {
+                newRecords(this, oCurrentGridConfiguration.gridName);
+            });
             oPageList.appendChild(oPage);
         }
     }
 };
-MAQ.getPage = function(iCurrentPageNum, iLastPageNum, oCurrentGridConfiguration) {
+MAQ.getPage = function (iCurrentPageNum, iLastPageNum, oCurrentGridConfiguration) {
     var iCurrentPage = iCurrentPageNum,
         iLastPage = iLastPageNum,
         oFirst = document.getElementById(oCurrentGridConfiguration.gridName + "_First"),
@@ -1158,7 +1208,7 @@ MAQ.getPage = function(iCurrentPageNum, iLastPageNum, oCurrentGridConfiguration)
         MAQ.setViewRecords(oCurrentGridConfiguration);
     }
 };
-MAQ.populateGrid = function(oCurrentGridConfiguration) {
+MAQ.populateGrid = function (oCurrentGridConfiguration) {
     var htmlGridObject = oCurrentGridConfiguration.gridObject,
         numberOfRows, rowCounter, iRowsRight;
     if (htmlGridObject) {
@@ -1175,23 +1225,23 @@ MAQ.populateGrid = function(oCurrentGridConfiguration) {
         oCurrentGridConfiguration.callBackFunc && oCurrentGridConfiguration.callBackFunc();
     }
 };
-MAQ.disablePrev = function(sGridName) {
+MAQ.disablePrev = function (sGridName) {
     var previous = document.getElementById(sGridName + "_Prev");
     MAQUtility.addClass(previous, "click-disabled");
 };
-MAQ.enablePrev = function(sGridName) {
+MAQ.enablePrev = function (sGridName) {
     var previous = document.getElementById(sGridName + "_Prev");
     MAQUtility.removeClass(previous, "click-disabled");
 };
-MAQ.disableNext = function(sGridName) {
+MAQ.disableNext = function (sGridName) {
     var next = document.getElementById(sGridName + "_Next");
     MAQUtility.addClass(next, "click-disabled");
 };
-MAQ.enableNext = function(sGridName) {
+MAQ.enableNext = function (sGridName) {
     var next = document.getElementById(sGridName + "_Next");
     MAQUtility.removeClass(next, "click-disabled");
 };
-MAQ.goLast = function(oElement, sGridName) {
+MAQ.goLast = function (oElement, sGridName) {
     var gridObjectPosition, oCurrentGridConfiguration;
     if (!MAQUtility.hasClass(oElement, "click-disabled")) {
         if (MAQ.gridName.length) {
@@ -1208,7 +1258,7 @@ MAQ.goLast = function(oElement, sGridName) {
         }
     }
 };
-MAQ.goFirst = function(oElement, sGridName) {
+MAQ.goFirst = function (oElement, sGridName) {
     var gridObjectPosition, oCurrentGridConfiguration;
     if (!MAQUtility.hasClass(oElement, "click-disabled")) {
         if (MAQ.gridName.length) {
@@ -1226,7 +1276,7 @@ MAQ.goFirst = function(oElement, sGridName) {
         }
     }
 };
-MAQ.goPrevious = function(oElement, sGridName) {
+MAQ.goPrevious = function (oElement, sGridName) {
     var gridObjectPosition, oCurrentGridConfiguration;
     if (!MAQUtility.hasClass(oElement, "click-disabled")) {
         if (MAQ.gridName.length > 0) {
@@ -1251,7 +1301,7 @@ MAQ.goPrevious = function(oElement, sGridName) {
         }
     }
 };
-MAQ.goNext = function(oElement, sGridName) {
+MAQ.goNext = function (oElement, sGridName) {
     var gridObjectPosition, oCurrentGridConfiguration;
     if (!MAQUtility.hasClass(oElement, "click-disabled")) {
         if (MAQ.gridName.length > 0) {
@@ -1291,7 +1341,7 @@ function isNumber(event, oElement, sGridName) {
 }
 
 // Navigate to page entered in text box
-MAQ.goToPage = function(iCharCode, oElement, sGridName) {
+MAQ.goToPage = function (iCharCode, oElement, sGridName) {
     var iCurrentPage, iGridIndex, iLastPage = 0,
         oCurrentGridConfig;
     if (oElement && oElement.value) {
@@ -1308,7 +1358,7 @@ MAQ.goToPage = function(iCharCode, oElement, sGridName) {
         }
     }
 };
-MAQ.sortDataWithinGroup = function(oGridConfiguration, sFieldName, sSortFlag, sSortType) {
+MAQ.sortDataWithinGroup = function (oGridConfiguration, sFieldName, sSortFlag, sSortType) {
     var iCount = 0,
         iTotal = oGridConfiguration.groupedRowHeader.groupHeaderName.length,
         iInnerCount = 0,
@@ -1329,11 +1379,11 @@ MAQ.sortDataWithinGroup = function(oGridConfiguration, sFieldName, sSortFlag, sS
     }
     return oGridConfiguration;
 };
-String.prototype.replaceAll = function(search, replacement) {
+String.prototype.replaceAll = function (search, replacement) {
     var target = this;
     return target.replace(new RegExp(search, 'g'), replacement);
 };
-MAQ.sortJsonGrid = function(cellObject, sGridName, fieldName) {
+MAQ.sortJsonGrid = function (cellObject, sGridName, fieldName) {
     var gridObjectPosition, sortOrder, sortFlag, oCurrentGridConfiguration, columnCounter, sortType = String,
         sortKey = "",
         oSortIndicators, iCount, oArrow;
@@ -1412,7 +1462,7 @@ MAQ.sortJsonGrid = function(cellObject, sGridName, fieldName) {
         }
     }
 };
-MAQ.CreatePaginationControl = function(GridConfiguration) {
+MAQ.CreatePaginationControl = function (GridConfiguration) {
     var paginationSpaceRow = GridConfiguration.tblFoot.insertRow(0),
         row = GridConfiguration.tblFoot.insertRow(1),
         rightRow, leftGrid, rightGrid, rightSpaceCell, spaceCell = paginationSpaceRow.insertCell(0),
@@ -1471,7 +1521,7 @@ MAQ.CreatePaginationControl = function(GridConfiguration) {
             $(oNextDiv).html('<span id="' + GridConfiguration.gridName + '_Next" class="next cur-pointer" active="0" onclick="MAQ.goNext(this,\'' + GridConfiguration.gridName + '\')">></span>');
         }
     } else {
-        MSApp.execUnsafeLocalFunction(function() {
+        MSApp.execUnsafeLocalFunction(function () {
             if (0 === GridConfiguration.currentPage) {
                 WinJS.Utilities.setInnerHTML(oPreviousDiv, '<span id="' + GridConfiguration.gridName + '_Prev" class="prev cur-pointer click-disabled" active="1" width="24" onclick="MAQ.goPrevious(this,\'' + GridConfiguration.gridName + '\')"><</span>');
             } else {
@@ -1505,7 +1555,7 @@ MAQ.CreatePaginationControl = function(GridConfiguration) {
         if (!GridConfiguration.isWin8App) {
             oViewRecords.appendChild(oPageList);
         } else {
-            MSApp.execUnsafeLocalFunction(function() {
+            MSApp.execUnsafeLocalFunction(function () {
                 WinJS.Utilities.setInnerHTML(oViewRecords, oPageList.innerHTML);
             });
         }
@@ -1523,14 +1573,20 @@ MAQ.CreatePaginationControl = function(GridConfiguration) {
         // Create text box
         oListOptionContainer.type = "text";
         oListOptionContainer.value = parseInt(GridConfiguration.currentPage) + 1;
-        oListOptionContainer.setAttribute("onkeypress", "isNumber(event,this,'" + GridConfiguration.container + "')");
-    } else {
+        oListOptionContainer.addEventListener('keypress', function (e) {
+            isNumber(event, this, GridConfiguration.container);
+        });
+    }
+    else {
         for (iIterator = 1; iIterator <= iLastPage; iIterator++) {
             oListOption = document.createElement("option");
             oListOption.innerText = iIterator;
             MAQUtility.addClass(oListOption, "ListOption");
             oListOption.setAttribute("data-pageId", iIterator.toString());
-            oListOption.setAttribute("onclick", "newRecords(this,'" + GridConfiguration.gridName + "')");
+            oListOption.addEventListener('click', function (e) {
+                newRecords(this, GridConfiguration.gridName);
+            }
+            );
             oListOptionContainer.appendChild(oListOption);
         }
         oSelectedElement = document.querySelector("#" + GridConfiguration.gridName + " .ListOption[data-pageId='" + iCurrentPage + "']");
@@ -1545,7 +1601,7 @@ MAQ.CreatePaginationControl = function(GridConfiguration) {
     }
 };
 
-MAQ.setDrillDown = function(sCellValue, iCurrentRow, oGridConfiguration, bEndRow) {
+MAQ.setDrillDown = function (sCellValue, iCurrentRow, oGridConfiguration, bEndRow) {
     var oDrillCellContainer = document.createElement("div"),
         oDrillCell = document.createElement("div"),
         iDrillIterator, iDrillDownCounter = 0,
@@ -1602,7 +1658,7 @@ MAQ.setDrillDown = function(sCellValue, iCurrentRow, oGridConfiguration, bEndRow
     }
     return $(oDrillCellContainer).html() + sCellValue;
 };
-MAQ.CreateHTMLTableRow = function(GridConfiguration) {
+MAQ.CreateHTMLTableRow = function (GridConfiguration) {
     /// <disable>JS3058</disable>
     var startIndex, endIndex, cell = null,
         cellCounter, drillCounter = 0,
@@ -1692,7 +1748,7 @@ MAQ.CreateHTMLTableRow = function(GridConfiguration) {
                 }
                 sHeaderName = GridConfiguration.data[iCounter]["groupHeaderName"];
                 iHeaderIndex = 0;
-                GridConfiguration.groupedRowHeader.data.forEach(function(element) {
+                GridConfiguration.groupedRowHeader.data.forEach(function (element) {
                     if (element.name === sHeaderName) {
                         iHeaderIndex = GridConfiguration.groupedRowHeader.data.indexOf(element);
                     }
@@ -1857,7 +1913,7 @@ MAQ.CreateHTMLTableRow = function(GridConfiguration) {
             if (!GridConfiguration.isWin8App) {
                 $(cell).html(sReturnValue);
             } else {
-                MSApp.execUnsafeLocalFunction(function() {
+                MSApp.execUnsafeLocalFunction(function () {
                     WinJS.Utilities.setInnerHTML(cell, sReturnValue);
                 });
             }
@@ -1943,7 +1999,7 @@ MAQ.CreateHTMLTableRow = function(GridConfiguration) {
                 if (!GridConfiguration.isWin8App) {
                     $(cell).html(sReturnValue);
                 } else {
-                    MSApp.execUnsafeLocalFunction(function() {
+                    MSApp.execUnsafeLocalFunction(function () {
                         WinJS.Utilities.setInnerHTML(cell, sReturnValue);
                     });
                 }
@@ -1958,7 +2014,7 @@ MAQ.CreateHTMLTableRow = function(GridConfiguration) {
     }
 };
 
-MAQ.CreateHTMLTableWithHeader = function(GridConfiguration) {
+MAQ.CreateHTMLTableWithHeader = function (GridConfiguration) {
     var tHead = GridConfiguration.tblHead,
         row = "",
         cell = null,
@@ -2066,7 +2122,7 @@ MAQ.CreateHTMLTableWithHeader = function(GridConfiguration) {
         }
     }
 };
-MAQ.applyStyleToObject = function(oGridObject, oStyleObject) {
+MAQ.applyStyleToObject = function (oGridObject, oStyleObject) {
     var oStyles, iCounter;
     if (typeof oStyleObject === "undefined") {
         return;
@@ -2075,11 +2131,11 @@ MAQ.applyStyleToObject = function(oGridObject, oStyleObject) {
     for (iCounter; iCounter < oStyles.length; iCounter += 1) {
         try {
             oGridObject.style[oStyles[iCounter]] = oStyleObject[oStyles[iCounter]];
-        } catch (e) {}
+        } catch (e) { }
     }
 };
 
-MAQ.CreateHTMLTable = function(GridConfiguration) {
+MAQ.CreateHTMLTable = function (GridConfiguration) {
     var gridContainer, grid, oRightGrid, oContainerDiv;
     if (GridConfiguration.fixedHeaderEnd) {
         gridContainer = document.createElement("div");
@@ -2087,7 +2143,7 @@ MAQ.CreateHTMLTable = function(GridConfiguration) {
     }
     grid = document.createElement("table");
     grid.setAttribute("id", GridConfiguration.gridName);
-    if ("string" === typeof(GridConfiguration.container)) {
+    if ("string" === typeof (GridConfiguration.container)) {
         grid.setAttribute("class", "jsonGrid");
     } else {
         grid.setAttribute("class", "InnerJsonGrid");
@@ -2118,7 +2174,7 @@ MAQ.CreateHTMLTable = function(GridConfiguration) {
     return (GridConfiguration.fixedHeaderEnd) ? gridContainer : grid;
 };
 
-MAQ.CreateLegends = function(oGridConfiguration) {
+MAQ.CreateLegends = function (oGridConfiguration) {
     var sGridContainer, oLegendContainer = document.createElement("div"),
         oLegendSectionCover = document.createElement("div"),
         oLegendTitleSection = document.createElement("div"),
@@ -2162,9 +2218,9 @@ MAQ.CreateLegends = function(oGridConfiguration) {
     }
     oGridConfiguration.containerObject.appendChild(oLegendContainer);
 };
-MAQ.JsonGrid = function(gridConfigurationOptions) {
+MAQ.JsonGrid = function (gridConfigurationOptions) {
     var oAttribute, tBody, checkKeys, bodyContainer, innerTable, indexPositionOfCurrentGrid, iIterator, iColumnIterator, iCount, iTotal, oTableBody, iColumnHeaderLength, iDataLength, iMargin, oAttributeObject, nCurrentValue, nCurrentColumn;
-    if (typeof(gridConfigurationOptions.container) === "string") {
+    if (typeof (gridConfigurationOptions.container) === "string") {
         this.containerObject = document.getElementById(gridConfigurationOptions.container);
 
         // Append data if grid already exists
@@ -2361,7 +2417,7 @@ MAQ.JsonGrid = function(gridConfigurationOptions) {
 
             // Add scroll handler if grid supports scrolling and Server Side is enabled.
             if (this.gridOptions.scrolling.enabled) {
-                this.gridOptions.containerObject.addEventListener("scroll", function(oEvent) {
+                this.gridOptions.containerObject.addEventListener("scroll", function (oEvent) {
                     MAQ.handleGridScroll(oEvent.currentTarget);
                 }, false);
             }
@@ -2477,12 +2533,19 @@ MAQ.JsonGrid = function(gridConfigurationOptions) {
     //Pagination issue fix
     var selectedElement = document.getElementsByClassName("ListOptionContainer")[0];
     if (undefined !== selectedElement) {
-        selectedElement.setAttribute("onchange", "jumpTo(0)");
+        selectedElement.addEventListener('change', function (e) {
+            jumpTo(0);
+        }
+        );
+
     }
 
     selectedElement = document.getElementsByClassName("ListOptionContainer")[1];
     if (undefined !== selectedElement) {
-        selectedElement.setAttribute("onchange", "jumpTo(1)");
+        selectedElement.addEventListener('change', function (e) {
+            jumpTo(1);
+        }
+        );
     }
     return true;
 };
@@ -2504,7 +2567,7 @@ function jumpTo(index) {
     }
 }
 // Function to create and update hidden chunk (this will be called only in case of server side grid)
-MAQ.createHiddenChunk = function(gridOptions) {
+MAQ.createHiddenChunk = function (gridOptions) {
     var sContainer = gridOptions.container,
         oHiddenContainer = document.getElementById(sContainer + "_hidden");
     if (oHiddenContainer) {
@@ -2529,7 +2592,7 @@ MAQ.createHiddenChunk = function(gridOptions) {
 };
 
 // Function to send service request in case of server side grid
-MAQ.callService = function(gridOptions) {
+MAQ.callService = function (gridOptions) {
     var oHiddenContainer = document.getElementById(gridOptions.container + "_hidden"),
         sCallBack = gridOptions.serverGrid.sendRequestFunction;
 
@@ -2552,7 +2615,7 @@ MAQ.callService = function(gridOptions) {
 };
 
 // Function to add scroll handler
-MAQ.handleGridScroll = function(oCurrentElement) {
+MAQ.handleGridScroll = function (oCurrentElement) {
     var oHiddenContainer, gridOptions, sRequestPending, iMaxPageNumber, iCurrentPage, iGridObjectPosition = MAQ.gridName.indexOf(oCurrentElement.id + "_Grid");
     if (-1 < iGridObjectPosition) {
         gridOptions = MAQ.gridObject[iGridObjectPosition];
@@ -2571,7 +2634,7 @@ MAQ.handleGridScroll = function(oCurrentElement) {
 };
 
 // Function to append data to existing grid on scroll
-MAQ.appendDataToGrid = function(gridOptions) {
+MAQ.appendDataToGrid = function (gridOptions) {
     var oHiddenContainer = document.getElementById(gridOptions.container + "_hidden"),
         oGridConfigurationOptions, iGridObjectPosition = MAQ.gridName.indexOf(gridOptions.container + "_Grid");
     if (-1 < iGridObjectPosition) {
@@ -2582,7 +2645,7 @@ MAQ.appendDataToGrid = function(gridOptions) {
     }
 };
 
-MAQ.drillDown = function(oObject, sCallBack, sContainer) {
+MAQ.drillDown = function (oObject, sCallBack, sContainer) {
     var iGridObjectPosition = MAQ.gridName.indexOf(sContainer + "_Grid"),
         bAccordion = MAQ.gridObject[iGridObjectPosition].drillDown.accordion,
         oDrillSet = {},
@@ -2622,7 +2685,7 @@ MAQ.drillDown = function(oObject, sCallBack, sContainer) {
 };
 
 // Function to calculate max and min
-MAQ.calculateMinMax = function(gridOptions, iStartIndex, iEndIndex) {
+MAQ.calculateMinMax = function (gridOptions, iStartIndex, iEndIndex) {
     var iColumnIncludedLength, iColumnIterator, nMax, nCurrentValue, nMin, nCurrentColumn, iIterator;
     iColumnIncludedLength = gridOptions.dataConfiguration.columnsIncluded.length;
     for (iColumnIterator = 0; iColumnIterator < iColumnIncludedLength; iColumnIterator++) {
@@ -2670,7 +2733,7 @@ MAQ.calculateMinMax = function(gridOptions, iStartIndex, iEndIndex) {
     }
     return gridOptions;
 };
-MAQ.getChildPosition = function(oChildNode, oParentNode) {
+MAQ.getChildPosition = function (oChildNode, oParentNode) {
     var index = -1,
         iCount, iTotal = oParentNode.querySelectorAll(oChildNode.tagName).length,
         aTrs = oParentNode.querySelectorAll(oChildNode.tagName);

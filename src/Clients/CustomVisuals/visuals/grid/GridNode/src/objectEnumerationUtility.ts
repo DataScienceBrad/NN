@@ -12,10 +12,8 @@ module powerbi.extensibility.visual {
         if(objects) {
             let object = objects[objectName];
             if(object) {
-                let property: T = object[propertyName];
+                let property: T = <T>object[propertyName];
                 if(property !== undefined) {
-                    if('number' === typeof(defaultValue) && parseInt(property.toString()) <= 0)
-                        return defaultValue;
                     return property;
                 }
             }
@@ -41,7 +39,7 @@ module powerbi.extensibility.visual {
             if(categoryObject) {
                 let object = categoryObject[objectName];
                 if(object) {
-                    let property: T = object[propertyName];
+                    let property: T = <T>object[propertyName];
                     if(property !== undefined) {
                         return property;
                     }
