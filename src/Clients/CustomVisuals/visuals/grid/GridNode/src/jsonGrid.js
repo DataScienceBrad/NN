@@ -47,9 +47,12 @@ function myMAQlibrary(dWagon, gridFormatters) {
             if (col.lastIndexOf(')') === (col.length - 1)) {
                 name = col.substring(col.indexOf('.') + 1, col.lastIndexOf(')')).replaceAll('"', '\'');
             }
-
             var value = dWagon.table.rows[jCount][iCount];
-            if (typeof (dWagon.table.rows[jCount][iCount]) == "object") {
+            //check if the value is null 
+            if (value === null) {
+                obj[name] = null;
+            }
+            else if (typeof (value) == "object") {
                 if (value && value instanceof Date) {
                     obj[name] = CustomDate(value);
                 }
@@ -84,12 +87,28 @@ function myMAQlibrary(dWagon, gridFormatters) {
         }
         obj.sortable = true;
         obj.sortType = "parseString";
-        switch (typeof (dWagon.table.rows[0][iCount])) {
+
+        //find first non-null value for the column to know its data type to select right sortType
+        var loopctr = 0, sort_type = '';
+
+        while (loopctr < dWagon.table.rows.length && !dWagon.table.rows[loopctr][iCount]) {
+            loopctr++;
+        }
+        if (loopctr == dWagon.table.rows.length) {
+            sort_type = typeof (dWagon.table.rows[0][iCount]);
+        }
+
+        else {
+            sort_type = typeof (dWagon.table.rows[loopctr][iCount]);
+        }
+
+
+        switch (sort_type) {
             case 'number':
                 obj.sortType = "parseInteger";
                 break;
             case 'object':
-                if (dWagon.table.rows[0][iCount] instanceof Date) {
+                if (loopctr < dWagon.table.rows.length && dWagon.table.rows[loopctr][iCount] instanceof Date) {
                     obj.sortType = "parseDate";
                 }
                 break;
@@ -223,11 +242,11 @@ function myMAQlibrary(dWagon, gridFormatters) {
 /// <dictionary>maqutility</dictionary>
 // Count without suppression: 37
 // JSCOP count: 0; June 19, 2014.
-// Current JSCOP count: 0;  June 19, 2014.
+// Current JSCOP count: 0;  June 19, 2014.  
 if ("undefined" === typeof oGridConstants) {
     var oGridConstants = {
         sNAN: "NaN",
-        sNA: "N/A",
+        sNA: " ", //for null values, this default null string would be displayed
         sParseDate: "parseDate",
         sParseDollar: "parseUSD",
         sParseInteger: "parseInteger",
@@ -1084,7 +1103,7 @@ var pageid;
 if ("undefined" === typeof oGridConstants) {
     var oGridConstants = {
         sNAN: "NaN",
-        sNA: "N/A",
+        sNA: " ",
         sParseDate: "parseDate",
         sParseDollar: "parseUSD",
         sParseInteger: "parseInteger",
