@@ -1,0 +1,185 @@
+{
+    "dataRoles": [
+        {
+            "name": "Y",
+            "kind": "Measure",
+            "displayName": "Value"
+        },
+        {
+            "name": "TargetValue",
+            "kind": "Measure",
+            "displayName": "Target Value"
+        },
+        {
+            "name": "MinValue",
+            "kind": "Measure",
+            "displayName": "Minimum value"
+        },
+        {
+            "name": "MaxValue",
+            "kind": "Measure",
+            "displayName": "Maximum value"
+        },
+        {
+            "name": "QualitativeState1Value",
+            "kind": "Measure",
+            "displayName": "Trend Value 1"
+        },
+        {
+            "name": "QualitativeState2Value",
+            "kind": "Measure",
+            "displayName": "Trend Value 2"
+        }
+    ],
+    "objects": {
+        "general": {
+            "displayName": "General",
+            "properties": {
+                "ActualFillColor": {
+                    "displayName": "Main Color",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "ComparisonFillColor": {
+                    "displayName": "Comparison Color",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "labels": {
+            "displayName": "Data label",
+            "properties": {
+                "DataColor": {
+                    "displayName": "Color",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "labelDisplayUnits": {
+                    "displayName": "Display units",
+                    "type": {
+                        "formatting": {
+                            "labelDisplayUnits": true
+                        }
+                    },
+                    "suppressFormatPainterCopy": true
+                },
+                "markerWidth": {
+                    "displayName": "Decimal Places(Max 4 Places)",
+                    "description": "Decimal Places(Max 4 Places)",
+                    "type": {
+                        "numeric": true
+                    }
+                }
+            }
+        },
+        "trendLabels": {
+            "displayName": "Trend label",
+            "properties": {
+                "trendColor": {
+                    "displayName": "Color",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "trendDisplayUnits": {
+                    "displayName": "Display units",
+                    "type": {
+                        "formatting": {
+                            "labelDisplayUnits": true
+                        }
+                    },
+                    "suppressFormatPainterCopy": true
+                },
+                "lineWidth": {
+                    "displayName": "Decimal Places(Max 4 Places)",
+                    "description": "Decimal Places(Max 4 Places)",
+                    "type": {
+                        "numeric": true
+                    }
+                }
+            }
+        }
+    },
+    "dataViewMappings": [
+        {
+            "conditions": [
+                {
+                    "Y": {
+                        "max": 1
+                    },
+                    "TargetValue": {
+                        "max": 1
+                    },
+                    "MinValue": {
+                        "max": 1
+                    },
+                    "MaxValue": {
+                        "max": 1
+                    },
+                    "QualitativeState1Value": {
+                        "max": 1
+                    },
+                    "QualitativeState2Value": {
+                        "max": 1
+                    }
+                }
+            ],
+            "categorical": {
+                "values": {
+                    "select": [
+                        {
+                            "bind": {
+                                "to": "Y"
+                            }
+                        },
+                        {
+                            "bind": {
+                                "to": "TargetValue"
+                            }
+                        },
+                        {
+                            "bind": {
+                                "to": "MinValue"
+                            }
+                        },
+                        {
+                            "bind": {
+                                "to": "MaxValue"
+                            }
+                        },
+                        {
+                            "bind": {
+                                "to": "QualitativeState1Value"
+                            }
+                        },
+                        {
+                            "bind": {
+                                "to": "QualitativeState2Value"
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    ]
+}

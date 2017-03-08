@@ -1,0 +1,40 @@
+{
+  "visual": {
+    "name": "HorizontalFunnel",
+    "displayName": "HorizontalFunnel",
+    "guid": "PBI_CV_81D3B16F_AA3E_47D2_A8DE_41F28A32173G",
+    "visualClassName": "HorizontalFunnel",
+    "version": "1.0.0",
+    "description": "Horizontal Funnel",
+    "supportUrl": "https://github.com/maqsoftware/PowerBI-visuals/issues",
+    "gitHubUrl": "https://github.com/maqsoftware/PowerBI-visuals/"
+  },
+  "apiVersion": "1.4.0",
+  "author": {
+    "name": "MAQ Software",
+    "email": "sales@maqsoftware.com"
+  },
+  "assets": {
+    "icon": "assets/icon.png",
+    "thumbnail": "assets/thumbnail.png",
+    "screenshot": "assets/screenshot.png"
+  },
+  "externalJS": [
+    "node_modules/lodash/lodash.min.js",
+    "node_modules/powerbi-visuals-utils-dataviewutils/lib/index.js",
+    "node_modules/jquery/dist/jquery.min.js",
+    "node_modules/d3/d3.min.js",
+    "node_modules/lodash/lodash.min.js",
+    "node_modules/globalize/lib/globalize.js",
+    "node_modules/globalize/lib/cultures/globalize.culture.en-US.js",
+    "node_modules/powerbi-visuals-utils-typeutils/lib/index.js",
+    "node_modules/powerbi-visuals-utils-svgutils/lib/index.js",
+    "node_modules/powerbi-visuals-utils-formattingutils/lib/index.js",
+    "node_modules/powerbi-visuals-utils-interactivityutils/lib/index.js",
+    "node_modules/powerbi-visuals-utils-chartutils/lib/index.js",
+    "node_modules/powerbi-visuals-utils-colorutils/lib/index.js"
+ ],
+  "style": "style/visual.less",
+  "capabilities": "capabilities.json",
+  "dependencies": "dependencies.json"
+}
