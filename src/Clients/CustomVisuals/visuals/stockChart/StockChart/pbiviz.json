@@ -5,14 +5,14 @@
     "guid": "StockChart1464746768122",
     "visualClassName": "StockChart",
     "version": "1.0.0",
-    "description": "",
-    "supportUrl": "",
-    "gitHubUrl": ""
+    "description": "Stock chart custom visual",
+    "supportUrl": "https://github.com/maqsoftware/PowerBI-visuals/issues",
+    "gitHubUrl": "https://github.com/maqsoftware/PowerBI-visuals/"
   },
   "apiVersion": "1.4.0",
   "author": {
-    "name": "",
-    "email": ""
+    "name": "MAQ Software",
+    "email": "sales@maqsoftware.com"
   },
   "assets": {
     "icon": "assets/icon.png"
