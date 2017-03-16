@@ -2,7 +2,7 @@
   "visual": {
     "name": "CircularGauge",
     "displayName": "CircularGauge",
-    "guid": "PBI_CV_076CB437_C51F_44BD_9DE2_746659E84585",
+    "guid": "CircularGauge1458053128559",
     "visualClassName": "CircularGauge",
     "version": "1.0.0",
     "description": "Illustrate headway toward goals in either a pie or a donut chart format. One color illustrates actual progress and the other displays the target. The percentage shown tracks progress. Text size and ring size are customizable.",

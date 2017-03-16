@@ -2,7 +2,7 @@
   "visual": {
     "name": "LinearGauge",
     "displayName": "LinearGauge",
-    "guid": "PBI_CV_39C8320B_1751_4CEC_A3EB_892F07B9834D",
+    "guid": "LinearGauge1450736844786",
     "visualClassName": "LinearGauge",
     "version": "1.0.0",
     "description": "Create at-a-glance visualization to compare your progress against identified goals and warning zones. By allowing you to include multiple data points, the component provides the ability to illustrate trend details, such as monthly or year-to-date completion rates. The pointer notes targets and the colored bar shows the current progress toward those goals.",
