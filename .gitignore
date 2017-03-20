@@ -49,3 +49,4 @@ src/Clients/**/obj/*.*
 
 # IDE temp data
 .sublime-gulp.cache
+.tmp
