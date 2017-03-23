@@ -73,6 +73,10 @@
                             {
                                 "value": "LeftCenter",
                                 "displayName": "Left Center"
+                            },
+                            {
+                                "value": "None",
+                                "displayName": "None"
                             }
                         ]
                     }
