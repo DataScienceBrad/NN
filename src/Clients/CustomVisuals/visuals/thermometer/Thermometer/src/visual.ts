@@ -181,12 +181,16 @@ module powerbi.extensibility.visual {
 
         private drawTicks(width: number, height: number, radius: number, padding: number) {
             d3.select(".y.axis").attr("visibility", "visible");
-            var y, yAxis;
+            var y, yAxis, tickData = [], iCount;
             var postFix = Thermometer.getValue(this.dataView, 'postfix', '');
             y = d3.scale.linear().range([height - (radius * 2) - padding, padding]);
-            yAxis = d3.svg.axis().scale(y).ticks(6).orient("right");
             y.domain([this.data.min, this.data.max]);
-           
+            var interval = (this.data.max-this.data.min)/5;
+            tickData[0] = this.data.min;
+            for(iCount = 1;iCount<6;iCount++) {
+                tickData[iCount] = tickData[iCount-1] + interval;
+            }
+            yAxis = d3.svg.axis().scale(y).ticks(6).orient("right").tickValues(tickData);
             this.tempMarkings
                 .attr("transform", "translate(" + ((width + radius) / 2 + (radius * 0.15)) + ",0)")
                 .style({
@@ -197,7 +201,7 @@ module powerbi.extensibility.visual {
                 })
                 .call(yAxis);
             this.tempMarkings.selectAll('.axis line, .axis path').style({ 'stroke': '#333', 'fill': 'none' });
-            for (var iCount = 0; iCount < document.querySelectorAll('.axis text').length; iCount++) {
+            for (iCount = 0; iCount < document.querySelectorAll('.axis text').length; iCount++) {
                 document.querySelectorAll('.axis text')[iCount].innerHTML = document.querySelectorAll('.axis text')[iCount].innerHTML + ' ' + postFix;
             }
             if (!this.data.drawTickBar) {
