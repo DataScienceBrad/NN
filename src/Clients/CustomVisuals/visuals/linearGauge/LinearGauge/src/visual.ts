@@ -47,75 +47,75 @@ module powerbi.extensibility.visual {
     }
     //object variable which we used in customized color and text through UI options
     export var linearGaugeProps = {
-           general: {
-               ActualFillColor: <DataViewObjectPropertyIdentifier>{ objectName: 'general', propertyName: 'ActualFillColor' },
-               ComparisonFillColor: <DataViewObjectPropertyIdentifier>{ objectName: 'general', propertyName: 'ComparisonFillColor' },
-           },
-           labels: {
-               color: { objectName: 'labels', propertyName: 'color' },
-               labelPrecision: { objectName: 'labels', propertyName: 'labelPrecision' },
-               labelDisplayUnits: { objectName: 'labels', propertyName: 'labelDisplayUnits' },
-           },
-           trendlabels: {
-               color: { objectName: 'labels', propertyName: 'color' },
-               labelPrecision_trend: { objectName: 'labels', propertyName: 'labelPrecision' },
-               labelDisplayUnits_trend: { objectName: 'labels', propertyName: 'labelDisplayUnits' },
-           }
+        general: {
+            ActualFillColor: <DataViewObjectPropertyIdentifier>{ objectName: 'general', propertyName: 'ActualFillColor' },
+            ComparisonFillColor: <DataViewObjectPropertyIdentifier>{ objectName: 'general', propertyName: 'ComparisonFillColor' },
+        },
+        labels: {
+            color: { objectName: 'labels', propertyName: 'color' },
+            labelPrecision: { objectName: 'labels', propertyName: 'labelPrecision' },
+            labelDisplayUnits: { objectName: 'labels', propertyName: 'labelDisplayUnits' },
+        },
+        trendlabels: {
+            color: { objectName: 'labels', propertyName: 'color' },
+            labelPrecision_trend: { objectName: 'labels', propertyName: 'labelPrecision' },
+            labelDisplayUnits_trend: { objectName: 'labels', propertyName: 'labelDisplayUnits' },
+        }
     };
     export var cardProps = {
         categoryLabels: {
-            show: < DataViewObjectPropertyIdentifier > {
+            show: <DataViewObjectPropertyIdentifier>{
                 objectName: 'categoryLabels',
                 propertyName: 'show'
             },
-            color: < DataViewObjectPropertyIdentifier > {
+            color: <DataViewObjectPropertyIdentifier>{
                 objectName: 'categoryLabels',
                 propertyName: 'color'
             },
-            fontSize: < DataViewObjectPropertyIdentifier > {
+            fontSize: <DataViewObjectPropertyIdentifier>{
                 objectName: 'categoryLabels',
                 propertyName: 'fontSize'
             },
         },
         labels: {
-            color: < DataViewObjectPropertyIdentifier > {
+            color: <DataViewObjectPropertyIdentifier>{
                 objectName: 'labels',
                 propertyName: 'color'
             },
-            labelPrecision: < DataViewObjectPropertyIdentifier > {
+            labelPrecision: <DataViewObjectPropertyIdentifier>{
                 objectName: 'labels',
                 propertyName: 'labelPrecision'
             },
-            labelDisplayUnits: <DataViewObjectPropertyIdentifier>{ 
-                objectName: 'labels', 
-                propertyName: 'labelDisplayUnits' 
+            labelDisplayUnits: <DataViewObjectPropertyIdentifier>{
+                objectName: 'labels',
+                propertyName: 'labelDisplayUnits'
             },
-            fontSize: < DataViewObjectPropertyIdentifier > {
+            fontSize: <DataViewObjectPropertyIdentifier>{
                 objectName: 'labels',
                 propertyName: 'fontSize'
             },
-            
+
         },
         trendlabels: {
-            color: < DataViewObjectPropertyIdentifier > {
+            color: <DataViewObjectPropertyIdentifier>{
                 objectName: 'trendlabels',
                 propertyName: 'color'
             },
-            labelPrecision: < DataViewObjectPropertyIdentifier > {
+            labelPrecision: <DataViewObjectPropertyIdentifier>{
                 objectName: 'trendlabels',
                 propertyName: 'labelPrecision'
             },
-            labelDisplayUnits: < DataViewObjectPropertyIdentifier > {
+            labelDisplayUnits: <DataViewObjectPropertyIdentifier>{
                 objectName: 'trendlabels',
                 propertyName: 'labelDisplayUnits'
             },
-            fontSize: < DataViewObjectPropertyIdentifier > {
+            fontSize: <DataViewObjectPropertyIdentifier>{
                 objectName: 'trendlabels',
                 propertyName: 'fontSize'
             },
         },
         wordWrap: {
-            show: < DataViewObjectPropertyIdentifier > {
+            show: <DataViewObjectPropertyIdentifier>{
                 objectName: 'wordWrap',
                 propertyName: 'show'
             },
@@ -134,22 +134,22 @@ module powerbi.extensibility.visual {
         private tooltipServiceWrapper: ITooltipServiceWrapper;
         private prevDataViewObjects: any = {};
         private settings: any;
-        private svg: d3.Selection < SVGElement > ;
-        private svgLinear: d3.Selection < SVGElement > ;
-        private svgLinearNext: d3.Selection < SVGElement > ;
-        private svgTitle: d3.Selection < SVGElement > ;
-        private svgSubtitle: d3.Selection < SVGElement > ;
-        private actual: d3.Selection < SVGElement > ;
-        private percentage: d3.Selection < SVGElement > ;
+        private svg: d3.Selection<SVGElement>;
+        private svgLinear: d3.Selection<SVGElement>;
+        private svgLinearNext: d3.Selection<SVGElement>;
+        private svgTitle: d3.Selection<SVGElement>;
+        private svgSubtitle: d3.Selection<SVGElement>;
+        private actual: d3.Selection<SVGElement>;
+        private percentage: d3.Selection<SVGElement>;
         private dataView: DataView;
         private data: iLinearGauge;
-        private min: d3.Selection < SVGElement > ;
-        private max: d3.Selection < SVGElement > ;
-        private targetText: d3.Selection < SVGElement > ;
-        private trendValue1: d3.Selection < SVGElement > ;
-        private trendValue2: d3.Selection < SVGElement > ;
-        private heading: d3.Selection < SVGElement > ;
-        private subHeading: d3.Selection < SVGElement > ;
+        private min: d3.Selection<SVGElement>;
+        private max: d3.Selection<SVGElement>;
+        private targetText: d3.Selection<SVGElement>;
+        private trendValue1: d3.Selection<SVGElement>;
+        private trendValue2: d3.Selection<SVGElement>;
+        private heading: d3.Selection<SVGElement>;
+        private subHeading: d3.Selection<SVGElement>;
         private cardFormatSetting: CardFormatSetting;
         private cardFormatSetting_trend: CardFormatSetting;
         private metaDataColumn: DataViewMetadataColumn;
@@ -202,7 +202,7 @@ module powerbi.extensibility.visual {
             }
             return {
                 show: show,
-                position: 0 /* Above */ ,
+                position: 0 /* Above */,
                 displayUnits: 0,
                 precision: precision,
                 labelColor: labelColor || defaultLabelColor,
@@ -228,7 +228,7 @@ module powerbi.extensibility.visual {
             }
             return {
                 show: show,
-                position: 0 /* Above */ ,
+                position: 0 /* Above */,
                 displayUnits: 0,
                 precision: precision,
                 labelColor: labelColor || defaultLabelColor,
@@ -250,7 +250,7 @@ module powerbi.extensibility.visual {
             return {
                 showTitle: true,
                 textSize: null,
-                labelSettings: this.getDefaultLabelSettings(true,'black', 0, undefined),
+                labelSettings: this.getDefaultLabelSettings(true, 'black', 0, undefined),
                 wordWrap: false,
             };
         }
@@ -258,14 +258,13 @@ module powerbi.extensibility.visual {
             return {
                 showTitle: true,
                 textSize: null,
-                labelSettings: this.getDefaultLabelSettings_trend(true,'black', 0, undefined),
+                labelSettings: this.getDefaultLabelSettings_trend(true, 'black', 0, undefined),
                 wordWrap: false,
             };
         }
         //One time setup
         //First time it will be called and made the structure of your visual
         constructor(options: VisualConstructorOptions) {
-            debugger;
             this.host = options.host;
             this.selectionManager = options.host.createSelectionManager();
             this.tooltipServiceWrapper = createTooltipServiceWrapper(this.host.tooltipService, options.element);
@@ -347,33 +346,33 @@ module powerbi.extensibility.visual {
                             {
                                 data.actualFormat = '$';
                             }
-                            data.actual = < number > value;
+                            data.actual = <number>value;
                             actualFlag = true;
                             pushToTooltips = true; // pass the value as true to make it as a tooltip
                         } else if (col.roles['MinValue']) {
                             if (col.format === '\\$#,0;(\\$#,0);\\$#,0') {
                                 data.minFormat = '$';
                             }
-                            data.min = < number > value;
+                            data.min = <number>value;
                         } else if (col.roles['MaxValue']) {
                             if (col.format === '\\$#,0;(\\$#,0);\\$#,0') {
                                 data.maxFormat = '$';
                             }
                             maxFlag = true;
-                            data.max = < number > value;
+                            data.max = <number>value;
                         } else if (col.roles['TargetValue']) {
                             data.targetSet = true;
                             if (col.format === '\\$#,0;(\\$#,0);\\$#,0') {
                                 data.targetFormat = '$';
                             }
-                            data.target = < number > value;
+                            data.target = <number>value;
                             pushToTooltips = true;
                         } else if (col.roles['QualitativeState1Value']) {
-                            data.trendValue1 = < number > value;
+                            data.trendValue1 = <number>value;
                             if (col.format == '0%;-0%;0%' || col.format == '0 %;-0 %;0 %')
                                 data.trend1Format = '%';
                         } else if (col.roles['QualitativeState2Value']) {
-                            data.trendValue2 = < number > value;
+                            data.trendValue2 = <number>value;
                             if (col.format == '0%;-0%;0%' || col.format == '0 %;-0 %;0 %')
                                 data.trend2Format = '%';
                         }
@@ -471,20 +470,20 @@ module powerbi.extensibility.visual {
                 this.svgLinear.attr('transform', 'translate(10,5)');
             }
             if (this.settings.markerWidth != undefined) {
-                if(this.settings.markerWidth > 4) {
+                if (this.settings.markerWidth > 4) {
                     this.settings.markerWidth = 4;
                 }
-                else if(this.settings.markerWidth < 0) {
-                    this.settings.markerWidth =0;
+                else if (this.settings.markerWidth < 0) {
+                    this.settings.markerWidth = 0;
                 }
                 precisionValue = this.settings.markerWidth
             }
-            if(this.settings.lineWidth != undefined) {
-                if(this.settings.lineWidth > 4) {
+            if (this.settings.lineWidth != undefined) {
+                if (this.settings.lineWidth > 4) {
                     this.settings.lineWidth = 4;
                 }
-                else if(this.settings.lineWidth < 0) {
-                    this.settings.lineWidth =0;
+                else if (this.settings.lineWidth < 0) {
+                    this.settings.lineWidth = 0;
                 }
                 precisionValue_trend = this.settings.lineWidth;
             }
@@ -512,15 +511,15 @@ module powerbi.extensibility.visual {
                 return str + z;
             }
             function newFormat(c, b) {
-                var length = (typeof(c.toString().split(".")[1]) != 'undefined') ? c.toString().split(".")[1].length : 0
-                var a = (typeof(c.toString().split(".")[1]) != 'undefined') ? c.toString().split(".")[1] : 0
+                var length = (typeof (c.toString().split(".")[1]) != 'undefined') ? c.toString().split(".")[1].length : 0
+                var a = (typeof (c.toString().split(".")[1]) != 'undefined') ? c.toString().split(".")[1] : 0
                 var beforeDecimal = c.toString().split(".")[0];
                 var f = beforeDecimal;
                 if (b != 0)
                     f = f + '.';
                 if (length != 0 || b != 0) {
                     for (var i = 0; i < b; i++) {
-                        f = f + (typeof(a[i]) != "undefined" ? a[i] : 0);
+                        f = f + (typeof (a[i]) != "undefined" ? a[i] : 0);
                     }
                 }
                 if (f <= 0 && c != 0 && b == length - 1 && b != 0) {
@@ -751,12 +750,12 @@ module powerbi.extensibility.visual {
                 .data(sortedRanges);
             range.enter()
                 .append('rect')
-                .attr('class', function(d, i) {
+                .attr('class', function (d, i) {
                     return 'range s' + i;
                 });
             range
                 .attr('x', 0)
-                .attr('width', function(d) {
+                .attr('width', function (d) {
                     return (Math.abs(scale(d) - scale(0)));
                 })
                 .attr('height', modHeight)
@@ -848,6 +847,7 @@ module powerbi.extensibility.visual {
                 this.svgLinear.selectAll('line.markerTilt').remove();
             }
             //Target Text   
+            
             var customwifth = (window.getComputedStyle($(this.svg[0][0])[0]).width).slice(0, -2);
             var wifth = Number(customwifth) - 10;
             var percen = (((this.data.target - this.data.min) * 100) / (this.data.max - this.data.min));
@@ -912,15 +912,32 @@ module powerbi.extensibility.visual {
                 this.svgLinear.selectAll('.marker').style('display', 'block');
                 this.targetText.style('display', 'block');
             }
-            this.tooltipServiceWrapper.addTooltip(this.svgLinear.selectAll('data_tab'),
-                (tooltipEvent: TooltipEventArgs < number > ) => LinearGauge.getTooltipData(dataView.metadata.columns[0].displayName, actualVal, dataView.metadata.columns[1].displayName, targetVal),
-                (tooltipEvent: TooltipEventArgs < number > ) => null);
-            this.tooltipServiceWrapper.addTooltip(this.svgLinear.selectAll('rect.measure'),
-                (tooltipEvent: TooltipEventArgs < number > ) => LinearGauge.getTooltipData(dataView.metadata.columns[0].displayName, actualVal, dataView.metadata.columns[1].displayName, targetVal),
-                (tooltipEvent: TooltipEventArgs < number > ) => null);
-            this.tooltipServiceWrapper.addTooltip(this.svgLinear.selectAll('rect.range'),
-                (tooltipEvent: TooltipEventArgs < number > ) => LinearGauge.getTooltipData(dataView.metadata.columns[0].displayName, actualVal, dataView.metadata.columns[1].displayName, targetVal),
-                (tooltipEvent: TooltipEventArgs < number > ) => null);
+            if (dataView.metadata.columns[1] == undefined) {
+                this.tooltipServiceWrapper.addTooltip(this.svgLinear.selectAll('data_tab'),
+                    (tooltipEvent: TooltipEventArgs<number>) => LinearGauge.getTwoTooltipData(dataView.metadata.columns[0].displayName, actualVal),
+                    (tooltipEvent: TooltipEventArgs<number>) => null);
+
+                this.tooltipServiceWrapper.addTooltip(this.svgLinear.selectAll('rect.measure'),
+                    (tooltipEvent: TooltipEventArgs<number>) => LinearGauge.getTwoTooltipData(dataView.metadata.columns[0].displayName, actualVal),
+                    (tooltipEvent: TooltipEventArgs<number>) => null);
+
+                this.tooltipServiceWrapper.addTooltip(this.svgLinear.selectAll('rect.range'),
+                    (tooltipEvent: TooltipEventArgs<number>) => LinearGauge.getTwoTooltipData(dataView.metadata.columns[0].displayName, actualVal),
+                    (tooltipEvent: TooltipEventArgs<number>) => null);
+
+            } else {
+                this.tooltipServiceWrapper.addTooltip(this.svgLinear.selectAll('data_tab'),
+                    (tooltipEvent: TooltipEventArgs<number>) => LinearGauge.getOneTooltipData(dataView.metadata.columns[0].displayName, actualVal, dataView.metadata.columns[1].displayName, targetVal),
+                    (tooltipEvent: TooltipEventArgs<number>) => null);
+
+                this.tooltipServiceWrapper.addTooltip(this.svgLinear.selectAll('rect.measure'),
+                    (tooltipEvent: TooltipEventArgs<number>) => LinearGauge.getOneTooltipData(dataView.metadata.columns[0].displayName, actualVal, dataView.metadata.columns[1].displayName, targetVal),
+                    (tooltipEvent: TooltipEventArgs<number>) => null);
+
+                this.tooltipServiceWrapper.addTooltip(this.svgLinear.selectAll('rect.range'),
+                    (tooltipEvent: TooltipEventArgs<number>) => LinearGauge.getOneTooltipData(dataView.metadata.columns[0].displayName, actualVal, dataView.metadata.columns[1].displayName, targetVal),
+                    (tooltipEvent: TooltipEventArgs<number>) => null);
+            }
             globalminValue = minVal;
             globalTargetValue = targetVal;
         }
@@ -930,43 +947,49 @@ module powerbi.extensibility.visual {
             var settingsChanged = false;
             if (typeof this.settings == 'undefined' || (JSON.stringify(objects) !== JSON.stringify(this.prevDataViewObjects))) {
                 this.settings = {
-                    ComparisonFillColor: getValue < Fill > (objects, 'general', 'ComparisonFillColor', {
+                    ComparisonFillColor: getValue<Fill>(objects, 'general', 'ComparisonFillColor', {
                         solid: {
                             color: "lightgrey"
                         }
                     }).solid.color, // The color of the outer circle.
-                    ActualFillColor: getValue < Fill > (objects, 'general', 'ActualFillColor', {
+                    ActualFillColor: getValue<Fill>(objects, 'general', 'ActualFillColor', {
                         solid: {
                             color: "orange"
                         }
                     }).solid.color, // The color of the fill wave.
-                    DataColor: getValue < Fill > (objects, 'labels', 'DataColor', {
+                    DataColor: getValue<Fill>(objects, 'labels', 'DataColor', {
                         solid: {
                             color: "black"
                         }
                     }).solid.color, // The color of the outer circle.
-                    labelDisplayUnits: getValue < number > (objects, 'labels', 'labelDisplayUnits', 0),
-                    markerWidth: getValue < number > (objects, 'labels', 'markerWidth', 0),
-                    trendColor: getValue < Fill > (objects, 'trendLabels', 'trendColor', {
+                    labelDisplayUnits: getValue<number>(objects, 'labels', 'labelDisplayUnits', 0),
+                    markerWidth: getValue<number>(objects, 'labels', 'markerWidth', 0),
+                    trendColor: getValue<Fill>(objects, 'trendLabels', 'trendColor', {
                         solid: {
                             color: "black"
                         }
                     }).solid.color, // The color of the outer circle.
                     trendDisplayUnits: getValue<number>(objects, 'trendLabels', 'trendDisplayUnits', 0),
-                    lineWidth: getValue < number > (objects, 'trendLabels', 'lineWidth', 0)
+                    lineWidth: getValue<number>(objects, 'trendLabels', 'lineWidth', 0)
                 };
                 settingsChanged = true;
             }
             this.prevDataViewObjects = objects;
             return settingsChanged;
         }
-        private static getTooltipData(value: any, tab: any, avalue: any, atab: any): VisualTooltipDataItem[] {
+        private static getOneTooltipData(value: any, tab: any, avalue: any, atab: any): VisualTooltipDataItem[] {
             return [{
                 displayName: value,
                 value: tab
             }, {
                 displayName: avalue,
                 value: atab
+            }];
+        }
+        private static getTwoTooltipData(value: any, tab: any): VisualTooltipDataItem[] {
+            return [{
+                displayName: value,
+                value: tab
             }];
         }
         public enumerateObjectInstances(options: EnumerateVisualObjectInstancesOptions): VisualObjectInstanceEnumeration {
@@ -981,7 +1004,6 @@ module powerbi.extensibility.visual {
                 this.cardFormatSetting_trend = this.getDefaultFormatSettings_trend();
             var formatSettings = this.cardFormatSetting;
             var formatSettings_trend = this.cardFormatSetting_trend;
-            debugger
             switch (options.objectName) {
                 case 'general':
                     objectEnumeration.push({
