@@ -211,7 +211,7 @@ module powerbi.extensibility.visual {
             width = width - YAxisLabelWidth / 2;
 
             this.legends_height = 0;
-            
+
             if (this.values && this.values.hasLegend)
                 this.legends_height = this.rootElement.selectAll('.stock_legends')[0][0]['clientHeight'];
 
@@ -634,7 +634,7 @@ module powerbi.extensibility.visual {
                         var y = bottom - diffCloseOpen;
                         point.push({ x, y });
 
-                        
+
                         if (this.values) {
                             // Trend line width range
                             if (this.values.hasTrend)
@@ -665,7 +665,7 @@ module powerbi.extensibility.visual {
                             displayName: viewModel.IsGrouped ? 'Year' : 'Date'
                             , value: viewModel.IsGrouped ? date.substr(0, 4) : formatDate(parseDate(date)) + ''
                         });
-                        
+
                         low = powerbi.extensibility.utils.formatting.valueFormatter.create({ format: viewModel.format['low'] }).format(low);
                         high = powerbi.extensibility.utils.formatting.valueFormatter.create({ format: viewModel.format['high'] }).format(high);
                         open = powerbi.extensibility.utils.formatting.valueFormatter.create({ format: viewModel.format['open'] }).format(open);
@@ -733,9 +733,9 @@ module powerbi.extensibility.visual {
                     }
                 }
 
-                this.tooltipServiceWrapper.addTooltip(this.rootElement.selectAll('svg.linearSVG>*'),
-                    (tooltipEvent: TooltipEventArgs<number>) => StockChart.getTooltipData(toolTipInfo[0].displayName, toolTipInfo[0].value, "low", low, "high", high, "open", open, "close", close),
-                    (tooltipEvent: TooltipEventArgs<number>) => null);
+                this.tooltipServiceWrapper.addTooltip(this.rootElement.selectAll('svg.linearSVG>*'), (tooltipEvent: TooltipEventArgs<number>) => {
+                    return tooltipEvent.context['cust-tooltip'];
+                }, (tooltipEvent: TooltipEventArgs<number>) => null, true);
 
                 // Y-Axis
                 if (this.values.hasYAxis && this.svg.select('g.Stock_yaxis')[0][0]) {
@@ -757,26 +757,26 @@ module powerbi.extensibility.visual {
                 value: tab
 
             },
-            {
-                displayName: avalue,
-                value: atab
+                {
+                    displayName: avalue,
+                    value: atab
 
-            },
-            {
-                displayName: bvalue,
-                value: btab
+                },
+                {
+                    displayName: bvalue,
+                    value: btab
 
-            },
-            {
-                displayName: cvalue,
-                value: ctab
+                },
+                {
+                    displayName: cvalue,
+                    value: ctab
 
-            },
-            {
-                displayName: dvalue,
-                value: dtab
+                },
+                {
+                    displayName: dvalue,
+                    value: dtab
 
-            }];
+                }];
 
         }
         // Make visual properties available in the property pane in Power BI
