@@ -1,0 +1,187 @@
+{
+    "dataRoles": [{
+        "displayName": "X Axis",
+        "name": "category",
+        "kind": "Grouping"
+    }, {
+        "displayName": "Values",
+        "name": "measure",
+        "kind": "Measure"
+    }],
+    "dataViewMappings": [{
+      "conditions": [
+                {
+                    "category": {
+                        "max": 1
+                    },
+                    "measure": {
+                        "max": 1
+                    }
+                }
+            ],
+        "categorical": {
+            "categories": {
+                "for": {
+                    "in": "category"
+                },
+                "dataReductionAlgorithm": {
+                    "top": {}
+                }
+            },
+            "values": {
+                "select": [{
+                    "bind": {
+                        "to": "measure"
+                    }
+                }]
+            }
+        }
+    }],
+    "objects": {
+        "Legend": {
+            "displayName": "Legends",
+            "properties": {
+                "legendValues": {
+                    "displayName": "Enable",
+                    "description": "Show legends",
+                    "type": {
+                        "bool": true
+                    }
+                }
+            }
+        },
+        "BackGround": {
+            "displayName": "Color Configuration",
+            "properties": {
+                "FirstRow": {
+                    "displayName": "First Range",
+                    "description": "Select color for First Range",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                      "SecondRow": {
+                    "displayName": "Second Range",
+                    "description": "Select color for Second Range",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                      "ThirdRow": {
+                    "displayName": "Third Range",
+                    "description": "Select color for Third Range",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                      "FourthRow": {
+                    "displayName": "Fourth Range",
+                    "description": "Select color for Fourth Range",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                }
+            }
+        },
+              "XAxis": {
+            "displayName": "X Axis",
+            "properties": {
+                "xAxisEnableLabels": {
+                    "displayName": "Enable Labels",
+                    "description": "Option to enable X Axis labels",
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "xAXisFontSize": {
+                    "displayName": "Font Size",
+                    "description": "Option to set font size of X Axis labels",
+                    "type": {
+                        "formatting": {
+                            "fontSize": true
+                        }
+                    }
+                }
+            }
+        },
+        "YAxis": {
+            "displayName": "Y Axis",
+            "properties": {
+                "yAxisEnableLabels": {
+                    "displayName": "Enable Labels",
+                    "description": "Option to enable Y Axis labels",
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "yAXisFontSize": {
+                    "displayName": "Font Size",
+                    "description": "Set font size of Y Axis labels",
+                    "type": {
+                        "formatting": {
+                            "fontSize": true
+                        }
+                    }
+                },
+                     "yAxisDataLabelEnable": {
+                    "displayName": "Enable Value Box Labels",
+                    "description": "Option to enable labels",
+                    "type": {
+                        "bool": true
+                    }
+                },
+                      "yAXisDataLabels": {
+                    "displayName": "Value Box Font Size",
+                    "description": "Set font size of Value Box Labels",
+                    "type": {
+                        "formatting": {
+                            "fontSize": true
+                        }
+                    }
+                },
+                    "yAXisDataLabelsColor": {
+                    "displayName": "Value Box Color",
+                    "description": "Option to set grid line color",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                      }
+                    }
+            }
+    },
+          "colorSelector": {
+            "displayName": "Data Colors",
+            "properties": {
+                "fill": {
+                    "displayName": "Color",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
