@@ -2,7 +2,7 @@
   "visual": {
     "name": "CylindricalGauge",
     "displayName": "Cylindrical Gauge",
-    "guid": "PBI_CV_309E6B47_39A5_4681_808F_132AFB230873",
+    "guid": "cylindricalGauge73A12A442345453EB69B593649C3A341",
     "visualClassName": "CylindericalGauge",
     "version": "1.0.0",
     "description": "Cylindrical gauge chart used to represent data in cylinder.",
