@@ -1,0 +1,74 @@
+{
+    "build": "13.0.1700.374",
+    "version": "1.3.1",
+    "author": {
+        "name": "Microsoft Global Marketing Operations (GMO)",
+        "email": "pbicvsupport@microsoft.com"
+    },
+    "licenseTerms": "https://powerbi.microsoft.com/en-us/visuals-gallery-terms",
+    "privacyTerms": "https://www.microsoft.com/privacystatement/default.aspx",
+    "resources": [
+        {
+            "resourceId": "rId0",
+            "sourceType": 5,
+            "file": "resources/Donut Chart (GMO).ts"
+        },
+        {
+            "resourceId": "rId1",
+            "sourceType": 0,
+            "file": "resources/Donut Chart (GMO).js"
+        },
+        {
+            "resourceId": "rId2",
+            "sourceType": 1,
+            "file": "resources/Donut Chart (GMO).css"
+        },
+        {
+            "resourceId": "rId3",
+            "sourceType": 3,
+            "file": "resources/icon.png"
+        },
+        {
+            "resourceId": "rId4",
+            "sourceType": 6,
+            "file": "resources/GMO_Donut_Chart_220x176px.png"
+        },
+        {
+            "resourceId": "rId5",
+            "sourceType": 2,
+            "file": "resources/GMO_Donut_Chart_424x410px.png"
+        }
+    ],
+    "visual": {
+        "name": "Donut Chart (GMO)",
+        "version": "1.3.1",
+        "displayName": "Donut Chart (GMO)",
+        "guid": "DonutChartGMO1474908387720",
+        "description": "A doughnut charts represent data as slices, where the size of each slice is determined by the slice value relative to the sum of the values of all slices. Each data series that you plot in a doughnut chart adds a ring to the chart. These rings have different colors for easy representation of the data slices in doughnut chart.\n",
+        "supportUrl": "http://community.powerbi.com/"
+    },
+    "images": {
+        "icon": {
+            "resourceId": "rId3"
+        },
+        "screenshots": [
+            {
+                "resourceId": "rId5"
+            }
+        ],
+        "thumbnail": {
+            "resourceId": "rId4"
+        }
+    },
+    "code": {
+        "typeScript": {
+            "resourceId": "rId0"
+        },
+        "javaScript": {
+            "resourceId": "rId1"
+        },
+        "css": {
+            "resourceId": "rId2"
+        }
+    }
+}
