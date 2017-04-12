@@ -1,0 +1,113 @@
+{
+    "dataRoles": [{
+            "name": "ActualValue",
+            "kind": "GroupingOrMeasure",
+            "displayName": "Actual Value"
+        },
+        {
+            "name": "TargetValue",
+            "kind": "GroupingOrMeasure",
+            "displayName": "Target Value"
+        }
+    ],
+    "objects": {
+        "general": {
+            "displayName": "General",
+            "properties": {
+                "ActualFillColor": {
+                    "displayName": "Target Color",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "ComparisonFillColor": {
+                    "displayName": "Value Color",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "custom": {
+            "displayName": "Donut Chart",
+            "properties": {
+                "show": {
+                    "displayName": "Visual",
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "ringWidth": {
+                    "displayName": "Ring Width",
+                    "type": {
+                        "formatting": {
+                            "fontSize": true
+                        }
+                    }
+                }
+            }
+        },
+        "labels": {
+            "displayName": "Data label",
+            "properties": {
+                "colors": {
+                    "displayName": "Color",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "labelPrecision": {
+                    "displayName": "Decimal Places",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "fontSize": {
+                    "displayName": "Text Size",
+                    "type": {
+                        "formatting": {
+                            "fontSize": true
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "dataViewMappings": [{
+        "conditions": [{
+            "ActualValue": {
+                "max": 1
+            },
+            "TargetValue": {
+                "max": 1
+            }
+        }],
+        "categorical": {
+            "values": {
+                "select": [{
+                        "bind": {
+                            "to": "ActualValue"
+                        }
+                    },
+                    {
+                        "bind": {
+                            "to": "TargetValue"
+                        }
+                    }
+                ]
+            }
+        }
+    }]
+}

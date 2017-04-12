@@ -1,0 +1,250 @@
+{
+    "dataRoles": [
+        {
+            "name": "date",
+            "kind": "Grouping",
+            "displayName": "Date"
+        },
+        {
+            "name": "low",
+            "kind": "Measure",
+            "displayName": "Low Values"
+        },
+        {
+            "name": "high",
+            "kind": "Measure",
+            "displayName": "High Values"
+        },
+        {
+            "name": "open",
+            "kind": "Measure",
+            "displayName": "Open Values"
+        },
+        {
+            "name": "close",
+            "kind": "Measure",
+            "displayName": "Close Values"
+        }
+    ],
+    "objects": {
+        "dataColors": {
+            "displayName": "Data colors",
+            "properties": {
+                "LowHighDataColor": {
+                    "displayName": "Baseline indicator",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "OpenCloseDataColor": {
+                    "displayName": "Increasing trend indicator",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "LossPriceColor": {
+                    "displayName": "Decreasing trend indicator",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "legends": {
+            "displayName": "Legend",
+            "properties": {
+                "show": {
+                    "displayName": "Show",
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "labelColor": {
+                    "displayName": "Color",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "trends": {
+            "displayName": "Trend Lines",
+            "properties": {
+                "show": {
+                    "displayName": "Trend Line",
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "TrendLineColor": {
+                    "displayName": "Trend Line Color",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "trendLineWidth": {
+                    "displayName": "Trend Line Width",
+                    "description": "Width of trend line",
+                    "type": {
+                        "numeric": true
+                    }
+                }
+            }
+        },
+        "yAxis": {
+            "displayName": "Y-Axis",
+            "properties": {
+                "show": {
+                    "displayName": "Y-Axis",
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "color": {
+                    "displayName": "Color",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "displayUnits": {
+                    "displayName": "Display Units",
+                    "type": {
+                        "formatting": {
+                            "labelDisplayUnits": true
+                        }
+                    }
+                },
+                "textPrecision": {
+                    "displayName": "Decimal Places",
+                    "description": "Enter the precision value between 0 and 4",
+                    "type": {
+                        "numeric": true
+                    }
+                }
+            }
+        },
+        "xAxis": {
+            "displayName": "X-Axis",
+            "properties": {
+                "show": {
+                    "displayName": "X-Axis",
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "color": {
+                    "displayName": "Color",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "stockBorder": {
+            "displayName": "Stock chart border",
+            "properties": {
+                "show": {
+                    "displayName": "Show",
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "color": {
+                    "displayName": "Color",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "dataViewMappings": [
+        {
+            "conditions": [
+                {
+                    "date": {
+                        "max": 1
+                    },
+                    "low": {
+                        "max": 1
+                    },
+                    "high": {
+                        "max": 1
+                    },
+                    "open": {
+                        "max": 1
+                    },
+                    "close": {
+                        "max": 1
+                    }
+                }
+            ],
+            "categorical": {
+                "categories": {
+                    "for": {
+                        "in": "date"
+                    },
+                    "dataReductionAlgorithm": {
+                        "top": {}
+                    }
+                },
+                "values": {
+                    "select": [
+                        {
+                            "bind": {
+                                "to": "low"
+                            }
+                        },
+                        {
+                            "bind": {
+                                "to": "high"
+                            }
+                        },
+                        {
+                            "bind": {
+                                "to": "open"
+                            }
+                        },
+                        {
+                            "bind": {
+                                "to": "close"
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    ]
+}

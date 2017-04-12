@@ -1,0 +1,40 @@
+div.CFtooltip {   
+  position: absolute;           
+  text-align: center;           
+  width: 80px;                  
+  height: auto;                 
+  padding: 2px;             
+  font: 12px sans-serif;    
+  color: wheat ;   
+  background: darkslategray;   
+  border: 0px;      
+  border-radius: 8px;           
+  pointer-events: none;         
+}
+div.CFtooltip:after {
+  box-sizing: border-box;
+  display: none;
+  font-size: 10px;
+  width: 100%;
+  line-height: 1;
+  color: rgba(0, 0, 0, 0.8);
+  content: "\25BC";
+  position: absolute;
+  text-align: center;
+}
+
+/* Style northward tooltips differently */
+div.CFtooltip.n:after {
+  margin: -1px 0 0 0;
+  top: 100%;
+  left: 0;
+}
+.clearCatcher{
+  background: darkslategray;  
+}
+.svg_Container > .svg_Element{
+	margin-left:auto;
+	margin-right: auto;
+	position: relative;
+	
+}

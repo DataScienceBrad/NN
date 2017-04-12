@@ -1,0 +1,26 @@
+{
+  "visual": {
+    "name": "Lift Chart",
+    "displayName": "Lift Chart",
+    "guid": "PBI_CV_0C8159C4_5413_4262_A0E1_4E0CEF5FFC65",
+    "visualClassName": "Visual",
+    "version": "1.0.0",
+    "description": "Lift chart is used to show the lift data with respect to ideal data",
+    "supportUrl": "https://github.com/maqsoftware/PowerBI-visuals/issues",
+    "gitHubUrl": "https://github.com/maqsoftware/PowerBI-visuals/"
+  },
+  "apiVersion": "1.1.0",
+  "author": {
+    "name": "MAQ Software",
+    "email": "sales@maqsoftware.com"
+  },
+  "assets": {
+    "icon": "assets/icon.png",
+    "thumbnail": "assets/thumbnail.png",
+    "screenshot": "assets/screenshot.png"
+  },
+  "externalJS": [],
+  "style": "style/visual.less",
+  "capabilities": "capabilities.json"
+  
+}

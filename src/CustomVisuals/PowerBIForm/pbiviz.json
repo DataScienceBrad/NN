@@ -1,0 +1,24 @@
+{
+  "visual": {
+    "name": "formPOC",
+    "displayName": "formPOC",
+    "guid": "PBI_CV_7946CAE8_7B19_4B47_935C_E22A4B180F81",
+    "visualClassName": "Visual",
+    "version": "1.0.0",
+    "description": "",
+    "supportUrl": "",
+    "gitHubUrl": ""
+  },
+  "apiVersion": "1.4.0",
+  "author": {
+    "name": "",
+    "email": ""
+  },
+  "assets": {
+    "icon": "assets/icon.png"
+  },
+  "externalJS": [],
+  "style": "style/visual.less",
+  "capabilities": "capabilities.json",
+  "dependencies": "dependencies.json"
+}

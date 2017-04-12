@@ -1,0 +1,47 @@
+{
+    "dataRoles": [
+        {
+            "displayName": "Priority Drop Down",
+            "name": "priority",
+            "kind": "Grouping"
+        },
+        {
+            "displayName": "Reason Drop Down",
+            "name": "reason",
+            "kind": "Grouping"
+        }
+    ],
+    "dataViewMappings": [
+        {
+            "conditions": [
+                {
+                    "priority": {
+                        "max": 1
+                    },
+                    "reason": {
+                        "max": 1
+                    }
+                }
+            ],
+            "categorical": {
+                "categories": {
+                    "select": [
+                        {
+                            "for": {
+                            "in": "priority"
+                            }
+                        },
+                        {
+                            "for": {
+                                "in": "reason"
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    ],
+    "objects": {
+
+    }
+}

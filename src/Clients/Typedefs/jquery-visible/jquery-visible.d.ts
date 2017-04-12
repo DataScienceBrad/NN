@@ -1,3 +1,0 @@
-interface JQuery {
-    visible(): boolean;
-}

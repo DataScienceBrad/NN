@@ -1,0 +1,133 @@
+{
+    "dataRoles": [{
+        "name": "measureData",
+        "displayName": "Measures",
+        "kind": "Measure"
+    }],
+    "dataViewMappings": [{
+        "conditions": [{
+            "measureData": {
+                "min": 1,
+                "max": 10
+            }
+        }],
+        "table": {
+            "rows": {
+                "for": {
+                    "in": "measureData"
+                }
+            }
+        }
+    }],
+    "suppressDefaultTitle": true,
+    "objects": {
+        "flipVertically": {
+            "displayName": "Vertical flip",
+            "properties": {
+                "show": {
+                    "displayName": "Show",
+                    "type": {
+                        "bool": true
+                    }
+                }
+            }
+        },
+        "vfxSettings": {
+            "displayName": "3D effect",
+            "properties": {
+                "show": {
+                    "displayName": "Show",
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "bgColor": {
+                    "displayName": "Background color",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "borderColor": {
+                    "displayName": "Border color",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "animationSettings": {
+            "displayName": "Animation settings",
+            "properties": {
+                "duration": {
+                    "displayName": "Delay (seconds)",
+                    "type": { "numeric": true }
+                }
+            }
+        },
+        "titleSettings": {
+            "displayName": "Title settings",
+            "properties": {
+                "titleColor": {
+                    "displayName": "Title color",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "fontSize": {
+                    "displayName": "Title size",
+                    "type": {
+                        "formatting": {
+                            "fontSize": true
+                        }
+                    },
+                    "suppressFormatPainterCopy": true
+                }
+            }
+        },
+        "labelSettings": {
+            "displayName": "Label settings",
+            "properties": {
+                "labelColor": {
+                    "displayName": "Label color",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "fontSize": {
+                    "displayName": "Label size",
+                    "type": {
+                        "formatting": {
+                            "fontSize": true
+                        }
+                    },
+                    "suppressFormatPainterCopy": true
+                },
+                "displayUnits": {
+                    "displayName": "Display Units",
+                    "type": { "formatting": { "labelDisplayUnits": true } }
+                },
+                "textPrecision": {
+                    "displayName": "Decimal Places",
+                    "type": { "numeric": true },
+                    "suppressFormatPainterCopy": true
+                }
+            }
+        }
+    }
+}

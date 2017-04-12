@@ -1,0 +1,1740 @@
+module powerbi.visuals.samples {
+    export var gaugeChartProps = {
+        values: {
+            minValue: <DataViewObjectPropertyIdentifier>{ objectName: 'values', propertyName: 'minValue' },
+            maxValue: <DataViewObjectPropertyIdentifier>{ objectName: 'values', propertyName: 'maxValue' },
+            groupLow: <DataViewObjectPropertyIdentifier>{ objectName: 'values', propertyName: 'groupLow' },
+            groupHigh: <DataViewObjectPropertyIdentifier>{ objectName: 'values', propertyName: 'groupHigh' },
+            zone1: <DataViewObjectPropertyIdentifier>{ objectName: 'values', propertyName: 'zone1' },
+            zone2: <DataViewObjectPropertyIdentifier>{ objectName: 'values', propertyName: 'zone2' },
+            zone3: <DataViewObjectPropertyIdentifier>{ objectName: 'values', propertyName: 'zone3' },
+            zone4: <DataViewObjectPropertyIdentifier>{ objectName: 'values', propertyName: 'zone4' },
+            zone5: <DataViewObjectPropertyIdentifier>{ objectName: 'values', propertyName: 'zone5' },
+            pointerValue: <DataViewObjectPropertyIdentifier>{ objectName: 'values', propertyName: 'pointerValue' }
+        },
+        general: {
+            formatString: <DataViewObjectPropertyIdentifier>{ objectName: 'general', propertyName: 'formatString' },
+            lable: <DataViewObjectPropertyIdentifier>{ objectName: 'general', propertyName: 'lable' },
+        },
+        PrimaryPointer: {
+            color: <DataViewObjectPropertyIdentifier>{ objectName: 'PrimaryPointer', propertyName: 'color' }
+        },
+        secondaryPointers: {
+            color: <DataViewObjectPropertyIdentifier>{ objectName: 'secondaryPointers', propertyName: 'color' }
+        },
+        reverseScale: {
+            show: <DataViewObjectPropertyIdentifier>{ objectName: 'reverseScale', propertyName: 'show' }
+        },
+        zone1settings: {
+            show: <DataViewObjectPropertyIdentifier>{ objectName: 'zone1settings', propertyName: 'show' },
+            color: <DataViewObjectPropertyIdentifier>{ objectName: 'zone1settings', propertyName: 'color' },
+            labelText: <DataViewObjectPropertyIdentifier>{ objectName: 'zone1settings', propertyName: 'labelText' }
+        }
+        ,
+        zone2settings: {
+            show: <DataViewObjectPropertyIdentifier>{ objectName: 'zone2settings', propertyName: 'show' },
+            color: <DataViewObjectPropertyIdentifier>{ objectName: 'zone2settings', propertyName: 'color' },
+            labelText: <DataViewObjectPropertyIdentifier>{ objectName: 'zone2settings', propertyName: 'labelText' }
+        }
+        ,
+        zone3settings: {
+            show: <DataViewObjectPropertyIdentifier>{ objectName: 'zone3settings', propertyName: 'show' },
+            color: <DataViewObjectPropertyIdentifier>{ objectName: 'zone3settings', propertyName: 'color' },
+            labelText: <DataViewObjectPropertyIdentifier>{ objectName: 'zone3settings', propertyName: 'labelText' }
+        }
+        ,
+        zone4settings: {
+            show: <DataViewObjectPropertyIdentifier>{ objectName: 'zone4settings', propertyName: 'show' },
+            color: <DataViewObjectPropertyIdentifier>{ objectName: 'zone4settings', propertyName: 'color' },
+            labelText: <DataViewObjectPropertyIdentifier>{ objectName: 'zone4settings', propertyName: 'labelText' }
+        }
+        ,
+        zone5settings: {
+            show: <DataViewObjectPropertyIdentifier>{ objectName: 'zone5settings', propertyName: 'show' },
+            color: <DataViewObjectPropertyIdentifier>{ objectName: 'zone5settings', propertyName: 'color' },
+            labelText: <DataViewObjectPropertyIdentifier>{ objectName: 'zone5settings', propertyName: 'labelText' }
+        }
+        ,
+        zone6settings: {
+            show: <DataViewObjectPropertyIdentifier>{ objectName: 'zone6settings', propertyName: 'show' },
+            color: <DataViewObjectPropertyIdentifier>{ objectName: 'zone6settings', propertyName: 'color' },
+            labelText: <DataViewObjectPropertyIdentifier>{ objectName: 'zone6settings', propertyName: 'labelText' }
+        },
+        allZonesSetting: {
+            fontSize: <DataViewObjectPropertyIdentifier>{ objectName: 'allZonesSetting', propertyName: 'fontSize' },
+            valueSize: <DataViewObjectPropertyIdentifier>{ objectName: 'allZonesSetting', propertyName: 'valueSize' },
+            labelColor: <DataViewObjectPropertyIdentifier>{ objectName: 'allZonesSetting', propertyName: 'labelColor' },
+            rimColor: <DataViewObjectPropertyIdentifier>{ objectName: 'allZonesSetting', propertyName: 'rimColor' }
+        }
+    }
+    export interface GaugeChartSettings {
+        values: {
+                min: number;
+                max: number;
+                groupLow: number;
+                groupHigh: number;
+                zone1: number;
+                zone2: number;
+                zone3: number;
+                zone4: number;
+                zone5: number;
+                pointerValue: number;
+        };
+        general: {
+                lable: string;
+        };
+        PrimaryPointer: {
+            color: string;
+        };
+        secondaryPointers: {
+            color: string;
+        };
+        reverseScale: {
+            show: boolean;
+        }
+        zone1settings: {
+            show: boolean;
+            color: string;
+            labelText: string;
+        };
+        zone2settings: {
+            show: boolean;
+            color: string;
+            labelText: string;
+        };
+        zone3settings: {
+            show: boolean;
+            color: string;
+            labelText: string;
+        };
+        zone4settings: {
+            show: boolean;
+            color: string;
+            labelText: string;
+        };
+        zone5settings: {
+            show: boolean;
+            color: string;
+            labelText: string;
+        };
+        zone6settings: {
+            show: boolean;
+            color: string;
+            labelText: string;
+        };
+        allZonesSetting: {
+            fontSize;
+            valueSize;
+            labelColor: string;
+            rimColor: string;
+        }
+    }
+    //model
+    export interface GaugeChartModel {
+        gaugeChartSettings: GaugeChartSettings;
+    }
+    export var gaugeChartRoleNames = {
+        min: 'min',
+        max: 'max',
+        groupLow : 'groupLow',
+        groupHigh : 'groupHigh',
+        zone1: 'zone1',
+        zone2: 'zone2',
+        zone3: 'zone3',
+        zone4: 'zone4',
+        zone5: 'zone5',
+        pointerValue: 'pointerValue'
+    }
+    export class ConfigGauge {
+        size: number;
+        label: string;
+        minVal: number;
+        maxVal: number;
+        majorTicks: number;
+        minorTicks: number;
+        raduis: number;
+        cx: number;
+        cy: number;
+        range: number;
+        transitionDuration: number;
+        PointerName: string;
+    }
+    export class DialGauge implements IVisual {
+
+        public static capabilities: VisualCapabilities = {
+            dataRoles: [
+                {
+                    name: 'min',
+                    kind: powerbi.VisualDataRoleKind.Measure,
+                    displayName: 'Min'
+                },
+                {
+                    name: 'max',
+                    kind: powerbi.VisualDataRoleKind.Measure,
+                    displayName: 'Max'
+                },
+                {
+                    name: 'groupLow',
+                    kind: powerbi.VisualDataRoleKind.Measure,
+                    displayName: 'Group Low Value'
+                },
+                {
+                    name: 'groupHigh',
+                    kind: powerbi.VisualDataRoleKind.Measure,
+                    displayName: 'Group Max Value'
+                },
+                {
+                    name: 'zone1',
+                    kind: powerbi.VisualDataRoleKind.Measure,
+                    displayName: 'Zone 1 Limit'
+                },
+                {
+                    name: 'zone2',
+                    kind: powerbi.VisualDataRoleKind.Measure,
+                    displayName: 'Zone 2 Limit'
+                },
+                {
+                    name: 'zone3',
+                    kind: powerbi.VisualDataRoleKind.Measure,
+                    displayName: 'Zone 3 Limit'
+                },
+                {
+                    name: 'zone4',
+                    kind: powerbi.VisualDataRoleKind.Measure,
+                    displayName: 'Zone 4 Limit'
+                },
+                {
+                    name: 'zone5',
+                    kind: powerbi.VisualDataRoleKind.Measure,
+                    displayName: 'Zone 5 Limit'
+                },
+                {
+                    name: 'pointerValue',
+                    kind: powerbi.VisualDataRoleKind.Measure,
+                    displayName: 'Pointer Value'
+                }
+            ],
+            objects: {
+                general: {
+                    displayName: data.createDisplayNameGetter('Visual_General'),
+                    properties: {                        
+                        lable: {
+                            type: { string: true },
+                            displayName: 'Wiggle2'
+                        }
+
+                    },
+                },
+                PrimaryPointer: {
+                    displayName: 'Primary Pointer',
+                    description: 'Primary Pointer settings',
+                    properties: {
+                        color: {
+                            displayName: 'Color',
+                            description: 'Color of Primary Pointer',
+                            type: { fill: { solid: { color: true } } }
+                        }
+                    },
+                },
+                secondaryPointers: {
+                    displayName: 'Secondary Pointers',
+                    description: 'Secondary Pointers setting',
+                    properties: {
+                        color: {
+                            displayName: 'Color',
+                            description: 'Color of Secondary Pointers',
+                            type: { fill: { solid: { color: true } } }
+                        }
+                    },
+                },
+                reverseScale: {
+                    displayName: 'Reverse Scale',
+                    description: 'Reverse the scale of Dial Gauge',
+                    properties: {
+                        show: {
+                            displayName: data.createDisplayNameGetter('Visual_Show'),
+                            type: { bool: true }
+                        }
+                    },
+                },
+                zone1settings: {
+                    displayName: 'Zone 1',
+                    description: 'Zone 1 settings',
+                    properties: {
+                        show: {
+                            displayName: data.createDisplayNameGetter('Visual_Show'),
+                            type: { bool: true }
+                        },
+                        color: {
+                            displayName: 'Color',
+                            description: 'Color of Zone 1',
+                            type: { fill: { solid: { color: true } } }
+                        }
+                        ,
+                        labelText:{
+                            displayName: 'Label',
+                            description: 'Label of Zone 1',
+                            type: { text: true },
+                            suppressFormatPainterCopy: true
+                        }
+                    },
+                },
+                zone2settings: {
+                    displayName: 'Zone 2',
+                    description: 'Zone 2 settings',
+                    properties: {
+                        show: {
+                            displayName: data.createDisplayNameGetter('Visual_Show'),
+                            type: { bool: true }
+                        },
+                        color: {
+                            displayName: 'Color',
+                            description: 'Color of Zone 2',
+                            type: { fill: { solid: { color: true } } }
+                        }
+                        ,
+                        labelText:{
+                            displayName: 'Label',
+                            description: 'Label of Zone 2',
+                            type: { text: true },
+                            suppressFormatPainterCopy: true
+                        }
+                    },
+                },
+                zone3settings: {
+                    displayName: 'Zone 3',
+                    description: 'Zone 3 settings',
+                    properties: {
+                        show: {
+                            displayName: data.createDisplayNameGetter('Visual_Show'),
+                            type: { bool: true }
+                        },
+                        color: {
+                            displayName: 'Color',
+                            description: 'Color of Zone 3',
+                            type: { fill: { solid: { color: true } } }
+                        }
+                        ,
+                        labelText:{
+                            displayName: 'Label',
+                            description: 'Label of Zone 3',
+                            type: { text: true },
+                            suppressFormatPainterCopy: true
+                        }
+                    },
+                },
+                zone4settings: {
+                    displayName: 'Zone 4',
+                    description: 'Zone 4 settings',
+                    properties: {
+                        show: {
+                            displayName: data.createDisplayNameGetter('Visual_Show'),
+                            type: { bool: true }
+                        },
+                        color: {
+                            displayName: 'Color',
+                            description: 'Color of Zone 4',
+                            type: { fill: { solid: { color: true } } }
+                        }
+                        ,
+                        labelText:{
+                            displayName: 'Label',
+                            description: 'Label of Zone 4',
+                            type: { text: true },
+                            suppressFormatPainterCopy: true
+                        }
+                    },
+                },
+                zone5settings: {
+                    displayName: 'Zone 5',
+                    description: 'Zone 5 settings',
+                    properties: {
+                        show: {
+                            displayName: data.createDisplayNameGetter('Visual_Show'),
+                            type: { bool: true }
+                        },
+                        color: {
+                            displayName: 'Color',
+                            description: 'Color of Zone 5',
+                            type: { fill: { solid: { color: true } } }
+                        }
+                        ,
+                        labelText:{
+                            displayName: 'Label',
+                            description: 'Label of Zone 5',
+                            type: { text: true },
+                            suppressFormatPainterCopy: true
+                        }
+                    },
+                },
+                zone6settings: {
+                    displayName: 'Zone 6',
+                    description: 'Zone 6 settings',
+                    properties: {
+                        show: {
+                            displayName: data.createDisplayNameGetter('Visual_Show'),
+                            type: { bool: true }
+                        },
+                        color: {
+                            displayName: 'Color',
+                            description: 'Color of Zone 6',
+                            type: { fill: { solid: { color: true } } }
+                        }
+                        ,
+                        labelText:{
+                            displayName: 'Label',
+                            description: 'Label of Zone 6',
+                            type: { text: true },
+                            suppressFormatPainterCopy: true
+                        }
+                    },
+                },
+                allZonesSetting: {
+                    displayName: 'Zones setting',
+                    description: 'Settings common for all Zones',
+                    properties: {
+                        fontSize: {
+                            displayName: 'Label font size',
+                            description: 'Size of Lables',
+                            type: { formatting: { fontSize: true } }
+                        },
+                        valueSize: {
+                            displayName: 'Value font size',
+                            description: 'Size of Values',
+                            type: { formatting: { fontSize: true } }
+                        },
+                        labelColor: {
+                            displayName: 'Label color',
+                            description: 'Color of Label',
+                            type: { fill: { solid: { color: true } } }
+                        },
+                        rimColor: {
+                            displayName: 'Rim color',
+                            description: 'Color of Rim',
+                            type: { fill: { solid: { color: true } } }
+                        }
+                    },
+                },
+                values: {
+                    displayName: 'Data values',
+                    properties: {
+                        minValue: {
+                            displayName: 'Min',
+                            type: { numaric: true }
+                        },
+                        maxValue: {
+                            displayName: 'Max',
+                            type: { numaric: true }
+                        },
+                        groupLow: {
+                            displayName: 'Group Low Value',
+                            type: { numaric: true }
+                        },
+                        groupHigh: {
+                            displayName: 'Group Max Value',
+                            type: { numaric: true }
+                        },
+                        zone1: {
+                            displayName: 'Zone 1',
+                            type: { numaric: true }
+                        },
+                        zone2: {
+                            displayName: 'Zone 2',
+                            type: { numaric: true }
+                        },
+                        zone3: {
+                            displayName: 'Zone 3',
+                            type: { numaric: true }
+                        },
+                        zone4: {
+                            displayName: 'Zone 4',
+                            type: { numaric: true }
+                        },
+                        zone5: {
+                            displayName: 'Zone 5',
+                            type: { numaric: true }
+                        },
+                        pointerValue: {
+                            displayName: 'Pointer',
+                            type: { numaric: true }
+                        },
+                    },
+                }
+            },
+            dataViewMappings: [{
+                conditions: [
+                    {
+                        'min': { max: 1 }, 'max': { max: 1 }, 'groupLow': { max: 1 }, 'groupHigh': { max: 1 }, 'zone1': { max: 1 }, 'zone2': { max: 1 },
+                         'zone3': { max: 1 },'zone4': { max: 1 },'zone5': { max: 1 }, 'pointerValue': { max: 1 }
+                    }
+                ],
+                categorical: {
+                    general: {
+                        select: [
+                            { bind: { to: 'formatString' } },
+                            { bind: { to: 'lable' } }
+
+                        ]
+                    },
+                    values: {
+                        select: [
+                            { bind: { to: 'min' } },
+                            { bind: { to: 'max' } },
+                            { bind: { to: 'groupLow' } },
+                            { bind: { to: 'groupHigh' } },
+                            { bind: { to: 'zone1' } },
+                            { bind: { to: 'zone2' } },
+                            { bind: { to: 'zone3' } },
+                            { bind: { to: 'zone4' } },
+                            { bind: { to: 'zone5' } },
+                            { bind: { to: 'pointerValue' } },
+                            { bind: { to: 'percentage' } }
+                        ]
+                    }
+                }
+            }
+            ]
+        };
+        private svg: D3.Selection;
+        private text: D3.Selection;
+        private body: D3.Selection;
+        private model: GaugeChartModel;
+        private dataView: DataView;
+        private config: ConfigGauge;
+        private clearCatcher: D3.Selection;
+        private ObjectProperties: DataViewObject;
+        private idGenerator: number;
+        private zoneData;
+        public defaultSettings: GaugeChartSettings;
+        public svgContainer;
+        public errorMessage;
+        private bdy: D3.Selection;
+        private reverseData;
+        private isPercentageData;
+
+
+        public static DefaultStyleProperties(): GaugeChartSettings {
+            return {
+                values: {
+                    min: null,
+                    max: null,
+                    groupLow: null,
+                    groupHigh: null,
+                    zone1: null,
+                    zone2: null,
+                    zone3: null,
+                    zone4: null,
+                    zone5: null,
+                    pointerValue: null
+                },
+                general: {
+                    lable: '',
+                },
+                PrimaryPointer: {
+                    color: '#000',
+                },
+                secondaryPointers: {
+                    color: '#DBDBFF',
+                },
+                reverseScale: {
+                    show: false,
+                },
+                zone1settings: {
+                show: false,
+                color: '#dc3912',
+                labelText: 'Zone 1'
+                },
+                zone2settings: {
+                show: false,
+                color: '#fe912a',
+                labelText: 'Zone 2'
+                },
+                zone3settings: {
+                show: false,
+                color: '#fdca19',
+                labelText: 'Zone 3'
+                },
+                zone4settings: {
+                show: false,
+                color: '#fff55f',
+                labelText: 'Zone 4'
+                },
+                zone5settings: {
+                show: false,
+                color: '#40cb5a',
+                labelText: 'Zone 5'
+                },
+                zone6settings: {
+                show: false,
+                color: '#109618',
+                labelText: 'Zone 6'
+                },
+                allZonesSetting: {
+                    fontSize: 10,
+                    valueSize: 7,
+                    labelColor: '#333',
+                    rimColor: '#ccc'
+                }
+            }
+        }
+
+        //Convert a DataView into a view model
+    public static converter(dataView: DataView, options: VisualUpdateOptions): GaugeChartModel {
+        var gaugeModel: GaugeChartModel;
+        if (!dataView) {
+            return;
+        }
+        var dataViewCategorical = dataView.categorical;
+        if (dataViewCategorical === null || dataViewCategorical.values.length === 0
+            || dataView.metadata === null || dataView.metadata.columns.length === 0)
+            return;
+
+        var defaultSettings = this.DefaultStyleProperties();
+        var objects = dataView.metadata.objects;
+        var columns = dataView.metadata;
+        if (objects) {
+            defaultSettings.values.max = DataViewObjects.getValue<number>(objects, gaugeChartProps.values.maxValue, defaultSettings.values.max);
+            defaultSettings.values.min = DataViewObjects.getValue<number>(objects, gaugeChartProps.values.minValue, defaultSettings.values.min);
+            defaultSettings.values.groupLow = DataViewObjects.getValue<number>(objects, gaugeChartProps.values.groupLow, defaultSettings.values.groupLow);
+            defaultSettings.values.groupHigh = DataViewObjects.getValue<number>(objects, gaugeChartProps.values.groupHigh, defaultSettings.values.groupHigh);
+            defaultSettings.values.zone1 = DataViewObjects.getValue<number>(objects, gaugeChartProps.values.zone1, defaultSettings.values.zone1);
+            defaultSettings.values.zone2 = DataViewObjects.getValue<number>(objects, gaugeChartProps.values.zone2, defaultSettings.values.zone2);
+            defaultSettings.values.zone3 = DataViewObjects.getValue<number>(objects, gaugeChartProps.values.zone3, defaultSettings.values.zone3);
+            defaultSettings.values.zone4 = DataViewObjects.getValue<number>(objects, gaugeChartProps.values.zone4, defaultSettings.values.zone4);
+            defaultSettings.values.zone5 = DataViewObjects.getValue<number>(objects, gaugeChartProps.values.zone5, defaultSettings.values.zone5);
+            defaultSettings.values.pointerValue = DataViewObjects.getValue<number>(objects, gaugeChartProps.values.pointerValue, defaultSettings.values.pointerValue);
+            defaultSettings.PrimaryPointer.color = DataViewObjects.getFillColor(objects, gaugeChartProps.PrimaryPointer.color, defaultSettings.PrimaryPointer.color);
+            defaultSettings.secondaryPointers.color = DataViewObjects.getFillColor(objects, gaugeChartProps.secondaryPointers.color, defaultSettings.secondaryPointers.color);
+            defaultSettings.reverseScale.show = DataViewObjects.getValue(objects, gaugeChartProps.reverseScale.show, defaultSettings.reverseScale.show);
+            defaultSettings.zone1settings.labelText = DataViewObjects.getValue<string>(objects, gaugeChartProps.zone1settings.labelText, defaultSettings.zone1settings.labelText);
+            defaultSettings.zone2settings.labelText = DataViewObjects.getValue<string>(objects, gaugeChartProps.zone2settings.labelText, defaultSettings.zone2settings.labelText);
+            defaultSettings.zone3settings.labelText = DataViewObjects.getValue<string>(objects, gaugeChartProps.zone3settings.labelText, defaultSettings.zone3settings.labelText);
+            defaultSettings.zone4settings.labelText = DataViewObjects.getValue<string>(objects, gaugeChartProps.zone4settings.labelText, defaultSettings.zone4settings.labelText);
+            defaultSettings.zone5settings.labelText = DataViewObjects.getValue<string>(objects, gaugeChartProps.zone5settings.labelText, defaultSettings.zone5settings.labelText);
+            defaultSettings.zone6settings.labelText = DataViewObjects.getValue<string>(objects, gaugeChartProps.zone6settings.labelText, defaultSettings.zone6settings.labelText);
+            defaultSettings.allZonesSetting.fontSize = DataViewObjects.getValue(objects, gaugeChartProps.allZonesSetting.fontSize, defaultSettings.allZonesSetting.fontSize);
+            defaultSettings.allZonesSetting.valueSize = DataViewObjects.getValue(objects, gaugeChartProps.allZonesSetting.valueSize, defaultSettings.allZonesSetting.valueSize);
+            defaultSettings.allZonesSetting.labelColor = DataViewObjects.getFillColor(objects, gaugeChartProps.allZonesSetting.labelColor, defaultSettings.allZonesSetting.labelColor);
+            defaultSettings.allZonesSetting.rimColor = DataViewObjects.getFillColor(objects, gaugeChartProps.allZonesSetting.rimColor, defaultSettings.allZonesSetting.rimColor);
+        }
+        var categories,
+            categoryValues,
+            categoryValuesLen = 1;
+
+        if (dataViewCategorical.categories) {
+            categories = dataViewCategorical.categories[0];
+            categoryValues = categories.values;
+            categoryValuesLen = categoryValues.length;
+        }
+
+        for (var idx = 0; idx < categoryValuesLen; idx++) {
+            var Maximum: number = undefined, minimum: number = undefined,
+            groupLow: number = undefined, groupHigh: number = undefined,
+            zone1: number = undefined, zone2: number = undefined,
+            zone3: number = undefined, zone4: number = undefined, zone5: number = undefined,
+            PointerValue: number = undefined;
+           
+            var values = dataViewCategorical.values;
+            var metadataColumns = dataView.metadata.columns;
+
+            for (var i = 0; i < values.length; i++) {
+                var col = metadataColumns[i];
+                var currentVal = values[i].values[idx] || 0;
+                if (col && col.roles) {
+                    if (col.roles[gaugeChartRoleNames.max]) {
+                        Maximum = currentVal.toFixed(4)/1 ;
+                    } else if (col.roles[gaugeChartRoleNames.min]) {
+                        minimum = currentVal.toFixed(4)/1;
+                    } else if (col.roles[gaugeChartRoleNames.groupLow]) {
+                        groupLow = currentVal.toFixed(4)/1;
+                    } else if (col.roles[gaugeChartRoleNames.groupHigh]) {
+                        groupHigh = currentVal.toFixed(4)/1;
+                    } else if (col.roles[gaugeChartRoleNames.zone1]) {
+                        zone1 = currentVal.toFixed(4)/1;
+                    } else if (col.roles[gaugeChartRoleNames.zone2]) {
+                        zone2 = currentVal.toFixed(4)/1;
+                    } else if (col.roles[gaugeChartRoleNames.zone3]) {
+                        zone3 = currentVal.toFixed(4)/1;
+                    } else if (col.roles[gaugeChartRoleNames.zone4]) {
+                        zone4 = currentVal.toFixed(4)/1;
+                    } else if (col.roles[gaugeChartRoleNames.zone5]) {
+                        zone5 = currentVal.toFixed(4)/1;
+                    }else if (col.roles[gaugeChartRoleNames.pointerValue]) {
+                        PointerValue = currentVal.toFixed(4)/1;
+                    }
+                }
+            }
+            
+            
+            
+            if (Maximum === undefined) {
+                Maximum = defaultSettings.values.max;
+            }
+            if (minimum === undefined) {
+                minimum = defaultSettings.values.min;
+            }
+            
+            if(Maximum === minimum)
+            {
+                if(Maximum === 0)
+                    Maximum = defaultSettings.values.max;
+                if (!(minimum === 0))
+                    minimum = defaultSettings.values.min;
+            }
+            
+            if (groupLow === undefined) {
+                groupLow = defaultSettings.values.groupLow;
+            }
+            if (groupHigh === undefined) {
+                groupHigh = defaultSettings.values.groupHigh;
+            }
+            if (zone1 === undefined) {
+                zone1 = defaultSettings.values.zone1;
+            }
+            if (zone2 === undefined) {
+                zone2 = defaultSettings.values.zone2;
+            }
+            if (zone3 === undefined) {
+                zone3 = defaultSettings.values.zone3;
+            }
+            if (zone4 === undefined) {
+                zone4 = defaultSettings.values.zone4;
+            }
+            if (zone5 === undefined) {
+                zone5 = defaultSettings.values.zone5;
+            }
+            if (PointerValue === undefined) {
+                PointerValue = defaultSettings.values.pointerValue;
+            }            
+            if (!isNaN(Maximum) && !isNaN(minimum) &&
+                !isNaN(zone1) && !isNaN(zone2) &&
+                !isNaN(zone3) && !isNaN(zone4) && !isNaN(zone5) &&
+                !isNaN(PointerValue)) {
+                defaultSettings.values = {
+                    max: Maximum,
+                    min: minimum,
+                    groupLow: groupLow,
+                    groupHigh: groupHigh,
+                    zone1: zone1,
+                    zone2: zone2,
+                    zone3: zone3,
+                    zone4: zone4,
+                    zone5: zone5,
+                    pointerValue: PointerValue,
+                };
+                 defaultSettings.PrimaryPointer = {
+                    color: defaultSettings.PrimaryPointer.color
+                };
+                defaultSettings.secondaryPointers = {
+                    color: defaultSettings.secondaryPointers.color
+                };
+                defaultSettings.reverseScale = {
+                    show: defaultSettings.reverseScale.show
+                };
+                defaultSettings.allZonesSetting = {
+                    fontSize: defaultSettings.allZonesSetting.fontSize,
+                    valueSize: defaultSettings.allZonesSetting.valueSize,
+                    labelColor: defaultSettings.allZonesSetting.labelColor,
+                    rimColor: defaultSettings.allZonesSetting.rimColor
+                }
+            }
+        }
+        gaugeModel = {
+            gaugeChartSettings: defaultSettings
+        }
+        return gaugeModel;
+    }
+    /*One Time Setup*/
+    public init(options: VisualInitOptions): void {
+    var viewport = _.clone(options.viewport);
+    this.bdy = d3.select(options.element.get(0));
+    this.clearCatcher = appendClearCatcher(this.bdy);
+    this.bdy
+            .append('div')
+            .classed('errorMessage', true)
+            .text("Error")
+            .style({
+            'display': 'none', 'text-align': 'center'
+            , 'top': viewport.height / 2 + 'px', 'position': 'relative'
+            , 'width': '100%'
+        });
+     
+    this.svgContainer = this.bdy
+            .append("div")
+            .classed("svg_Container", true)
+            .style('text-align','center');
+            
+    var svg = this.svg = this.svgContainer
+    .append("svg").attr("class", "gauge");
+    
+    this.initConfig();
+
+    this.text = svg.append('text');
+    this.body = svg;
+    }
+    public initConfig() {
+        this.config = new ConfigGauge();
+        this.config.label = "sample";
+        this.initConfigOnRezise(250,250);
+        this.config.majorTicks = 7;
+        this.config.minorTicks = 2;
+        this.config.transitionDuration = 500;
+        this.config.PointerName="";
+    }
+    //Resize
+    public initConfigOnRezise(Height:number,Width:number) {
+        var size=250;
+        if(Height>Width)
+        {
+            size= Width;
+        }
+        else{
+            size=Height;
+        }
+        this.config.size = size;
+        this.config.raduis = this.config.size * 0.99 / 2;
+        this.config.cx = this.config.size / 2;
+        this.config.cy = this.config.size / 2;
+        this.svg.selectAll("*").remove();
+        $('.CFtooltip').remove();
+    }
+
+    /* Called for data, size, formatting changes*/
+    public update(options: VisualUpdateOptions) {
+        if (!options.dataViews && !options.dataViews[0]) return;
+        var dataView = options.dataViews[0];
+        var viewport = options.viewport;
+        var model: GaugeChartModel = DialGauge.converter(dataView, options);
+        if (!model) {
+            return;
+        }
+        this.initConfig();
+        this.initConfigOnRezise(viewport.height,viewport.width);
+        this.model = model
+        var settings = model.gaugeChartSettings;
+        this.config.minVal = settings.values.min;
+        this.config.maxVal = settings.values.max;
+        this.config.range = this.config.maxVal - this.config.minVal;
+        var height = viewport.height;
+        var width = viewport.width;
+        var duration = options.suppressAnimations ? 0 : 1000;
+        
+        this.svg.attr({ 'height': this.config.size, 'width': this.config.size });
+        var rawData = [];
+        this.zoneData = [];
+        this.reverseData = [];
+        var errorflag = 0;
+        var emptyflag = 1;
+        rawData.push(this.model.gaugeChartSettings.values.zone1);
+        rawData.push(this.model.gaugeChartSettings.values.zone2);
+        rawData.push(this.model.gaugeChartSettings.values.zone3);
+        rawData.push(this.model.gaugeChartSettings.values.zone4);
+        rawData.push(this.model.gaugeChartSettings.values.zone5);
+        var len = rawData.length;
+		
+        var dataViewCategorical = dataView.categorical;
+        var values = dataViewCategorical.values;
+        var metadataColumns = dataView.metadata.columns;
+		this.isPercentageData = false;
+        var PercentageCounter=0;
+		
+        for (var i = 0; i < values.length; i++) {
+            var col = metadataColumns[i];
+            if(col.format){
+				if(col.format.indexOf('%') >= 0){
+	                PercentageCounter++;
+            	}
+			}
+        }
+        
+		if(PercentageCounter !== 0 && PercentageCounter !== values.length){
+			errorflag = 1;
+            this.errorMessage = "Invalid data format";
+		}
+		else if(PercentageCounter === values.length){
+			this.isPercentageData = true;
+		}
+		
+        //Validations
+        for(var i = 0; i < len; i++){
+            if (!rawData[0] && rawData[0] !== 0){
+                for(j = i;j < len; j++){
+                    if(rawData[j]){
+                        emptyflag = 0;
+                    }
+                }
+                if(emptyflag === 1){
+                    errorflag = 1;
+                    this.errorMessage = "Enter Zone values";
+                    break;
+                }
+                errorflag = 1;
+                this.errorMessage = "Zone 1 cannot be left blank";
+                break;
+            }
+            else if(!rawData[i] && i!==len-1 && rawData[i] !== 0){
+                for( var j = i; j< len; j++){
+                    if(rawData[j]){
+                        errorflag = 1;
+                        this.errorMessage = "There cannot be empty Zones in between";
+                        break;
+                    }
+                }
+            }
+            else if(rawData[i] && (rawData[i] > this.model.gaugeChartSettings.values.max) && i !==len-1 && rawData[i+1]){
+                errorflag = 1;
+                this.errorMessage = "Zone value cannot be greater than Max value";
+                break;
+            }
+            else if(rawData[i] && rawData[i] < this.model.gaugeChartSettings.values.min){
+                errorflag = 1;
+                this.errorMessage = "Zone value cannot be less than Min value";
+                break;
+            }
+            else if(i !==len-1 && rawData[i+1] && (rawData[i] >= rawData[i+1])){
+                errorflag = 1;
+                this.errorMessage = "Invalid Zone values";
+                break;
+            }
+            if(rawData[i] || rawData[i] === 0){
+                this.zoneData[i] = rawData[i];
+                 ///////// logic for handling zone value greater than max///////////////////////
+                if(rawData[i]>this.config.maxVal)
+                {
+                    this.zoneData[i] = this.config.maxVal;
+                }
+            }
+        }
+        
+        if((this.model.gaugeChartSettings.values.min || this.model.gaugeChartSettings.values.min === 0) && 
+        (this.model.gaugeChartSettings.values.max || this.model.gaugeChartSettings.values.max === 0)){
+            if(this.model.gaugeChartSettings.values.min >= this.model.gaugeChartSettings.values.max){
+                errorflag = 1;
+                this.errorMessage = "Min value cannot be greater than or equal to Max value";    
+            }
+        }
+        if((this.model.gaugeChartSettings.values.groupLow || this.model.gaugeChartSettings.values.groupLow === 0) && 
+        (this.model.gaugeChartSettings.values.groupHigh || this.model.gaugeChartSettings.values.groupHigh === 0)){    
+            if(this.model.gaugeChartSettings.values.groupLow >= this.model.gaugeChartSettings.values.groupHigh){
+                errorflag = 1;
+                this.errorMessage = "Group pointer Min value cannot be greater than or equal to Group pointer Max value";    
+            }
+        }
+        
+        if(errorflag === 1)
+        {
+            this.bdy.select('.errorMessage').text(this.errorMessage).style({ 'display': 'block', 'top': viewport.height / 2 + 'px' });
+        }
+        else{
+            this.bdy.select('.errorMessage').style('display','none');
+            var objects = options.dataViews[0].metadata.objects;
+            var zoneLen = this.zoneData.length;
+            switch(zoneLen){
+                case 1:
+                    this.model.gaugeChartSettings.zone1settings.show = DataViewObjects.getValue<boolean>(objects, gaugeChartProps.zone1settings.show, true);
+                    this.model.gaugeChartSettings.zone2settings.show = DataViewObjects.getValue<boolean>(objects, gaugeChartProps.zone2settings.show, true);
+                    this.model.gaugeChartSettings.zone1settings.color = DataViewObjects.getFillColor(objects, gaugeChartProps.zone1settings.color, '#dc3912');
+                    this.model.gaugeChartSettings.zone2settings.color = DataViewObjects.getFillColor(objects, gaugeChartProps.zone2settings.color, '#109618');
+                break;
+                case 2:
+                    this.model.gaugeChartSettings.zone1settings.show = DataViewObjects.getValue<boolean>(objects, gaugeChartProps.zone1settings.show, true);
+                    this.model.gaugeChartSettings.zone2settings.show = DataViewObjects.getValue<boolean>(objects, gaugeChartProps.zone2settings.show, true);
+                    this.model.gaugeChartSettings.zone3settings.show = DataViewObjects.getValue<boolean>(objects, gaugeChartProps.zone3settings.show, true);
+                    this.model.gaugeChartSettings.zone1settings.color = DataViewObjects.getFillColor(objects, gaugeChartProps.zone1settings.color, '#dc3912');
+                    this.model.gaugeChartSettings.zone2settings.color = DataViewObjects.getFillColor(objects, gaugeChartProps.zone2settings.color, '#fff55f');
+                    this.model.gaugeChartSettings.zone3settings.color = DataViewObjects.getFillColor(objects, gaugeChartProps.zone3settings.color, '#109618');
+                break;
+                case 3:
+                    this.model.gaugeChartSettings.zone1settings.show = DataViewObjects.getValue<boolean>(objects, gaugeChartProps.zone1settings.show, true);
+                    this.model.gaugeChartSettings.zone2settings.show = DataViewObjects.getValue<boolean>(objects, gaugeChartProps.zone2settings.show, true);
+                    this.model.gaugeChartSettings.zone3settings.show = DataViewObjects.getValue<boolean>(objects, gaugeChartProps.zone3settings.show, true);
+                    this.model.gaugeChartSettings.zone4settings.show = DataViewObjects.getValue<boolean>(objects, gaugeChartProps.zone4settings.show, true);
+                    this.model.gaugeChartSettings.zone1settings.color = DataViewObjects.getFillColor(objects, gaugeChartProps.zone1settings.color, '#dc3912');
+                    this.model.gaugeChartSettings.zone2settings.color = DataViewObjects.getFillColor(objects, gaugeChartProps.zone2settings.color, '#fe912a');
+                    this.model.gaugeChartSettings.zone3settings.color = DataViewObjects.getFillColor(objects, gaugeChartProps.zone3settings.color, '#fff55f');
+                    this.model.gaugeChartSettings.zone4settings.color = DataViewObjects.getFillColor(objects, gaugeChartProps.zone4settings.color, '#109618');
+                break;
+                case 4:
+                    this.model.gaugeChartSettings.zone1settings.show = DataViewObjects.getValue<boolean>(objects, gaugeChartProps.zone1settings.show, true);
+                    this.model.gaugeChartSettings.zone2settings.show = DataViewObjects.getValue<boolean>(objects, gaugeChartProps.zone2settings.show, true);
+                    this.model.gaugeChartSettings.zone3settings.show = DataViewObjects.getValue<boolean>(objects, gaugeChartProps.zone3settings.show, true);
+                    this.model.gaugeChartSettings.zone4settings.show = DataViewObjects.getValue<boolean>(objects, gaugeChartProps.zone4settings.show, true);
+                    this.model.gaugeChartSettings.zone5settings.show = DataViewObjects.getValue<boolean>(objects, gaugeChartProps.zone5settings.show, true);
+                    this.model.gaugeChartSettings.zone1settings.color = DataViewObjects.getFillColor(objects, gaugeChartProps.zone1settings.color, '#dc3912');
+                    this.model.gaugeChartSettings.zone2settings.color = DataViewObjects.getFillColor(objects, gaugeChartProps.zone2settings.color, '#fe912a');
+                    this.model.gaugeChartSettings.zone3settings.color = DataViewObjects.getFillColor(objects, gaugeChartProps.zone3settings.color, '#fff55f');
+                    this.model.gaugeChartSettings.zone4settings.color = DataViewObjects.getFillColor(objects, gaugeChartProps.zone4settings.color, '#40cb5a');
+                    this.model.gaugeChartSettings.zone5settings.color = DataViewObjects.getFillColor(objects, gaugeChartProps.zone5settings.color, '#109618');
+                break;
+                case 5:
+                    this.model.gaugeChartSettings.zone1settings.show = DataViewObjects.getValue<boolean>(objects, gaugeChartProps.zone1settings.show, true);
+                    this.model.gaugeChartSettings.zone2settings.show = DataViewObjects.getValue<boolean>(objects, gaugeChartProps.zone2settings.show, true);
+                    this.model.gaugeChartSettings.zone3settings.show = DataViewObjects.getValue<boolean>(objects, gaugeChartProps.zone3settings.show, true);
+                    this.model.gaugeChartSettings.zone4settings.show = DataViewObjects.getValue<boolean>(objects, gaugeChartProps.zone4settings.show, true);
+                    this.model.gaugeChartSettings.zone5settings.show = DataViewObjects.getValue<boolean>(objects, gaugeChartProps.zone5settings.show, true);
+                    this.model.gaugeChartSettings.zone6settings.show = DataViewObjects.getValue<boolean>(objects, gaugeChartProps.zone6settings.show, true);
+                    this.model.gaugeChartSettings.zone1settings.color = DataViewObjects.getFillColor(objects, gaugeChartProps.zone1settings.color, '#dc3912');
+                    this.model.gaugeChartSettings.zone2settings.color = DataViewObjects.getFillColor(objects, gaugeChartProps.zone2settings.color, '#fe912a');
+                    this.model.gaugeChartSettings.zone3settings.color = DataViewObjects.getFillColor(objects, gaugeChartProps.zone3settings.color, '#fdca19');
+                    this.model.gaugeChartSettings.zone4settings.color = DataViewObjects.getFillColor(objects, gaugeChartProps.zone4settings.color, '#fff55f');
+                    this.model.gaugeChartSettings.zone5settings.color = DataViewObjects.getFillColor(objects, gaugeChartProps.zone5settings.color, '#40cb5a');
+                    this.model.gaugeChartSettings.zone6settings.color = DataViewObjects.getFillColor(objects, gaugeChartProps.zone6settings.color, '#109618');
+                break;
+            }
+            this.draw(width, height, duration);
+        }
+        var prevZoneData;
+    }
+    
+    public draw(width: number, height: number, duration: number) {
+        this.body.append("svg:circle")
+            .attr("cx", this.config.cx)
+            .attr("cy", this.config.cy)
+            .attr("r", this.config.raduis)
+            .style("fill", this.model.gaugeChartSettings.allZonesSetting.rimColor)
+            .style("stroke", "#000")
+            .style("stroke-width", "0.5px");
+
+        this.body.append("svg:circle")
+            .attr("cx", this.config.cx)
+            .attr("cy", this.config.cy)
+            .attr("r", 0.9 * this.config.raduis)
+            .style("fill", "#fff")
+            .style("stroke", "#e0e0e0")
+            .style("stroke-width", "2px");
+        var prevZoneData, i;
+        var len = this.zoneData.length;     
+        
+        var zoneColors = [
+            this.model.gaugeChartSettings.zone1settings.color, 
+            this.model.gaugeChartSettings.zone2settings.color, 
+            this.model.gaugeChartSettings.zone3settings.color, 
+            this.model.gaugeChartSettings.zone4settings.color, 
+            this.model.gaugeChartSettings.zone5settings.color, 
+            this.model.gaugeChartSettings.zone6settings.color
+        ];
+        var zoneLabels = [
+            this.model.gaugeChartSettings.zone1settings.labelText, 
+            this.model.gaugeChartSettings.zone2settings.labelText, 
+            this.model.gaugeChartSettings.zone3settings.labelText, 
+            this.model.gaugeChartSettings.zone4settings.labelText, 
+            this.model.gaugeChartSettings.zone5settings.labelText, 
+            this.model.gaugeChartSettings.zone6settings.labelText
+        ]
+        this.idGenerator=0;
+        var currentPointer, currentZone;
+        currentPointer = this.model.gaugeChartSettings.values.pointerValue;
+        var j=0;
+        for(i = len-1; i >= 0; i--){
+            this.reverseData[j++] = this.model.gaugeChartSettings.values.min  + (this.model.gaugeChartSettings.values.max - this.zoneData[i]);
+        }
+    
+        if(this.model.gaugeChartSettings.reverseScale.show){
+            this.zoneData = this.reverseData;
+            this.reverseArray(zoneColors, 0, len);
+            this.reverseArray(zoneLabels, 0, len);
+            currentPointer = 
+            this.model.gaugeChartSettings.values.max - (this.model.gaugeChartSettings.values.pointerValue - this.model.gaugeChartSettings.values.min)
+        }
+            for(i = 0;i < len; i++){
+                if(i === 0){
+                    this.drawBand(this.config.minVal, this.zoneData[0], zoneColors[0], zoneLabels[0]);
+                    if(len === 1){
+                        this.drawBand(this.zoneData[0], this.config.maxVal, zoneColors[1], zoneLabels[1]);
+                    }
+                }
+                else if(i === len-1){
+                    if(this.zoneData[i] === this.config.maxVal){
+                        this.drawBand(prevZoneData, this.zoneData[i], zoneColors[i], zoneLabels[i]);
+                    }
+                    else{
+                        this.drawBand(prevZoneData, this.zoneData[i], zoneColors[i], zoneLabels[i]);
+                        this.drawBand(this.zoneData[i], this.config.maxVal, zoneColors[i+1], zoneLabels[i+1]);   
+                        }
+                }
+                else{
+                    if(this.zoneData[i] === this.config.maxVal){
+                        this.drawBand(prevZoneData, this.zoneData[i], zoneColors[i], zoneLabels[i]);
+                    }
+                    else{
+                        this.drawBand(prevZoneData, this.zoneData[i], zoneColors[i], zoneLabels[i]);
+                    }
+                }
+                prevZoneData =this.zoneData[i];
+            }
+        //Pointer value
+        if (undefined != this.model.gaugeChartSettings.values.pointerValue) {
+            var fontSize = Math.round(this.config.size / 9);
+            this.body.select(".PointerValueContainer").remove();
+
+            var perContainer = this.body.append("svg:g").attr("class", "PointerValueContainer");
+            var pointerValue = this.getFormattedValue(this.model.gaugeChartSettings.values.pointerValue);
+            
+            if(this.isPercentageData){
+                var formatter = valueFormatter.create({ format: "0.00 %;-0.00 %;0.00 %", value: 1, allowFormatBeautification: true });
+                pointerValue = formatter.format(pointerValue);
+            }
+            
+            perContainer.append("svg:text")
+                .attr("x", this.config.cx)
+                .attr("y", this.config.cy * 1.5 + fontSize / 2)
+                .attr("dy", fontSize / 2)
+                .attr("text-anchor", "middle")
+                .text(pointerValue)
+                .style("font-size", fontSize/1.30 + "px")
+                .style("fill", "#333")
+                .style("stroke-width", "0px");
+        }
+		 
+		 //Zone color
+         this.body.select(".ZoneContainer").remove();
+         var fontSize = Math.round(this.config.size / 26 );
+         var perContainer = this.body.append("svg:g").attr("class", "ZoneContainer");
+        if(this.model.gaugeChartSettings.reverseScale.show)
+        {
+            for(i = 0;i < len; i++){
+                if (currentPointer <= this.zoneData[i])
+                 {
+                     currentZone = zoneLabels[i];
+                     break;
+                 }
+            }
+            if (currentPointer > this.zoneData[len-1])
+                 {
+                     currentZone = zoneLabels[len];
+                 }
+        }
+        else{
+            for(i = 0;i < len; i++){
+                if (currentPointer < this.zoneData[i])
+                 {
+                     currentZone = zoneLabels[i];
+                     break;
+                 }
+            }
+            if (currentPointer >= this.zoneData[len-1])
+                 {
+                     currentZone = zoneLabels[len];
+                 }
+        }
+         perContainer.append("text")
+             .attr("id","zone_color_label")
+             .attr("x", this.config.cx)
+             .attr("y", this.config.cy * 1.45 + fontSize / 3)
+             .attr("text-anchor", "middle") 
+             .text(currentZone) 
+             .style("font-size", fontSize + "px") 
+             .style("fill", "#333") 
+             .style("stroke-width", "0px");
+         var textElement: D3.Selection = perContainer.select("text");
+         powerbi.TextMeasurementService.svgEllipsis(textElement[0][0], 130);
+         
+        
+        var settingvalue = this.model.gaugeChartSettings;
+        //draw inner band
+        if((settingvalue.values.groupLow || settingvalue.values.groupLow === 0) && 
+            (settingvalue.values.groupHigh || settingvalue.values.groupHigh === 0)){
+            this.drawInnerBand(settingvalue.values.groupLow, settingvalue.values.groupHigh, settingvalue.secondaryPointers.color, "Secondary Pointer");
+        }
+        
+        this.renderTicks();
+        this.renderPointer();
+    }
+    //ticks
+    public renderTicks(){
+        
+        var settingvalue = this.model.gaugeChartSettings;
+        var zoneDataCopy = this.zoneData;
+        zoneDataCopy.push(this.model.gaugeChartSettings.values.max);
+        var zoneDataLen = zoneDataCopy.length;
+        var fontSize = Math.round(this.config.size / 21);
+        var fontSizeTicks = this.model.gaugeChartSettings.allZonesSetting.valueSize;
+        var i=0,major=settingvalue.values.min;
+        for (var i = 0; i <= zoneDataLen; i++) {
+            var minorDelta;
+            if(i==0)
+            minorDelta = (zoneDataCopy[i] - settingvalue.values.min) / this.config.minorTicks;
+            else
+            minorDelta = (zoneDataCopy[i]-zoneDataCopy[i-1]) / this.config.minorTicks;
+            for (var minor = major + minorDelta; minor < zoneDataCopy[i]; minor += minorDelta) {
+                var point1 = this.valueToPoint(minor, 0.75);
+                var point2 = this.valueToPoint(minor, 0.85);
+
+                this.body.append("svg:line")
+                    .attr("x1", point1.x)
+                    .attr("y1", point1.y)
+                    .attr("x2", point2.x)
+                    .attr("y2", point2.y)
+                    .style("stroke", "#666")
+                    .style("stroke-width", "1px");
+            }
+
+            var point1 = this.valueToPoint(major, 0.7);
+            var point2 = this.valueToPoint(major, 0.85);
+
+            this.body.append("svg:line")
+                .attr("x1", point1.x)
+                .attr("y1", point1.y)
+                .attr("x2", point2.x)
+                .attr("y2", point2.y)
+                .style("stroke", "#333")
+                .style("stroke-width", "2px");
+                
+            if (major == settingvalue.values.min || major == settingvalue.values.max) {
+                var point = this.valueToPoint(major, 0.73);
+
+                var FormattedMajorValue= this.getFormattedValue(major);
+                //min value max value
+                this.body.append("svg:text")
+                    .attr("x", point.x)
+                    .attr("y", point.y)
+                    .attr("dy", fontSize/1.3)
+                    .attr("text-anchor", major == settingvalue.values.min ? "start" : "end")
+                    .text(major == settingvalue.values.min ? "MIN" : "MAX")
+                    .style("font-size", fontSize/1.6 + "px")
+                    .style("fill", "#333")
+                    .style("stroke-width", "0px");
+
+            }
+            
+            var textAnchor;
+            if (major < (this.config.minVal+this.config.range*0.48)){
+                textAnchor = "start";
+            }
+            else if (major > (this.config.minVal+this.config.range*0.52)){
+                textAnchor = "end";
+            }
+            else{
+                textAnchor = "middle";
+            }
+            //reverse logic
+            
+            var point = this.valueToPoint(major, 0.62);
+            if(this.model.gaugeChartSettings.reverseScale.show){
+                major = settingvalue.values.min + (settingvalue.values.max - major) ;
+                if (major < (this.config.minVal+this.config.range*0.48)){
+                    textAnchor = "end";
+                }
+                else if (major > (this.config.minVal+this.config.range*0.52)){
+                    textAnchor = "start";
+                }
+                else{
+                    textAnchor = "middle";
+                }
+            }
+            
+            var FormattedMajorValue= this.getFormattedValue(major);
+            
+            if(this.isPercentageData){
+                var formatter = valueFormatter.create({ format: "0.00 %;-0.00 %;0.00 %", value: 1, allowFormatBeautification: true });
+                FormattedMajorValue = formatter.format(FormattedMajorValue);
+            }
+            
+            this.body.append("svg:text")
+                .attr("id","tick"+i)
+                .attr("x", point.x)
+                .attr("y", point.y)
+                .attr("dy", fontSize/2)
+                .attr("text-anchor", textAnchor)
+                .text(FormattedMajorValue)
+                .style("font-size", fontSizeTicks + "pt")
+                .style("fill", "#333")
+                .style("stroke-width", "0px");
+           
+            major = zoneDataCopy[i];
+        }
+        //logic to avoid clashing of tick labels
+        for (var i = 0; i < zoneDataLen; i++) {
+            var obj1 = document.getElementById("tick"+(i)).getBoundingClientRect();
+            for(var j = i+1;j <= zoneDataLen; j++){
+                var obj2 = document.getElementById("tick"+j).getBoundingClientRect();
+                if(!(obj2.left > obj1.right || 
+                    obj2.right < obj1.left || 
+                    obj2.top > obj1.bottom || 
+                    obj2.bottom < obj1.top)){
+                        document.getElementById("tick"+i).style.display = "none";
+                }
+            }
+        }
+    }
+    
+    public renderPointer(){
+        var settingvalue = this.model.gaugeChartSettings;
+        
+        var pointerContainer = this.body.append("svg:g").attr("class", "pointerContainer");
+
+        var midValue = (settingvalue.values.min + settingvalue.values.max) / 2;
+
+        var pointerPath = this.buildPointerPath(midValue);
+
+        var pointerLine = d3.svg.line()
+            .x(function (d) { return d.x })
+            .y(function (d) { return d.y })
+            .interpolate("basis");
+        var value = settingvalue.values.pointerValue;  
+       
+        if (value > settingvalue.values.max){
+            value = settingvalue.values.max
+        }
+        else if (value < settingvalue.values.min){
+            value = settingvalue.values.min
+        }
+        var pointerValue = value;
+        
+        //reverse logic
+        if(this.model.gaugeChartSettings.reverseScale.show){
+            pointerValue = settingvalue.values.max - (pointerValue - settingvalue.values.min)    
+        }
+        
+        var targetRotation = (this.valueToDegrees(pointerValue) - 90);
+        var currentRotation =  targetRotation;
+        var step = 1;
+        var rotation = currentRotation + (targetRotation - currentRotation) * step;
+
+        var div = d3.select("body").append("div")   
+            .attr("class", "CFtooltip")               
+            .style("opacity", 0);
+         
+        var formattedPointerValue=this.getFormattedValue(settingvalue.values.pointerValue);
+        pointerContainer.selectAll("path")
+            .data([pointerPath])
+            .enter()
+            .append("svg:path")
+            .attr("d", pointerLine)
+            .style("fill", this.model.gaugeChartSettings.PrimaryPointer.color)
+            .style("fill-opacity", 0.7)
+            .attr("transform", "translate(" + this.config.cx + "," + this.config.cy + ") rotate(" + rotation + ")")
+            
+        pointerContainer.append("svg:circle")
+            .attr("cx", this.config.cx)
+            .attr("cy", this.config.cy)
+            .attr("r", 0.12 * this.config.raduis)
+            .style("fill", "#4684EE")
+            .style("stroke", "#666")
+            .style("opacity", 1);
+
+        var fontSize = Math.round(this.config.size / 10);
+        pointerContainer.selectAll("text")
+            .data([midValue])
+            .enter()
+            .append("svg:text")
+            .attr("x", this.config.cx)
+            .attr("y", this.config.size - this.config.cy / 4 - fontSize)
+            .attr("dy", fontSize / 2)
+            .attr("text-anchor", "middle")
+            .style("font-size", fontSize + "px")
+            .style("fill", "#000")
+            .style("stroke-width", "0px");
+    }
+
+    public buildPointerPath(value: number) {
+        var delta = this.config.range / 13;
+        var head = this.valueToPointForBP(value, 0.85);
+        var head1 = this.valueToPointForBP(value - delta, 0.12);
+        var head2 = this.valueToPointForBP(value + delta, 0.12);
+        var tailValue = value - (this.config.range * (1 / (270 / 360)) / 2);
+        var tail = this.valueToPointForBP(tailValue, 0.28);
+        var tail1 = this.valueToPointForBP(tailValue - delta, 0.12);
+        var tail2 = this.valueToPointForBP(tailValue + delta, 0.12);
+        return [head, head1, tail2, tail, tail1, head2, head];
+    }
+
+    public valueToPointForBP(value: number, factor: number) {
+        var point = this.valueToPoint(value, factor);
+        point.x -= this.config.cx;
+        point.y -= this.config.cy;
+        return point;
+    }
+        
+    public getFormattedValue(val :number){
+        if((val <= 100000) || (val >= -100000)){
+            if(this.isPercentageData){
+                val = +val.toFixed(4);
+            }
+            else{
+                val = +val.toFixed(2);
+            }
+        }
+        else{
+            val = +val.toFixed(0);
+        }
+        var formater= valueFormatter.create({value:0});
+          
+        var formattedValue=val.toString();
+        if((val>= 100000) &&( val < 1000000000) || (val<= -100000) &&( val > -1000000000)){
+            formater= valueFormatter.create({ value: 1e6});
+        }
+        else if(val >= 1000000000 || (val <= -1000000000) ){                
+            formater= valueFormatter.create({ value: 1e9});
+        }
+        else{ 
+            formater= valueFormatter.create({ value: 0});
+        }
+        formattedValue= formater.format(val);
+        return formattedValue;
+    }
+        
+    public drawBand(start: number, end: number, color: string,ToolTipText: string) {
+        
+        var formattedEndValue=this.getFormattedValue(end);
+        var div = d3.select("body").append("div")   
+            .attr("class", "CFtooltip")               
+            .style("opacity", 0);
+            
+        var band = this.body.append("svg:g")
+        
+        var labelArc = band.append("svg:path")
+        labelArc
+        .style("fill", color)
+        .attr("id", "zonePath_"+this.idGenerator)
+        .attr("d", d3.svg.arc()
+            .startAngle(this.valueToRadians(start))
+            .endAngle(this.valueToRadians(end))
+            .innerRadius(0.65 * this.config.raduis)
+            .outerRadius(0.85 * this.config.raduis))
+        .attr("transform", "translate(" + this.config.cx + "," + this.config.cy + ") rotate(270)")
+        .on("mouseover", function(d) {      
+            div.transition()
+                .duration(200)
+                .style("opacity", .9);
+            //div .html(ToolTipText+ " : "+ formattedEndValue.toString())
+                div .html(ToolTipText)
+                .style("left", (d3.event.clientX) + "px")
+                .style("top", (d3.event.clientY - 28) + "px");
+            })
+            .on("mouseout", function(d) {
+                div.transition()
+                    .duration(500)
+                    .style("opacity", 0);
+            });
+            
+        var outerArcRegEx = /(^.+?)L/;
+        var arcId = labelArc.attr("d");
+        var outerArc = outerArcRegEx.exec(arcId)[1];
+        outerArc = outerArc.replace(/,/g , " ");
+		var labelPath;
+        labelPath =  band.append("path")
+            .attr("id","labelPath_"+this.idGenerator)
+		    .attr("d", outerArc)
+		    .style("fill", "none")
+            .attr("transform", "translate(" + this.config.cx + "," + this.config.cy + ") rotate(270)");
+            
+        var getUserFontSize = this.model.gaugeChartSettings.allZonesSetting.fontSize;
+        //labels
+        band.append("svg:text")
+          .attr("dy",-Math.round(this.config.size)*0.033)
+          .style("margin-bottom","50px")
+          .append("textPath")
+    	  .attr("xlink:href", "#labelPath_"+this.idGenerator)
+          .attr("id","zoneLabel_"+this.idGenerator)
+    	  .style("text-anchor","middle")
+          .style("fill",this.model.gaugeChartSettings.allZonesSetting.labelColor)
+          .style("font-size", getUserFontSize + "pt")
+    	  .attr("startOffset", "50%")
+          .text(ToolTipText)
+          .on("mouseover", function(d) {      
+            div.transition()
+                .duration(200)
+                .style("opacity", .9);
+                div .html(ToolTipText)
+                .style("left", (d3.event.clientX) + "px")
+                .style("top", (d3.event.clientY - 28) + "px");
+            })
+            .on("mouseout", function(d) {
+                div.transition()
+                    .duration(500)
+                    .style("opacity", 0);
+            });
+        var arcLength = (this.valueToRadians(end)-this.valueToRadians(start));
+        var textElement: D3.Selection = band.select("#zoneLabel_"+this.idGenerator);
+        powerbi.TextMeasurementService.svgEllipsis(textElement[0][0], (this.config.size/2.7)*(arcLength));
+        this.idGenerator++;
+    }
+    
+    public drawInnerBand(start: number, end: number, color: string,ToolTipText: string) {
+        var settingvalue = this.model.gaugeChartSettings;
+        if(start < settingvalue.values.min){
+            start = settingvalue.values.min;
+        }
+        if(end > settingvalue.values.max){
+            end = settingvalue.values.max;
+        }
+        var formattedStart = this.getFormattedValue(settingvalue.values.groupLow),
+        formattedEnd = this.getFormattedValue(settingvalue.values.groupHigh);
+        
+        if(this.isPercentageData){
+            var formatter = valueFormatter.create({ format: "0.00 %;-0.00 %;0.00 %", value: 1, allowFormatBeautification: true });
+            formattedStart = formatter.format(formattedStart);
+            formattedEnd = formatter.format(formattedEnd);
+        }
+        
+        
+        var startAngle, endAngle;
+        //reverse logic
+        if (settingvalue.reverseScale.show){
+            start = settingvalue.values.min+(settingvalue.values.max - settingvalue.values.groupHigh);
+            end = settingvalue.values.min+(settingvalue.values.max - settingvalue.values.groupLow);
+        }
+        
+        var div = d3.select("body").append("div")
+            .attr("class", "CFtooltip")
+            .style("opacity", 0);
+            
+        this.body.append("svg:path")
+            .style("fill", color)
+            .attr("d", d3.svg.arc()
+            .startAngle(this.valueToRadians(start))
+            .endAngle(this.valueToRadians(end))
+            .innerRadius(0.000001 * this.config.raduis)
+            .outerRadius(0.47 * this.config.raduis))
+            .attr("transform", "translate(" + this.config.cx + "," + this.config.cy + ") rotate(270)")
+            .on("mouseover", function(d) {      
+                div.transition()
+                    .duration(200)
+                    .style("opacity", .9);
+                div .html(ToolTipText)
+                    .style("left", (d3.event.clientX) + "px")
+                    .style("top", (d3.event.clientY - 28) + "px");
+            })
+            .on("mouseout", function(d) {
+                div.transition()
+                    .duration(500)
+                    .style("opacity", 0);
+            });
+            
+        var innerBand = this.body.append("svg:path");
+            innerBand
+            .style("fill", "none")
+            .attr("id","innerBand")
+            .attr("d", d3.svg.arc()
+            .startAngle(this.valueToRadians(start - this.config.range * 0.085))
+            .endAngle(this.valueToRadians(end + this.config.range * 0.085))
+            .innerRadius(0.000001 * this.config.raduis)
+            .outerRadius(0.42 * this.config.raduis))
+            .attr("transform", "translate(" + this.config.cx + "," + this.config.cy + ") rotate(270)")   
+            
+        var outerArcRegEx = /(^.+?)L/;
+        var arcId = innerBand.attr("d");
+        var outerArc = outerArcRegEx.exec(arcId)[1];
+        outerArc = outerArc.replace(/,/g , " ");
+		
+		var labelPath =  this.body.append("path")
+            .attr("id","innerBandOuterArc")
+			.attr("d", outerArc)
+			.style("fill", "none")
+            .attr("transform", "translate(" + this.config.cx + "," + this.config.cy + ") rotate(270)");
+            
+        var labelSize =  Math.round(this.config.size / 40)
+        
+        this.body.append("text")
+          .append("textPath")
+    	  .attr("xlink:href", "#innerBandOuterArc")
+    	  .style("text-anchor","left")
+          .style("fill","#2e71ce")
+          .style("font-size", labelSize + "px")
+          .text("MIN");
+          
+        this.body.append("text")
+            .attr("dy",Math.round(this.config.size / 40))
+          .append("textPath")
+    	  .attr("xlink:href", "#innerBandOuterArc")
+    	  .style("text-anchor","left")
+          .style("fill","#2e71ce")
+          .style("font-size", labelSize + "px")
+          .text(settingvalue.reverseScale.show ? formattedEnd : formattedStart);
+          
+        this.body.append("text")
+          .append("textPath")
+    	  .attr("xlink:href", "#innerBandOuterArc")
+    	  .style("text-anchor","end")
+          .style("fill","#2e71ce")
+          .style("font-size", labelSize + "px")
+    	  .attr("startOffset", "100%")
+          .text("MAX");
+          
+          this.body.append("text")
+          .attr("dy",Math.round(this.config.size / 40))
+          .append("textPath")
+    	  .attr("xlink:href", "#innerBandOuterArc")
+    	  .style("text-anchor","end")
+          .style("fill","#2e71ce")
+          .style("font-size", labelSize + "px")
+          .attr("startOffset", "100%")
+          .text(settingvalue.reverseScale.show ? formattedStart : formattedEnd);
+          
+    }
+    
+    private valueToDegrees(value: number) {
+        return value / this.config.range * 270 - (this.config.minVal / this.config.range * 270 + 45);
+    }
+
+    private valueToRadians(value: number) {
+        return this.valueToDegrees(value) * Math.PI / 180;
+    }
+
+    private valueToPoint(value: number, factor: number) {
+        return {
+            x: this.config.cx - this.config.raduis * factor * Math.cos(this.valueToRadians(value)),
+            y: this.config.cy - this.config.raduis * factor * Math.sin(this.valueToRadians(value))
+        };
+    }
+
+    public reverseArray (arr: string[], start: number, end: number){
+        var temp;
+        while (start < end){
+            temp = arr[start];   
+            arr[start] = arr[end];
+            arr[end] = temp;
+            start++;
+            end--;
+        }   
+    }
+
+    public enumerateObjectInstances(options: EnumerateVisualObjectInstancesOptions): VisualObjectInstanceEnumeration {
+        var enumeration = new ObjectEnumerationBuilder();
+        if  (!data){
+            return;
+        }
+        var objectName = options.objectName;
+        switch (objectName) {
+            case 'PrimaryPointer':
+                enumeration.pushInstance({
+                    objectName: 'PrimaryPointer',
+                    displayName: 'Primary Pointer',
+                    selector: null,
+                    properties: {  
+                      color: this.model.gaugeChartSettings.PrimaryPointer.color
+                    }
+                });
+                break;
+            case 'secondaryPointers':
+                enumeration.pushInstance({
+                    objectName: 'secondaryPointers',
+                    displayName: 'Secondary Pointers',
+                    selector: null,
+                    properties: {  
+                      color: this.model.gaugeChartSettings.secondaryPointers.color
+                    }
+                });
+                break;
+            case 'reverseScale':
+                enumeration.pushInstance({
+                    objectName: 'reverseScale',
+                    displayName: 'Reverse Scale',
+                    selector: null,
+                    properties: {  
+                      show: this.model.gaugeChartSettings.reverseScale.show
+                    }
+                });
+                break;
+            case 'zone1settings':
+                enumeration.pushInstance({
+                    objectName: 'zone1settings',
+                    displayName: 'Settings for Zone 1',
+                    selector: null,
+                    properties: {
+                      show: this.model.gaugeChartSettings.zone1settings.show,
+                      color: this.model.gaugeChartSettings.zone1settings.color,
+                      labelText: this.model.gaugeChartSettings.zone1settings.labelText
+                    }
+                });
+                break;
+            case 'zone2settings':
+                enumeration.pushInstance({
+                    objectName: 'zone2settings',
+                    displayName: 'Settings for Zone 2',
+                    selector: null,
+                    properties: {
+                      show: this.model.gaugeChartSettings.zone2settings.show,
+                      color: this.model.gaugeChartSettings.zone2settings.color,
+                      labelText: this.model.gaugeChartSettings.zone2settings.labelText
+                    }
+                });
+                break;
+            case 'zone3settings':
+                enumeration.pushInstance({
+                    objectName: 'zone3settings',
+                    displayName: 'Settings for Zone 3',
+                    selector: null,
+                    properties: {  
+                      show: this.model.gaugeChartSettings.zone3settings.show,
+                      color: this.model.gaugeChartSettings.zone3settings.color,
+                      labelText: this.model.gaugeChartSettings.zone3settings.labelText
+                    }
+                });
+                break;
+            case 'zone4settings':
+                enumeration.pushInstance({
+                    objectName: 'zone4settings',
+                    displayName: 'Settings for Zone 4',
+                    selector: null,
+                    properties: {  
+                      show: this.model.gaugeChartSettings.zone4settings.show,
+                      color: this.model.gaugeChartSettings.zone4settings.color,
+                      labelText: this.model.gaugeChartSettings.zone4settings.labelText
+                    }
+                });
+                break;
+            case 'zone5settings':
+                enumeration.pushInstance({
+                    objectName: 'zone5settings',
+                    displayName: 'Settings for Zone 5',
+                    selector: null,
+                    properties: {  
+                     show: this.model.gaugeChartSettings.zone5settings.show,
+                      color: this.model.gaugeChartSettings.zone5settings.color,
+                      labelText: this.model.gaugeChartSettings.zone5settings.labelText
+                    }
+                });
+                break;
+            case 'zone6settings':
+                enumeration.pushInstance({
+                    objectName: 'zone6settings',
+                    displayName: 'Settings for Zone 6',
+                    selector: null,
+                    properties: {  
+                      show: this.model.gaugeChartSettings.zone6settings.show,
+                      color: this.model.gaugeChartSettings.zone6settings.color,
+                      labelText: this.model.gaugeChartSettings.zone6settings.labelText
+                    }
+                });
+                break;
+            case 'allZonesSetting':
+                enumeration.pushInstance({
+                    objectName: 'allZonesSetting',
+                    displayName: 'Settings for all Zones',
+                    selector: null,
+                    properties: {
+                      fontSize: this.model.gaugeChartSettings.allZonesSetting.fontSize,
+                      valueSize: this.model.gaugeChartSettings.allZonesSetting.valueSize,
+                      labelColor: this.model.gaugeChartSettings.allZonesSetting.labelColor,
+                      rimColor: this.model.gaugeChartSettings.allZonesSetting.rimColor
+                    }
+                });
+                break;
+        }
+        return enumeration.complete();
+    }
+
+    private enumerateValues(data: GaugeChartModel): VisualObjectInstance[] {
+        var settings = data.gaugeChartSettings;
+        return [{
+            selector: null,
+            objectName: 'values',
+            displayName: 'Values',
+            properties: {
+                min: settings.values.min,
+                max: settings.values.max,
+                groupLow: settings.values.groupLow,
+                groupHigh: settings.values.groupHigh,
+                zone1: settings.values.zone1,
+                zone2: settings.values.zone2,
+                zone3: settings.values.zone3,
+                zone4: settings.values.zone4,
+                zone5: settings.values.zone5,
+                pointerValue: settings.values.pointerValue
+            }
+        }];
+    }
+}
+}
