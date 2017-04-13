@@ -1,30 +1,9 @@
-    module powerbi.extensibility.visual {
-        import PixelConverter = powerbi.extensibility.utils.type.PixelConverter;
-        import ClassAndSelector = powerbi.extensibility.utils.svg.CssConstants.ClassAndSelector;
-        import createClassAndSelector = powerbi.extensibility.utils.svg.CssConstants.createClassAndSelector;
-        import Polygon = powerbi.extensibility.utils.svg.shapes.IPolygon;
-        import EnumExtensions = powerbi.extensibility.utils.type.EnumExtensions;
-
-        import LegendPosition = powerbi.extensibility.utils.chart.legend.LegendPosition;
-        import LegendData = powerbi.extensibility.utils.chart.legend.LegendData;
-        import IInteractivityService = powerbi.extensibility.utils.interactivity.IInteractivityService;
-        import appendClearCatcher = powerbi.extensibility.utils.interactivity.appendClearCatcher;
-        import SVGLegend = powerbi.extensibility.utils.chart.legend.SVGLegend;
-        import Prototype = powerbi.extensibility.utils.type.Prototype;
-        import LegendDataPoint = powerbi.extensibility.utils.chart.legend.LegendDataPoint;
-        import LegendBehavior = powerbi.extensibility.utils.chart.legend.LegendBehavior;
-        import LegendBehaviorOptions = powerbi.extensibility.utils.chart.legend.LegendBehaviorOptions;
-        import SVGUtil = powerbi.extensibility.utils.svg;
-        import TextProperties = powerbi.extensibility.utils.formatting.TextProperties;
-        import AxisHelper = powerbi.extensibility.utils.chart.axis;
-        import IAxisProperties = powerbi.extensibility.utils.chart.axis.IAxisProperties;
-        import IValueFormatter = powerbi.extensibility.utils.formatting.IValueFormatter;
-        import SelectableDataPoint = powerbi.extensibility.utils.interactivity.SelectableDataPoint;
-        import IDataLabelSettings = powerbi.extensibility.utils.chart.dataLabel.IDataLabelSettings;
-        import DataViewObjects = powerbi.extensibility.utils.dataview.DataViewObjects;
-        import DataViewObject = powerbi.extensibility.utils.dataview.DataViewObject;
-        
-
+    module powerbi.visuals {
+        import PixelConverter = jsCommon.PixelConverter;
+        import ClassAndSelector = jsCommon.CssConstants.ClassAndSelector;
+        import createClassAndSelector = jsCommon.CssConstants.createClassAndSelector;
+        import Polygon = powerbi.visuals.shapes.Polygon;
+        import EnumExtensions = jsCommon.EnumExtensions;
         export interface IGMOLegend {
             getMargins(): IViewport;
             isVisible(): boolean;
@@ -61,9 +40,9 @@
             private orientation: LegendPosition;
             private viewport: IViewport;
             private parentViewport: IViewport;
-            private svg: d3.Selection<SVGElement>;
-            private group: d3.Selection<SVGElement>;
-            private clearCatcher: d3.Selection<SVGElement>;
+            private svg: D3.Selection;
+            private group: D3.Selection;
+            private clearCatcher: D3.Selection;
             private element: JQuery;
             private interactivityService: IInteractivityService;
             private legendDataStartIndex = 0;
@@ -209,14 +188,9 @@
                 // clone because we modify legend item label with ellipsis if it is truncated
                 var clonedData = Prototype.inherit(data);
                 var newDataPoints: LegendDataPoint[] = [];
-                data.dataPoints.forEach(element => {
-                    newDataPoints.push(Prototype.inherit(element));
-                });
-
-                /* 
                 for (var dp in data.dataPoints) {
                     newDataPoints.push(Prototype.inherit(dp));
-                }*/
+                }
                 clonedData.dataPoints = newDataPoints;
     
                 this.setTooltipToLegendItems(clonedData);
@@ -245,7 +219,7 @@
                 var layout = this.calculateLayout(data, autoWidth, detailedLegend);
                 var titleLayout = layout.title;
                 var titleData = titleLayout ? [titleLayout] : [];
-                var hasSelection = this.interactivityService && powerbi.extensibility.utils.interactivity.dataHasSelection(data.dataPoints);
+                var hasSelection = this.interactivityService && powerbi.visuals.dataHasSelection(data.dataPoints);
                 this.group
                     .selectAll(GMOSVGLegend.LegendItem.selector).remove();
                 this.group
@@ -257,11 +231,11 @@
                     var centerOffset = 0;
                     if (this.isTopOrBottom(this.orientation)) {
                         centerOffset = Math.max(0,(this.parentViewport.width - this.visibleLegendWidth) / 2);
-                        group.attr('transform', powerbi.extensibility.utils.svg.translate(centerOffset, 0));
+                        group.attr('transform', SVGUtil.translate(centerOffset, 0));
                     }
                     else {
                         centerOffset = Math.max((this.parentViewport.height - this.visibleLegendHeight) / 2);
-                        group.attr('transform', powerbi.extensibility.utils.svg.translate(0, centerOffset));
+                        group.attr('transform', SVGUtil.translate(0, centerOffset));
                     }
                 }
                 else {
@@ -289,7 +263,7 @@
                 }
                 if (data.dataPoints.length) {
                     var virtualizedDataPoints = data.dataPoints.slice(this.legendDataStartIndex, this.legendDataStartIndex + layout.numberOfItems);
-                    var iconRadius = powerbi.extensibility.utils.formatting.textMeasurementService.estimateSvgTextHeight(GMOSVGLegend.getTextProperties(false, '', this.data.fontSize)) / GMOSVGLegend.LegendIconRadiusFactor;
+                    var iconRadius = TextMeasurementService.estimateSvgTextHeight(GMOSVGLegend.getTextProperties(false, '', this.data.fontSize)) / GMOSVGLegend.LegendIconRadiusFactor;
                     iconRadius = (this.legendFontSizeMarginValue > GMOSVGLegend.DefaultTextMargin) && iconRadius > GMOSVGLegend.LegendIconRadius
                         ? iconRadius :
                         GMOSVGLegend.LegendIconRadius;
@@ -323,7 +297,7 @@
                     var textElement = legendItems.selectAll('.legend > #legendGroup > .legendItem > .legendText');
                     if(textElement.length){
                         for(var i = 0; i < textElement.length ; i++){
-                            powerbi.extensibility.utils.formatting.textMeasurementService.wordBreak(textElement[i][0], this.maxLegendTextLength, 60);
+                            powerbi.TextMeasurementService.wordBreak(textElement[i][0], this.maxLegendTextLength, 60);
                             var tSpanElements = textElement[i][0].childNodes.length;
                                 for(var j = 0; j < tSpanElements; j++){
                                     textElement[i][0].childNodes[j].setAttribute('x',textElement[i][0].getAttribute('x'));
@@ -397,17 +371,17 @@
                     }
                     var textProperties = GMOSVGLegend.getTextProperties(true, title, this.data.fontSize);
                     var text = title;
-                    var titlewidth = powerbi.extensibility.utils.formatting.textMeasurementService.measureSvgTextWidth(textProperties);
+                    var titlewidth = TextMeasurementService.measureSvgTextWidth(textProperties);
                     var primaryTitleWidth: number = 0;
                     if (this.data['primaryTitle'])
-                        primaryTitleWidth = powerbi.extensibility.utils.formatting.textMeasurementService.measureSvgTextWidth(GMOSVGLegend.getTextProperties(true, this.data['primaryTitle'], this.data.fontSize));
+                        primaryTitleWidth = TextMeasurementService.measureSvgTextWidth(GMOSVGLegend.getTextProperties(true, this.data['primaryTitle'], this.data.fontSize));
                     width = titlewidth > primaryTitleWidth ? titlewidth : primaryTitleWidth;
                     if (titlewidth > maxMeasureLength || primaryTitleWidth > maxMeasureLength) {
     
-                        text = powerbi.extensibility.utils.formatting.textMeasurementService.getTailoredTextOrDefault(textProperties, maxMeasureLength);
+                        text = TextMeasurementService.getTailoredTextOrDefault(textProperties, maxMeasureLength);
                         width = maxMeasureLength;
                         if (this.data['primaryTitle']) {
-                            this.primaryTitle = this.data['primaryTitle'] = powerbi.extensibility.utils.formatting.textMeasurementService.getTailoredTextOrDefault(GMOSVGLegend.getTextProperties(true, this.data['primaryTitle'], this.data.fontSize), maxMeasureLength);
+                            this.primaryTitle = this.data['primaryTitle'] = TextMeasurementService.getTailoredTextOrDefault(GMOSVGLegend.getTextProperties(true, this.data['primaryTitle'], this.data.fontSize), maxMeasureLength);
                         }
                     }
                     else {
@@ -418,9 +392,9 @@
                         width += GMOSVGLegend.TitlePadding;
                     else {
                         if (width < maxMeasureLength) {
-                            text = powerbi.extensibility.utils.formatting.textMeasurementService.getTailoredTextOrDefault(textProperties, titlewidth);
+                            text = TextMeasurementService.getTailoredTextOrDefault(textProperties, titlewidth);
                             if (this.data['primaryTitle']) {
-                                this.primaryTitle = this.data['primaryTitle'] = powerbi.extensibility.utils.formatting.textMeasurementService.getTailoredTextOrDefault(GMOSVGLegend.getTextProperties(true, this.data['primaryTitle'], this.data.fontSize), width);
+                                this.primaryTitle = this.data['primaryTitle'] = TextMeasurementService.getTailoredTextOrDefault(GMOSVGLegend.getTextProperties(true, this.data['primaryTitle'], this.data.fontSize), width);
                             }
                         }
     
@@ -440,7 +414,7 @@
                 var dataPoints = data.dataPoints;
                 if (data.dataPoints.length === 0) {
                     return {
-                        //startIndex: null,
+                        startIndex: null,
                         numberOfItems: 0,
                         title: null,
                         navigationArrows: []
@@ -612,18 +586,18 @@
     
                     var textProperties: any;
                     textProperties = GMOSVGLegend.getTextProperties(false, dp.label, this.data.fontSize);
-                    var labelwidth = powerbi.extensibility.utils.formatting.textMeasurementService.measureSvgTextWidth(textProperties);
+                    var labelwidth = TextMeasurementService.measureSvgTextWidth(textProperties);
                     var primaryWidth = 0;
                     if (detailedLegend === "Value" || detailedLegend === "Percentage" || detailedLegend === "Both") {
     
                         if (detailedLegend === "Value") {
-                            primaryWidth = powerbi.extensibility.utils.formatting.textMeasurementService.measureSvgTextWidth(GMOSVGLegend.getTextProperties(false, dp.measure, this.data.fontSize));
+                            primaryWidth = TextMeasurementService.measureSvgTextWidth(GMOSVGLegend.getTextProperties(false, dp.measure, this.data.fontSize));
                         }
                         else if (detailedLegend === "Percentage") {
-                            primaryWidth = powerbi.extensibility.utils.formatting.textMeasurementService.measureSvgTextWidth(GMOSVGLegend.getTextProperties(false, dp['percentage'], this.data.fontSize));
+                            primaryWidth = TextMeasurementService.measureSvgTextWidth(GMOSVGLegend.getTextProperties(false, dp['percentage'], this.data.fontSize));
                         }
                         else {
-                            primaryWidth = powerbi.extensibility.utils.formatting.textMeasurementService.measureSvgTextWidth(GMOSVGLegend.getTextProperties(false, dp.measure + ' ' + dp['percentage'], this.data.fontSize));
+                            primaryWidth = TextMeasurementService.measureSvgTextWidth(GMOSVGLegend.getTextProperties(false, dp.measure + ' ' + dp['percentage'], this.data.fontSize));
                         }
                     }
                     var width = labelwidth > primaryWidth ? labelwidth : primaryWidth;
@@ -638,12 +612,12 @@
                             dp.measure = dp.measure + ' ' + dp['percentage'];
                         }
                     } else {
-                        var text = powerbi.extensibility.utils.formatting.textMeasurementService.getTailoredTextOrDefault(
+                        var text = TextMeasurementService.getTailoredTextOrDefault(
                             textProperties,
                             maxTextLength);
                         dp.label = text;
                         if (detailedLegend === "Value") {
-                            dp.measure = powerbi.extensibility.utils.formatting.textMeasurementService.getTailoredTextOrDefault(
+                            dp.measure = TextMeasurementService.getTailoredTextOrDefault(
                                 GMOSVGLegend.getTextProperties(false, dp.measure, this.data.fontSize),
                                 maxTextLength);
                         }
@@ -729,18 +703,18 @@
                     }
                     var textProperties: any;
                     textProperties = GMOSVGLegend.getTextProperties(false, dp.label, this.data.fontSize);
-                    var labelwidth = powerbi.extensibility.utils.formatting.textMeasurementService.measureSvgTextWidth(textProperties);
+                    var labelwidth = TextMeasurementService.measureSvgTextWidth(textProperties);
                     var primaryWidth = 0;
                     if (detailedLegend === "Value" || detailedLegend === "Percentage" || detailedLegend === "Both") {
     
                         if (detailedLegend === "Value") {
-                            primaryWidth = powerbi.extensibility.utils.formatting.textMeasurementService.measureSvgTextWidth(GMOSVGLegend.getTextProperties(false, dp.measure, this.data.fontSize));
+                            primaryWidth = TextMeasurementService.measureSvgTextWidth(GMOSVGLegend.getTextProperties(false, dp.measure, this.data.fontSize));
                         }
                         else if (detailedLegend === "Percentage") {
-                            primaryWidth = powerbi.extensibility.utils.formatting.textMeasurementService.measureSvgTextWidth(GMOSVGLegend.getTextProperties(false, dp['percentage'], this.data.fontSize));
+                            primaryWidth = TextMeasurementService.measureSvgTextWidth(GMOSVGLegend.getTextProperties(false, dp['percentage'], this.data.fontSize));
                         }
                         else {
-                            primaryWidth = powerbi.extensibility.utils.formatting.textMeasurementService.measureSvgTextWidth(GMOSVGLegend.getTextProperties(false, dp.measure + ' ' + dp['percentage'], this.data.fontSize));
+                            primaryWidth = TextMeasurementService.measureSvgTextWidth(GMOSVGLegend.getTextProperties(false, dp.measure + ' ' + dp['percentage'], this.data.fontSize));
                         }
                     }
                     var width = labelwidth > primaryWidth ? labelwidth : primaryWidth;
@@ -750,12 +724,12 @@
                     }
     
                     if (width > maxHorizontalSpaceAvaliable) {
-                        var text = powerbi.extensibility.utils.formatting.textMeasurementService.getTailoredTextOrDefault(
+                        var text = TextMeasurementService.getTailoredTextOrDefault(
                             GMOSVGLegend.getTextProperties(false, dp.label, this.data.fontSize),
                             maxHorizontalSpaceAvaliable);
                         dp.label = text;
                         if (detailedLegend === "Value") {
-                            dp.measure = powerbi.extensibility.utils.formatting.textMeasurementService.getTailoredTextOrDefault(
+                            dp.measure = TextMeasurementService.getTailoredTextOrDefault(
                                 GMOSVGLegend.getTextProperties(false, dp.measure, this.data.fontSize),
                                 maxHorizontalSpaceAvaliable);
                         }
@@ -910,14 +884,9 @@
     
             private setTooltipToLegendItems(data: LegendData) {
                 //we save the values to tooltip before cut
-                data.dataPoints.forEach(element => {
-                    element.tooltip = element.label;
-                });
-
-                /*
                 for (var dataPoint in data.dataPoints) {
                     dataPoint.tooltip = dataPoint.label;
-                }*/
+                }
             }
         }
         
@@ -927,22 +896,22 @@
         
         export interface ColumnChartAnimationOptionsGMO extends IAnimationOptions {
             viewModel: StackedChartGMOData;
-            series: d3.UpdateSelection;
+            series: D3.UpdateSelection;
             layout: IColumnLayout;
             itemCS: ClassAndSelector;
-            mainGraphicsContext: d3.Selection<SVGElement>;
+            mainGraphicsContext: D3.Selection;
             viewPort: IViewport;
         }
         
         export interface ColumnAxisOptionsGMO {
-            xScale: d3.scale.Scale;
-            yScale: d3.Scale.Scale;
+            xScale: D3.Scale.Scale;
+            yScale: D3.Scale.Scale;
             seriesOffsetScale?: D3.Scale.Scale;
             columnWidth: number;
             /** Used by clustered only since categoryWidth !== columnWidth */
             categoryWidth?: number;
             isScalar: boolean;
-            margin: powerbi.extensibility.utils.svg.IMargin;
+            margin: IMargin;
         }
         
         export interface LabelDataPointGMO {
@@ -955,7 +924,7 @@
             tooltip?: string;
             insideFill: string;
             outsideFill: string;
-            identity: ISelectionId;
+            identity: powerbi.visuals.SelectionId;
             key?: string;
             fontSize?: number;
             secondRowText?: string;
@@ -970,15 +939,15 @@
         }
         
         export interface LabelParentRectGMO {
-            rect: powerbi.extensibility.utils.svg.IRect;
+            rect: IRect;
             orientation: NewRectOrientationGMO;
             validPositions: RectLabelPosition[];
         }
         */
         
         export interface ColumnChartDrawInfoGMO {
-            eventGroup: d3.Selection<SVGElement>;
-            shapesSelection: d3.Selection<SVGElement>;
+            eventGroup: D3.Selection;
+            shapesSelection: D3.Selection;
             viewport: IViewport;
             axisOptions: ColumnAxisOptionsGMO;
             labelDataPoints: LabelDataPointGMO[];
@@ -989,11 +958,11 @@
             width: number;
             duration: number;
             hostService: IVisualHostServices;
-            margin: powerbi.extensibility.utils.svg.IMargin;
+            margin: IMargin;
             /** A group for graphics can be placed that won't be clipped to the data area of the chart. */
-            //unclippedGraphicsContext: d3.Selection<SVGElement>;
+            //unclippedGraphicsContext: D3.Selection;
             /** A SVG for graphics that should be clipped to the data area, e.g. data bars, columns, lines */
-            mainGraphicsContext: d3.Selection<SVGElement>;
+            mainGraphicsContext: D3.Selection;
             layout: CategoryLayout;
             animator: IColumnChartAnimatorGMO;
             onDragStart?: (datum: ColumnChartDataPoint) => void;
@@ -1061,10 +1030,10 @@
             public static OuterPaddingRatio = 0.4;
             public static InnerPaddingRatio = 0.2;
             private static FontSize = 11;
-            private static FontSizeString = PixelConverter.toString(CartesianChartGMO.FontSize);
+            private static FontSizeString = jsCommon.PixelConverter.toString(CartesianChartGMO.FontSize);
             
             public static AxisTextProperties: TextProperties = {
-                fontFamily: powerbi.extensibility.utils.formatting.font.Family.regular.css,
+                fontFamily: Font.Family.regular.css,
                 fontSize: CartesianChartGMO.FontSizeString,
             };
             
@@ -1079,7 +1048,7 @@
                 if (!CartesianChartGMO.supportsScalar(type, scalarKeys))
                     return false;
     
-                var axisTypeValue = powerbi.extensibility.utils.dataview.DataViewObjects.getValue(objects, propertyId);
+                var axisTypeValue = DataViewObjects.getValue(objects, propertyId);
                 if (!objects || axisTypeValue == null)
                     return true;
     
@@ -1092,7 +1061,7 @@
                     return true;
     
                 // otherwise does not support scalar if the type is non-numeric.
-                return !powerbi.extensibility.utils.chart.axis.isOrdinal(type);
+                return !AxisHelper.isOrdinal(type);
             }
             
             private static getMinInterval(seriesList: CartesianSeries[]): number {
@@ -1159,7 +1128,7 @@
     
                 // visibleCategoryCount will be used to discard data that overflows on ordinal-axis charts.
                 // Needed for dashboard visuals            
-                var calculatedBarCount = powerbi.extensibility.utils.type.Double.floorWithPrecision((availableWidth - totalOuterPadding) / categoryThickness);
+                var calculatedBarCount = Double.floorWithPrecision((availableWidth - totalOuterPadding) / categoryThickness);
                 var visibleCategoryCount = Math.min(calculatedBarCount, categoryCount);
                 var willScroll = visibleCategoryCount < categoryCount && isScrollable;
     
@@ -1184,16 +1153,16 @@
         }
         
         export class ColumnChartGMO {
-            public static SeriesClasses: powerbi.extensibility.utils.svg.CssConstants.ClassAndSelector = powerbi.extensibility.utils.svg.CssConstants.createClassAndSelector('series');
+            public static SeriesClasses: jsCommon.CssConstants.ClassAndSelector = jsCommon.CssConstants.createClassAndSelector('series');
             public static stackedValidLabelPositions: RectLabelPositionGMO[] = [RectLabelPositionGMO.InsideCenter, RectLabelPositionGMO.InsideEnd, RectLabelPositionGMO.InsideBase];
             public static getLabelFill(labelColor: string, isInside: boolean, isCombo: boolean): string {
                 if (labelColor) {
                     return labelColor;
                 }
                 if (isInside && !isCombo) {
-                    return powerbi.extensibility.utils.chart.dataLabel.utils.defaultInsideLabelColor;
+                    return NewDataLabelUtils.defaultInsideLabelColor;
                 }
-                return powerbi.extensibility.utils.chart.dataLabel.utils.defaultLabelColor;
+                return NewDataLabelUtils.defaultLabelColor;
             }
             public static getInteractiveColumnChartDomElement(element: JQuery): HTMLElement {
                 return element.children("svg").get(0);
@@ -1230,12 +1199,12 @@
             private graphicsContext: ColumnChartContextGMO;
             private width: number;
             private height: number;
-            private margin: powerbi.extensibility.utils.svg.IMargin;
+            private margin: IMargin;
             private xProps: IAxisProperties;
             private yProps: IAxisProperties;
             private categoryLayout: CategoryLayout;
             private columnsCenters: number[];
-            private columnSelectionLineHandle: d3.Selection<SVGElement>;
+            private columnSelectionLineHandle: D3.Selection;
             private animator: IColumnChartAnimatorGMO;
             private interactivityService: IInteractivityService;
             private viewportHeight: number;
@@ -1305,7 +1274,7 @@
                     pixelSpan: size,
                     dataDomain: domain,
                     metaDataColumn: data.categoryMetadata,
-                    formatString: powerbi.extensibility.utils.formatting.valueFormatter.getFormatString(data.categoryMetadata, columnChartProps.general.formatString),
+                    formatString: valueFormatter.getFormatString(data.categoryMetadata, columnChartProps.general.formatString),
                     outerPadding: categoryThickness * outerPaddingRatio,
                     isCategoryAxis: true,
                     isScalar: isScalar,
@@ -1377,8 +1346,8 @@
                 var max = d3.max<ColumnChartSeries, number>(data, d => d3.max<ColumnChartDataPoint, number>(d.data, e => e.position));
     
                 if (is100pct) {
-                    min = powerbi.extensibility.utils.type.Double.roundToPrecision(min, 0.0001);
-                    max = powerbi.extensibility.utils.type.Double.roundToPrecision(max, 0.0001);
+                    min = Double.roundToPrecision(min, 0.0001);
+                    max = Double.roundToPrecision(max, 0.0001);
                 }
     
                 return {
@@ -1395,10 +1364,10 @@
                 var combinedDomain = AxisHelper.combineDomain(forcedYDomain, valueDomainArr, y1ReferenceLineValue);
                 var shouldClamp = AxisHelper.scaleShouldClamp(combinedDomain, valueDomainArr);
                 var metadataColumn = this.data.valuesMetadata[0];
-                powerbi.extensibility.utils.formatting.valueFormatter.getFormatString(this.data.valuesMetadata[0], columnChartProps.general.formatString)
+                valueFormatter.getFormatString(this.data.valuesMetadata[0], columnChartProps.general.formatString)
                 var formatString = is100Pct ?
                     this.graphicsContext.hostService.getLocalizedString('Percentage')
-                    : powerbi.extensibility.utils.formatting.valueFormatter.getFormatString(metadataColumn, columnChartProps.general.formatString);
+                    : valueFormatter.getFormatString(metadataColumn, columnChartProps.general.formatString);
     
                 this.yProps = AxisHelper.createAxis({
                     pixelSpan: height,
@@ -1567,7 +1536,7 @@
                 };
             }
             
-            public setChosenColumnOpacity(mainGraphicsContext: d3.Selection<SVGElement>, columnGroupSelector: string, selectedColumnIndex: number, lastColumnIndex: number): void {
+            public setChosenColumnOpacity(mainGraphicsContext: D3.Selection, columnGroupSelector: string, selectedColumnIndex: number, lastColumnIndex: number): void {
                 var series = mainGraphicsContext.selectAll(ColumnChartGMO.SeriesClasses.selector);
                 var lastColumnUndefined = typeof lastColumnIndex === 'undefined';
                 // find all columns that do not belong to the selected column and set a dimmed opacity with a smooth animation to those columns
@@ -1651,7 +1620,7 @@
                 // for negative values it is just the previous stack position
                 return {
                     shapeLayout: {
-                        width: (d: powerbi.extensibility. ColumnChartDataPoint) => columnWidth,
+                        width: (d: ColumnChartDataPoint) => columnWidth,
                         x: (d: ColumnChartDataPoint) => xScale(isScalar ? d.categoryValue : d.categoryIndex) - xScaleOffset,
                         y: (d: ColumnChartDataPoint) => yScale(d.position),
                         height: (d: ColumnChartDataPoint) => yScale(d.position - d.valueAbsolute) - yScale(d.position),
@@ -1675,7 +1644,7 @@
                 var labelDataPoints: LabelDataPointGMO[] = [];
                 var data = this.data;
                 var series = data.series;
-                var formattersCache = powerbi.extensibility.utils.chart.dataLabel.utils.createColumnFormatterCacheManager();
+                var formattersCache = NewDataLabelUtils.createColumnFormatterCacheManager();
                 var shapeLayout = this.layout.shapeLayout;
     
                 for (var currentSeriesIndex in series) {
@@ -1691,7 +1660,7 @@
                         }
     
                         // Calculate parent rectangle   
-                        var parentRect: powerbi.extensibility.utils.svg.IRect = {
+                        var parentRect: IRect = {
                             left: shapeLayout.x(dataPoint),
                             top: shapeLayout.y(dataPoint),
                             width: shapeLayout.width(dataPoint),
@@ -1702,23 +1671,23 @@
                         var formatString = undefined;
     
                         if (this.graphicsContext.is100Pct) {
-                            formatString = powerbi.extensibility.utils.chart.dataLabel.utils.hundredPercentFormat;
+                            formatString = NewDataLabelUtils.hundredPercentFormat;
                         }
                         else {
                             formatString = dataPoint.labelFormatString;
                         }
                         var formatter = formattersCache.getOrCreate(formatString, labelSettings, axisFormatter);
-                        var text = powerbi.extensibility.utils.chart.dataLabel.utils.getLabelFormattedText(formatter.format(dataPoint.value));
+                        var text = NewDataLabelUtils.getLabelFormattedText(formatter.format(dataPoint.value));
     
                         // Calculate text size
                         var properties: TextProperties = {
                             text: text,
-                            fontFamily: powerbi.extensibility.utils.chart.dataLabel.utils.LabelTextProperties.fontFamily,
-                            fontSize: PixelConverter.fromPoint(labelSettings.fontSize || powerbi.extensibility.utils.chart.dataLabel.utils.DefaultFontSizeInPt),
-                            fontWeight: powerbi.extensibility.utils.chart.dataLabel.utils.LabelTextProperties.fontWeight,
+                            fontFamily: NewDataLabelUtils.LabelTextProperties.fontFamily,
+                            fontSize: PixelConverter.fromPoint(labelSettings.fontSize || NewDataLabelUtils.DefaultLabelFontSizeInPt),
+                            fontWeight: NewDataLabelUtils.LabelTextProperties.fontWeight,
                         };
-                        var textWidth = powerbi.extensibility.utils.formatting.textMeasurementService.measureSvgTextWidth(properties);
-                        var textHeight = powerbi.extensibility.utils.formatting.textMeasurementService.estimateSvgTextHeight(properties, true /* tightFitForNumeric */);
+                        var textWidth = TextMeasurementService.measureSvgTextWidth(properties);
+                        var textHeight = TextMeasurementService.estimateSvgTextHeight(properties, true /* tightFitForNumeric */);
                        
                         labelDataPoints.push({
                             isPreferred: true,
@@ -1736,7 +1705,7 @@
                                 validPositions: ColumnChartGMO.stackedValidLabelPositions,
                             },
                             identity: dataPoint.identity,
-                            fontSize: labelSettings.fontSize || powerbi.extensibility.utils.chart.dataLabel.utils.DefaultFontSizeInPt,
+                            fontSize: labelSettings.fontSize || NewDataLabelUtils.DefaultLabelFontSizeInPt,
                         });
                     }
                 }
@@ -1760,7 +1729,7 @@
         
         export interface LabelParentRect {
             /** The rectangle this data label belongs to */
-            rect: powerbi.extensibility.utils.svg.IRect;
+            rect: IRect;
             /** The orientation of the parent rectangle */
             orientation: NewRectOrientationGMO;
             /** Valid positions to place the label ordered by preference */
@@ -1816,7 +1785,7 @@
             hasHighlights: boolean;
             categoryMetadata: DataViewMetadataColumn;
             scalarCategoryAxis: boolean;
-            labelSettings: powerbi.extensibility.utils.chart.dataLabel.VisualDataLabelsSettings;
+            labelSettings: VisualDataLabelsSettings;
             axesLabels: ChartAxesLabels;
             hasDynamicSeries: boolean;
             isMultiMeasure: boolean;
@@ -1826,8 +1795,8 @@
         }
         export interface ColumnGMOBehaviorOptions {
             datapoints: SelectableDataPoint[];
-            bars: d3.Selection<SVGElement>;
-            mainGraphicsContext: d3.Selection<SVGElement>;
+            bars: D3.Selection;
+            mainGraphicsContext: D3.Selection;
             hasHighlights: boolean;
             viewport: IViewport;
             axisOptions: ColumnAxisOptions;
@@ -1838,9 +1807,9 @@
             key: string;
             index: number;
             data: StackedChartGMODataPoint[];
-            identity: ISelectionId;
+            identity: SelectionId;
             color: string;
-            labelSettings: powerbi.extensibility.utils.chart.dataLabel.VisualDataLabelsSettings;
+            labelSettings: VisualDataLabelsSettings;
         }
     
         export interface StackedChartGMODataPoint extends CartesianDataPoint, SelectableDataPoint, TooltipEnabledDataPoint, LabelEnabledDataPoint {
@@ -1853,7 +1822,7 @@
             /** Not adjusted for 100% stacked */
             valueOriginal: number;
             seriesIndex: number;
-            labelSettings: powerbi.extensibility.utils.chart.dataLabel.VisualDataLabelsSettings;
+            labelSettings: VisualDataLabelsSettings;
             categoryIndex: number;
             color: string;
             /** The original values from the highlighted rect, used in animations */
@@ -1896,7 +1865,7 @@
             /** Used by clustered only since categoryWidth !== columnWidth */
             categoryWidth?: number;
             isScalar: boolean;
-            margin: powerbi.extensibility.utils.svg.IMargin;
+            margin: IMargin;
         }
     
         export interface IColumnGMOLayout {
@@ -1925,9 +1894,9 @@
             width: number;
             duration: number;
             hostService: IVisualHostServices;
-            margin: powerbi.extensibility.utils.svg.IMargin;
-            mainGraphicsContext: d3.Selection<SVGElement>;
-            labelGraphicsContext: d3.Selection<SVGElement>;
+            margin: IMargin;
+            mainGraphicsContext: D3.Selection;
+            labelGraphicsContext: D3.Selection;
             layout: CategoryLayout;
             animator: IColumnChartAnimatorGMO;
             onDragStart?: (datum: StackedChartGMODataPoint) => void;
@@ -1963,7 +1932,7 @@
         }
     
         export interface ColumnChartDrawGMOInfo {
-            shapesSelection: d3.Selection<SVGElement>;
+            shapesSelection: D3.Selection;
             viewport: IViewport;
             axisOptions: ColumnAxisOptions;
             labelDataPoints: LabelDataPoint[];
@@ -2091,28 +2060,28 @@
          * Renders a stacked and clustered column chart.
          */
         export class StackedChartGMO implements IVisual {
-            private root: d3.Selection<SVGElement>;
+            private root: D3.Selection;
             private updateCount: number = 0;
             private static ColumnChartClassName = 'StackedChartGMO';
-            public static SeriesClasses: powerbi.extensibility.utils.svg.CssConstants.ClassAndSelector = powerbi.extensibility.utils.svg.CssConstants.createClassAndSelector('series');
+            public static SeriesClasses: jsCommon.CssConstants.ClassAndSelector = jsCommon.CssConstants.createClassAndSelector('series');
             private legend: IGMOLegend;
             private static MainGraphicsContextClassName = 'mainGraphicsContext';
             private AxisGraphicsContextClassName = 'axisGraphicsContext';
             private y1AxisReferenceLines: DataViewObjectMap;
             private sharedColorPalette: SharedColorPalette;
             private background: VisualBackground;
-            private svg: d3.Selection<SVGElement>;
+            private svg: D3.Selection;
             private barsCenters: number[];
-            private svgScrollable: d3.Selection<SVGElement>;
-            private mainGraphicsContext: d3.Selection<SVGElement>;
-            private labelGraphicsContext: d3.Selection<SVGElement>;
-            private axisGraphicsContext: d3.Selection<SVGElement>;
-            private axisGraphicsContextScrollable: d3.Selection<SVGElement>;
-            private xAxisGraphicsContext: d3.Selection<SVGElement>;
-            private backgroundGraphicsContext: d3.Selection<SVGElement>;
-            private y1AxisGraphicsContext: d3.Selection<SVGElement>;
-            private clearCatcher: d3.Selection<SVGElement>;
-            private mainGraphicsG: d3.Selection<SVGElement>;
+            private svgScrollable: D3.Selection;
+            private mainGraphicsContext: D3.Selection;
+            private labelGraphicsContext: D3.Selection;
+            private axisGraphicsContext: D3.Selection;
+            private axisGraphicsContextScrollable: D3.Selection;
+            private xAxisGraphicsContext: D3.Selection;
+            private backgroundGraphicsContext: D3.Selection;
+            private y1AxisGraphicsContext: D3.Selection;
+            private clearCatcher: D3.Selection;
+            private mainGraphicsG: D3.Selection;
             private xAxisProperties: IAxisProperties;
             private yAxisProperties: IAxisProperties;
             public isLegendValue: boolean = false;
@@ -2130,7 +2099,7 @@
             private scrollX: boolean;
             private textProperties: TextProperties = {
                 fontFamily: 'wf_segoe-ui_normal',
-                fontSize: PixelConverter.toString(StackedChartGMO.AxisFontSize),
+                fontSize: jsCommon.PixelConverter.toString(StackedChartGMO.AxisFontSize),
             };
             private chartType: ColumnChartType;
             private columnChart: IStackedChartGMOStrategy;
@@ -2169,12 +2138,12 @@
             private categoryAxisHasUnitType: boolean;
             private valueAxisHasUnitType: boolean;
             private static LegendLabelFontSizeDefault: number = 9;
-            private _margin: powerbi.extensibility.utils.svg.IMargin;
-            private get margin(): powerbi.extensibility.utils.svg.IMargin {
+            private _margin: IMargin;
+            private get margin(): IMargin {
                 return this._margin || { left: 0, right: 0, top: 0, bottom: 0 };
             }
     
-            private set margin(value: powerbi.extensibility.utils.svg.IMargin) {
+            private set margin(value: IMargin) {
                 this._margin = $.extend({}, value);
                 this._viewportIn = StackedChartGMO.substractMargin(this.viewport, this.margin);
             }
@@ -2197,11 +2166,12 @@
             private get legendViewport(): IViewport {
                 return this.legend.getMargins();
             }
-            /*constructor(options: StackedChartGMOConstructorOptions) {    
+            constructor(options: StackedChartGMOConstructorOptions) {
+    
                 this.categoryAxisType = null;
                 this.tooltipsEnabled = true;
-            }*/
-            private static substractMargin(viewport: IViewport, margin: powerbi.extensibility.utils.svg.IMargin): IViewport {
+            }
+            private static substractMargin(viewport: IViewport, margin: IMargin): IViewport {
                 return {
                     width: Math.max(viewport.width - (margin.left + margin.right), 0),
                     height: Math.max(viewport.height - (margin.top + margin.bottom), 0)
@@ -2866,29 +2836,29 @@
                 },
             };
     
-            constructor(options: VisualConstructorOptions) {
-                this.root = d3.select(options.element);
+            public init(options: VisualInitOptions): void {
+                this.root = d3.select(options.element.get(0));
                 this.style = options.style;
                 this.viewport = _.clone(options.viewport);
                 this.hostService = options.host;
                 this.interactivity = options.interactivity;
                 this.colors = this.style.colorPalette.dataColors;
-                this.interactivityService = powerbi.extensibility.utils.interactivity.createInteractivityService(this.hostService);
+                this.interactivityService = createInteractivityService(this.hostService);
                 this.options = options;
     
-                d3.select(options.element)
+                d3.select(options.element.get(0))
                     .append('div')
                     .classed('Title_Div_Text', true)
                     .style({ 'width': '100%', 'display': 'inline-block', 'position': 'static' })
                     .html('<div class = "GMOColumnChartTitleDiv" style = "max-width: 80%; overflow: hidden; -ms-text-overflow: ellipsis;-o-text-overflow: ellipsis; text-overflow: ellipsis; white-space: nowrap; display: inline-block">' + '</div>'
                     + '<span class = "GMOColumnChartTitleIcon" style = "width: 2%; cursor: pointer; position: absolute">&nbsp(&#063;)</span>');
-                d3.select(options.element)
+                d3.select(options.element.get(0))
                     .append('div')
                     .classed('EmptyDiv', true)
                     .style({ 'width': '100%', 'position': 'relative', 'visibility': 'hidden', 'height': '8px' })
                     .html('.');
     
-                d3.select(options.element)
+                d3.select(options.element.get(0))
                     .append('div')
                     .classed('errorMessage', true)
                     .text("Please select 'Primary Measure' value")
@@ -2898,7 +2868,7 @@
                     , 'width': '100%'
                 });
     
-                this.svg = d3.select(options.element)
+                this.svg = d3.select(options.element.get(0))
                     .append('svg')
                     .style('position', 'absolute').classed('cartesianChart', true);
                 this.margin = {
@@ -2939,7 +2909,7 @@
     
                 this.xAxisGraphicsContext.classed('hideLinesOnAxis', !showLinesOnX);
                 this.y1AxisGraphicsContext.classed('hideLinesOnAxis', !showLinesOnY);
-                this.interactivityService = powerbi.extensibility.utils.interactivity.createInteractivityService(this.hostService);
+                this.interactivityService = createInteractivityService(this.hostService);
                 this.isComboChart = false;
                 this.mainGraphicsG = this.axisGraphicsContextScrollable.append('g')
                     .classed(StackedChartGMO.MainGraphicsContextClassName, true);
@@ -3413,6 +3383,124 @@
                         trimOrdinalDataOnOverflow: options.trimOrdinalDataOnOverflow
                     });
             }
+            public getTickLabelMargins(viewport, yMarginLimit, textWidthMeasurer, textHeightMeasurer, axes, bottomMarginLimit, properties, scrollbarVisible, showOnRight, renderXAxis, renderY1Axis, renderY2Axis) {
+                var xAxisProperties = axes.x;
+			    var XLabelMaxAllowedOverflow =  35;
+                var y1AxisProperties = axes.y1;
+                var y2AxisProperties = axes.y2;
+                var xLabels = xAxisProperties.values;
+                var y1Labels = y1AxisProperties.values;
+                var leftOverflow = 0;
+                var rightOverflow = 0;
+                var maxWidthY1 = 0;
+                var maxWidthY2 = 0;
+                var xMax = 0; // bottom margin
+                var ordinalLabelOffset = xAxisProperties.categoryThickness ? xAxisProperties.categoryThickness / 2 : 0;
+                var scaleIsOrdinal = isOrdinalScale(xAxisProperties.scale);
+                var xLabelOuterPadding = 0;
+                if (xAxisProperties.outerPadding !== undefined) {
+                    xLabelOuterPadding = xAxisProperties.outerPadding;
+                }
+                else if (xAxisProperties.xLabelMaxWidth !== undefined) {
+                    xLabelOuterPadding = Math.max(0, (viewport.width - xAxisProperties.xLabelMaxWidth * xLabels.length) / 2);
+                }
+                if (getRecommendedNumberOfTicksForXAxis(viewport.width) !== 0
+                    || getRecommendedNumberOfTicksForYAxis(viewport.height) !== 0) {
+                    var rotation;
+                    if (scrollbarVisible)
+                        rotation = LabelLayoutStrategy.DefaultRotationWithScrollbar;
+                    else
+                        rotation = LabelLayoutStrategy.DefaultRotation;
+                    if (renderY1Axis) {
+                        for (var i = 0, len = y1Labels.length; i < len; i++) {
+                            properties.text = y1Labels[i];
+                            maxWidthY1 = Math.max(maxWidthY1, textWidthMeasurer(properties));
+                        }
+                    }
+                    if (y2AxisProperties && renderY2Axis) {
+                        var y2Labels = y2AxisProperties.values;
+                        for (var i = 0, len = y2Labels.length; i < len; i++) {
+                            properties.text = y2Labels[i];
+                            maxWidthY2 = Math.max(maxWidthY2, textWidthMeasurer(properties));
+                        }
+                    }
+                    var textHeight = textHeightMeasurer(properties);
+                    var maxNumLines = Math.floor(bottomMarginLimit / textHeight);
+                    var xScale = xAxisProperties.scale;
+                    var xDomain = xScale.domain();
+                    if (renderXAxis && xLabels.length > 0) {
+                        for (var i = 0, len = xLabels.length; i < len; i++) {
+                            // find the max height of the x-labels, perhaps rotated or wrapped
+                            var height = void 0;
+                            properties.text = xLabels[i];
+                            var width = textWidthMeasurer(properties);
+                            if (xAxisProperties.willLabelsWordBreak) {
+                                // Split label and count rows
+                                var wordBreaks = jsCommon.WordBreaker.splitByWidth(properties.text, properties, textWidthMeasurer, xAxisProperties.xLabelMaxWidth, maxNumLines);
+                                height = wordBreaks.length * textHeight;
+                            }
+                            else if (!xAxisProperties.willLabelsFit) {
+                                height = width * rotation.sine;
+                                width = width * rotation.cosine;
+                            }
+                            else {
+                                height = TextHeightConstant;
+                            }
+                            // calculate left and right overflow due to wide X labels
+                            // (Note: no right overflow when rotated)
+                            if (i === 0) {
+                                if (scaleIsOrdinal) {
+                                    if (!xAxisProperties.willLabelsFit /*rotated text*/)
+                                        leftOverflow = width - ordinalLabelOffset - xLabelOuterPadding;
+                                    else
+                                        leftOverflow = (width / 2) - ordinalLabelOffset - xLabelOuterPadding;
+                                    leftOverflow = Math.max(leftOverflow, 0);
+                                }
+                                else if (xDomain && xDomain.length > 1) {
+                                    // Scalar - do some math
+                                    var xPos = xScale(xDomain[0]);
+                                    // xPos already incorporates xLabelOuterPadding, don't subtract it twice
+                                    leftOverflow = (width / 2) - xPos;
+                                    leftOverflow = Math.max(leftOverflow, 0);
+                                }
+                            }
+                            else if (i === len - 1 && (xAxisProperties.willLabelsFit || xAxisProperties.willLabelsWordBreak)) {
+                                // if we are rotating text (!willLabelsFit) there won't be any right overflow
+                                if (scaleIsOrdinal) {
+                                    // assume this label is placed near the edge
+                                    rightOverflow = (width / 2) - ordinalLabelOffset - xLabelOuterPadding;
+                                    rightOverflow = Math.max(rightOverflow, 0);
+                                }
+                                else if (xDomain && xDomain.length > 1) {
+                                    // Scalar - do some math
+                                    var xPos = xScale(xDomain[1]);
+                                    // xPos already incorporates xLabelOuterPadding, don't subtract it twice
+                                    rightOverflow = (width / 2) - (viewport.width - xPos);
+                                    rightOverflow = Math.max(rightOverflow, 0);
+                                }
+                            }
+                            xMax = Math.max(xMax, height);
+                        }
+                        // trim any actual overflow to the limit
+                        leftOverflow = Math.min(leftOverflow, XLabelMaxAllowedOverflow);
+                        rightOverflow = Math.min(rightOverflow, XLabelMaxAllowedOverflow);
+                    }
+                }
+                var rightMargin = 0, leftMargin = 0, bottomMargin = Math.min(Math.ceil(xMax), bottomMarginLimit);
+                if (showOnRight) {
+                    leftMargin = Math.min(Math.max(leftOverflow, maxWidthY2), yMarginLimit);
+                    rightMargin = Math.min(Math.max(rightOverflow, maxWidthY1), yMarginLimit);
+                }
+                else {
+                    leftMargin = Math.min(Math.max(leftOverflow, maxWidthY1), yMarginLimit);
+                    rightMargin = Math.min(Math.max(rightOverflow, maxWidthY2), yMarginLimit);
+                }
+                return {
+                    xMax: Math.ceil(bottomMargin),
+                    yLeft: Math.ceil(leftMargin),
+                    yRight: Math.ceil(rightMargin),
+                };
+            }
     public applyUserMinMax(isScalar: boolean, dataView: DataViewCategorical, xAxisCardProperties: DataViewObject): DataViewCategorical {
             if (isScalar) {
                 let min = xAxisCardProperties['start'];
@@ -3423,6 +3511,7 @@
 
             return dataView;
         }
+        
             public converter(
                 dataViewAll: DataView[],
                 dataView: DataViewCategorical,
@@ -3451,7 +3540,7 @@
                     categoryFormatter: IValueFormatter = categoryInfo.categoryFormatter,
                     categoryIdentities: DataViewScopeIdentity[] = categoryInfo.categoryIdentities,
                     categoryMetadata: DataViewMetadataColumn = dataView.categories && dataView.categories.length > 0 ? dataView.categories[0].source : undefined;
-                var labelSettings: powerbi.extensibility.utils.chart.dataLabel.VisualDataLabelsSettings = powerbi.extensibility.utils.chart.dataLabel.utils.getDefaultColumnLabelSettings(is100PercentStacked || EnumExtensions.hasFlag(chartType, flagStacked));
+                var labelSettings: VisualDataLabelsSettings = dataLabelUtils.getDefaultColumnLabelSettings(is100PercentStacked || EnumExtensions.hasFlag(chartType, flagStacked));
                
                 var defaultLegendLabelColor = LegendData.DefaultLegendLabelFillColor;
                 var defaultDataPointColor = undefined;
@@ -3463,9 +3552,9 @@
                     showAllDataPoints = DataViewObjects.getValue<boolean>(objects, columnChartProps.dataPoint.showAllDataPoints);
                     defaultLegendLabelColor = DataViewObjects.getFillColor(objects, columnChartProps.legend.labelColor, LegendData.DefaultLegendLabelFillColor);
     
-                    var labelsObj = <powerbi.extensibility.utils.chart.dataLabel.DataLabelObject>objects['labels'];
+                    var labelsObj = <DataLabelObject>objects['labels'];
                     
-                    powerbi.extensibility.utils.chart.dataLabel.utils.updateLabelSettingsFromLabelsObject(labelsObj, labelSettings);
+                    dataLabelUtils.updateLabelSettingsFromLabelsObject(labelsObj, labelSettings);
                     labelSettings.precision = 4;
                 }
     
@@ -3656,7 +3745,7 @@
                 legend: LegendDataPoint[],
                 seriesObjectsList: DataViewObjects[][],
                 converterStrategy: ColumnChartConverterHelper,
-                defaultLabelSettings: powerbi.extensibility.utils.chart.dataLabel.VisualDataLabelsSettings,
+                defaultLabelSettings: VisualDataLabelsSettings,
                 is100PercentStacked: boolean,
                 isScalar: boolean = false,
                 isCategoryAlsoSeries?: boolean,
@@ -3724,14 +3813,14 @@
                 for (var seriesIndex = 0; seriesIndex < seriesCount; seriesIndex++) {
                     var seriesDataPoints: StackedChartGMODataPoint[] = [],
                         legendItem = legend[seriesIndex],
-                        seriesLabelSettings: powerbi.extensibility.utils.chart.dataLabel.VisualDataLabelsSettings;
+                        seriesLabelSettings: VisualDataLabelsSettings;
     
                     if (!hasDynamicSeries) {
                         var labelsSeriesGroup = grouped && grouped.length > 0 && grouped[0].values ? grouped[0].values[seriesIndex] : null;
-                        var labelObjects = (labelsSeriesGroup && labelsSeriesGroup.source && labelsSeriesGroup.source.objects) ? <powerbi.extensibility.utils.chart.dataLabel.DataLabelObject>labelsSeriesGroup.source.objects['labels'] : null;
+                        var labelObjects = (labelsSeriesGroup && labelsSeriesGroup.source && labelsSeriesGroup.source.objects) ? <DataLabelObject>labelsSeriesGroup.source.objects['labels'] : null;
                         if (labelObjects) {
                             seriesLabelSettings = Prototype.inherit(defaultLabelSettings);
-                            powerbi.extensibility.utils.chart.dataLabel.utils.updateLabelSettingsFromLabelsObject(labelObjects, seriesLabelSettings);
+                            dataLabelUtils.updateLabelSettingsFromLabelsObject(labelObjects, seriesLabelSettings);
                         }
                     }
     
@@ -3806,16 +3895,15 @@
     
                         var seriesGroup = grouped && grouped.length > seriesIndex && grouped[seriesIndex].values ? grouped[seriesIndex].values[0] : null;
                         var category = dataViewCat.categories && dataViewCat.categories.length > 0 ? dataViewCat.categories[0] : null;
-                        var ISelectionBldr : powerbi.extensibility.ISelectionIdBuilder;
-                        var identity = ISelectionBldr
-                                        .withCategory(category, categoryIndex)
-                                        .withSeries(dataViewCat.values, seriesGroup)
-                                        .withMeasure(converterStrategy.getMeasureNameByIndex(seriesIndex))
-                                        .createSelectionId();
+                        var identity = SelectionIdBuilder.builder()
+                            .withCategory(category, categoryIndex)
+                            .withSeries(dataViewCat.values, seriesGroup)
+                            .withMeasure(converterStrategy.getMeasureNameByIndex(seriesIndex))
+                            .createSelectionId();
     
                         var rawCategoryValue = categories[categoryIndex];
                         var color = StackedChartGMO.getDataPointColor(legendItem, categoryIndex, dataPointObjects);
-                        var tooltipInfo: TooltipDataItem[] =  powerbi.extensibility.  TooltipBuilder.createTooltipInfo(formatStringProp, dataViewCat, rawCategoryValue, originalValue, null, null, seriesIndex, categoryIndex);
+                        var tooltipInfo: TooltipDataItem[] = TooltipBuilder.createTooltipInfo(formatStringProp, dataViewCat, rawCategoryValue, originalValue, null, null, seriesIndex, categoryIndex);
                         var series = columnSeries[seriesIndex];
                         var dataPointLabelSettings = (series.labelSettings) ? series.labelSettings : defaultLabelSettings;
                         var labelColor = dataPointLabelSettings.labelColor;
@@ -3823,7 +3911,7 @@
                         //Stacked column/bar label color is white by default (except last series)
                         if ((EnumExtensions.hasFlag(chartType, flagStacked))) {
                             lastValue = this.getStackedLabelColor(isNegative, seriesIndex, seriesCount, categoryIndex, rawValues);
-                            labelColor = (lastValue || (seriesIndex === seriesCount - 1 && !isNegative)) ? labelColor : powerbi.extensibility.utils.chart.dataLabel.utils.defaultInsideLabelColor;
+                            labelColor = (lastValue || (seriesIndex === seriesCount - 1 && !isNegative)) ? labelColor : dataLabelUtils.defaultInsideLabelColor;
                         }
     
                         var dataPoint: StackedChartGMODataPoint = {
@@ -3874,10 +3962,10 @@
                                 highlightPosition -= valueAbsolute;
                             }
     
-                            var highlightIdentity = ISelectionId.createWithHighlight(identity);
+                            var highlightIdentity = SelectionId.createWithHighlight(identity);
                             var rawCategoryValue = categories[categoryIndex];
                             var highlightedValue: number = highlightedTooltip ? valueHighlight : undefined;
-                            var tooltipInfo: TooltipDataItem[] =  TooltipBuilder.createTooltipInfo(formatStringProp, dataViewCat, rawCategoryValue, originalValue, null, null, seriesIndex, categoryIndex, highlightedValue);
+                            var tooltipInfo: TooltipDataItem[] = TooltipBuilder.createTooltipInfo(formatStringProp, dataViewCat, rawCategoryValue, originalValue, null, null, seriesIndex, categoryIndex, highlightedValue);
     
                             if (highlightedTooltip) {
                                 // Override non highlighted data point
@@ -3969,7 +4057,7 @@
                     hasHighlights: false,
                     categoryMetadata: null,
                     scalarCategoryAxis: false,
-                    labelSettings: powerbi.extensibility.utils.chart.dataLabel.utils.getDefaultColumnLabelSettings(is100PctStacked || EnumExtensions.hasFlag(this.chartType, flagStacked)),
+                    labelSettings: dataLabelUtils.getDefaultColumnLabelSettings(is100PctStacked || EnumExtensions.hasFlag(this.chartType, flagStacked)),
                     axesLabels: { x: null, y: null },
                     hasDynamicSeries: false,
                     defaultDataPointColor: null,
@@ -4020,7 +4108,7 @@
             }
     
             public enumerateObjectInstances(options: EnumerateVisualObjectInstancesOptions): VisualObjectInstanceEnumeration {
-                var enumeration: VisualObjectInstance[] = [];
+                var enumeration = new ObjectEnumerationBuilder();
                 var sampleFilterSettings = this.getSampleFilterSettings(this.dataViews[0]);
                 var textWrapSettings: textWrapSettings = this.getTextWrapSettings(this.dataViews[0]);
                 var measureTitlesSettings: measureTitlesSettings = this.getMeasureTitlesSettings(this.dataViews[0]);
@@ -4033,14 +4121,14 @@
                 switch (options.objectName) {
                     case 'dataPoint':
                         var categoricalDataView: DataViewCategorical = this.data && this.dataViewCat ? this.dataViewCat : null;
-                        if (! powerbi.extensibility.utils.formatting.  GradientUtils.hasGradientRole(categoricalDataView))
+                        if (!GradientUtils.hasGradientRole(categoricalDataView))
                             this.enumerateDataPoints(enumeration);
                         break;
                     case 'categoryAxis':
                         this.getCategoryAxisValues(enumeration);
                         break;
                     case 'sampleFilter':
-                        enumeration.push({
+                        enumeration.pushInstance({
                             objectName: 'sampleFilter',
                             displayName: 'Sample filter',
                             selector: null,
@@ -4050,7 +4138,7 @@
                         });
                         break;    
                     case 'textWrap':
-                        enumeration.push({
+                        enumeration.pushInstance({
                             objectName: 'textWrap',
                             displayName: 'X-Axis text wrap',
                             selector: null,
@@ -4060,7 +4148,7 @@
                         });
                         break; 
                     case 'measureTitles':
-                        enumeration.push({
+                        enumeration.pushInstance({
                             objectName: 'measureTitles',
                             displayName: 'Measure Titles',
                             selector: null,
@@ -4077,16 +4165,16 @@
                         break;
                     case 'categoryLabels':
                         if (this.data)
-                            powerbi.extensibility.utils.chart.dataLabel.utils.enumerateCategoryLabels(enumeration, this.data.labelSettings, true);
+                            dataLabelUtils.enumerateCategoryLabels(enumeration, this.data.labelSettings, true);
                         else
-                            powerbi.extensibility.utils.chart.dataLabel.utils.enumerateCategoryLabels(enumeration, null, true);
+                            dataLabelUtils.enumerateCategoryLabels(enumeration, null, true);
                         break;
                     case 'labels':
                         this.enumerateDataLabels(enumeration);
                         break;
                         
                     case 'totalLabels':
-                        enumeration.push({
+                        enumeration.pushInstance({
                             objectName: 'totalLabels',
                             displayName: 'Total Labels',
                             selector: null,
@@ -4101,7 +4189,7 @@
                         });
                         break;
                     case 'secondaryLabels':
-                        enumeration.push({
+                        enumeration.pushInstance({
                             objectName: 'secondaryLabels',
                             displayName: 'Secondary Labels',
                             selector: null,
@@ -4115,7 +4203,7 @@
                         });
                         break;
                     case 'tertiaryLabels':
-                        enumeration.push({
+                        enumeration.pushInstance({
                             objectName: 'tertiaryLabels',
                             displayName: 'Tertiary Labels',
                             selector: null,
@@ -4129,7 +4217,7 @@
                         });
                         break;
                     case 'quaternaryLabels':
-                        enumeration.push({
+                        enumeration.pushInstance({
                             objectName: 'quaternaryLabels',
                             displayName: 'Quaternary Labels',
                             selector: null,
@@ -4147,7 +4235,7 @@
                         break;
                     // MAQCode
                     case 'GMOColumnChartTitle':
-                        enumeration.push({
+                        enumeration.pushInstance({
                             objectName: 'GMOColumnChartTitle',
                             displayName: 'Stacked Chart title',
                             selector: null,
@@ -4163,7 +4251,7 @@
                         break;
     
                 }
-                return enumeration;
+                return enumeration.complete();
             }
             private getLegendValue(enumeration: ObjectEnumerationBuilder): void {
                 if (!this.hasLegend())
@@ -4181,7 +4269,7 @@
                 if (labelPrecision && labelPrecision > 20) {
                     labelPrecision = 20;
                 }
-                enumeration.push({
+                enumeration.pushInstance({
                     selector: null,
                     properties: {
                         show: show,
@@ -4539,8 +4627,8 @@
                 instance.properties['showAxisTitle'] = this.categoryAxisProperties && this.categoryAxisProperties['showAxisTitle'] != null ? this.categoryAxisProperties['showAxisTitle'] : true;
     
                 enumeration
-                    .push(instance)
-                    .push({
+                    .pushInstance(instance)
+                    .pushInstance({
                     selector: null,
                     properties: {
                         axisStyle: this.categoryAxisProperties && this.categoryAxisProperties['axisStyle'] ? this.categoryAxisProperties['axisStyle'] : axisStyle.showTitleOnly,
@@ -4577,8 +4665,8 @@
                 instance.properties['labelDisplayUnits'] = this.valueAxisProperties && this.valueAxisProperties['labelDisplayUnits'] != null ? this.valueAxisProperties['labelDisplayUnits'] : StackedChartGMO.LabelDisplayUnitsDefault;
     
                 enumeration
-                    .push(instance)
-                    .push({
+                    .pushInstance(instance)
+                    .pushInstance({
                     selector: null,
                     properties: {
                         axisStyle: this.valueAxisProperties && this.valueAxisProperties['axisStyle'] != null ? this.valueAxisProperties['axisStyle'] : axisStyle.showTitleOnly,
@@ -4596,11 +4684,11 @@
                     labelSettings = this.data.labelSettings,
                     seriesCount = data.series.length,
                     showLabelPerSeries = !data.hasDynamicSeries && (seriesCount > 1 || !data.categoryMetadata) && this.seriesLabelFormattingEnabled;
-                    var labelsObj = this.dataView.metadata.objects ? <powerbi.extensibility.utils.chart.dataLabel.DataLabelObject>this.dataView.metadata.objects['labels'] : null;
+                    var labelsObj = this.dataView.metadata.objects ? <DataLabelObject>this.dataView.metadata.objects['labels'] : null;
                     labelSettings.precision = labelsObj ? labelsObj.labelPrecision : 0;
                     
                 //Draw default settings
-                powerbi.extensibility.utils.chart.dataLabel.utils.enumerateDataLabels(this.getLabelSettingsOptions(enumeration, labelSettings, null, showLabelPerSeries));
+                dataLabelUtils.enumerateDataLabels(this.getLabelSettingsOptions(enumeration, labelSettings, null, showLabelPerSeries));
     
                 if (seriesCount === 0)
                     return;
@@ -4609,10 +4697,10 @@
                 if (showLabelPerSeries && labelSettings.showLabelPerSeries) {
                     for (var i = 0; i < seriesCount; i++) {
                         var series = data.series[i],
-                            labelSettings: powerbi.extensibility.utils.chart.dataLabel.VisualDataLabelsSettings = (series.labelSettings) ? series.labelSettings : this.data.labelSettings;
+                            labelSettings: VisualDataLabelsSettings = (series.labelSettings) ? series.labelSettings : this.data.labelSettings;
     
                         enumeration.pushContainer({ displayName: series.displayName });
-                        powerbi.extensibility.utils.chart.dataLabel.utils.enumerateDataLabels(this.getLabelSettingsOptions(enumeration, labelSettings, series));
+                        dataLabelUtils.enumerateDataLabels(this.getLabelSettingsOptions(enumeration, labelSettings, series));
                         enumeration.popContainer();
                     }
                 }
@@ -4759,7 +4847,7 @@
                 return <IDataLabelSettings>true;
             }
     
-            private getLabelSettingsOptions(enumeration: ObjectEnumerationBuilder, labelSettings: powerbi.extensibility.utils.chart.dataLabel.VisualDataLabelsSettings, series?: StackedChartGMOSeries, showAll?: boolean): VisualDataLabelsSettingsOptions {
+            private getLabelSettingsOptions(enumeration: ObjectEnumerationBuilder, labelSettings: VisualDataLabelsSettings, series?: StackedChartGMOSeries, showAll?: boolean): VisualDataLabelsSettingsOptions {
                 return {
                     enumeration: enumeration,
                     dataLabelsSettings: labelSettings,
@@ -4785,7 +4873,7 @@
                 if (data.hasDynamicSeries || seriesCount > 1 || !data.categoryMetadata) {
                     for (var i = 0; i < seriesCount; i++) {
                         var series = data.series[i];
-                        enumeration.push({
+                        enumeration.pushInstance({
                             objectName: 'dataPoint',
                             displayName: series.displayName,
                             selector: ColorHelper.normalizeSelector(series.identity.getSelector()),
@@ -4801,13 +4889,13 @@
                     var categoryFormatter = data.categoryFormatter;
     
                     // Add default color and show all slices
-                    enumeration.push({
+                    enumeration.pushInstance({
                         objectName: 'dataPoint',
                         selector: null,
                         properties: {
                             defaultColor: { solid: { color: data.defaultDataPointColor || this.colors.getColorByIndex(0).value } }
                         }
-                    }).push({
+                    }).pushInstance({
                         objectName: 'dataPoint',
                         selector: null,
                         properties: {
@@ -4818,7 +4906,7 @@
                     for (var i = 0; i < singleSeriesData.length; i++) {
                         var singleSeriesDataPoints = singleSeriesData[i],
                             categoryValue: any = data.categories[i];
-                        enumeration.push({
+                        enumeration.pushInstance({
                             objectName: 'dataPoint',
                             displayName: categoryFormatter ? categoryFormatter.format(categoryValue) : categoryValue,
                             selector: ColorHelper.normalizeSelector(singleSeriesDataPoints.identity.getSelector(), /*isSingleSeries*/true),
@@ -5282,7 +5370,7 @@
                         .classed('dataLabels',true)
                     
                     var objects = this.dataView.metadata.objects;
-                    var labelsObj = <powerbi.extensibility.utils.chart.dataLabel.DataLabelObject>objects['labels'];
+                    var labelsObj = <DataLabelObject>objects['labels'];
                     var precision = labelsObj.labelPrecision;
                     
                     while(allBoxesLength >= 0){
@@ -5387,12 +5475,12 @@
                             aggregatedValues.push(sum);
                         }
                     }
-                    var totalTitleTextProperties: powerbi.extensibility.utils.formatting.TextProperties = {
+                    var totalTitleTextProperties: powerbi.TextProperties = {
                         text: totalLabelSettings.titleText,
                         fontFamily: "wf_segoe-ui_Semibold",
                         fontSize: '12px'
                     };
-                    var totalTitleText = powerbi.extensibility.utils.formatting.textMeasurementService.getTailoredTextOrDefault(totalTitleTextProperties, maxLabelTextWidth);
+                    var totalTitleText = powerbi.TextMeasurementService.getTailoredTextOrDefault(totalTitleTextProperties, maxLabelTextWidth);
                     
                     this.root.select('.cartesianChart')
                         .append('text')
@@ -5427,12 +5515,12 @@
 						this.spliceMeasures(tempAggregatedSecValues);
 					}
 					
-                    var secMeasuretextProperties: powerbi.extensibility.utils.formatting.TextProperties = {
+                    var secMeasuretextProperties: powerbi.TextProperties = {
                         text: secondaryLabelSettings.titleText,
                         fontFamily: "wf_segoe-ui_Semibold",
                         fontSize: '12px'
                     };
-                    var secMeasuretext = powerbi.extensibility.utils.formatting.textMeasurementService.getTailoredTextOrDefault(secMeasuretextProperties, maxLabelTextWidth);    
+                    var secMeasuretext = powerbi.TextMeasurementService.getTailoredTextOrDefault(secMeasuretextProperties, maxLabelTextWidth);    
                     this.root.select('.cartesianChart')
                         .append('text')
                         .attr('x',1)
@@ -5466,12 +5554,12 @@
 						this.spliceMeasures(tempAggregatedTerValues);
 					}
 					
-                    var terMeasuretextProperties: powerbi.extensibility.utils.formatting.TextProperties = {
+                    var terMeasuretextProperties: powerbi.TextProperties = {
                         text: tertiaryLabelSettings.titleText,
                         fontFamily: "wf_segoe-ui_Semibold",
                         fontSize: '12px'
                     };
-                    var terMeasuretext = powerbi.extensibility.utils.formatting.textMeasurementService.getTailoredTextOrDefault(terMeasuretextProperties, maxLabelTextWidth);    
+                    var terMeasuretext = powerbi.TextMeasurementService.getTailoredTextOrDefault(terMeasuretextProperties, maxLabelTextWidth);    
                     this.root.select('.cartesianChart')
                         .append('text')
                         .attr('x',1)
@@ -5506,12 +5594,12 @@
 						this.spliceMeasures(tempAggregatedQuatValues);
 					}
 					
-                    var quatMeasuretextProperties: powerbi.extensibility.utils.formatting.TextProperties = {
+                    var quatMeasuretextProperties: powerbi.TextProperties = {
                         text: quaternaryLabelSettings.titleText,
                         fontFamily: "wf_segoe-ui_Semibold",
                         fontSize: '12px'
                     };
-                    var quatMeasuretext = powerbi.extensibility.utils.formatting.textMeasurementService.getTailoredTextOrDefault(quatMeasuretextProperties, maxLabelTextWidth);
+                    var quatMeasuretext = powerbi.TextMeasurementService.getTailoredTextOrDefault(quatMeasuretextProperties, maxLabelTextWidth);
                     this.root.select('.cartesianChart')
                         .append('text')
                         .attr('x',1)
@@ -5558,12 +5646,12 @@
                         
                         yAxisValue = yAxisValue - 27;
                         
-                        var DatatextProperties: powerbi.extensibility.utils.formatting.TextProperties = {
+                        var DatatextProperties: powerbi.TextProperties = {
                             text: formattedTotalText,
                             fontFamily: "Segoe UI",
                             fontSize: totalLabelSettings.fontSize +'px'
                         };
-                        var totalText = powerbi.extensibility.utils.formatting.textMeasurementService.getTailoredTextOrDefault(DatatextProperties,barWidthValue);
+                        var totalText = powerbi.TextMeasurementService.getTailoredTextOrDefault(DatatextProperties,barWidthValue);
                         this.root.select('.svgScrollable > .axisGraphicsContext')
                             .append('text')
                             .classed('totalLabels',true)
@@ -5589,12 +5677,12 @@
                         
                         yAxisValue = yAxisValue - 27;
                         
-                        var secDatatextProperties: powerbi.extensibility.utils.formatting.TextProperties = {
+                        var secDatatextProperties: powerbi.TextProperties = {
                         text: formattedSecondaryText,
                         fontFamily: "Segoe UI",
                         fontSize: secondaryLabelSettings.fontSize +'px'
                         };
-                        var secText = powerbi.extensibility.utils.formatting.textMeasurementService.getTailoredTextOrDefault(secDatatextProperties,barWidthValue);
+                        var secText = powerbi.TextMeasurementService.getTailoredTextOrDefault(secDatatextProperties,barWidthValue);
                         this.root.select('.svgScrollable > .axisGraphicsContext')
                             .append('text')
                             .classed('secLabels',true)
@@ -5620,12 +5708,12 @@
                         
                         yAxisValue = yAxisValue - 27;
                          
-                        var terDatatextProperties: powerbi.extensibility.utils.formatting.TextProperties = {
+                        var terDatatextProperties: powerbi.TextProperties = {
                         text: formattedTertiaryText,
                         fontFamily: "Segoe UI",
                         fontSize: tertiaryLabelSettings.fontSize +'px'
                         };
-                        var terText = powerbi.extensibility.utils.formatting.textMeasurementService.getTailoredTextOrDefault(terDatatextProperties,barWidthValue);
+                        var terText = powerbi.TextMeasurementService.getTailoredTextOrDefault(terDatatextProperties,barWidthValue);
                         this.root.select('.svgScrollable > .axisGraphicsContext')
                             .append('text')
                             .classed('terLabels',true)
@@ -5651,12 +5739,12 @@
                         
                         yAxisValue = yAxisValue - 27;
                              
-                        var quatDatatextProperties: powerbi.extensibility.utils.formatting.TextProperties = {
+                        var quatDatatextProperties: powerbi.TextProperties = {
                         text: formattedQuaternaryText,
                         fontFamily: "Segoe UI",
                         fontSize: quaternaryLabelSettings.fontSize +'px'
                         };
-                        var quatText = powerbi.extensibility.utils.formatting.textMeasurementService.getTailoredTextOrDefault(quatDatatextProperties,barWidthValue);
+                        var quatText = powerbi.TextMeasurementService.getTailoredTextOrDefault(quatDatatextProperties,barWidthValue);
                         this.root.select('.svgScrollable > .axisGraphicsContext')
                             .append('text')
                             .classed('quatLabels',true)
@@ -5979,7 +6067,7 @@
                     this.axisGraphicsContext.selectAll('.yAxisLabel').remove();
                 }
             }
-            private darkenZeroLine(g: d3.Selection<SVGElement>): void {
+            private darkenZeroLine(g: D3.Selection): void {
                 var zeroTick = g.selectAll('g.tick').filter((data) => data === 0).node();
                 if (zeroTick) {
                     d3.select(zeroTick).select('line').classed('zero-line', true);
@@ -6024,7 +6112,7 @@
                     var xAxisLabel = this.axisGraphicsContext.append("text")
                         .style("text-anchor", "middle")
                         .text(axisLabels.x)
-                        .call((text: d3.Selection<SVGElement>) => {
+                        .call((text: D3.Selection) => {
                         text.each(function () {
                             var text = d3.select(this);
                             text.attr({
@@ -6043,7 +6131,7 @@
                     var yAxisLabel = this.axisGraphicsContext.append("text")
                         .style("text-anchor", "middle")
                         .text(axisLabels.y)
-                        .call((text: d3.Selection<SVGElement>) => {
+                        .call((text: D3.Selection) => {
                         text.each(function () {
                             var text = d3.select(this);
                             text.attr({
@@ -6066,7 +6154,7 @@
                     var y2AxisLabel = this.axisGraphicsContext.append("text")
                         .style("text-anchor", "middle")
                         .text(axisLabels.y2)
-                        .call((text: d3.Selection<SVGElement>) => {
+                        .call((text: D3.Selection) => {
                         text.each(function () {
                             var text = d3.select(this);
                             text.attr({
@@ -6272,9 +6360,9 @@
                     return labelColor;
                 }
                 if (isInside && !isCombo) {
-                    return powerbi.extensibility.utils.chart.dataLabel.utils.defaultInsideLabelColor;
+                    return NewDataLabelUtils.defaultInsideLabelColor;
                 }
-                return powerbi.extensibility.utils.chart.dataLabel.utils.defaultLabelColor;
+                return NewDataLabelUtils.defaultLabelColor;
             }
             public getLegendDispalyUnits(dataView: DataView, propertyName: string) {
                 var property: any = [], displayOption;
