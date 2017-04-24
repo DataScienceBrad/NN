@@ -39,20 +39,20 @@ Horizontal Funnel allows you to visualize a customizable primary measure as colo
 ![Horizontal Funnel](https://github.com/maqsoftware/PowerBI-visuals/blob/master/documents/Horizontal%20Funnel/Images/HorizontalFunnel_Screenshot_410_424.png)
 
 
-### [Ring Chart](https://github.com/maqsoftware/PowerBI-visuals/blob/master/src/Clients/CustomVisuals/visuals/donutChart(GMO)/donutChart(GMO).ts)
+### [Ring Chart](https://github.com/maqsoftware/PowerBI-visuals/blob/master/documents/Ring%20Chart/RingChart_1.6.0.pbiviz)
 A doughnut charts represent data as slices, where the size of each slice is determined by the slice value relative to the sum of the values of all slices. Each data series that you plot in a doughnut chart adds a ring to the chart. These rings have different colors for easy representation of the data slices in doughnut chart.
 ![Donut Chart](https://github.com/maqsoftware/PowerBI-visuals/blob/master/documents/Ring%20Chart/Images/RingChart_Screenshot_410_424.png)
 
-### [JSON Grid](https://github.com/bandaruabinash/PowerBI-visuals/blob/master/src/Clients/CustomVisuals/visuals/grid/GridNode/src/jsonGrid.js)
+### [JSON Grid](https://github.com/maqsoftware/PowerBI-visuals/blob/master/src/CustomVisuals/JSONGrid/src/visual.ts)
 Grid allows you to add a paginated grid on the report. It allows you to specify on which column should the grid be sorted by default and in which order. It also allows you to call an API on any column if further processing needs to be done.
 
 ![Grid](https://github.com/maqsoftware/PowerBI-visuals/blob/master/documents/JSON%20Grid/Images/screenshot.png)
 
-### [Thermometer](https://github.com/bandaruabinash/PowerBI-visuals/blob/master/src/Clients/CustomVisuals/visuals/thermometer/Thermometer/src/visual.ts)
+### [Thermometer](https://github.com/maqsoftware/PowerBI-visuals/blob/master/src/CustomVisuals/Thermometer/src/visual.ts)
 Thermometer is used to represent data in thermometer. It could be a good way to represent data when you have the actual value and the target value (maximum threshold).           
 ![Thermometer](https://github.com/maqsoftware/PowerBI-visuals/blob/master/documents/Thermometer/Images/Thermometer_icon_424_410.jpg)
 
-### [Text Wrapper](https://github.com/bandaruabinash/PowerBI-visuals/blob/master/src/Text%20Wrapper/src/visual.ts)
+### [Text Wrapper](https://github.com/maqsoftware/PowerBI-visuals/blob/master/src/CustomVisuals/TextWrapper/src/visual.ts)
 Text Wrapper wrap a static text string (Statement) along with a dynamic text field value which was taken as an input from the dataset. This dynamic field value will update according to the selected filter/slicer keeping the static text intact. The static string needs to be provided by the user which will be appended as “ : <>” after the dynamic field value in the visual resulting the final value in the visual as: “<> : <>”                   
 ![Text Wrapper](https://github.com/maqsoftware/PowerBI-visuals/blob/master/documents/Text%20Wrapper/Images/Screenshot.png)
 
