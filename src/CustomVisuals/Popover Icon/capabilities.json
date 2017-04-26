@@ -1,0 +1,85 @@
+{
+    "dataRoles": [
+        {
+            "displayName": "Measure Data",
+            "name": "measure",
+            "kind": "Measure"
+        }
+    ],
+    "dataViewMappings": [
+        {
+            "conditions": [
+                {
+                    "measure": {
+                        "max": 1
+                    }
+                }
+            ],
+            "categorical": {
+                "categories": {
+                    "for": {
+                        "in": "category"
+                    },
+                    "dataReductionAlgorithm": {
+                        "top": {}
+                    }
+                }
+            }
+        }
+    ],
+    "objects": {
+        "tooltip": {
+            "displayName": "Tooltip",
+            "properties": {
+                "header": {
+                    "displayName": "Header",
+                    "description": "Tooltip Header Text",
+                    "type": {
+                        "text": true
+                    }
+                },
+                "text": {
+                    "displayName": "Body",
+                    "description": "Tooltip Body Text",
+                    "type": {
+                        "text": true
+                    }
+                },
+                "imageurl": {
+                    "displayName": "Image URL",
+                    "description": "Image here",
+                    "type": {
+                        "text": true
+                    }
+                }
+            }
+        },
+        "MeasureTooltip": {
+            "displayName": "Measure Tooltip",
+            "properties": {
+                "show": {
+                    "displayName": "Measure Tooltip",
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "textPrecision": {
+                    "displayName": "Decimal Places",
+                    "type": {
+                        "numeric": true
+                    },
+                    "suppressFormatPainterCopy": true
+                },
+                "displayUnits": {
+                    "displayName": "Display Units",
+                    "type": {
+                        "formatting": {
+                            "labelDisplayUnits": true
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "suppressDefaultTitle": true
+}
