@@ -2,29 +2,53 @@
 module powerbi.extensibility.visual {
 
     export class KPITicker implements IVisual {
+        // stores the entire data that is selected by the user
         private static oData: DataViewTableRow[];
+        // stores the index of data which is to be added next
         private static iCurrentPosition = 0;
+        // number of KPI that is to be shown at a time. Possible values : 1, 2, 3, 4
         private static iNumberOfKPI: number;
+        // stores the dataView of the visual
         private static oDataView: DataView;
+        // stores the font size of elements of the visual
         private static iFontSize: number;
+        // stores the font color of elements of the visual
         private static iFontColor: Fill;
+        // stores the background color of the container
         private static iBackgroundColor: Fill;
+        // stores the height of the container
         private static iHeightOfContainer: number;
+        // stores the value of time for which current data will appear
         private static iDelay: number;
+        // stores the value of time after which next data will appear
         private static iDuration: number;
+        // stores the index of meaure KPI Status
         private static iIndexOfStatus: number;
+        // stores the index of category KPI Nane
         private static iIndexOfName: number;
+        // stores the index of measure KPI Last Value
         private static iIndexOfLastValue: number;
+        // stores the index of measure KPI Current Value 
         private static iIndexOfCurrentValue: number;
+        // stores the interval value
         private static iInterval: number;
+        // stores the timeout value
         private static iTimeout: number;
+        // stores the color for positive indicator
         private static iPositiveIndicatorColor: Fill;
+        // stores the color for negative indicator
         private static iNegativeIndicatorColor: Fill;
+        // stores the color for neutral indicator
         private static iNeutralIndicatorColor: Fill;
+        // stores the flag variable to check if index is exceeding the length of data
         private static bFlag: boolean;
+        // stores the index to check if index is exceeding data length
         private static iCheckIndex: number;
+        // tells where to continue from in case the index exceeds data length
         private static iFlagIndex: number;
+        // stores if change percentage is to be shown or not
         private static iEnableDelta: number;
+        // stores the information if the visual is updated or not
         private static bIsUpdated: boolean;
 
         /*
@@ -36,15 +60,18 @@ module powerbi.extensibility.visual {
         */
         constructor(options: VisualConstructorOptions) {
             // this is to make the parent container
+            
             d3.select(options.element).append('div').attr('id', 'wrapper');
-            // initializing default variables
+            // initializing iDelay to 1200ms
             KPITicker.iDelay = 1200;
+            // initializing iDuration to 4000ms
             KPITicker.iDuration = 4000;
+            // initializing the height of containers to 80
             KPITicker.iHeightOfContainer = 80;
+            // initializing iInterval and iTimeout to -1 so that they are not cleared the first time visual is loaded
             KPITicker.iInterval = -1;
             KPITicker.iTimeout = -1;
         }
-
         /*
         * function to updates the state of the visual. Every sequential databinding and resize will call update.
         * @param {VisualUpdateOptions} options - Contains references to the size of the container
@@ -152,12 +179,21 @@ module powerbi.extensibility.visual {
             KPITicker.iFontSize = KPITicker.getValue(KPITicker.oDataView, 'fontSize');
             KPITicker.iFontSize = (12 * KPITicker.iFontSize) / 40;
 
-            // storing the values for formatting options
+            // Status of show change percentage
             KPITicker.iEnableDelta = KPITicker.getValue(KPITicker.oDataView, 'enableDelta');
+            // The font color of container
             KPITicker.iFontColor = KPITicker.getFill(KPITicker.oDataView, 'fontColor');
+
+            // The background color of containers
             KPITicker.iBackgroundColor = KPITicker.getFill(KPITicker.oDataView, 'backgroundColor');
+
+            // The color of positive indicator
             KPITicker.iPositiveIndicatorColor = KPITicker.getFill(KPITicker.oDataView, 'positiveIndicatorColor');
+
+            // The color of negative indicator
             KPITicker.iNegativeIndicatorColor = KPITicker.getFill(KPITicker.oDataView, 'negativeIndicatorColor');
+
+            // The color of neutral indicator
             KPITicker.iNeutralIndicatorColor = KPITicker.getFill(KPITicker.oDataView, 'neutralIndicatorColor');
 
             // creating wrapper1 initially to start the visual
@@ -178,7 +214,6 @@ module powerbi.extensibility.visual {
                 KPITicker.iInterval = setTimeout(KPITicker.addNextData, KPITicker.iDuration);
             }
         }
-
         /*
         * method to display text if basic requirements are not satisfied
         */
@@ -197,7 +232,6 @@ module powerbi.extensibility.visual {
                 document.getElementById('textToDisplay').innerHTML = `No Data to display `;
             }
         }
-
         /*
         * method to enumerate through the objects defined in the capabilities and adds the properties to the format pane
         * @param {EnumerateVisualObjectInstancesOptions} options - Map of defined objects
@@ -311,7 +345,6 @@ module powerbi.extensibility.visual {
                 return 0;
             }
         }
-
         /*
         * method to decide which class is to be used for what div and append html elements accordingly
         * @param {DataView} oDataView - contains the DataView of options
@@ -349,7 +382,6 @@ module powerbi.extensibility.visual {
             }
             return sAppendString;
         }
-
         /*
         * method to decide what indicator is to be used on the basis of status and display statistics about the kpi
         * @param {DataView} oDataView - DataView of the visual
@@ -571,7 +603,6 @@ module powerbi.extensibility.visual {
             // call addNextData again
             KPITicker.iInterval = setTimeout(KPITicker.addNextData, KPITicker.iDuration);
         }
-        
         /*
         * method to populate wrapper which was created by addNextData and animate it
         * @param {number} iWrapperID - id of the wrapper that was created
