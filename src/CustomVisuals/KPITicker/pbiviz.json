@@ -2,7 +2,7 @@
   "visual": {
     "name": "kpiTicker",
     "displayName": "KPI Ticker",
-    "guid": "kpiTicker10293847568564379125",
+    "guid": "kpiTicker492C9305B9464241B52382527F977DE1",
     "visualClassName": "KPITicker",
     "version": "1.0.0",
     "description": "Show Key Performance Indicators rotating at top of the screen. Maximum number of KPI visible at a time can be 4",
