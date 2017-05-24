@@ -1,0 +1,21 @@
+.visual-popOver1859AB39DB23051788ADF752BCB91243_DEBUG {
+  
+}
+.visual-popOver1859AB39DB23051788ADF752BCB91243_DEBUG .overflowingText {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  display: block;
+}
+.visual-popOver1859AB39DB23051788ADF752BCB91243_DEBUG p {
+  font-size: 20px;
+  font-weight: bold;
+}
+.visual-popOver1859AB39DB23051788ADF752BCB91243_DEBUG p em {
+  background: yellow;
+  padding: 5px;
+}
+.visual-popOver1859AB39DB23051788ADF752BCB91243_DEBUG li {
+  list-style: disc;
+  font-weight: bold;
+}
