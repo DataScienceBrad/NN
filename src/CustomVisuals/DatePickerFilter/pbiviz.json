@@ -1,0 +1,26 @@
+{
+  "visual": {
+    "name": "DatePickerFilter",
+    "displayName": "DatePickerFilter",
+    "guid": "DatePickerFilter67ACDAFEF8744EB0A088E040B0E5FED9",
+    "visualClassName": "Visual",
+    "version": "1.0.0",
+    "description": "Date Picker Filter that can apply cross filtering on data based on two columns.",
+    "supportUrl": "https://github.com/maqsoftware/PowerBI-visuals/issues",
+    "gitHubUrl": "https://github.com/maqsoftware/PowerBI-visuals/"
+  },
+  "apiVersion": "1.4.0",
+  "author": {
+    "name": "MAQ Software",
+    "email": "sales@maqsoftware.com"
+  },
+  "assets": {
+    "icon": "assets/icon.png"
+  },
+  "externalJS": [
+    "node_modules/jquery/dist/jquery.js"
+  ],
+  "style": "style/visual.less",
+  "capabilities": "capabilities.json",
+  "dependencies": "dependencies.json"
+}

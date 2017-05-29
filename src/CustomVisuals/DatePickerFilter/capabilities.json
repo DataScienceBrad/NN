@@ -1,0 +1,168 @@
+{
+    "dataRoles": [
+        {
+            "displayName": "Start date",
+            "name": "startDate",
+            "kind": "Grouping"
+        },
+        {
+            "displayName": "End date",
+            "name": "endDate",
+            "kind": "Grouping"
+        },
+        {
+            "displayName": "Filtering value",
+            "name": "filteringValue",
+            "kind": "Grouping"
+        }
+    ],
+    "dataViewMappings": [
+        {
+            "conditions": [
+                {
+                    "startDate": {
+                        "max": 1
+                    },
+                    "endDate": {
+                        "max": 1
+                    },
+                    "filteringValue": {
+                        "max": 1
+                    }
+                },
+                {
+                    "startDate": {
+                        "max": 4
+                    },
+                    "endDate": {
+                        "max": 4
+                    },
+                    "filteringValue": {
+                        "max": 1
+                    }
+                },
+                {
+                    "startDate": {
+                        "max": 4
+                    },
+                    "endDate": {
+                        "max": 1
+                    },
+                    "filteringValue": {
+                        "max": 1
+                    }
+                },
+                {
+                    "startDate": {
+                        "max": 1
+                    },
+                    "endDate": {
+                        "max": 4
+                    },
+                    "filteringValue": {
+                        "max": 1
+                    }
+                }
+            ],
+            "categorical": {
+                "categories": {
+                    "select": [
+                        {
+                            "for": {
+                                "in": "startDate"
+                            }
+                        },
+                        {
+                            "for": {
+                                "in": "endDate"
+                            }
+                        },
+                        {
+                            "for": {
+                                "in": "filteringValue"
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    ],
+    "objects": {
+        "datePicker": {
+            "displayName": "Date Picker",
+            "description": "Apply Formatting to Date Picker",
+            "properties": {
+                "startDateCaption": {
+                    "displayName": "Start Date Caption",
+                    "description": "Caption For Start Date",
+                    "type": {
+                        "text": true
+                    }
+                },
+                "endDateCaption": {
+                    "displayName": "End Date Caption",
+                    "description": "Caption For End Date",
+                    "type": {
+                        "text": true
+                    }
+                },
+                "dateFormat": {
+                    "displayName": "Date Format",
+                    "description": "Change format of date in Date Picker",
+                    "type": {
+                        "enumeration": [
+                            {
+                                "value": "d-m-yy",
+                                "displayName": "d-m-yy"
+                            },
+                            {
+                                "value": "m-d-yy",
+                                "displayName": "m-d-yy"
+                            },
+                            {
+                                "value": "d-mm-yy",
+                                "displayName": "d-mm-yy"
+                            },
+                            {
+                                "value": "m-dd-yy",
+                                "displayName": "m-dd-yy"
+                            },
+                            {
+                                "value": "dd-m-yy",
+                                "displayName": "dd-m-yy"
+                            },
+                            {
+                                "value": "mm-dd-yy",
+                                "displayName": "mm-dd-yy"
+                            },
+                            {
+                                "value": "dd-mm-yy",
+                                "displayName": "dd-mm-yy"
+                            }
+                        ]
+                    }
+                },
+                "fontSize": {
+                    "displayName": "Font Size",
+                    "description": "The font size of date picker title",
+                    "type": {
+                        "formatting": {
+                            "fontSize": true
+                        }
+                    }
+                },
+                "fontColor": {
+                    "displayName": "Font Color",
+                    "description": "The font color of date picker title",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
