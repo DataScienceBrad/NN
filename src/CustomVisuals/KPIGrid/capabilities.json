@@ -1,0 +1,181 @@
+{
+    "dataRoles": [
+        {
+            "displayName": "Category Data",
+            "name": "category",
+            "kind": "Grouping"
+        },
+        {
+            "displayName": "Measure Data",
+            "name": "measure",
+            "kind": "Measure"
+        },
+        {
+            "displayName": "Measure KPIs",
+            "name": "measure2",
+            "kind": "Measure"
+        }
+    ],
+    "dataViewMappings": [
+        {
+            "categorical": {
+                "categories": {
+                    "for": {
+                        "in": "category"
+                    },
+                    "dataReductionAlgorithm": {
+                        "top": {"count": 1000}
+                    }
+                },
+                "values": {
+                    "select": [
+                        {
+                            "bind": {
+                                "to": "measure"
+                            }
+                        },
+                        {
+                            "bind": {
+                                "to": "measure2"
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    ],
+    "sorting": {
+            "default": {}
+        },
+    "suppressDefaultTitle": true,
+    "objects": {
+        "hierarchyData": {
+            "displayName": "Hierarchy Data",
+            "properties": {
+                "expanded": {
+                    "displayName": "Expanded",
+                    "type": { 
+                        "text": true
+                    }
+                }
+            }
+        },
+        "resizeData": {
+            "displayName": "Resize Data",
+            "properties": {
+                "width": {
+                    "displayName": "Width",
+                    "type": { 
+                        "text": true
+                    }
+                }
+            }
+        },
+        "headerSettings": {
+            "displayName": "Header settings",
+            "properties": {
+                "headerColor": {
+                    "displayName": "Header text color",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "bgColor": {
+                    "displayName": "Header background color",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "fontSize": {
+                    "displayName": "Title size",
+                    "type": {
+                        "formatting": {
+                            "fontSize": true
+                        }
+                    },
+                    "suppressFormatPainterCopy": true
+                }
+            }
+        },
+        "labelSettings": {
+            "displayName": "Label settings",
+            "properties": {
+                "labelColor": {
+                    "displayName": "Label text color",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "fontSize": {
+                    "displayName": "Label size",
+                    "type": {
+                        "formatting": {
+                            "fontSize": true
+                        }
+                    },
+                    "suppressFormatPainterCopy": true
+                },
+                "gap": {
+                    "displayName": "Column gap",
+                    "type": { "numeric": true },
+                    "suppressFormatPainterCopy": true
+                }
+            }
+        },
+        "totalSettings": {
+            "displayName": "Total settings",
+            "properties": {
+                "totalText": {
+                    "displayName": "Total text",
+                    "type": { 
+                        "text": true 
+                    },
+                "suppressFormatPainterCopy": true
+                },
+                "totalColor": {
+                    "displayName": "Total text color",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "fontSize": {
+                    "displayName": "Total font size",
+                    "type": {
+                        "formatting": {
+                            "fontSize": true
+                        }
+                    },
+                    "suppressFormatPainterCopy": true
+                }
+            }
+        },
+        "indicatorSettings": {
+            "displayName": "Indicator settings",
+            "properties": {
+                "prefixText": {
+                    "displayName": "Prefix text",
+                    "type": { 
+                        "text": true 
+                    },
+                "suppressFormatPainterCopy": true
+                }
+            }
+        }
+    }
+}

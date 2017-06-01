@@ -1,0 +1,33 @@
+{
+  "visual": {
+    "name": "KPI Grid",
+    "displayName": "KPI Grid",
+    "guid": "KPIGrid39FBAB0336346DBB68AB522063E7241",
+    "visualClassName": "Visual",
+    "version": "1.0.0",
+    "description": "Display KPI data in hierarchical order, with options to separate categories and illustrate trends with arrows.",
+    "supportUrl": "https://github.com/maqsoftware/PowerBI-visuals/issues",
+    "gitHubUrl": "https://github.com/maqsoftware/PowerBI-visuals"
+  },
+  "apiVersion": "1.4.0",
+  "author": {
+    "name": "MAQ Software",
+    "email": "sales@maqsoftware.com"
+  },
+  "assets": {
+    "icon": "assets/icon.png"
+  },
+  "externalJS": [
+    "node_modules/jquery/dist/jquery.min.js",
+    "node_modules/d3/d3.min.js",
+    "node_modules/lodash/lodash.min.js",
+    "node_modules/globalize/lib/globalize.js",
+    "node_modules/globalize/lib/cultures/globalize.culture.en-US.js",
+    "node_modules/powerbi-visuals-utils-typeutils/lib/index.js",
+    "node_modules/powerbi-visuals-utils-svgutils/lib/index.js",
+    "node_modules/powerbi-visuals-utils-dataviewutils/lib/index.js",
+    "node_modules/powerbi-visuals-utils-formattingutils/lib/index.js"
+  ],
+  "style": "style/visual.less",
+  "capabilities": "capabilities.json"
+}

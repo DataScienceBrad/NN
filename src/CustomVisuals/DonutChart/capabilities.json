@@ -1,0 +1,424 @@
+{
+    "dataRoles": [
+        {
+            "displayName": "Legend",
+            "name": "Category",
+            "kind": "Grouping",
+            "description": "The categorical field to show for color"
+        },
+        {
+            "displayName": "Primary Measure",
+            "name": "Y",
+            "kind": "Measure",
+            "description": "Primary Measure"
+        },
+        {
+            "displayName": "Secondary Measure",
+            "name": "SecondaryMeasure",
+            "kind": "Measure",
+            "description": "Secondary Measure"
+        }
+    ],
+    "dataViewMappings": [
+        {
+            "conditions": [
+                {
+                    "Category": {
+                        "max": 1
+                    },
+                    "Y": {
+                        "max": 1
+                    },
+                    "SecondaryMeasure": {
+                        "max": 1
+                    }
+                }
+            ],
+            "categorical": {
+                "categories": {
+                    "for": {
+                        "in": "Category"
+                    },
+                    "dataReductionAlgorithm": {
+                        "top": {}
+                    }
+                },
+                "values": {
+                    "select": [
+                        {
+                            "bind": {
+                                "to": "Y"
+                            }
+                        },
+                        {
+                            "bind": {
+                                "to": "SecondaryMeasure"
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    ],
+    "suppressDefaultTitle": true,
+    "sorting": {
+        "default": {}
+    },
+    "drilldown": {
+        "roles": [
+            "Category"
+        ]
+    },
+    "objects": {
+        "legend": {
+            "displayName": "Legend",
+            "description": "Display legend options",
+            "properties": {
+                "show": {
+                    "displayName": "Show",
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "position": {
+                    "displayName": "Position",
+                    "description": "Select the location for the legend",
+                    "type": {
+                        "enumeration": [
+                            {
+                                "value": "Top",
+                                "displayName": "Top"
+                            },
+                            {
+                                "value": "Bottom",
+                                "displayName": "Bottom"
+                            },
+                            {
+                                "value": "Left",
+                                "displayName": "Left"
+                            },
+                            {
+                                "value": "Right",
+                                "displayName": "Right"
+                            },
+                            {
+                                "value": "TopCenter",
+                                "displayName": "Top Center"
+                            },
+                            {
+                                "value": "BottomCenter",
+                                "displayName": "Bottom Center"
+                            },
+                            {
+                                "value": "LeftCenter",
+                                "displayName": "Left Center"
+                            },
+                            {
+                                "value": "RightCenter",
+                                "displayName": "Right Center"
+                            },
+                            {
+                                "value": "None",
+                                "displayName": "None"
+                            }
+                        ]
+                    }
+                },
+                "showTitle": {
+                    "displayName": "Title",
+                    "description": "Display a title for legend symbols",
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "titleText": {
+                    "displayName": "Legend Name",
+                    "description": "Title text",
+                    "type": {
+                        "text": true
+                    }
+                },
+                "labelColor": {
+                    "displayName": "Color",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "fontSize": {
+                    "displayName": "Text Size",
+                    "type": {
+                        "formatting": {
+                            "fontSize": true
+                        }
+                    }
+                },
+                "detailedLegend": {
+                    "displayName": "Primary Measure",
+                    "description": "Displaying the legend details based on selection",
+                    "type": {
+                        "enumeration": [
+                            {
+                                "value": "none",
+                                "displayName": "None"
+                            },
+                            {
+                                "value": "value",
+                                "displayName": "Value"
+                            },
+                            {
+                                "value": "percentage",
+                                "displayName": "Percentage"
+                            },
+                            {
+                                "value": "both",
+                                "displayName": "Both"
+                            }
+                        ]
+                    }
+                },
+                "labelDisplayUnits": {
+                    "displayName": "Display Units",
+                    "description": "Select the units (millions, billions, etc).",
+                    "type": {
+                        "formatting": {
+                            "labelDisplayUnits": true
+                        }
+                    }
+                },
+                "labelPrecision": {
+                    "displayName": "Decimal Places",
+                    "description": "Select the number of decimal places to display",
+                    "type": {
+                        "numeric": true
+                    },
+                    "suppressFormatPainterCopy": true
+                }
+            }
+        },
+        "labels": {
+            "displayName": "Detail labels",
+            "description": "Display data label options",
+            "properties": {
+                "show": {
+                    "displayName": "Show",
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "color": {
+                    "displayName": "Color",
+                    "description": "Select color for data labels",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "labelDisplayUnits": {
+                    "displayName": "Display Units",
+                    "description": "Select the units (millions, billions, etc.)",
+                    "type": {
+                        "formatting": {
+                            "labelDisplayUnits": true
+                        }
+                    },
+                    "suppressFormatPainterCopy": true
+                },
+                "labelPrecision": {
+                    "displayName": "Decimal Places",
+                    "description": "Select the number of decimal places to display",
+                    "placeHolderText": "Auto",
+                    "type": {
+                        "numeric": true
+                    },
+                    "suppressFormatPainterCopy": true
+                },
+                "fontSize": {
+                    "displayName": "Text Size",
+                    "type": {
+                        "formatting": {
+                            "fontSize": true
+                        }
+                    }
+                },
+                "labelStyle": {
+                    "displayName": "Label Style",
+                    "description": "Select Label style to display",
+                    "type": {
+                        "enumeration": [
+                            {
+                                "value": "category",
+                                "displayName": "Category"
+                            },
+                            {
+                                "value": "data",
+                                "displayName": "Data Values"
+                            },
+                            {
+                                "value": "percent",
+                                "displayName": "Percent of Totals"
+                            },
+                            {
+                                "value": "categorydata",
+                                "displayName": "Category,DataValue"
+                            },
+                            {
+                                "value": "categorypercent",
+                                "displayName": "Category,Percent of Totals"
+                            },
+                            {
+                                "value": "datapercent",
+                                "displayName": "Data Values,Percent of Totals"
+                            },
+                            {
+                                "value": "both",
+                                "displayName": "All Detail Labels"
+                            }
+                        ]
+                    }
+                }
+            }
+        },        
+        "summaryLabels": {
+            "displayName": "Summary labels",
+            "description": "Summary label options",
+            "properties": {
+                "show": {
+                    "displayName": "Show Summary",
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "color": {
+                    "displayName": "Color",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "labelDisplayUnits": {
+                    "displayName": "Display units",
+                    "type": {
+                        "formatting": {
+                            "labelDisplayUnits": true
+                        }
+                    },
+                    "suppressFormatPainterCopy": true
+                },
+                "labelPrecision": {
+                    "displayName": "Decimal places",
+                    "placeHolderText": "Auto",
+                    "type": {
+                        "numeric": true
+                    },
+                    "suppressFormatPainterCopy": true
+                },
+                "fontSize": {
+                    "displayName": "Text Size",
+                    "type": {
+                        "formatting": {
+                            "fontSize": true
+                        }
+                    }
+                },
+                "primaryMeasureSummaryText": {
+                    "displayName": "Summary Text",
+                    "type": {
+                        "text": true
+                    }
+                }
+            }
+        },
+        "Indicators": {
+            "displayName": "Primary Indicators",
+            "description": "Display Indicators options",
+            "properties": {
+                "show": {
+                    "displayName": "Show",
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "PrimaryMeasure": {
+                    "displayName": "Sign Indicator",
+                    "description": "Indicator based on sign for Primary Measure",
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "Threshold": {
+                    "displayName": "Threshold",
+                    "description": "Threshold value for Primary Measure",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "Total_Threshold": {
+                    "displayName": "Total Value Threshold",
+                    "description": "Threshold value for primary measure total",
+                    "type": {
+                        "numeric": true
+                    }
+                }
+            }
+        },
+        "SMIndicator": {
+            "displayName": "Secondary Indicators",
+            "description": "Display Indicators options",
+            "properties": {
+                "show": {
+                    "displayName": "Show",
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "SecondaryMeasure": {
+                    "displayName": "Sign Indicator",
+                    "description": "Indicator for Secondary Measure",
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "SMThreshold": {
+                    "displayName": "Threshold",
+                    "description": "Threshold value for Secondary Measure",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "SMTotalThreshold": {
+                    "displayName": "Total Value Threshold",
+                    "description": "Threshold value for secondary measure total",
+                    "type": {
+                        "numeric": true
+                    }
+                }
+            }
+        },
+        "dataPoint": {
+            "displayName": "Data Colors",
+            "description": "Display data color options",
+            "properties": {
+                "fill": {
+                    "displayName": "Fill",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
