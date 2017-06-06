@@ -1,0 +1,15 @@
+Brief description: 
+
+Display KPI data in hierarchical order, with options to separate categories and illustrate trends with arrows 
+
+This custom visual works in: Power BI. 
+
+Overview: 
+
+Effortlessly track productivity and performance with KPI Grid. The grid displays key data in hierarchical order, up to n levels. 
+
+Use arrows to illustrate KPI trends over time, such as year-to-year or quarter-to-quarter. You specify the time periods, making it easy to gauge performance according to internal deadlines and benchmarks.  
+
+The grid comes with the option to include separators between certain columns. Using this feature, you can visually draw out categories that you would like to compare or emphasize. 
+
+With KPI Grid’s numerous formatting choices, you can customize your text, background, and units. Tailor the look and feel of your visual by updating rows’ background colors or your text size and color. Easily call attention to your headers and totals by creating first and last rows that are visually distinct from the rest of the grid.
