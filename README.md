@@ -5,56 +5,83 @@ The Microsoft Power BI visuals project provides high quality data visualizations
 
 # Custom Visuals
 
-### [Circular Gauge](https://github.com/maqsoftware/PowerBI-visuals/blob/master/src/Clients/Visuals/visuals/circularGauge.ts)
+### [Circular Gauge](https://github.com/maqsoftware/PowerBI-visuals/blob/master/src/CustomVisuals/Published/CircularGauge/src/visual.ts)
 Illustrate headway toward goals in either a pie or a donut chart format. One color illustrates actual progress and the other displays the target. The percentage shown tracks progress. Text size and ring size are customizable. 
-![Circular Gauge](https://github.com/maqsoftware/PowerBI-visuals/blob/master/documents/Circular%20Gauge/Images/screenshot.png) 
+![Circular Gauge](https://github.com/maqsoftware/PowerBI-visuals/blob/master/documents/Published/Circular%20Gauge/Images/screenshot.png) 
 
 ##### Coming soon
-We are working on adding an option to show legends and the value in the visual itself. Currently this info can be seen in the tooltip 
+We are working on adding an option to show legends and the value in the visual itself. Currently this info can be seen in the tooltip.
 
-### [Linear Gauge](https://github.com/maqsoftware/PowerBI-visuals/blob/master/src/Clients/Visuals/visuals/linearGauge.ts)
+### [Linear Gauge](https://github.com/maqsoftware/PowerBI-visuals/blob/master/src/CustomVisuals/Published/LinearGauge/src/visual.ts)
 Create at-a-glance visualization to compare your progress against identified goals and warning zones. By allowing you to include multiple data points, the component provides the ability to illustrate trend details, such as monthly or year-to-date completion rates. The pointer notes targets and the colored bar shows the current progress toward those goals.     
-![Linear Gauge](https://github.com/maqsoftware/PowerBI-visuals/blob/master/documents/Linear%20Gauge/Images/screenshot.png)
+![Linear Gauge](https://github.com/maqsoftware/PowerBI-visuals/blob/master/documents/Published/Linear%20Gauge/Images/screenshot.png)
 
 
-### [Brick Chart](https://github.com/maqsoftware/PowerBI-visuals/blob/master/src/Clients/Visuals/visuals/Brickchart.ts)
+### [Brick Chart](https://github.com/maqsoftware/PowerBI-visuals/blob/master/src/CustomVisuals/Published/BrickChart/src/visual.ts)
 Brick Chart consists of 100 squares that are colored according to the percentage breakdown of your datasets. Hover your mouse over a square to bring up a tooltip. The tooltip indicates which dataset the color represents and the percentage value of that category. An optional legend above the chart identifies which datasets correspond with which colors. You may tailor the legend’s title, size and color. You may also customize the chart’s width and height. 
-![Brick Chart](https://github.com/maqsoftware/PowerBI-visuals/blob/master/documents/Brick%20Chart/Images/screenshot.png)
+![Brick Chart](https://github.com/maqsoftware/PowerBI-visuals/blob/master/documents/Published/Brick%20Chart/Images/screenshot.png)
 
 ##### Coming soon
 We are working on enabling report filtering on click of brick
 
-### [Trading Chart](https://github.com/maqsoftware/PowerBI-visuals/blob/master/src/Clients/Visuals/visuals/stockChart.ts)
-Stock Chart displays significant stock price points as colored vertical bars. Low and high price values are represented by grey bars. Open and close price values are shown as either red or green bars, which are superimposed over the low and high values. If a stock’s price dropped the bar will be red, and if the price rose the bar will be green. Prices are listed on the vertical axis and time increments are listed on the horizontal axis. The ranges for prices and time increments are customizable.  
-![Stock Chart](https://github.com/maqsoftware/PowerBI-visuals/blob/master/documents/Trading%20Chart/Images/TradingChart_Screenshot_410_424.png)
+### [Trading Chart](https://github.com/maqsoftware/PowerBI-visuals/blob/master/src/CustomVisuals/Published/TradingChart/src/visual.ts)
+Stock Chart displays significant stock price points as colored vertical bars. Low and high price values are represented by grey bars. Open and close price values are shown as either red or green bars, which are superimposed over the low and high values. If a stock’s price is dropped the bar will be red, and if the price rose the bar will be green. Prices are listed on the vertical axis and time increments are listed on the horizontal axis. The ranges for prices and time increments are customizable.  
+![Stock Chart](https://github.com/maqsoftware/PowerBI-visuals/blob/master/documents/Published/Trading%20Chart/Images/TradingChart_Screenshot_410_424.png)
 
 
-### [Bowtie Chart](https://github.com/maqsoftware/PowerBI-visuals/blob/master/src/Clients/CustomVisuals/visuals/BowtieChart/BowtieChart.ts)
+### [Bowtie Chart](https://github.com/maqsoftware/PowerBI-visuals/blob/master/src/CustomVisuals/Published/BowtieChart/src/visual.ts)
 Bowtie Chart displays categorization of a value by branching out smooth interpolated nodes. The thickness of the branch indicates the weightage of the category. You can display Half Bowtie or Full Bowtie by providing source category or both source and destination categories respectively. Used for displaying the categorization of an aggregated value.     
-![Bowtie Chart](https://github.com/maqsoftware/PowerBI-visuals/blob/master/documents/Bowtie%20Chart/Images/BowtieChart_Screenshot_410_424.png)
+![Bowtie Chart](https://github.com/maqsoftware/PowerBI-visuals/blob/master/documents/Published/Bowtie%20Chart/Images/BowtieChart_Screenshot_410_424.png)
 
 
-### [Horizontal Funnel](https://github.com/maqsoftware/PowerBI-visuals/blob/master/src/Clients/CustomVisuals/visuals/horizontalFunnel/HorizontalFunnel.ts)
+### [Horizontal Funnel](https://github.com/maqsoftware/PowerBI-visuals/blob/master/src/CustomVisuals/Published/HorizontalFunnel/src/visual.ts)
 Horizontal Funnel allows you to visualize a customizable primary measure as colored bars. Use this to display a number of metric types, such as sales stages, time or geographic locations. A second customizable value is displayed beneath the colored bars. This feature provides you the ability to track an additional metric against your primary measure. The component includes the option to create a tool tip, which you may tailor to your specific needs.
-![Horizontal Funnel](https://github.com/maqsoftware/PowerBI-visuals/blob/master/documents/Horizontal%20Funnel/Images/HorizontalFunnel_Screenshot_410_424.png)
+![Horizontal Funnel](https://github.com/maqsoftware/PowerBI-visuals/blob/master/documents/Published/Horizontal%20Funnel/Images/HorizontalFunnel_Screenshot_410_424.png)
 
 
-### [Ring Chart](https://github.com/maqsoftware/PowerBI-visuals/blob/master/documents/Ring%20Chart/RingChart_1.6.0.pbiviz)
-A doughnut charts represent data as slices, where the size of each slice is determined by the slice value relative to the sum of the values of all slices. Each data series that you plot in a doughnut chart adds a ring to the chart. These rings have different colors for easy representation of the data slices in doughnut chart.
-![Donut Chart](https://github.com/maqsoftware/PowerBI-visuals/blob/master/documents/Ring%20Chart/Images/RingChart_Screenshot_410_424.png)
+### [Ring Chart](https://github.com/maqsoftware/PowerBI-visuals/blob/master/src/CustomVisuals/Published/RingChart/src/visual.ts)
+A doughnut chart represent data as slices, where the size of each slice is determined by the slice value relative to the sum of the values of all slices. Each data series that you plot in a doughnut chart adds a ring to the chart. These rings have different colors for easy representation of the data slices in doughnut chart.
+![Donut Chart](https://github.com/maqsoftware/PowerBI-visuals/blob/master/documents/Published/Ring%20Chart/Images/RingChart_Screenshot_410_424.png)
 
-### [JSON Grid](https://github.com/maqsoftware/PowerBI-visuals/blob/master/src/CustomVisuals/JSONGrid/src/visual.ts)
+
+### [JSON Grid](https://github.com/maqsoftware/PowerBI-visuals/blob/master/src/CustomVisuals/Published/JSONGrid/src/visual.ts)
 Grid allows you to add a paginated grid on the report. It allows you to specify on which column should the grid be sorted by default and in which order. It also allows you to call an API on any column if further processing needs to be done.
+![Grid](https://github.com/maqsoftware/PowerBI-visuals/blob/master/documents/Published/JSON%20Grid/Images/screenshot.png)
 
-![Grid](https://github.com/maqsoftware/PowerBI-visuals/blob/master/documents/JSON%20Grid/Images/screenshot.png)
 
-### [Thermometer](https://github.com/maqsoftware/PowerBI-visuals/blob/master/src/CustomVisuals/Thermometer/src/visual.ts)
+### [Thermometer](https://github.com/maqsoftware/PowerBI-visuals/blob/master/src/CustomVisuals/Published/Thermometer/src/visual.ts)
 Thermometer is used to represent data in thermometer. It could be a good way to represent data when you have the actual value and the target value (maximum threshold).           
-![Thermometer](https://github.com/maqsoftware/PowerBI-visuals/blob/master/documents/Thermometer/Images/Thermometer_icon_424_410.jpg)
+![Thermometer](https://github.com/maqsoftware/PowerBI-visuals/blob/master/documents/Published/Thermometer/Images/Thermometer_icon_424_410.jpg)
 
-### [Text Wrapper](https://github.com/maqsoftware/PowerBI-visuals/blob/master/src/CustomVisuals/TextWrapper/src/visual.ts)
+
+### [Text Wrapper](https://github.com/maqsoftware/PowerBI-visuals/blob/master/src/CustomVisuals/Published/TextWrapper/src/visual.ts)
 Text Wrapper wrap a static text string (Statement) along with a dynamic text field value which was taken as an input from the dataset. This dynamic field value will update according to the selected filter/slicer keeping the static text intact. The static string needs to be provided by the user which will be appended as “ : <>” after the dynamic field value in the visual resulting the final value in the visual as: “<> : <>”                   
-![Text Wrapper](https://github.com/maqsoftware/PowerBI-visuals/blob/master/documents/Text%20Wrapper/Images/Screenshot.png)
+![Text Wrapper](https://github.com/maqsoftware/PowerBI-visuals/blob/master/documents/Published/Text%20Wrapper/Images/Screenshot.png)
+
+### [KPI Column](https://github.com/maqsoftware/PowerBI-visuals/blob/master/src/CustomVisuals/Published/KPIColumn/src/barChart.ts)
+KPI Column is a column chart where each column will behave as an indicator when compared with a line. Column color updates dynamically based on the difference in column height and their respective target line value. Adding common threshold value exists for all columns. For upcoming values, the same target line can be used for forecasting and column will be displayed in separate manner (in translucent color) to show them as forecasted values.
+![KPI Column](https://github.com/maqsoftware/PowerBI-visuals/blob/master/documents/Published/KPIColumn/Images/512%20x%20384%20KPI%20Column.png)
+
+
+### [KPI Grid](https://github.com/maqsoftware/PowerBI-visuals/blob/master/src/CustomVisuals/Published/KPIGrid/src/visual.ts)
+KPI Grid displays data in hierarchical order, with options to separate categories and illustrate trends with arrows. You can use arrows to illustrate KPI trends over time, such as year-to-year or quarter-to-quarter. You specify the time periods, making it easy to gauge performance according to internal deadlines and benchmarks. 
+![KPI Grid](https://github.com/maqsoftware/PowerBI-visuals/blob/master/documents/Published/KPIGrid/Images/KPIGrid_512x384.png)
+
+
+### [Journey Chart](https://github.com/maqsoftware/PowerBI-visuals/blob/master/src/CustomVisuals/Published/JourneyChart/src/visual.ts)
+Journey Chart transforms dense statistical data into clear networks of categories and relationships. In this intuitive graph, nodes represent categories and vertices represent relationships between categories. The bigger the node or vertex, the larger the value. You can use the visual for numerous scenarios like explaining a process’ flow, uncovering underlying patterns, highlighting subcategories stemming from a single source, showing the connectedness of key categories.
+![Journey Chart](https://github.com/maqsoftware/PowerBI-visuals/blob/master/documents/Published/JourneyChart/Images/JourneyGraph_512x384.png)
+
+
+### [Dynamic Tooltip](https://github.com/maqsoftware/PowerBI-visuals/blob/master/src/CustomVisuals/Published/DynamicTooltip/src/visual.ts)
+Attach dynamic tooltips to add insight to a visual. Increase your audience’s understanding of your data by adding dynamic tooltips to your visuals. Most tooltips display static information or images. With Dynamic Tooltip, you can display data fetched from a data source. This function allows you the freedom to create a tooltip that does not require constant adjustment. When your data changes, the tooltip changes too. It’s as easy as that. Dynamic Tooltip also works well with static statements. If you would just like to add some helpful information for your audience, simply enter your text into the display field. 
+![Dynamic Tooltip](https://github.com/maqsoftware/PowerBI-visuals/blob/master/documents/Published/Dynamic%20Tooltip/Images/Popover_424x410%20copy%203-8.png)
+
+
+### [Rotating Tile](https://github.com/maqsoftware/PowerBI-visuals/blob/master/src/CustomVisuals/Published/RotatingTile/src/visual.ts)
+Rotating tile is useful when multiple metrics are required to be displayed but in less real estate space on report.Thus saving space for other important charts. This visual basically is a tile which will display one KPI values at a time and then flip to display other. Each flip can have a new KPI value based on number of KPIs that needs to be displayed. The tile can be rotated either on horizontal axis or vertical axis. For better visibility, end user can set the timer for the tile for flip delay. Additionally this visual has option for providing 3D effect as well which provide additional rotational effect to the tile.
+![Rotating Tile](https://github.com/maqsoftware/PowerBI-visuals/blob/master/documents/Published/Rotating%20Tile/Images/512x384.png)
+
 
 ### Lift Chart (Coming soon)
 Lift chart is used to show the lift data with respect to ideal data. It is commonly used for prediction models and how different models perform against each other.

@@ -1,0 +1,155 @@
+@import (less) "node_modules/powerbi-visuals-utils-formattingutils/lib/index.css";
+#baseContainer{
+    cursor: default
+}
+.gridText{
+    white-space: nowrap
+}
+.gapDiv{
+    height: 25px;
+    width: 20px;
+    float: left;
+}
+.gridLevels{
+    padding-right: 7px;
+    position: relative;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    float: left;
+    height: 25px;
+    width: 243px;
+    line-height: 25px;
+    border-bottom: 1px solid #808080;
+}
+.gridMeasures{
+    position: relative;
+    padding:  0 7px 0 7px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-align: right;
+    font-family: Segoe UI, wf_segoe-ui_normal, helvetica, arial, sans-serif; 
+    float: left;
+    height: 25px;
+    width: 86px;
+    line-height: 25px;
+    border-bottom: 1px solid #808080;
+    border-right: 1px solid #ffffff;
+}
+.gridMeasures .gridText{
+    margin-right: 7px;
+}
+#content{
+    position: relative;
+    margin-top:1px;
+    overflow-y: auto;
+    overflow-x: auto;
+    //z-index: -2;
+}
+.headerLevel{
+    margin-left: 30px;
+}
+
+.totalGridLevel{
+    border-top: 1px solid #000000;
+    border-bottom: none;
+}
+.totalLevel{
+    margin-left: 30px;
+}
+
+.totalGridMeasures{
+    border-top: 1px solid #000000;
+    border-bottom: none;
+}
+.totalMeasures .gridText{
+    margin-right: 7px;
+}    
+.gridRow{
+    height: 25px;
+    position: relative;
+    margin: 0;
+    padding: 0;
+    clear: both;
+    width: 100%;
+    margin-top: 1px;
+}
+
+#totalGridRow{
+    margin-top: 14px
+}
+
+/*coloring for each level*/
+.rowLevel0{
+    background-color: #f0f0f0;
+} 
+.rowLevel1{
+    background-color: #fafafa;
+}
+.rowLevel2{
+    background-color: #ffffff;
+}
+.rowLevel3{
+    background-color: #ffffff;
+}
+
+.iconProps{
+    position: relative;
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    background-repeat: no-repeat;
+}
+
+.gridPlusIcon {
+    .iconProps;
+    position: absolute;
+    left: -17px;
+    top:7px;
+    cursor: pointer;
+    background-size: 85%;
+	
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA8AAAAPCAMAAAAMCGV4AAAAb1BMVEX///9hYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWG+femcAAAAJHRSTlMAAgMEEBITGB4gJCkqKy0wSldlZmdoaX5/gLy9wNPU2ODu7/BVFba7AAAAkElEQVQI102OyRKCMBQEO0TceIpG2RJDDHn//40eEMu5TU31VANY57Pm4CwASJo7qaWLSQCkjAYAMxYBm0ag2hlgTBYXDdDqCTCzI3T8Or0nC1zbu95agWZBayiqqvqGvbI0cNx2yfjHH9+F7//5dQBMdNg0sGVKFqQMq181FQG4pPhs9tLPqz9YF7Jm7yzwAf8ECp2dRkitAAAAAElFTkSuQmCC);
+}
+
+.gridMinusIcon {
+    .iconProps;
+    position: absolute;
+    left: -17px;
+    top:7px;
+    cursor: pointer;
+    background-size: 85%;
+	background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA8AAAAPCAMAAAAMCGV4AAAAPFBMVEX///9hYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWGldawLAAAAE3RSTlMAAgQQGyElKjBkZXqQsLzQ2O7wQRl/qQAAAF1JREFUeNpdz+sOgCAIhuFXLU0tT9z/vZZuro3nH2PABx+bSpdekmUJrUbvfKwtrHJkw2TyCGBbZsvNkqphMzVRIr9Y6B7OazrAd8TBI9MNTnRfz+v9+r7Op/Pr/15HRwTbDqiJzQAAAABJRU5ErkJggg==);
+}
+
+.kpiArrow1{
+    .iconProps;
+    top:5px;
+    background-size: 70%;
+	background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA8AAAAPCAMAAAAMCGV4AAAA81BMVEX////rHx/rHx/rHx/rHx/rHx/rHx/rHx/rHx/rHx/rHx/rHx/rHx/rHx/rHx/rHx/rHx/rHx/rHx/rHx/rHx/rHx/rHx/rHx/rHx/rHx/rHx/rHx/rHx/rHx/rHx/rHx/rHx/rHx/rHx/rHx/rHx/rHx/rHx/rHx/rHx/rHx/rHx/rHx/rHx/rHx/rHx/rHx/rHx/rHx/rHx/rHx/rHx/rHx/rHx/rHx/rHx/rHx/rHx/rHx/rHx/rHx/rHx/rHx/rHx/rHx/rHx/rHx/rHx/rHx/rHx/rHx/rHx/rHx/rHx/rHx/rHx/rHx/rHx/rHx/rHx8977hkAAAAUHRSTlMAAQMFCQsODxARExUYGh0eHyAhIiMpKisuNzo8QEFLTE1RUldYW2FnaHB1eoGGiIyRnJ2rrbW9wcLEy83Q0dXX2Nna29ze4OLj5efu8fL6/uuf0Y0AAACfSURBVHjaRczFEsJQEETRDhYkeHB3dw3uLv3/X0NeEYqzmr6LgVJteGGQImYkyFnA2KVrAfY1OfdBMK04AcJbcuEXWzmIjdCOXAYBeI4cQISNHlQgemETQlgPCxX5B1v4B3f8zjKE79Np78k0DKE9yTcz+LGORVABKVasdbqj4Zk6F5C8PV80aDaY6t/zpGn9dlACHNlKLuVWnLJsMQMfEcMe7s7ItMsAAAAASUVORK5CYII=);
+    
+}
+.kpiArrow2{
+    .iconProps;
+    top:5px;
+    background-size: 80%;
+	background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA8AAAAPCAMAAAAMCGV4AAAAilBMVEX///9nZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2e80sHzAAAALXRSTlMABggKEB0eIigsSkxNW19hY2lub3mChIaIjI2RlpydoKOqrcDm6PX4+fv8/f5Z66HkAAAAY0lEQVR4AU3BBxbBQABF0acQDNG7YEQR/P1vz1FO8u/lr7dKcHPlLUz/qtjADG/a4mZPTXDHQgHau332tT7ddYaBHCTp9GeUvZRjoi4dSrWoR6CykMZU0kIbzFKHOqYbmny8AdSiCkqBcFSQAAAAAElFTkSuQmCC);
+}
+.kpiArrow3{
+    .iconProps;
+    top:5px;
+    background-size: 70%;
+	background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA8AAAAPCAMAAAAMCGV4AAAA9lBMVEX///84nhg4nhg4nhg4nhg4nhg4nhg4nhg4nhg4nhg4nhg4nhg4nhg4nhg4nhg4nhg4nhg4nhg4nhg4nhg4nhg4nhg4nhg4nhg4nhg4nhg4nhg4nhg4nhg4nhg4nhg4nhg4nhg4nhg4nhg4nhg4nhg4nhg4nhg4nhg4nhg4nhg4nhg4nhg4nhg4nhg4nhg4nhg4nhg4nhg4nhg4nhg4nhg4nhg4nhg4nhg4nhg4nhg4nhg4nhg4nhg4nhg4nhg4nhg4nhg4nhg4nhg4nhg4nhg4nhg4nhg4nhg4nhg4nhg4nhg4nhg4nhg4nhg4nhg4nhg4nhg4nhj6ChFMAAAAUXRSTlMAAQMGCQoMDQ4PEBETFRYYGR4hIystNjc6PD1FSUxNTk9QUVNUVWJoa3p8goiJjI2bnqKrrK6vsbK0tsHEysvO0NbZ2t7j7O3u7/Dx8/T1+v7+TnUCAAAApElEQVR4ATXKZZqCAACE4WFjl9juQMXGEFvsFhEUnftfRiTef98zA+GlWC/lkh/PT4p8A+DaYMidTVpvAvCzsByPobEIQPrPFqqVpk3fI2LfS5Kn9zgzB9I7MhGlticb5R3VaHXJwdWfSz3ItEP275B3aARnmzRF4HPD2iW3ZE8G8LqmCUGzyK4C3/2KIzz4a0dGYMohfsm2hNDXXMVtShcRU3AGLMkfRdjH3N8AAAAASUVORK5CYII=);
+}
+
+.resizer{
+    width : 4px;
+    height : 25px;
+    position: absolute;
+    right:0;
+    float : left;
+    cursor : col-resize;
+    border-left: none;
+    border-bottom: none;
+}
