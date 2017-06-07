@@ -83,14 +83,6 @@ Rotating tile is useful when multiple metrics are required to be displayed but i
 ![Rotating Tile](https://github.com/maqsoftware/PowerBI-visuals/blob/master/documents/Published/Rotating%20Tile/Images/512x384.png)
 
 
-### [KPI Ticker]
-KPI Ticker is a automatically flipping visual that allows you to view various metrics along with trend indicators.Suitable for applications that focus on certain key metrics and are interested in knowing the metric value increase or decrease. Visually attractive with ability to change colors of tiles and trend indicators.
-![KPI Ticker]
-
-### [Cylindrical Gauge]
-Cylindrical Gauge tracks current values against a target with an intuitive 3D cylinder visual. The cylindrical gauge’s fill line gives the user an easy way to understand how actual values weigh against a target capacity. The tool is useful for evaluating inventory, fuel, or other repository levels.
-![Cylindrical Gauge]
-
 ### Lift Chart (Coming soon)
 Lift chart is used to show the lift data with respect to ideal data. It is commonly used for prediction models and how different models perform against each other.
 
