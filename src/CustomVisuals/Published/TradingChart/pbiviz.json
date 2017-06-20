@@ -4,7 +4,7 @@
     "displayName": "migratedStockChart",
     "guid": "StockChart1464746768122",
     "visualClassName": "StockChart",
-    "version": "1.2.2",
+    "version": "3.0.0",
     "description": "Stock chart custom visual",
     "supportUrl": "https://github.com/maqsoftware/PowerBI-visuals/issues",
     "gitHubUrl": "https://github.com/maqsoftware/PowerBI-visuals/"
