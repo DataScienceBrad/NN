@@ -1,0 +1,21 @@
+Brief description: 
+
+Transform dense statistical data into clear networks of categories and relationships 
+
+This custom visual works in: Power BI
+
+Overview: 
+
+Reveal connections in your data with a storytelling visual. 
+
+In this intuitive graph, nodes represent categories and vertices represent relationships between categories. The bigger the node or vertex, the larger the value. 
+
+Network Map’s customizable node colors make it easy for your audience to distinguish between categories. You can also enable text labels and tooltips for each node to provide additional information, such as a category’s title and value. The color and size of your text labels are adjustable. The option to enable a legend gives you the opportunity to clarify complex graphs that describe many types of data and categories.  
+
+You can use the visual for numerous scenarios. Some examples include: 
+
+•	Explaining a process’ flow
+•	Uncovering underlying patterns
+•	Highlighting subcategories stemming from a single source
+•	Showing the connectedness of key categories 
+
