@@ -1,6 +1,11 @@
 {
   "name": "visual",
   "dependencies": {
-    "d3": "^3.5.5"
+    "d3": "^3.5.5",
+    "powerbi-visuals-utils-chartutils": "^0.3.0",
+    "powerbi-visuals-utils-colorutils": "^0.2.2",
+    "powerbi-visuals-utils-dataviewutils": "^1.1.1",
+    "powerbi-visuals-utils-formattingutils": "^0.4.0",
+    "powerbi-visuals-utils-svgutils": "^0.2.0"
   }
 }

@@ -4,7 +4,7 @@
     "displayName": "Journey Graph",
     "guid": "journeyGraph1859AB39DB23421488ADF752BCB05167",
     "visualClassName": "Visual",
-    "version": "1.0.0",
+    "version": "3.0.0",
     "description": "Transform dense statistical data into clear networks of categories and relationships.",
     "supportUrl": "https://github.com/maqsoftware/PowerBI-visuals/issues",
     "gitHubUrl": "https://github.com/maqsoftware/PowerBI-visuals"
