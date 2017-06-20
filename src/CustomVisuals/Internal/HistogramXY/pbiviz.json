@@ -2,9 +2,9 @@
   "visual": {
     "name": "HistogramXY",
     "displayName": "HistogramXY",
-    "guid": "PBI_CV_309E6B47_39A5_4681_808F_132AFB230892",
+    "guid": "histogramXY6E3D5691159E41859A007A262D4B0E9E",
     "visualClassName": "Visual",
-    "version": "1.0.0",
+    "version": "3.0.0",
     "description": "Histogram with Point visual is nothing but the combination of histogram and point chart to show histogram along with points.",
     "supportUrl": "https://github.com/maqsoftware/PowerBI-visuals/issues/",
     "gitHubUrl": "https://github.com/maqsoftware/PowerBI-visuals/"
