@@ -4,7 +4,7 @@
     "displayName": "Text Wrapper",
     "guid": "PBI_CV_FFFE680D_D220_4F62_B16C_C7B5C5732654",
     "visualClassName": "Visual",
-    "version": "1.1.0",
+    "version": "3.0.0",
     "description": "Text Wrapper wrap a static text string (Statement) along with a dynamic text field value which was taken as an input from the dataset. This dynamic field value will update according to the selected filter/slicer keeping the static text intact. The static string needs to be provided by the user which will be appended as “ : <<Static String>>” after the dynamic field value in the visual resulting the final value in the visual as: “<<Dynamic Value>> : <<Static Value>>”",
     "supportUrl": "https://github.com/maqsoftware/PowerBI-visuals/issues",
     "gitHubUrl": "https://github.com/maqsoftware/PowerBI-visuals"
@@ -17,7 +17,9 @@
   "assets": {
     "icon": "assets/icon.png"
   },
-  "externalJS": [],
+  "externalJS": [
+    "node_modules/d3/d3.min.js"
+  ],
   "style": "style/visual.less",
   "capabilities": "capabilities.json"
 }
