@@ -4,7 +4,7 @@
     "displayName": "Quadrant chart",
     "guid": "QuadrantChart309E6B4739A54681808F132AFB230871",
     "visualClassName": "QuadrantChart",
-    "version": "1.0.0",
+    "version": "3.0.0",
     "description": "Quadrant chart is used to show points across different quadrants",
     "supportUrl": "https://github.com/maqsoftware/PowerBI-visuals/issues",
     "gitHubUrl": "https://github.com/maqsoftware/PowerBI-visuals/"
