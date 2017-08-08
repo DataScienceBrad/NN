@@ -1,10 +1,40 @@
 @import (less) "node_modules/powerbi-visuals-utils-formattingutils/lib/index.css";
-.legendItem{
-    font-family: wf_segoe-ui_normal;
-}
+@import (less) "node_modules/powerbi-visuals-utils-interactivityutils/lib/index.css";
+@import (less) "node_modules/powerbi-visuals-utils-chartutils/lib/index.css";
+@import (less) "node_modules/powerbi-visuals-utils-interactivityutils/lib/index.css";
 .styleLibrary.compact .typeRamp.authoringPaneText, body.visual-sandbox {
     font-family: 'Segoe UI',wf_segoe-ui_normal,helvetica,arial,sans-serif;
 }
 .legendTitle{
-    font-family:wf_segoe-ui_Semibold;
+    font-family:"Segoe UI", wf_segoe-ui_semibold, helvetica, arial, sans-serif;
+    font-weight: 500;
+    fill:rgb(102, 102, 102);
+}
+
+.legendItem{
+    font-family:"Segoe UI", wf_segoe-ui_normal, helvetica, arial, sans-serif;
+}
+
+.primaryMeasureSum , .secondaryMeasureSum{		
+    max-width: 80%;		
+    display: inline-block;		
+    text-overflow: ellipsis;		
+    overflow: hidden;	
+}		
+.primaryMeasureIndicator, .secondaryMeasureIndicator{		
+    position: absolute;		
+    float: left;
+    margin-left: 1px;		
+}
+.ErrorMessage{
+    text-align: center;
+    font-size: 20px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    top: 45%;
+    width:100%;
+    position: absolute;
+}
+.donutTitle{
+    width:100%;
 }

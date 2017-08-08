@@ -18,6 +18,7 @@ module powerbi.extensibility.visual {
                 }
             }
         }
+
         return defaultValue;
     }
 
@@ -45,6 +46,7 @@ module powerbi.extensibility.visual {
                 }
             }
         }
+
         return defaultValue;
     }
 }
