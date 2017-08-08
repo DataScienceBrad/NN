@@ -80,8 +80,6 @@ declare module powerbi {
         None = 1,
     }
 }
-﻿
-
 
 
 declare module powerbi.visuals.plugins {
@@ -101,13 +99,13 @@ declare module powerbi.visuals.plugins {
 
         /** The version of the api that this plugin should be run against */
         apiVersion: string;
-        
+
         /** Human readable plugin name displayed to users */
         displayName: string;
 
     }
 }
-﻿
+
 
 
 
@@ -116,7 +114,7 @@ declare module jsCommon {
         get(id: string): string;
         getOptional(id: string): string;
     }
-}﻿
+}
 
 
 
@@ -164,12 +162,12 @@ declare module powerbi {
          * Rejects immediately if any of the promises fail
          */
         all(promises: IPromise2<any, any>[]): IPromise<any[]>;
-        
+
         /**
          * Combines multiple promises into a single promise that is resolved when all of the input promises are resolved.
          * Does not resolve until all promises finish (success or failure).
          */
-        allSettled<T>(promises: IPromise2<any, any>[]): IPromise<IPromiseResult<T>[]>;        
+        allSettled<T>(promises: IPromise2<any, any>[]): IPromise<IPromiseResult<T>[]>;
 
         /**
          * Wraps an object that might be a value or a then-able promise into a promise. 
@@ -256,7 +254,7 @@ declare module powerbi {
     export interface IResultCallback<T> {
         (result: T, done: boolean): void;
     }
-    
+
     export interface IPromiseResult<T> {
         type: PromiseResultType;
         value: T;
@@ -274,7 +272,7 @@ declare module powerbi.visuals {
         withMeasure(measureId: string): this;
         createSelectionId(): ISelectionId;
     }
-    
+
     export interface ISelectionId {
         equals(other: ISelectionId): boolean;
         includes(other: ISelectionId, ignoreHighlight?: boolean): boolean;
@@ -283,7 +281,7 @@ declare module powerbi.visuals {
         getSelectorsByColumn(): Selector;
         hasIdentity(): boolean;
     }
-}﻿
+}
 
 
 
@@ -292,14 +290,14 @@ declare module powerbi {
         Ascending = 1,
         Descending = 2,
     }
-}﻿
+}
 
 
 
 declare module powerbi {
     export interface QueryTransformTypeDescriptor {
     }
-}﻿
+}
 
 
 
@@ -477,7 +475,7 @@ declare module powerbi {
          * If this node represents a composite group node in matrix, this property will be undefined.
          */
         value?: PrimitiveValue;
-      
+
         /** 
          * This property contains all the values in this node. 
          * The key of each of the key-value-pair in this dictionary is the position of the column in the 
@@ -542,8 +540,8 @@ declare module powerbi {
 
         children?: DataViewMatrixNode[];
 
-         
-        values?: { [id: number]: DataViewMatrixNodeValue };         
+
+        values?: { [id: number]: DataViewMatrixNodeValue };
 
         /**
          * Indicates the source metadata index on the node's level. Its value is 0 if omitted.
@@ -635,7 +633,7 @@ declare module powerbi {
 
     /** Defines the PrimitiveValue range. */
     export type PrimitiveValueRange = ValueRange<PrimitiveValue>;
-}﻿
+}
 
 
 
@@ -667,7 +665,7 @@ declare module powerbi {
     export type DataViewObjectMap = { [id: string]: DataViewObject };
 
     export type DataViewPropertyValue = PrimitiveValue | StructuralObjectValue;
-}﻿
+}
 
 
 
@@ -677,7 +675,7 @@ declare module powerbi.data {
         roles: string[];
         key: string;
     }
-}﻿
+}
 
 
 
@@ -690,7 +688,7 @@ declare module powerbi {
         /** Key string that identifies the DataViewScopeIdentity to a string, which can be used for equality comparison. */
         key: string;
     }
-}﻿
+}
 
 
 
@@ -700,7 +698,7 @@ declare module powerbi.data {
         exprs: ISQExpr[];
         key: string;
     }
-}﻿
+}
 
 
 
@@ -708,7 +706,7 @@ declare module powerbi.data {
     import IStringResourceProvider = jsCommon.IStringResourceProvider;
 
     export type DisplayNameGetter = ((resourceProvider: IStringResourceProvider) => string) | string;
-}﻿
+}
 
 
 
@@ -717,7 +715,7 @@ declare module powerbi.data {
     export interface Selector {
         /** Data-bound repetition selection. */
         data?: DataRepetitionSelector[];
-	
+
         /** Metadata-bound repetition selection.  Refers to a DataViewMetadataColumn queryName. */
         metadata?: string;
 
@@ -725,8 +723,8 @@ declare module powerbi.data {
         id?: string;
     }
 
-    export type DataRepetitionSelector = DataViewScopeIdentity | DataViewScopeWildcard | DataViewRoleWildcard; 
-}﻿
+    export type DataRepetitionSelector = DataViewScopeIdentity | DataViewScopeWildcard | DataViewRoleWildcard;
+}
 
 
 
@@ -739,7 +737,7 @@ declare module powerbi.data {
 
     export interface ISQConstantExpr extends ISQExpr { }
 
-}﻿
+}
 
 
 
@@ -771,8 +769,8 @@ declare module powerbi {
         /** Gets the members of the enumeration, limited to the validMembers, if appropriate. */
         members(validMembers?: EnumMemberValue[]): IEnumMember[];
     }
-    
-}﻿
+
+}
 
 
 
@@ -810,8 +808,8 @@ declare module powerbi {
     export interface FillSolidColorAdvancedTypeDescriptor {
         /** Indicates whether the color value may be nullable, and a 'no fill' option is appropriate. */
         nullable: boolean;
-    }  
-}﻿
+    }
+}
 
 
 
@@ -845,7 +843,7 @@ declare module powerbi {
         color: TColor;
         value?: TValue;
     }
-}﻿
+}
 
 
 
@@ -853,7 +851,7 @@ declare module powerbi {
     export interface FilterTypeDescriptor {
         selfFilter?: boolean;
     }
-}﻿
+}
 
 declare module powerbi {
     export type GeoJson = GeoJsonDefinitionGeneric<string>;
@@ -865,7 +863,7 @@ declare module powerbi {
     }
 
     export interface GeoJsonTypeDescriptor { }
-}﻿
+}
 
 
 
@@ -880,7 +878,7 @@ declare module powerbi {
 
     export interface ImageTypeDescriptor { }
 
-}﻿
+}
 
 
 
@@ -907,7 +905,7 @@ declare module powerbi {
         url?: string;
         value: string;
     }
-}﻿
+}
 
 
 
@@ -923,7 +921,7 @@ declare module powerbi {
         ImageValue |
         Paragraphs |
         GeoJson;
-    
+
     /** Describes a structural type in the client type system. Leaf properties should use ValueType. */
     export interface StructuralTypeDescriptor {
         fill?: FillTypeDescriptor;
@@ -938,7 +936,7 @@ declare module powerbi {
         //border?: BorderTypeDescriptor;
         //etc.
     }
-}﻿
+}
 
 
 
@@ -1017,7 +1015,7 @@ declare module powerbi {
 
     /** Describes instances of value type objects. */
     export type PrimitiveValue = string | number | boolean | Date;
-}﻿
+}
 
 
 
@@ -1026,13 +1024,13 @@ declare module powerbi {
         height: number;
         width: number;
     }
-}﻿
+}
 
 
 
 declare module powerbi {
     import Selector = powerbi.data.Selector;
-    
+
     export interface VisualObjectInstance {
         /** The name of the object (as defined in VisualCapabilities). */
         objectName: string;
@@ -1093,7 +1091,7 @@ declare module powerbi {
         /** Instances which should be deleted from the existing objects. */
         removeObject?: VisualObjectInstance[];
     }
-    
+
     export interface EnumerateVisualObjectInstancesOptions {
         objectName: string;
     }
@@ -1120,7 +1118,7 @@ declare module powerbi {
         formattingProperties?: string[];
     }
 }
-﻿
+
 
 
 
@@ -1132,11 +1130,11 @@ declare module powerbi.extensibility {
 
     export interface IVisualConstructor {
         __transform__?: IVisualDataViewTransform;
-    }   
-    
+    }
+
     export interface IVisualDataViewTransform {
         <T>(dataview: DataView[]): T;
-    } 
+    }
 
     // These are the base interfaces. These should remain empty
     // All visual versions should extend these for type compatability
@@ -1190,7 +1188,7 @@ declare module powerbi.extensibility {
 
 
 declare module powerbi.extensibility {
-    function VisualPlugin (options: IVisualPluginOptions): ClassDecorator;
+    function VisualPlugin(options: IVisualPluginOptions): ClassDecorator;
 }
 
 
@@ -1212,7 +1210,7 @@ declare module powerbi.extensibility {
         header?: string;
         opacity?: string;
     }
-    
+
     interface TooltipMoveOptions {
         coordinates: number[];
         isTouchEvent: boolean;
