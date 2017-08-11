@@ -1146,7 +1146,7 @@ module powerbi.extensibility.visual {
                     if (labelYPos > parseFloat(visualHeight)
                         || (secondLabelYPos > parseFloat(visualHeight))
                         && document.getElementById(`ring_secondRowLabel_${i}`)
-                        && document.getElementById(`secondRowLabel_${i}`).style.display !== 'none') {
+                        && document.getElementById(`ring_secondRowLabel_${i}`).style.display !== 'none') {
                         document.getElementById(`ring_label_${i}`).style.display = 'none';
                         document.getElementById(`ring_polyline_${i}`).style.display = 'none';
                         if (document.getElementById(`ring_secondRowLabel_${i}`)) {

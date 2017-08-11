@@ -1326,7 +1326,8 @@ module powerbi.extensibility.visual {
                             'id': i,
                             height: height,
                             width: width,
-                            fill: '#FAFAFA'
+                            fill: '#FAFAFA',
+                            overflow: "hidden"
                         }).classed(classname, true)
                         .append('rect')
                         .attr({
@@ -1350,7 +1351,8 @@ module powerbi.extensibility.visual {
                             'id': i,
                             height: height,
                             width: width / 4,
-                            fill: '#FAFAFA'
+                            fill: '#FAFAFA',
+                            overflow: "hidden"
                         })
                         .classed(classname, true)
                         .append('rect')
@@ -1387,7 +1389,7 @@ module powerbi.extensibility.visual {
                     // if (precisionValue === 0 && title.split('.').length > 1) {
                     //     precisionValue = title.split('.')[1].length;
                     precisionValue = precisionValue;
-                    //}
+                    //}this.dataView.categorical.category[0].values[0]
                     sKMBValueY1Axis = this.format(this.viewModel.values[i].values[0], displayunitValue, precisionValue, this.dataView.categorical.values[0].source.format);
                     let decimalPlaces = HorizontalFunnel.getDecimalPlacesCount(this.viewModel.values[i].values[0]);
                     // tooltip values
@@ -1509,6 +1511,7 @@ module powerbi.extensibility.visual {
             for (var i = 0; i < (catLength); i++) {
                 svgElement[0][i]['cust-tooltip'] = this.viewModel.values[i].toolTipInfo;
             }
+
             for (var i = 0; i < percentageVal.length; i++) {
                 var polygonColor;
                 if (this.defaultDataPointColor) {

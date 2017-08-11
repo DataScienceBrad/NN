@@ -1,0 +1,188 @@
+{
+    "dataRoles": [
+        {
+            "displayName": "Target Value",
+            "name": "targetValue",
+            "kind": "Measure"
+        },
+        {
+            "displayName": "Satisfactory",
+            "name": "satisfactory",
+            "kind": "Measure"
+        },
+        {
+            "displayName": "Good",
+            "name": "good",
+            "kind": "Measure"
+        },
+        {
+            "displayName": "Very Good",
+            "name": "vGood",
+            "kind": "Measure"
+        },
+        {
+            "displayName": "Actual Value",
+            "name": "actualValue",
+            "kind": "Measure"
+        }
+    ],
+    "dataViewMappings": [
+        {
+            "conditions": [
+                {
+                    "targetValue": {
+                        "max": 1
+                    },
+                    "satisfactory": {
+                        "max": 1
+                    },
+                    "good": {
+                        "max": 1
+                    },
+                    "vGood": {
+                        "max": 1
+                    },
+                    "actualValue": {
+                        "max": 1
+                    }
+                }
+            ],
+            "categorical": {
+                "values": {
+                    "select": [
+                        {
+                            "bind": {
+                                "to": "targetValue"
+                            }
+                        },
+                        {
+                            "bind": {
+                                "to": "satisfactory"
+                            }
+                        },
+                        {
+                            "bind": {
+                                "to": "good"
+                            }
+                        },
+                        {
+                            "bind": {
+                                "to": "vGood"
+                            }
+                        },
+                        {
+                            "bind": {
+                                "to": "actualValue"
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    ],
+    "objects": {
+        "colorSelector": {
+            "displayName": "Colors",
+            "description": "Option to update the color of bars",
+            "properties": {
+                "satisfactory": {
+                    "displayName": "Satisfactory",
+                    "description": "Option to set color of Satisfactory range",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "good": {
+                    "displayName": "Good",
+                    "description": "Option to set color of Good range",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "veryGood": {
+                    "displayName": "Very Good",
+                    "description": "Option to set color of Very Good range",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "actualValue": {
+                    "displayName": "Actual value",
+                    "description": "Option to set color of Actual Value range",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "targetValue": {
+                    "displayName": "Target value",
+                    "description": "Option to set color of Target Value",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "labels": {
+            "displayName": "Label settings",
+            "description": "Option to update label settings",
+            "properties": {
+                "fontSize": {
+                    "displayName": "Label size",
+                    "description": "Option to adjust font size of labels",
+                    "type": {
+                        "formatting": {
+                            "fontSize": true
+                        }
+                    }
+                },
+                "labelColor": {
+                    "displayName": "Label color",
+                    "description": "Option to set label color",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "labelDisplayUnits": {
+                    "displayName": "Display Units",
+                    "description": "Select the units (millions, billions, etc).",
+                    "type": {
+                        "formatting": {
+                            "labelDisplayUnits": true
+                        }
+                    }
+                },
+                "labelPrecision": {
+                    "displayName": "Decimal Places",
+                    "description": "Select the number of decimal places to display",
+                    "type": {
+                        "numeric": true
+                    }
+                }
+            }
+        }
+    }
+}
