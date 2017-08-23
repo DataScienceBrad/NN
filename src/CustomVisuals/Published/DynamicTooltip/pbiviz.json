@@ -1,11 +1,11 @@
 {
   "visual": {
-    "name": "Popover",
-    "displayName": "Popover",
-    "guid": "popOver1859AB39DB23051788ADF752BCB91243",
+    "name": "Dynamic Tooltip",
+    "displayName": "Dynamic Tooltip",
+    "guid": "dynamicTooltip1859AB39DB23051788ADF752BCB90749",
     "visualClassName": "Visual",
-    "version": "3.0.0",
-    "description": "A Popover icon which can be used to display static or dynamic data",
+    "version": "1.0.0",
+    "description": "Attach dynamic tooltips to add insight to a visual",
     "supportUrl": "https://github.com/maqsoftware/PowerBI-visuals/issues",
     "gitHubUrl": "https://github.com/maqsoftware/PowerBI-visuals"
   },

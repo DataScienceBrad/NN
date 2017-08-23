@@ -33,28 +33,28 @@
             "properties": {
                 "header": {
                     "displayName": "Header",
-                    "description": "Tooltip Header Text",
+                    "description": "Tooltip header text",
                     "type": {
                         "text": true
                     }
                 },
                 "text": {
                     "displayName": "Body",
-                    "description": "Tooltip Body Text",
+                    "description": "Tooltip body text",
                     "type": {
                         "text": true
                     }
                 },
                 "imageurl": {
                     "displayName": "Image URL",
-                    "description": "Image here",
+                    "description": "Valid URL of the image",
                     "type": {
                         "text": true
                     }
                 }
             }
         },
-        "MeasureTooltip": {
+        "measuretooltip": {
             "displayName": "Measure Tooltip",
             "properties": {
                 "show": {
@@ -65,6 +65,7 @@
                 },
                 "textPrecision": {
                     "displayName": "Decimal Places",
+                    "description": "Number of decimal places",
                     "type": {
                         "numeric": true
                     },
@@ -72,6 +73,7 @@
                 },
                 "displayUnits": {
                     "displayName": "Display Units",
+                    "description": "Type of display units",
                     "type": {
                         "formatting": {
                             "labelDisplayUnits": true
