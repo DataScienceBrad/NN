@@ -4,12 +4,12 @@
     "displayName": "Thermometer",
     "guid": "PBI_CV_309E6B47_39A5_4681_808F_132AFB230872",
     "visualClassName": "Thermometer",
-    "version": "3.0.0",
+    "version": "1.0.0",
     "description": "Thermometer is used to represent data in thermometer. It could be a good way to represent data when you have the actual value and the target value (maximum threshold)",
     "supportUrl": "https://github.com/maqsoftware/PowerBI-visuals/issues",
     "gitHubUrl": "https://github.com/maqsoftware/PowerBI-visuals/"
   },
-  "apiVersion": "1.4.0",
+  "apiVersion": "1.1.0",
   "author": {
     "name": "MAQ Software",
     "email": "sales@maqsoftware.com"
@@ -19,20 +19,7 @@
     "thumbnail": "./assets/thumbnail.jpg",
     "screenshot": "./assets/screenshot.jpg"
   },
-  "externalJS": [
-    "node_modules/jquery/dist/jquery.min.js",
-    "node_modules/d3/d3.min.js",
-    "node_modules/lodash/lodash.min.js",
-    "node_modules/globalize/lib/globalize.js",
-    "node_modules/globalize/lib/cultures/globalize.culture.en-US.js",
-    "node_modules/powerbi-visuals-utils-typeutils/lib/index.js",
-    "node_modules/powerbi-visuals-utils-svgutils/lib/index.js",
-    "node_modules/powerbi-visuals-utils-dataviewutils/lib/index.js",
-    "node_modules/powerbi-visuals-utils-formattingutils/lib/index.js",
-    "node_modules/powerbi-visuals-utils-colorutils/lib/index.js",
-    "node_modules/powerbi-visuals-utils-interactivityutils/lib/index.js",
-    "node_modules/powerbi-visuals-utils-chartutils/lib/index.js"
-  ],
+  "externalJS": [],
   "style": "style/visual.less",
   "capabilities": "capabilities.json"
 }
