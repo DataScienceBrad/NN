@@ -1,0 +1,323 @@
+{
+	"dataRoles": [
+		{
+			"name": "Temperature",
+			"kind": "Grouping",
+			"displayName": "Temperature"
+		},
+		{
+			"name": "TargetValue",
+			"kind": "Measure",
+			"displayName": "Target Value"
+		},
+		{
+			"name": "Min",
+			"kind": "Measure",
+			"displayName": "Min"
+		},
+		{
+			"name": "Max",
+			"kind": "Measure",
+			"displayName": "Max"
+		}
+	],
+	"dataViewMappings": [
+		{
+			"conditions": [
+				{
+					"Temperature": {
+						"max": 1
+					},
+					"TargetValue": {
+						"max": 1
+					},
+					"Min": {
+						"max": 1
+					},
+					"Max": {
+						"max": 1
+					}
+				
+				}			
+			],
+            "categorical": {
+                "categories": {
+                    "select": [
+                        {
+                            "for": {
+                                "in": "Temperature"
+                            }
+                        }
+                    ]
+                },
+                "values": {
+					"select": [
+						{
+							"for": {
+								"in": "TargetValue"
+							}
+						},
+						{
+							"for": {
+								"in": "Min"
+							}
+						},
+						{
+							"for": {
+								"in": "Max"
+							}
+						}
+					]
+                }
+            }
+		}
+	],
+	"objects": {
+		"config": {
+			"displayName": "Configurations",
+			"properties": {
+				"max": {
+					"type": {
+						"numeric": true
+					},
+					"displayName": "Max"
+				},
+				"min": {
+					"type": {
+						"numeric": true
+					},
+					"displayName": "Min"
+				},
+				"tickBar": {
+					"type": {
+						"bool": true
+					},
+					"displayName": "Tick bar"
+				},
+				"fontColor": {
+					"type": {
+						"fill": {
+							"solid": {
+								"color": true
+							}
+						}
+					},
+					"displayName": "Actual value color"
+				},
+				"postfix": {
+					"type": {
+						"text": true
+					},
+					"displayName": "Unit"
+				}
+			}
+		},
+		"legend": {
+            "displayName": "Legend",
+            "description": "Display legend options",
+            "properties": {
+                "show": {
+                    "displayName": "Show",
+                    "type": {
+                        "bool": true
+                    }
+                },
+				"position": {
+                    "displayName": "Position",
+                    "description": "Select the location for the legend",
+                    "type": {
+                        "enumeration": [
+                            {
+                                "value": "Top",
+                                "displayName": "Top"
+                            },
+                            {
+                                "value": "Bottom",
+                                "displayName": "Bottom"
+                            },
+                            {
+                                "value": "Left",
+                                "displayName": "Left"
+                            },
+                            {
+                                "value": "Right",
+                                "displayName": "Right"
+                            },
+                            {
+                                "value": "TopCenter",
+                                "displayName": "Top Center"
+                            },
+                            {
+                                "value": "BottomCenter",
+                                "displayName": "Bottom Center"
+                            },
+                            {
+                                "value": "LeftCenter",
+                                "displayName": "Left Center"
+                            },
+                            {
+                                "value": "RightCenter",
+                                "displayName": "Right Center"
+                            }
+                        ]
+                    }
+                },
+                "showTitle": {
+                    "displayName": "Title",
+                    "description": "Display a title for legend symbols",
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "titleText": {
+                    "displayName": "Legend Name",
+                    "description": "Title text",
+                    "type": {
+                        "text": true
+                    },
+                    "suppressFormatPainterCopy": true
+                },
+                "labelColor": {
+                    "displayName": "Color",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                }
+            }
+        },
+		"category1": {
+			"displayName": "Category 1",
+			"properties": {
+				"fill1": {
+					"type": {
+						"fill": {
+							"solid": {
+								"color": true
+							}
+						}
+					},
+					"displayName": "Fill"
+				},
+				"border1": {
+					"type": {
+						"fill": {
+							"solid": {
+								"color": true
+							}
+						}
+					},
+					"displayName": "Border"
+				}		
+			}
+		},
+        "category2": {
+			"displayName": "Category 2",
+			"properties": {
+				"fill2": {
+					"type": {
+						"fill": {
+							"solid": {
+								"color": true
+							}
+						}
+					},
+					"displayName": "Fill"
+				},
+				"border2": {
+					"type": {
+						"fill": {
+							"solid": {
+								"color": true
+							}
+						}
+					},
+					"displayName": "Border"
+				}		
+			}
+		},
+        "category3": {
+			"displayName": "Category 3",
+			"properties": {
+				"fill3": {
+					"type": {
+						"fill": {
+							"solid": {
+								"color": true
+							}
+						}
+					},
+					"displayName": "Fill"
+				},
+				"border3": {
+					"type": {
+						"fill": {
+							"solid": {
+								"color": true
+							}
+						}
+					},
+					"displayName": "Border"
+				}		
+			}
+		},
+        "category4": {
+			"displayName": "Category 4",
+			"properties": {
+				"fill4": {
+					"type": {
+						"fill": {
+							"solid": {
+								"color": true
+							}
+						}
+					},
+					"displayName": "Fill"
+				},
+				"border4": {
+					"type": {
+						"fill": {
+							"solid": {
+								"color": true
+							}
+						}
+					},
+					"displayName": "Border"
+				}		
+			}
+		},
+		"ranges": {
+			"displayName": "Range",
+			"properties": {
+				"range1": {
+					"type": {
+						"numeric": true
+					},
+					"displayName": "Category 1"
+				},
+				"range2": {
+					"type": {
+						"numeric": true
+					},
+					"displayName": "Category 2"
+				},
+				"range3": {
+					"type": {
+						"numeric": true
+					},
+					"displayName": "Category 3"
+				},
+				"range4": {
+					"type": {
+						"numeric": true
+					},
+					"displayName": "Category 4"
+				}
+			}
+		}
+		
+	}
+}
