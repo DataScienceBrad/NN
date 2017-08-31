@@ -1,0 +1,338 @@
+{
+    "dataRoles": [
+        {
+            "name": "ActualValue",
+            "kind": "GroupingOrMeasure",
+            "displayName": "Actual Value"
+        },
+        {
+            "name": "TargetValue",
+            "kind": "GroupingOrMeasure",
+            "displayName": "Target Value"
+        },
+        {
+            "name": "Tooltip",
+            "kind": "Measure",
+            "displayName": "Tooltip"
+        }
+    ],
+    "objects": {
+        "general": {
+            "displayName": "General",
+            "properties": {
+                "ActualFillColor": {
+                    "displayName": "Target Color",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "custom": {
+            "displayName": "Donut Chart",
+            "properties": {
+                "show": {
+                    "displayName": "Visual",
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "ringWidth": {
+                    "displayName": "Ring Width",
+                    "type": {
+                        "formatting": {
+                            "fontSize": true
+                        }
+                    }
+                }
+            }
+        },
+        "labels": {
+            "displayName": "Data label",
+            "properties": {
+                "show": {
+                    "displayName": "Show",
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "colors": {
+                    "displayName": "Color",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "labelUnit": {
+                    "displayName": "Display Units",
+                    "type": {
+                        "enumeration": [
+                            {
+                                "value": "None",
+                                "displayName": "None"
+                            },
+                            {
+                                "value": "Thousands",
+                                "displayName": "Thousands"
+                            },
+                            {
+                                "value": "Millions",
+                                "displayName": "Millions"
+                            },
+                            {
+                                "value": "Billions",
+                                "displayName": "Billions"
+                            },
+                            {
+                                "value": "Trillions",
+                                "displayName": "Trillions"
+                            }
+                        ]
+                    }
+                },
+                "labelPrecision": {
+                    "displayName": "Decimal Places",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "labelStyle": {
+                    "displayName": "Label style",
+                    "type": {
+                        "enumeration": [
+                            {
+                                "value": "Category",
+                                "displayName": "Category"
+                            },
+                            {
+                                "value": "DataValue",
+                                "displayName": "Data Value"
+                            },
+                            {
+                                "value": "Percentage",
+                                "displayName": "Percentage"
+                            },
+                            {
+                                "value": "CategoryPercentage",
+                                "displayName": "Category, Percentage"
+                            },
+                            {
+                                "value": "DatavaluePercentage",
+                                "displayName": "Data Value, Percentage"
+                            },
+                            {
+                                "value": "CategoryDatavalue",
+                                "displayName": "Category, Data Value"
+                            },
+                            {
+                                "value": "All",
+                                "displayName": "All"
+                            }
+                        ]
+                    }
+                },
+                "fontSize": {
+                    "displayName": "Text Size",
+                    "type": {
+                        "formatting": {
+                            "fontSize": true
+                        }
+                    }
+                }
+            }
+        },
+        "ranges": {
+            "displayName": "Range",
+            "properties": {
+                "range1": {
+                    "type": {
+                        "numeric": true
+                    },
+                    "displayName": "Category 1"
+                },
+                "range2": {
+                    "type": {
+                        "numeric": true
+                    },
+                    "displayName": "Category 2"
+                },
+                "range3": {
+                    "type": {
+                        "numeric": true
+                    },
+                    "displayName": "Category 3"
+                },
+                "range4": {
+                    "type": {
+                        "numeric": true
+                    },
+                    "displayName": "Category 4"
+                }
+            }
+        },
+        "dataColors": {
+            "displayName": "Data Colors",
+            "properties": {
+                "value1": {
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    },
+                    "displayName": "Category 1"
+                },
+                "value2": {
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    },
+                    "displayName": "Category 2"
+                },
+                "value3": {
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    },
+                    "displayName": "Category 3"
+                },
+                "value4": {
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    },
+                    "displayName": "Category 4"
+                }
+            }
+        },
+        "legend": {
+            "displayName": "Legend",
+            "description": "Display legend options",
+            "properties": {
+                "show": {
+                    "displayName": "Show",
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "position": {
+                    "displayName": "Position",
+                    "description": "Select the location for the legend",
+                    "type": {
+                        "enumeration": [
+                            {
+                                "value": "Top",
+                                "displayName": "Top"
+                            },
+                            {
+                                "value": "Bottom",
+                                "displayName": "Bottom"
+                            },
+                            {
+                                "value": "Left",
+                                "displayName": "Left"
+                            },
+                            {
+                                "value": "Right",
+                                "displayName": "Right"
+                            },
+                            {
+                                "value": "TopCenter",
+                                "displayName": "Top Center"
+                            },
+                            {
+                                "value": "BottomCenter",
+                                "displayName": "Bottom Center"
+                            },
+                            {
+                                "value": "LeftCenter",
+                                "displayName": "Left Center"
+                            },
+                            {
+                                "value": "RightCenter",
+                                "displayName": "Right Center"
+                            }
+                        ]
+                    }
+                },
+                "showTitle": {
+                    "displayName": "Title",
+                    "description": "Display a title for legend symbols",
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "titleText": {
+                    "displayName": "Legend Name",
+                    "description": "Title text",
+                    "type": {
+                        "text": true
+                    },
+                    "suppressFormatPainterCopy": true
+                },
+                "labelColor": {
+                    "displayName": "Color",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "dataViewMappings": [
+        {
+            "conditions": [
+                {
+                    "ActualValue": {
+                        "max": 1
+                    },
+                    "TargetValue": {
+                        "max": 1
+                    }
+                }
+            ],
+            "categorical": {
+                "values": {
+                    "select": [
+                        {
+                            "bind": {
+                                "to": "ActualValue"
+                            }
+                        },
+                        {
+                            "bind": {
+                                "to": "TargetValue"
+                            }
+                        },
+                        {
+                            "bind": {
+                                "to": "Tooltip"
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    ]
+}
