@@ -1,0 +1,220 @@
+{
+    "dataRoles": [
+        {
+            "displayName": "Actual Value",
+            "name": "value",
+            "kind": "Measure",
+            "requiredTypes": [
+                {
+                    "numeric": true
+                }
+            ]
+        },
+        {
+            "displayName": "Target Goal",
+            "name": "goal",
+            "kind": "Measure",
+            "requiredTypes": [
+                {
+                    "numeric": true
+                }
+            ]
+        },
+        {
+            "displayName": "Color Indicator",
+            "name": "colorIndicator",
+            "kind": "Measure",
+            "requiredTypes": [
+                {
+                    "numeric": true
+                }
+            ]
+        }
+    ],
+    "dataViewMappings": [
+        {
+            "conditions": [
+                {
+                    "value": {
+                        "max": 1
+                    },
+                    "goal": {
+                        "max": 1
+                    },
+                    "colorIndicator": {
+                        "max": 1
+                    }
+                }
+            ],
+            "categorical": {
+                "values": {
+                    "select": [
+                        {
+                            "bind": {
+                                "to": "value"
+                            }
+                        },
+                        {
+                            "bind": {
+                                "to": "goal"
+                            }
+                        },
+                        {
+                            "bind": {
+                                "to": "colorIndicator"
+                            }
+                        }
+                    ],
+                    "dataReductionAlgorithm": {
+                        "top": {
+                            "count": 50000
+                        }
+                    }
+                }
+            }
+        }
+    ],
+    "objects": {
+        "indicator": {
+            "displayName": "Actual value",
+            "description": "Options to update actual value settings",
+            "properties": {
+                "fontSize": {
+                    "displayName": "Font size",
+                    "description": "Option to update font size of actual value",
+                    "type": {
+                        "formatting": {
+                            "fontSize": true
+                        }
+                    }
+                },
+                "labelDisplayUnits": {
+                    "displayName": "Display Units",
+                    "description": "Select the units (millions, billions, etc).",
+                    "type": {
+                        "formatting": {
+                            "labelDisplayUnits": true
+                        }
+                    }
+                },
+                "labelPrecision": {
+                    "displayName": "Decimal Places",
+                    "description": "Select the number of decimal places to display",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "fontColor": {
+                    "displayName": "Font color",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "goals": {
+            "displayName": "Goals",
+            "description": "Options to update goal settings",
+            "properties": {
+                "show": {
+                    "displayName": "Show",
+                    "description": "Option to show/hide goal",
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "goal": {
+                    "displayName": "Goal",
+                    "description": "Option to show/hide goal value",
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "distance": {
+                    "displayName": "Distance",
+                    "description": "Option to show/hide distance percentage",
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "position": {
+                    "displayName": "Position",
+                    "description": "Option to change the position of the Goal",
+                    "type": {
+                        "enumeration": [
+                            {
+                                "displayName": "Top",
+                                "value": "top"
+                            },
+                            {
+                                "displayName": "Bottom",
+                                "value": "bottom"
+                            }
+                        ]
+                    }
+                },
+                "color": {
+                    "displayName": "Font color",
+                    "description": "Option to change font color of goal",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "colorCoding": {
+            "displayName": "Color coding",
+            "description": "Options to update the colors",
+            "properties": {
+                "oneColor": {
+                    "displayName": "1",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "twoColor": {
+                    "displayName": "2",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "threeColor": {
+                    "displayName": "3",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "fourColor": {
+                    "displayName": "4",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

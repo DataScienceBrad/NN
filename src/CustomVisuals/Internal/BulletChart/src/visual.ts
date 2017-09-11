@@ -54,6 +54,7 @@ module powerbi.extensibility.visual {
         private goodColor: string;
         private satisfactoryColor: string;
         private vGoodColor: string;
+        private targetExists: boolean;
 
         // bullet chart formatting pane options
         private barColorSettings: IBarColors;
@@ -138,6 +139,7 @@ module powerbi.extensibility.visual {
                         bulletDataPoint.value = value;
                         bulletDataPoint.color = 'targetValColor';
                         bulletDataPoint.index = 5;
+                        this.targetExists = true;
                     }
                     viewModel.dataPoints.push(bulletDataPoint);
                 }
@@ -162,6 +164,7 @@ module powerbi.extensibility.visual {
 
         public update(options: VisualUpdateOptions) {
             this.colorPalette = this.host.colorPalette;
+            this.targetExists = false;
             if (!options) {
                 return;
             }
@@ -327,7 +330,7 @@ module powerbi.extensibility.visual {
             let maxValText = textMeasurementService.getTailoredTextOrDefault(maxValTextProps, options.viewport.width - labelXPos + 4);
 
             // for displaying the labels at bottom
-            if (this.targetValue && this.targetValue >= 0) {
+            if (this.targetExists && this.targetValue && this.targetValue >= 0) {
                 this.svg.append('text')
                     .text(maxValText)
                     .attr({
@@ -352,11 +355,25 @@ module powerbi.extensibility.visual {
         public getTooltipData(value: any): VisualTooltipDataItem[] {
             let tooltipDataPoints: VisualTooltipDataItem[] = [];
             let displayName = value && value.category ? value.category : '';
+            let name1 = displayName.length ? displayName.toLowerCase() : '';
+            switch (name1) {
+                case 'satisfactory':
+                    displayName = 'Red';
+                    break;
+                case 'good':
+                    displayName = 'Yellow';
+                    break;
+                case 'very good':
+                    displayName = 'Green';
+                    break;
+                default:
+                    break;
+            }
             let dataValue = value && value.value ? value.value : '';
             let formatter = valueFormatter.create({
                 format: this.actualFormat
             });
-            dataValue = formatter.format(dataValue); // visualUtils.getValue(dataValue, this.actualFormat, true);
+            dataValue = formatter.format(dataValue);
             let tooltipData: VisualTooltipDataItem = {
                 displayName: displayName,
                 value: dataValue
