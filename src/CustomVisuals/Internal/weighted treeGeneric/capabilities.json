@@ -1,0 +1,207 @@
+{
+    "dataRoles": [
+        {
+            "displayName": "Category Data",
+            "name": "category",
+            "kind": "Grouping"
+        },
+        {
+            "displayName": "Measure Data",
+            "name": "value",
+            "kind": "Measure"
+        }
+    ],
+    "dataViewMappings": [
+        {
+            "conditions": [
+                {
+                    "category": {
+                        "max": 7
+                    },
+                    "value": {
+                        "max": 1
+                    }
+                }
+            ],
+            "categorical": {
+                "categories": {
+                    "select": [
+                        {
+                            "for": {
+                                "in": "category"
+                            }
+                        }
+                    ],
+                    "dataReductionAlgorithm": {
+                        "top": {
+                            "count": 100000
+                        }
+                    }
+                },
+                "values": {
+                    "for": {
+                        "in": "value"
+                    }
+                }
+            }
+        }
+    ],
+    "suppressDefaultTitle": true,
+    "sorting": {
+        "default": {}
+    },
+    "objects": {
+
+          "View": {
+            "displayName": "Chart View",
+            "properties": {
+                  "show": {
+                    "displayName": "Collapse/Expand",
+                    "type": {
+                        "bool": true
+                    }
+                }
+            }
+        },
+        "ChartOrientation": {
+            "displayName": "Chart Orientation",
+            "properties": {
+                "Orientation": {
+                    "displayName": "Orientation",
+                    "type": {
+                      
+                        "enumeration": [
+                            {
+                                "value": "Top-Bottom",
+                                "displayName": "Top-Bottom"
+                            },
+                            {
+                                "value": "Left-Right",
+                                "displayName": "Left-Right"
+                            }
+                        ]
+                    }
+                }
+            }
+        },
+         "imageurls": {
+            "displayName": "Image Urls",
+            "properties": {
+                "Level1Image": {
+                    "displayName": "Level1",
+                       "placeHolderText": "Auto",
+                    "type": {
+                      "text":true
+                    }
+                },
+                      "Level2Image": {
+                    "displayName": "Level2",
+                       "placeHolderText": "Auto",
+                    "type": {
+                      "text":true
+                    }
+                },
+                   "Level3Image": {
+                    "displayName": "Level3",
+                       "placeHolderText": "Auto",
+                    "type": {
+                      "text":true
+                    }
+                },
+                "Level4Image": {
+                    "displayName": "Level4",
+                       "placeHolderText": "Auto",
+                    "type": {
+                      "text":true
+                    }
+                },
+                "Level5Image": {
+                    "displayName": "Level5",
+                       "placeHolderText": "Auto",
+                    "type": {
+                      "text":true
+                    }
+                },
+                 "Level6Image": {
+                    "displayName": "Level6",
+                       "placeHolderText": "Auto",
+                    "type": {
+                      "text":true
+                    }
+                },
+                 "Level7Image": {
+                    "displayName": "Level7",
+                       "placeHolderText": "Auto",
+                    "type": {
+                      "text":true
+                    }
+                }
+                
+            }
+        },
+        "labelSettings": {
+            "displayName": "Label settings",
+            "properties": {
+                "show": {
+                    "displayName": "Show",
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "color": {
+                    "displayName": "Color",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "fontSize": {
+                    "displayName": "Font size",
+                    "type": {
+                        "formatting": {
+                            "fontSize": true
+                        }
+                    }
+                },
+                "displayUnits": {
+                    "displayName": "Display Units",
+                    "description": "Select the units (millions, billions, etc).",
+                    "type": {
+                        "formatting": {
+                            "labelDisplayUnits": true
+                        }
+                    }
+                },
+                "labelPrecision": {
+                    "displayName": "Decimal Places",
+                    "description": "Select the number of decimal places to display",
+                    "placeHolderText": "Auto",
+                    "type": {
+                        "numeric": true
+                    }
+                }
+            }
+        },
+  
+       
+        "linkcolor": {
+            "displayName": "Link Settings",
+            "properties": {
+                "color": {
+                    "displayName": "Color",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                }
+            }
+        }
+     
+    }
+}

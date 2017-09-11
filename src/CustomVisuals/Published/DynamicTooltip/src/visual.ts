@@ -62,7 +62,7 @@ module powerbi.extensibility.visual {
         imageurl: string;
     };
 
-    export interface MeasureSettings {
+    export interface measureSettings {
         show: boolean;
         textPrecision: number;
         displayUnits: number;
@@ -74,10 +74,10 @@ module powerbi.extensibility.visual {
             header: <DataViewObjectPropertyIdentifier>{ objectName: 'tooltip', propertyName: 'header' },
             imageurl: <DataViewObjectPropertyIdentifier>{ objectName: 'tooltip', propertyName: 'imageurl' },
         },
-        MeasureSettings: {
-            show: <DataViewObjectPropertyIdentifier>{ objectName: 'MeasureTooltip', propertyName: 'show' },
-            textPrecision: <DataViewObjectPropertyIdentifier>{ objectName: 'MeasureTooltip', propertyName: 'textPrecision' },
-            displayUnits: <DataViewObjectPropertyIdentifier>{ objectName: 'MeasureTooltip', propertyName: 'displayUnits' }
+        measureSettings: {
+            show: <DataViewObjectPropertyIdentifier>{ objectName: 'measuretooltip', propertyName: 'show' },
+            textPrecision: <DataViewObjectPropertyIdentifier>{ objectName: 'measuretooltip', propertyName: 'textPrecision' },
+            displayUnits: <DataViewObjectPropertyIdentifier>{ objectName: 'measuretooltip', propertyName: 'displayUnits' }
         }
     };
 
@@ -94,6 +94,8 @@ module powerbi.extensibility.visual {
         private dataViews;
         private imageurl: string;
         private showMeasure: boolean;
+        private textPrecision: number;
+        private displayUnits: number;
 
         constructor(options: VisualConstructorOptions) {
             this.host = options.host;
@@ -106,11 +108,12 @@ module powerbi.extensibility.visual {
             this.tooltipText = "Tooltip text here";
             this.header = "Tooltip header text here";
             this.showMeasure = false;
+            this.textPrecision = 0;
+            this.displayUnits = 0;
         }
 
         public update(options: VisualUpdateOptions) {
 
-            // debugger;
             var textSetting: tooltip = this.getDefaultTextSettings();
             var img = d3.select('img');
 
@@ -125,7 +128,7 @@ module powerbi.extensibility.visual {
                 var selectedImage: string;
                 var validImage: boolean;
                 var tooltipSettings: tooltip = this.getToolTipSettings(dataView);
-                var measureSettings: MeasureSettings = this.getMeasureSettings(dataView);
+                var measureSettings: measureSettings = this.getMeasureSettings(dataView);
 
                 this.tooltipText = tooltipSettings.text;
                 this.header = tooltipSettings.header;
@@ -168,18 +171,18 @@ module powerbi.extensibility.visual {
             return textSetting;
         }
 
-        public getMeasureSettings(dataView: DataView): MeasureSettings {
+        public getMeasureSettings(dataView: DataView): measureSettings {
             var objects: DataViewObjects = null;
-            var settings: MeasureSettings = this.getDefaultMeasureSettings();
+            var settings: measureSettings = this.getDefaultMeasureSettings();
 
             if (!dataView.metadata || !dataView.metadata.objects)
                 return settings;
 
             objects = dataView.metadata.objects;
             var properties = visualProperties;
-            settings.show = DataViewObjects.getValue(objects, properties.MeasureSettings.show, settings.show);
-            settings.displayUnits = DataViewObjects.getValue(objects, properties.MeasureSettings.displayUnits, settings.displayUnits);
-            settings.textPrecision = DataViewObjects.getValue(objects, properties.MeasureSettings.textPrecision, settings.textPrecision);
+            settings.show = DataViewObjects.getValue(objects, properties.measureSettings.show, settings.show);
+            settings.displayUnits = DataViewObjects.getValue(objects, properties.measureSettings.displayUnits, settings.displayUnits);
+            settings.textPrecision = DataViewObjects.getValue(objects, properties.measureSettings.textPrecision, settings.textPrecision);
             return settings;
         }
 
@@ -191,7 +194,7 @@ module powerbi.extensibility.visual {
             }
         }
 
-        public getDefaultMeasureSettings(): MeasureSettings {
+        public getDefaultMeasureSettings(): measureSettings {
             return {
                 show: false,
                 textPrecision: 0,
@@ -209,7 +212,7 @@ module powerbi.extensibility.visual {
 
         public enumerateObjectInstances(options: EnumerateVisualObjectInstancesOptions): VisualObjectInstanceEnumeration {
             var tooltipSetting: tooltip = this.getToolTipSettings(this.dataViews);
-            var measureSettings: MeasureSettings = this.getMeasureSettings(this.dataViews);
+            var measureSettings: measureSettings = this.getMeasureSettings(this.dataViews);
             let objectName = options.objectName;
             let objectEnumeration: VisualObjectInstance[] = [];
 
@@ -226,7 +229,7 @@ module powerbi.extensibility.visual {
                         selector: null
                     });
                     break;
-                case 'MeasureTooltip':
+                case 'measuretooltip':
                     objectEnumeration.push({
                         objectName: objectName,
                         displayName: 'Measure Tooltip',

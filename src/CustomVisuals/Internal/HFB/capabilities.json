@@ -1,0 +1,212 @@
+{
+	"dataRoles": [
+		{
+			"name": "category",
+			"kind": "Grouping",
+			"displayName": "Category"
+		},
+		{
+			"name": "subCategory",
+			"kind": "Grouping",
+			"displayName": "Sub Category"
+		},
+		{
+			"name": "primaryMeasure",
+			"kind": "Measure",
+			"displayName": "Primary Measure",
+			"requiredTypes": [
+				{
+					"numeric": true
+				}
+			]
+		},
+		{
+			"name": "secondaryMeasure",
+			"kind": "Measure",
+			"displayName": "Secondary Measure",
+			"requiredTypes": [
+				{
+					"numeric": true
+				}
+			]
+		}
+	],
+	"sorting": {
+		"implicit": {
+			"clauses": [
+				{
+					"role": "subCategory",
+					"direction": 1
+				}
+			]
+		}
+	},
+	"dataViewMappings": [
+		{
+			"conditions": [
+				{
+					"category": {
+						"max": 1
+					},
+					"subCategory": {
+						"max": 1
+					},
+					"primaryMeasure": {
+						"max": 1
+					},
+					"secondaryMeasure": {
+						"max": 1
+					}
+				}
+			],
+			"categorical": {
+				"categories": {
+					"select": [
+						{
+							"for": {
+								"in": "category"
+							}
+						}
+					],
+					"dataReductionAlgorithm": {
+						"top": {
+							"count": 30000
+						}
+					}
+				},
+				"values": {
+					"group": {
+						"by": "subCategory",
+						"select": [
+							{
+								"bind": {
+									"to": "primaryMeasure"
+								}
+							},
+							{
+								"bind": {
+									"to": "secondaryMeasure"
+								}
+							}
+						],
+						"dataReductionAlgorithm": {
+							"top": {
+								"count": 30000
+							}
+						}
+					}
+				}
+			}
+		}
+	],
+	"suppressDefaultTitle": true,
+	"objects": {
+		"dataPoint": {
+			"displayName": "Data colors",
+			"description": "Display data color options",
+			"properties": {
+				"fill": {
+					"type": {
+						"fill": {
+							"solid": {
+								"color": true
+							}
+						}
+					}
+				}
+			}
+		},
+		"labels": {
+			"displayName": "Primary data labels",
+			"description": "Option to update primary label settings",
+			"properties": {
+				"fontColor": {
+					"displayName": "Font color",
+					"description": "Option to update font color",
+					"type": {
+						"fill": {
+							"solid": {
+								"color": true
+							}
+						}
+					}
+				},
+				"labelDisplayUnits": {
+					"displayName": "Display units",
+					"description": "Select the units (millions, billions, etc).",
+					"type": {
+						"formatting": {
+							"labelDisplayUnits": true
+						}
+					}
+				},
+				"labelPrecision": {
+					"displayName": "Decimal Places",
+					"description": "Select the number of decimal places to display",
+					"type": {
+						"numeric": true
+					}
+				}
+			}
+		},
+		"secondaryLabels": {
+			"displayName": "Secondary data labels",
+			"description": "Option to update secondary label settings",
+			"properties": {
+				"fontColor": {
+					"displayName": "Font color",
+					"description": "Option to update font color",
+					"type": {
+						"fill": {
+							"solid": {
+								"color": true
+							}
+						}
+					}
+				},
+				"labelDisplayUnits": {
+					"displayName": "Display units",
+					"description": "Select the units (millions, billions, etc).",
+					"type": {
+						"formatting": {
+							"labelDisplayUnits": true
+						}
+					}
+				},
+				"labelPrecision": {
+					"displayName": "Decimal Places",
+					"description": "Select the number of decimal places to display",
+					"type": {
+						"numeric": true
+					}
+				}
+			}
+		},
+		"gradientColors": {
+			"displayName": "Gradient colors",
+			"description": "Option to select minimum and maximum gradient colors",
+			"properties": {
+				"minColor": {
+					"displayName": "Minimum",
+					"type": {
+						"fill": {
+							"solid": {
+								"color": true
+							}
+						}
+					}
+				},
+				"maxColor": {
+					"displayName": "Maximum",
+					"type": {
+						"fill": {
+							"solid": {
+								"color": true
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

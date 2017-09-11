@@ -51,6 +51,10 @@ module powerbi.extensibility.visual {
         // private satisfactoryValue: number;
         // private vGoodValue: number;
         private targetValue: number;
+        private goodColor: string;
+        private satisfactoryColor: string;
+        private vGoodColor: string;
+        private targetExists: boolean;
 
         // bullet chart formatting pane options
         private barColorSettings: IBarColors;
@@ -63,6 +67,10 @@ module powerbi.extensibility.visual {
             this.svg = d3.select(this.target)
                 .append('svg');
             this.maxDataValue = -1;
+            this.goodColor = '';
+            this.vGoodColor = '';
+            this.satisfactoryColor = '';
+            // this.targetValue = 0;
             // this.interactivityService = powerbi.extensibility.utils.interactivity.createInteractivityService(options.host);
         }
 
@@ -84,7 +92,7 @@ module powerbi.extensibility.visual {
             for (let i = 0; i < valuesLen; i++) {
                 let bulletDataPoint: BulletDataPoint = {
                     category: '',
-                    value: -1,
+                    value: 0,
                     color: '',
                     index: 0
                 };
@@ -92,9 +100,9 @@ module powerbi.extensibility.visual {
                     && categorical.values
                     && categorical.values[i]
                     && categorical.values[i].source) {
-                    let value = -1;
+                    let value = 0;
                     if (categorical.values[i].values
-                        && categorical.values[i].values[0]) {
+                        && (categorical.values[i].values.length)) {
                         value = <number>categorical.values[i].values[0];
                     }
 
@@ -103,41 +111,41 @@ module powerbi.extensibility.visual {
                         bulletDataPoint.value = value;
                         bulletDataPoint.color = 'satisfactoryColor';
                         bulletDataPoint.index = 1;
-                    }
-                    else if (categorical.values[i].source.roles['good']) {
+                    } else if (categorical.values[i].source.roles['good']) {
                         bulletDataPoint.category = 'Good';
                         bulletDataPoint.value = value;
                         bulletDataPoint.color = 'goodColor';
                         bulletDataPoint.index = 2;
                         this.goodValue = value;
-                        this.targetDataFormat = categorical.values[i].source.format ? categorical.values[i].source.format : valueFormatter.DefaultNumericFormat;
-                    }
-                    else if (categorical.values[i].source.roles['vGood']) {
+                        this.targetDataFormat = categorical.values[i].source.format ?
+                            categorical.values[i].source.format : valueFormatter.DefaultNumericFormat;
+                    } else if (categorical.values[i].source.roles['vGood']) {
                         bulletDataPoint.category = 'Very Good';
                         bulletDataPoint.value = value;
                         this.maxDataValue = value;
                         bulletDataPoint.color = 'vGoodColor';
                         bulletDataPoint.index = 3;
-                    }
-                    else if (categorical.values[i].source.roles['actualValue']) {
+                    } else if (categorical.values[i].source.roles['actualValue']) {
                         this.actualValue = value;
                         bulletDataPoint.category = 'Actual Value';
                         bulletDataPoint.value = value;
                         bulletDataPoint.color = 'actualValColor';
                         bulletDataPoint.index = 4;
-                        this.actualFormat = categorical.values[i].source.format ? categorical.values[i].source.format : valueFormatter.DefaultNumericFormat;
-                    }
-                    else if (categorical.values[i].source.roles['targetValue']) {
+                        this.actualFormat = categorical.values[i].source.format ?
+                            categorical.values[i].source.format : valueFormatter.DefaultNumericFormat;
+                    } else if (categorical.values[i].source.roles['targetValue']) {
                         this.targetValue = value;
                         bulletDataPoint.category = 'Target Value';
                         bulletDataPoint.value = value;
                         bulletDataPoint.color = 'targetValColor';
                         bulletDataPoint.index = 5;
+                        this.targetExists = true;
                     }
                     viewModel.dataPoints.push(bulletDataPoint);
                 }
             }
             viewModel.dataPoints.sort(this.objectSort('index'));
+
             return viewModel;
         }
         public objectSort(objProperty) {
@@ -151,11 +159,12 @@ module powerbi.extensibility.visual {
                 let result = (a[objProperty] < b[objProperty]) ? -1 : (a[objProperty] > b[objProperty]) ? 1 : 0;
 
                 return result * sortOrder;
-            }
+            };
         }
 
         public update(options: VisualUpdateOptions) {
             this.colorPalette = this.host.colorPalette;
+            this.targetExists = false;
             if (!options) {
                 return;
             }
@@ -176,7 +185,10 @@ module powerbi.extensibility.visual {
 
             let labelConfig: ILabelSettings = this.labelSettings = enumSettings.getLabelSettings(dataView);
             let barColorConfig: IBarColors = this.barColorSettings = enumSettings.getBarColors(dataView);
-            if (this.maxDataValue < 0) {
+            this.goodColor = barColorConfig.goodColor;
+            this.satisfactoryColor = barColorConfig.satisfactoryColor;
+            this.vGoodColor = barColorConfig.vGoodColor;
+            if (this.maxDataValue <= 0) {
                 this.maxDataValue = this.goodValue > 0 ? this.goodValue : this.actualValue > 0 ? this.actualValue * 2 : 1;
             }
             let THIS = this;
@@ -191,8 +203,8 @@ module powerbi.extensibility.visual {
                 y: Visual.margins.top
             });
 
-            let formattedActualVal = visualUtils.getValue(this.actualValue, this.actualFormat, false, labelConfig);            
-            let formattedMaxVal = this.targetValue ? visualUtils.getValue(this.targetValue, this.targetDataFormat, false, labelConfig) : "";
+            let formattedActualVal = visualUtils.getValue(this.actualValue, this.actualFormat, false, labelConfig);
+            let formattedMaxVal = this.targetValue ? visualUtils.getValue(this.targetValue, this.targetDataFormat, false, labelConfig) : '';
 
             let actualTextProps: TextProperties = {
                 fontFamily: 'Segoe UI',
@@ -214,9 +226,10 @@ module powerbi.extensibility.visual {
                 .text(visualUtils.getValue(this.actualValue, this.actualFormat, true));
 
             // Empty background bar
+            let bkColor = !this.targetValue || this.targetValue === 0 ? '#D3D3D3' : barColorConfig.vGoodColor;
             this.svg.append('rect')
                 .classed('bullet_bar', true)
-                .style('fill', barColorConfig.vGoodColor)
+                .style('fill', bkColor)
                 .attr({
                     width: visualWidth,
                     height: visualHeight
@@ -231,12 +244,12 @@ module powerbi.extensibility.visual {
             // function to calculate width of each bar
             function getWidth(currentVal) {
                 let width: number = 0;
-                width = (currentVal * visualWidth) / THIS.maxDataValue;
+                width = THIS.maxDataValue === 0 ? 0 : (currentVal * visualWidth) / THIS.maxDataValue;
 
                 return width;
             }
 
-            // code for creating bars            
+            // code for creating bars
             let labelXPos = Visual.margins.right;
             for (let i = 0; i < values; i++) {
                 let xPos = Visual.margins.left;
@@ -260,7 +273,7 @@ module powerbi.extensibility.visual {
                             y: yPos
                         });
                 } else if (viewModel.dataPoints[i].color === 'targetValColor') {
-                    if (this.targetValue >= 0) {
+                    if (this.targetValue > 0) {
                         xPos = Visual.margins.left + getWidth(this.targetValue);
                         labelXPos = xPos;
                         barWidth = 2;
@@ -271,7 +284,10 @@ module powerbi.extensibility.visual {
                     this.svg.append('line')
                         .classed(viewModel.dataPoints[i].category, true)
                         .classed('targetLine', true)
-                        .style({ 'stroke': barColorConfig[viewModel.dataPoints[i].color], 'stroke-width': barWidth })
+                        .style({
+                            stroke: barColorConfig[viewModel.dataPoints[i].color],
+                            'stroke-width': barWidth
+                        })
                         .attr({
                             x1: xPos,
                             x2: xPos,
@@ -288,7 +304,7 @@ module powerbi.extensibility.visual {
                     }
                 }
                 if (viewModel.dataPoints[i].color !== 'targetValColor' && viewModel.dataPoints[i].color !== 'actualValColor') {
-                    if (this.targetValue < 0) {
+                    if (this.targetValue <= 0) {
                         barWidth = 0;
                     }
                     this.svg.append('rect')
@@ -304,7 +320,6 @@ module powerbi.extensibility.visual {
                             y: yPos
                         });
                 }
-
             }
 
             let maxValTextProps: TextProperties = {
@@ -315,21 +330,18 @@ module powerbi.extensibility.visual {
             let maxValText = textMeasurementService.getTailoredTextOrDefault(maxValTextProps, options.viewport.width - labelXPos + 4);
 
             // for displaying the labels at bottom
-            if (this.targetValue && this.targetValue >= 0) {
+            if (this.targetExists && this.targetValue && this.targetValue >= 0) {
                 this.svg.append('text')
                     .text(maxValText)
                     .attr({
                         x: labelXPos - 4,
-                        y: Visual.margins.top + visualHeight + parseInt(labelConfig.labelSize.toString()),
+                        y: Visual.margins.top + visualHeight + parseInt(labelConfig.labelSize.toString(), 10),
                         fill: labelConfig.labelColor,
                         'font-size': `${labelConfig.labelSize}px`
                     })
                     .append('title')
                     .text(visualUtils.getValue(this.targetValue, this.targetDataFormat, true));
-            } else {
-
             }
-
             let barsData = this.svg.selectAll('rect.bullet_bars').data(viewModel.dataPoints);
 
             // Adding tooltips
@@ -343,8 +355,25 @@ module powerbi.extensibility.visual {
         public getTooltipData(value: any): VisualTooltipDataItem[] {
             let tooltipDataPoints: VisualTooltipDataItem[] = [];
             let displayName = value && value.category ? value.category : '';
+            let name1 = displayName.length ? displayName.toLowerCase() : '';
+            switch (name1) {
+                case 'satisfactory':
+                    displayName = 'Red';
+                    break;
+                case 'good':
+                    displayName = 'Yellow';
+                    break;
+                case 'very good':
+                    displayName = 'Green';
+                    break;
+                default:
+                    break;
+            }
             let dataValue = value && value.value ? value.value : '';
-            dataValue = visualUtils.getValue(dataValue, this.actualFormat, true);
+            let formatter = valueFormatter.create({
+                format: this.actualFormat
+            });
+            dataValue = formatter.format(dataValue);
             let tooltipData: VisualTooltipDataItem = {
                 displayName: displayName,
                 value: dataValue
