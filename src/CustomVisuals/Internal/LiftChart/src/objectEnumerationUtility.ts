@@ -12,7 +12,7 @@ module powerbi.extensibility.visual {
         if(objects) {
             let object = objects[objectName];
             if(object) {
-                let property: T = object[propertyName];
+                let property: T = <T>object[propertyName];
                 if(property !== undefined) {
                     return property;
                 }

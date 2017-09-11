@@ -1,37 +1,46 @@
 {
-    "dataRoles": [{
-        "displayName": "X Axis",
-        "name": "category",
-        "kind": 0
-    }, {
-        "displayName": "Values",
-        "name": "measure",
-        "kind": 1
-    }],
-    "dataViewMappings": [{
-        "conditions": [{
-            "category": {
-                "max": 1
-            }
-        }],
-        "categorical": {
-            "categories": {
-                "for": {
-                    "in": "category"
-                },
-                "dataReductionAlgorithm": {
-                    "top": {}
-                }
-            },
-            "values": {
-                "select": [{
-                    "bind": {
-                        "to": "measure"
+    "dataRoles": [
+        {
+            "displayName": "X Axis",
+            "name": "category",
+            "kind": "Grouping"
+        },
+        {
+            "displayName": "Values",
+            "name": "measure",
+            "kind": "Measure"
+        }
+    ],
+    "dataViewMappings": [
+        {
+            "conditions": [
+                {
+                    "category": {
+                        "max": 1
                     }
-                }]
+                }
+            ],
+            "categorical": {
+                "categories": {
+                    "for": {
+                        "in": "category"
+                    },
+                    "dataReductionAlgorithm": {
+                        "top": {}
+                    }
+                },
+                "values": {
+                    "select": [
+                        {
+                            "bind": {
+                                "to": "measure"
+                            }
+                        }
+                    ]
+                }
             }
         }
-    }],
+    ],
     "objects": {
         "Legend": {
             "displayName": "Legends",
@@ -92,6 +101,15 @@
         "Lift": {
             "displayName": "Lift Configurations",
             "properties": {
+                "dragWindowWidth": {
+                    "displayName": "Window Width",
+                    "description": "Option to set window drag width",
+                    "type": {
+                        "formatting": {
+                            "fontSize": true
+                        }
+                    }
+                },
                 "dragLineColor": {
                     "displayName": "Drag Line Color",
                     "description": "Option to set drag line color",
