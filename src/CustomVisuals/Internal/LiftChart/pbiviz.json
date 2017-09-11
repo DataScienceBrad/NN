@@ -2,14 +2,14 @@
   "visual": {
     "name": "Lift Chart",
     "displayName": "Lift Chart",
-    "guid": "PBI_CV_0C8159C4_5413_4262_A0E1_4E0CEF5FFC65",
+    "guid": "PBI_CV_0C8159C4_5413_4262_A0E1_4E0CEF5FFC75",
     "visualClassName": "Visual",
     "version": "1.0.0",
     "description": "Lift chart is used to show the lift data with respect to ideal data",
     "supportUrl": "https://github.com/maqsoftware/PowerBI-visuals/issues",
     "gitHubUrl": "https://github.com/maqsoftware/PowerBI-visuals/"
   },
-  "apiVersion": "1.1.0",
+  "apiVersion": "1.4.0",
   "author": {
     "name": "MAQ Software",
     "email": "sales@maqsoftware.com"
@@ -19,8 +19,20 @@
     "thumbnail": "assets/thumbnail.png",
     "screenshot": "assets/screenshot.png"
   },
-  "externalJS": [],
+  "externalJS": [
+    "node_modules/lodash/lodash.min.js",
+     "node_modules/powerbi-visuals-utils-dataviewutils/lib/index.js",
+    "node_modules/powerbi-visuals-utils-typeutils/lib/index.js",
+    "node_modules/powerbi-visuals-utils-colorutils/lib/index.js",
+      "node_modules/jquery/dist/jquery.min.js",
+    "node_modules/d3/d3.min.js",
+    "node_modules/lodash/lodash.min.js",
+    "node_modules/globalize/lib/globalize.js",
+    "node_modules/globalize/lib/cultures/globalize.culture.en-US.js",
+    "node_modules/powerbi-visuals-utils-typeutils/lib/index.js",
+    "node_modules/powerbi-visuals-utils-svgutils/lib/index.js",
+    "node_modules/powerbi-visuals-utils-formattingutils/lib/index.js"
+  ],
   "style": "style/visual.less",
   "capabilities": "capabilities.json"
-  
 }

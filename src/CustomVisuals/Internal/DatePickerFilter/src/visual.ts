@@ -68,6 +68,12 @@ module powerbi.extensibility.visual {
         // stores the font size of elements of the visual
         private static iFontSize: number;
 
+        // stores the previously selected start date
+        private static prevStartDate: String;
+
+        // stores the previously selected end date
+        private static prevEndDate: String;
+
         /**
         * Creates instance of date picker filter. This method is only called once.
         *
@@ -113,17 +119,19 @@ module powerbi.extensibility.visual {
             //sFormattedDate    -   Formatted date string
             var sMinDateFromStart, sMinDateFromEnd, sMaxDateFromStart, sMaxDateFromEnd, sFormattedMonth, sFormattedDate, sDateFormat: string;
 
-            // oMinStartDate    -   Minimum start date from start dates in date format
-            // oMaxEndDate      -   Maximum end date from end dates in date format
             // oTempDate        -   Temporary variable to process dates
-            var oMinStartDate, oMaxEndDate, oTempDate: Date;
+            var oTempDate: Date;
+
             // oStartDateValue  - to store the category data of start date
-            // oEndDateValue  - to store the category data of end date
+            // oEndDateValue    - to store the category data of end date
             var oStartDateValue, oEndDateValue;
-            // iCounter   - counter to iterate through the values
+
+            // iCounter         - counter to iterate through the values
             var iCounter: number;
+
             // bIsDateHierarchy -   Check whether data is in hierarchy or without hierarchy.
             var bIsDateHierarchy: boolean;
+
             //Loads jQuery UI Date Picker
             function callBackFun() {
 
@@ -169,7 +177,7 @@ module powerbi.extensibility.visual {
 
             //Return if data is not received or the length of categories is not as required
             if (options.dataViews.length === 0 || !options.dataViews[0].categorical || !(options.dataViews[0].categorical.categories.length != 3 || options.dataViews[0].categorical.categories.length != 9)) {
-                Visual.diplayDataAlert(0);
+                Visual.displayDataAlert(0);
                 return;
             }
             //if the above condition is false remove the textToDisplay element
@@ -255,7 +263,7 @@ module powerbi.extensibility.visual {
                     for (iCounter = 0; iCounter < oStartDateValue.values.length; iCounter++) {
                         if (!(oStartDateValue.values[iCounter] == null) && !(oEndDateValue.values[iCounter] == null)) {
                             if (!(oStartDateValue.values[iCounter] instanceof Date) || !(oEndDateValue.values[iCounter] instanceof Date)) {
-                                Visual.diplayDataAlert(1);
+                                Visual.displayDataAlert(1);
                                 return;
                             }
                         }
@@ -273,7 +281,7 @@ module powerbi.extensibility.visual {
 
                 //Check if start and end dates with at least one category is obtained from data set.
                 if (this.iDataColumnLength < 3) {
-                    Visual.diplayDataAlert(0);
+                    Visual.displayDataAlert(0);
                     return;
                 }
                 else {
@@ -288,7 +296,7 @@ module powerbi.extensibility.visual {
             }
             else {
                 if (this.iDataColumnLength < 9) {
-                    Visual.diplayDataAlert(0);
+                    Visual.displayDataAlert(0);
                     return;
                 }
                 else {
@@ -350,7 +358,9 @@ module powerbi.extensibility.visual {
             //Change the date format from DD-MM-YYYY to the format specified in formatting options
             sMaxDateFromStart = this.changeMinMaxDateFormat(sMaxDateFromStart, sDateFormat);
 
-            loadJQueryUI(callBackFun);
+            if ($("#enddatepicker").datepicker === undefined) {
+                loadJQueryUI(callBackFun);
+            }
 
             // call change event of date picker only if it is first load or some date is selected from date picker
             if (this.bIsFirstLoad || Visual.bIsDateSelected) {
@@ -362,17 +372,17 @@ module powerbi.extensibility.visual {
             Visual.bIsDateSelected = false;
 
             $("#enddatepicker").change(function (ev) {
-
-                //Handle click event of date picker
-                this.datePickerClick();
-
+                if (Visual.prevEndDate !== document.getElementById("enddatepicker")["value"]) {
+                    //Handle click event of date picker
+                    this.datePickerClick();
+                }
             }.bind(this));
 
             $("#startdatepicker").change(function (ev) {
-
-                //Handle click event of date picker
-                this.datePickerClick();
-
+                if (Visual.prevStartDate !== document.getElementById("startdatepicker")["value"]) {
+                    //Handle click event of date picker
+                    this.datePickerClick();
+                }
             }.bind(this));
 
         }
@@ -408,7 +418,7 @@ module powerbi.extensibility.visual {
         /* method to display basic requirements if the selection of columns is not appropriate
         * @param {number} iRequirementType - if it is 1 means the data type of columns is not appropriate and if it is anything else it means not all fields are selected
         */
-        public static diplayDataAlert(iRequirementType: number) {
+        public static displayDataAlert(iRequirementType: number) {
             // remove textToDisplay element if it exists
             Visual.removeDataAlert();
             $('#mainWindow').append('<p id = "textToDisplay"></p>');
@@ -427,7 +437,7 @@ module powerbi.extensibility.visual {
 
         public applyFiltering(oStartDate: Date, oEndDate: Date, bIsHierarchy: boolean) {
             if (this.iDataColumnLength < 3 || this.iDataColumnLength < 9) {
-                Visual.diplayDataAlert(0);
+                Visual.displayDataAlert(0);
                 return;
             }
             else {
@@ -442,14 +452,13 @@ module powerbi.extensibility.visual {
         }
 
         public datePickerClick() {
-
             var sStartDate, sEndDate;
 
             // click event is called so make bIsDateSelected true
             Visual.bIsDateSelected = true;
             //Return if data is not received
             if (this.oOptions.dataViews.length === 0) {
-                Visual.diplayDataAlert(0);
+                Visual.displayDataAlert(0);
                 return;
             }
             // if above condition is false remove textToDisplay element if present
@@ -466,6 +475,9 @@ module powerbi.extensibility.visual {
             // store the selected dates in a global variable to retain the values in next update
             Visual.sStartDateLast = sStartDate;
             Visual.sEndDateLast = sEndDate;
+
+            Visual.prevStartDate = sStartDate;
+            Visual.prevEndDate = sEndDate;
 
             // Change date format of date picker to acceptable date format in Date constructor
             sStartDate = this.changeDateFormat(sStartDate, Visual.sDateFormat);
@@ -643,7 +655,6 @@ module powerbi.extensibility.visual {
                     this.oSelectionManager.select(this.oSelectionID[iCategoryCount], true).then((ids: ISelectionId[]) => { });
                 }
             }
-
         }
 
         /**

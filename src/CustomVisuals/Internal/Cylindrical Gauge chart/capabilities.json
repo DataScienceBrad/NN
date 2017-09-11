@@ -1,0 +1,128 @@
+{
+	"dataRoles": [
+		{
+			"name": "ActualValue",
+			"kind": "Measure",
+			"displayName": "Actual Value"
+		},
+		{
+			"name": "TargetValue",
+			"kind": "Measure",
+			"displayName": "Target Value"
+		}
+	],
+	"dataViewMappings": [
+		{
+			"conditions": [
+				{
+					"TargetValue": {
+						"max": 1
+					},
+					"ActualValue": {
+						"max": 1
+					}
+				}
+			],
+			"categorical": {
+				"values": {
+					"select": [
+						{
+							"for": {
+								"in": "ActualValue"
+							}
+						},
+						{
+							"for": {
+								"in": "TargetValue"
+							}
+						}
+					],
+					"dataReductionAlgorithm": {
+						"bottom": {}
+					}
+				}
+			}
+		}
+	],
+	"objects": {
+		"config": {
+			"displayName": "Configurations",
+			"properties": {
+				"fill": {
+					"type": {
+						"fill": {
+							"solid": {
+								"color": true
+							}
+						}
+					},
+					"displayName": "Fill"
+				},
+				"border": {
+					"type": {
+						"fill": {
+							"solid": {
+								"color": true
+							}
+						}
+					},
+					"displayName": "Border"
+				},
+				"max": {
+					"type": {
+						"numeric": true
+					},
+					"displayName": "Max"
+				},
+				"min": {
+					"type": {
+						"numeric": true
+					},
+					"displayName": "Min"
+				},
+				"interval": {
+					"type": {
+						"numeric": true
+					},
+					"displayName": "Interval"
+				},
+				"tickBar": {
+					"type": {
+						"bool": true
+					},
+					"displayName": "Tick bar"
+				},
+				"fontSize": {
+					"type": {
+						"formatting": {
+							"fontSize": true
+						}
+					},
+					"displayName": "Font Size"
+				},
+				"postfix": {
+					"type": {
+						"text": true
+					},
+					"displayName": "Unit"
+				},
+				"showTarget": {
+					"type": {
+						"bool": true
+					},
+					"displayName": "Show Target"
+				},
+				"targetColor": {
+					"type": {
+						"fill": {
+							"solid": {
+								"color": true
+							}
+						}
+					},
+					"displayName": "Target Color"
+				}
+			}
+		}
+	}
+}

@@ -1,0 +1,18 @@
+{
+  "name": "visual",
+  "dependencies": {
+    "@types/cors": "^2.8.1",
+    "@types/jquery": "^2.0.45",
+    "base64-img": "^1.0.3",
+    "cors": "^2.8.3",
+    "d3": "^3.5.5",
+    "jquery": "^3.2.1",
+    "lodash": "^4.17.4",
+    "powerbi-visuals-utils-formattingutils": "^0.4.0",
+    "powerbi-visuals-utils-tooltiputils": "^0.3.2"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.1",
+    "grunt-data-uri": "^0.3.0"
+  }
+}

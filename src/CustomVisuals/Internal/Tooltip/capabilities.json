@@ -1,0 +1,61 @@
+{
+    "dataRoles": [
+        {
+            "displayName": "Category Data",
+            "name": "category",
+            "kind": "Measure"
+        }
+    ],
+    "dataViewMappings": [
+        {
+            "conditions": [
+                {
+                    "category": {
+                        "max": 1
+                    }
+                }
+            ],
+            "categorical": {
+                "values": {
+                    "select": [
+                        {
+                            "for": {
+                                "in": "category"
+                            }
+                        }
+                    ],
+                    "dataReductionAlgorithm": {
+                        "top": {
+                            "count": 30000000
+                        }
+                    }
+                }
+            }
+        }
+    ],
+    "objects": {
+        "config": {
+            "displayName": "Configurations",
+            "properties": {
+                "fill": {
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    },
+                    "displayName": "Fill"
+                },
+                "url": {
+                    "placeHolderText": "data.createDisplayNameGetter('Visual_General')",
+                    "type": {
+                        "text": true
+                    },
+                    "suppressFormatPainterCopy": true,
+                    "displayName": "URL"
+                }
+            }
+        }
+    }
+}

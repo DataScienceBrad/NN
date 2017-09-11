@@ -1,0 +1,12 @@
+{
+  "name": "visual",
+  "scripts": {
+    "postinstall": "npm run typings",
+    "typings": "node node_modules/typings/dist/bin.js i"
+  },
+  "dependencies": {
+    "d3": "^3.5.5",
+    "jquery": "^3.2.1",
+    "powerbi-visuals-utils-formattingutils": "^0.4.0"
+  }
+}

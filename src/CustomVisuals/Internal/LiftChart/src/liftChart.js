@@ -1,6 +1,28 @@
 /*JSHint Count = 0*/
-function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
+var defaultLoad = false;
+var viewPortDimensions;
+function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic, UpdateLoad, formatteddWagon, viewPort) {
+    viewPortDimensions = viewPort;
+    $(document).ready(function () {
+        if (!document.querySelector("#liftVisual").width)
+            return;
+        $("#liftVisual svg").width(document.querySelector("#liftVisual").querySelector('svg').width.baseVal.value + 90);
+        if (document.querySelector("#liftVisual").querySelector('svg').height.baseVal.value < 200) {
+            $('#liftVisual').css({ "overflow-y": "auto" });
+        }
+    });
 
+    var formattedYAxisView = formatteddWagon;
+
+    dWagon['newtable'] = [];
+    var valueFormatterForYAxis = formatteddWagon.create({
+        format: formatteddWagon.format(dWagon.categorical.values[0].source.format)
+    });
+
+    var valueFormatterForXAxis = formatteddWagon.create({
+        format: formatteddWagon.format(dWagon.categorical.categories[0].source.format)
+    });
+    defaultLoad = UpdateLoad;
     var isOverlapped = false, totalWindowWidth = 0;
     if (liftFormatters.markerWidth < 0) {
         liftFormatters.markerWidth = 1;
@@ -18,11 +40,11 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
                 20,
                 10,
                 10,
-                10
+                75
             ],
             "style": {
-                "width": Math.max(document.documentElement.clientWidth, window.innerWidth || 0) + "px",
-                "height": Math.max(document.documentElement.clientHeight, window.innerHeight || 0) + "px",
+                "width": Math.max(document.documentElement.clientWidth, window.frames.innerWidth || 0) + "px",
+                "height": Math.max(document.documentElement.clientHeight, window.frames.innerHeight || 0) + "px",
                 "border": "0px solid silver"
             }
         },
@@ -98,6 +120,7 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
                 "fontSize": "12px",
                 "fontFamily": "Segoe UI"
             },
+            "x": 85,
             "enableTextClipping": false,
             "clipTextFrom": "left",
             "clippedTextLength": 10
@@ -128,7 +151,7 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
                     "fontFamily": "Segoe UI"
                 },
                 "x": 0,
-                "y": 0
+                "y": 5
             },
             "numberOfGridLines": 8,
             "gridLineWidth": liftFormatters.xAxisGridLineWidth,
@@ -156,13 +179,14 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
                     "fontFamily": "Segoe UI",
                     "textAnchor": "middle"
                 },
-                "x": -20,
+                "x": -120,
                 "y": 0
             },
             "labels": {
                 "enabled": liftFormatters.yAxisEnableLabels,
                 "align": "right",
                 "series": [],
+                "formatter": "scaleFormatter",
                 "staggerLines": false,
                 "rotation": 0,
                 "style": {
@@ -189,7 +213,7 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
             "alternateGridColor": ""
         },
         "tooltip": {
-            "enabled": true,
+            "enabled": false,
             "customTooltip": null,
             "style": {
                 "padding": "2px 5px",
@@ -205,14 +229,31 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
         },
         "series": []
     };
+    var totalCount = dWagon.table.rows.length;
     var normalizer = (liftFormatters.bubbleSize / 100);
     normalizer = normalizer * 12;
     liftConfig.plotOptions.lift.intersectionMarker.fontStyle.fontSize = normalizer + "px";
     normalizer = liftFormatters.yAXisFontSize / 100;
     normalizer = normalizer * 39;
     liftConfig.yAxis.labels.style.fontSize = normalizer + "px";
-    normalizer = liftFormatters.xAXisFontSize / 100;
-    normalizer = normalizer * 39;
+
+    //set x-axis label font-size according to the data-size of label
+    if (totalCount > 33 && liftFormatters.xAXisFontSize > 40) {
+        normalizer = liftFormatters.xAXisFontSize / 100;
+        if (totalCount <= 100) {
+            liftConfig["xAxis"].skipInterval = 1;
+        }
+        else {
+            liftConfig["xAxis"].skipInterval = 1;
+            normalizer = liftFormatters.xAXisFontSize / 150;
+        }
+        normalizer = normalizer * 20;
+    }
+    else {
+        normalizer = liftFormatters.xAXisFontSize / 100;
+        normalizer = normalizer * 15;
+    }
+
     liftConfig.xAxis.labels.style.fontSize = normalizer + "px";
     normalizer = liftFormatters.markerWidth / 100;
     normalizer = normalizer * 17;
@@ -241,10 +282,14 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
     }
     var obj, data = [],
         jCount, iCount, keys;
+    var rowsLength = dWagon.table.rows.length;
     for (iCount = 0; iCount < dWagon.metadata.columns.length; iCount++) {
+
         keys = Object.keys(dWagon.metadata.columns[iCount].roles);
         for (jCount = 0; jCount < keys.length; jCount++) {
-            if ('category' === keys[jCount] || typeof (dWagon.table.rows[0][iCount]) === 'number') {
+
+            if ('category' === keys[jCount] || rowsLength > 0 && typeof (dWagon.table.rows[0][iCount]) === 'number') { //first check if there exists some rows.
+
                 roles[keys[jCount]].push(iCount);
             }
         }
@@ -268,8 +313,10 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
         }
     }
     liftConfig.xAxis.labels.series = [];
+
     for (jCount = 0; jCount < dWagon.table.rows.length; jCount++) {
-        liftConfig.xAxis.labels.series.push(dWagon.table.rows[jCount][roles.category[0]]);
+        if (dWagon.table.rows[jCount][roles.category[0]])
+            liftConfig.xAxis.labels.series.push(dWagon.table.rows[jCount][roles.category[0]].toString()); //converted to string
         for (iCount = 0; iCount < roles.measure.length; iCount++) {
             data[iCount].data.push(dWagon.table.rows[jCount][roles.measure[iCount]]);
         }
@@ -277,10 +324,13 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
     liftConfig.series = data;
     for (legendName = 0; legendName < dWagon.categorical.values.length; legendName++) {
         if (liftConfig.series[legendName]) {
+
             liftConfig.series[legendName].name = dWagon.categorical.values[legendName].source.displayName;
-            liftConfig.series[legendName].enabled = powerbi.extensibility.visual.PBI_CV_0C8159C4_5413_4262_A0E1_4E0CEF5FFC65.Visual.getLegendEnable()[legendName];
+            liftConfig.series[legendName].enabled = powerbi.extensibility.visual.PBI_CV_0C8159C4_5413_4262_A0E1_4E0CEF5FFC75.Visual.getLegendEnable()[legendName];
         }
     }
+
+
     (function mike(liftConfig) {
         /*jslint white: true, devel:true, browser: true, this:true, for:true  */
         /*global MAQ, window,oDimensionTotalTitle,oGrpELESum,oData*/
@@ -422,7 +472,6 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
             'use strict';
             //return if the passed array is not 2D
             if (!('[object Array]' === Object.prototype.toString.call(arr) && '[object Array]' === Object.prototype.toString.call(arr[0]))) {
-                console.log('Passed argument is not a 2D array');
                 return;
             }
             var pivotArr = [],
@@ -445,7 +494,6 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
             'use strict';
             //return if the passed array is not 2D
             if (!('[object Array]' === Object.prototype.toString.call(arr) && '[object Array]' === Object.prototype.toString.call(arr[0]))) {
-                console.log('Passed argument is not a 2D array');
                 return;
             }
             var linearArr = [],
@@ -459,6 +507,7 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
             trimText: function (sInput) {
                 'use strict';
                 if (sInput.length >= 13) {
+
                     sInput = sInput.substring(0, 9) + '...';
                 }
                 return sInput;
@@ -540,8 +589,11 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
                 sTempValue = sInput.toString();
                 if (-1 !== sTempValue.indexOf('.')) {
                     decimalLength = sTempValue.substring(sTempValue.indexOf('.') + 1).length;
-                    if (iDecimalPlaces < decimalLength) {
-                        sTempValue = sInput.toFixed(iDecimalPlaces).toString();
+                    if (decimalLength > 2) {
+                        sTempValue = sInput.toFixed(2).toString();
+                    }
+                    else {
+                        sTempValue = sInput.toString();
                     }
                 }
                 aDigits = sTempValue.split('.');
@@ -1854,10 +1906,10 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
             var oGrpDisplayArea = oParam.config.svgELE;
             if (oParam.config.series[oParam.seriesIndex].enabled) {
                 oParam.config.series[oParam.seriesIndex].enabled = false;
-                powerbi.extensibility.visual.PBI_CV_0C8159C4_5413_4262_A0E1_4E0CEF5FFC65.Visual.setLegendEnable(oParam.seriesIndex, false);
+                powerbi.extensibility.visual.PBI_CV_0C8159C4_5413_4262_A0E1_4E0CEF5FFC75.Visual.setLegendEnable(oParam.seriesIndex, false);
             } else if (0 !== oParam.config.series[oParam.seriesIndex].data) {
                 oParam.config.series[oParam.seriesIndex].enabled = true;
-                powerbi.extensibility.visual.PBI_CV_0C8159C4_5413_4262_A0E1_4E0CEF5FFC65.Visual.setLegendEnable(oParam.seriesIndex, true);
+                powerbi.extensibility.visual.PBI_CV_0C8159C4_5413_4262_A0E1_4E0CEF5FFC75.Visual.setLegendEnable(oParam.seriesIndex, true);
             } else {
                 return; //#62 donut bug fix
             }
@@ -1889,6 +1941,7 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
         function removeLegendHover(evt, oParam) {
             'use strict';
             //remove all the hover effects
+
             var oLegendActive = document.querySelectorAll('.MAQCharts-legend-hover'),
                 oChartActive = document.querySelectorAll('g.legendActive'),
                 oLegendDim = document.querySelectorAll('.MAQCharts-legend-dim'),
@@ -1897,7 +1950,7 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
             MAQ.styles.removeClass(oChartActive, 'legendActive');
             MAQ.styles.removeClass(oLegendDim, 'MAQCharts-legend-dim');
             MAQ.styles.removeClass(oChartDim, 'legendDim');
-            //console.log('removed legend hover effects for ' + oParam.seriesIndex);
+
             /*Remove Legend Hover Effects*/
             //1. Static Tooltip Popup
             if (oParam.config.legend.hover.staticTooltip) {
@@ -1974,8 +2027,8 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
                 obj = obj.offsetParent;
             }
             // return relative mouse position
-            mouseX = evt.clientX - left + window.pageXOffset;
-            mouseY = evt.clientY - top + window.pageYOffset;
+            mouseX = evt.clientX - left + window.frames.pageXOffset;
+            mouseY = evt.clientY - top + window.frames.pageYOffset;
             return {
                 x: mouseX,
                 y: mouseY
@@ -1988,6 +2041,8 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
         */
         function showToolTip(evt, oParam) {
             'use strict';
+            if (oParam["toolTip"] || document.querySelector(".MAQCharts-RangeSelector") === null)
+                return;
             var oConfig = oParam.config;
             var oSVG = oConfig.svgELE,
                 fInterval = oConfig.plotIntervalWidth,
@@ -2056,9 +2111,12 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
                 } else {
                     var sChartType = oConfig.chart.type,
                         iLen, i, tempValue;
-                    switch (sChartType.toLowerCase()) {
-                        default: oToolTip.innerHTML = document.querySelector(".MAQCharts-RangeSelector").querySelectorAll('text')[oParam.seriesIndex].innerHTML;
-                            break;
+                    $(document.querySelector('#liftVisual > div')).show();
+                    if (document.querySelector(".MAQCharts-RangeSelector").querySelectorAll('text')[oParam.position] !== undefined) {
+                        oToolTip.innerHTML = document.querySelector(".MAQCharts-RangeSelector").querySelectorAll('text')[oParam.position].textContent;
+                    }
+                    else {
+                        oToolTip.innerHTML = document.querySelector(".MAQCharts-RangeSelector").querySelectorAll('text')[0].textContent;
                     }
                 }
             } else {
@@ -2120,7 +2178,6 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
         MAQ.showHideStaticTooltips = function (oParam, bShow) {
             'use strict';
             if ('line' !== oParam.config.chart.type.toLowerCase()) {
-                console.log('Static tooltips are only supported for line charts.');
                 return;
             }
             var oConfig = oParam.config,
@@ -2248,17 +2305,9 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
                             }
                         }
                         oTextELE = MAQ.createSVGElement(chartConfigOptions.svgNS, 'text', oTextAttr);
+                        var ooTitleObj = MAQ.createSVGElement(chartConfigOptions.svgNS, 'title', oTextAttr);
                         oGrpELE.appendChild(oTextELE);
-                        if (bAttachTooltip) {
-                            oParam = {
-                                value: sTempText,
-                                config: chartConfigOptions,
-                                type: 'axis'
-                            };
-                            oToolTip = chartConfigOptions.tooltipDiv;
-                            MAQ.addEventListener(oTextELE, 'mouseover', showToolTip, oParam);
-                            MAQ.addEventListener(oTextELE, 'mouseout', hideToolTip, oToolTip);
-                        }
+                        oTextELE.appendChild(ooTitleObj);
                         oParam = {
                             config: chartConfigOptions,
                             grpNumber: customOrder[iSCounter]
@@ -2711,7 +2760,6 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
                 xAxisSeriesLength = 0,
                 yAxisSeriesLength = 0,
                 yAxisLimit = 0;
-
             xAxisSeriesLength = xAxisSeries.length;
             var oAttr = {
                 class: 'MAQCharts-chartArea',
@@ -2929,15 +2977,43 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
                     oGrpXAxisLblNTick.appendChild(oTick);
                     iPrevX = oAttrLabel.x;
                     oAttrLabel.text = xAxisSeries[iCounter] ? xAxisSeries[iCounter] : "";
-                    oAttrLabel.text = MAQ.applyFormatter(oAttrLabel.text, xAxisLabel.formatter);
+                    if (valueFormatterForXAxis.format(oAttrLabel.text).includes("(Blank)") || oAttrLabel.text.length == 0) {
+                        oAttrLabel.text = MAQ.applyFormatter(oAttrLabel.text, xAxisLabel.formatter);
+                    }
+                    else {
+                        if (isNaN(oAttrLabel.text)) {
+                            oAttrLabel.text = valueFormatterForXAxis.format(oAttrLabel.text);
+                        }
+                        else {
+                            try {
+                                JSON.parse(oAttrLabel.text);
+                                if (valueFormatterForXAxis.format(JSON.parse(oAttrLabel.text)).includes("(Blank)")) {
+                                    throw (e);
+                                }
+                                else {
+                                    oAttrLabel.text = (valueFormatterForXAxis.format(JSON.parse(oAttrLabel.text)));
+                                }
+                            } catch (e) {
+                                oAttrLabel.text = MAQ.applyFormatter(oAttrLabel.text, xAxisLabel.formatter);
+                            }
+                        }
+                    }
+
                     /* Code for clipping the text to specified number of characters */
                     sTempText = oAttrLabel.text;
-                    if (!xAxisLabel.formatter && sTempText.length > iNumOfCharsAllowed) {
-                        oAttrLabel.text = oAttrLabel.text.substring(0, Math.max(iNumOfCharsAllowed - 3, 2)) + '...';
+                    if (!xAxisLabel.formatter) {  //clips the label if it contains more characters than the available space else displays as it is.
+                        if (sTempText.length > iNumOfCharsAllowed && sTempText.length != 2) {
+                            oAttrLabel.text = oAttrLabel.text.substring(0, Math.max(iNumOfCharsAllowed - 3, 2)) + '...';
+                        }
+                        else {
+                            oAttrLabel.text = oAttrLabel.text.toString();
+                        }
+
                         oAttrLabel.x = oAttrLabel.x + (20 * iCounter);
                         totalWindowWidth = oAttrLabel.x;
                         isOverlapped = true;
                     }
+
                     if (!xAxisLabel.enabled) {
                         oAttrLabel.text = "";
                     }
@@ -3155,9 +3231,34 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
                     oGrpYAxisLblNTick.appendChild(oTick);
                     if (yAxisLabel.enabled) {
                         oAttrLabel.text = yAxisSeries[iCounter];
-                        oAttrLabel.text = MAQ.applyFormatter(oAttrLabel.text, yAxisLabel.formatter);
+
+
+                        if (valueFormatterForYAxis.format(oAttrLabel.text).includes("(Blank)") || oAttrLabel.text.length == 0) {
+                            oAttrLabel.text = MAQ.applyFormatter(oAttrLabel.text, yAxisLabel.formatter);
+                        }
+                        else {
+                            if (isNaN(oAttrLabel.text)) {
+                                oAttrLabel.text = valueFormatterForYAxis.format(oAttrLabel.text);
+                            }
+                            else {
+                                try {
+                                    JSON.parse(oAttrLabel.text);
+                                    if (valueFormatterForYAxis.format(JSON.parse(oAttrLabel.text)).includes("(Blank)")) {
+                                        throw (e);
+                                    }
+                                    else {
+                                        oAttrLabel.text = (valueFormatterForYAxis.format(JSON.parse(oAttrLabel.text)));
+                                    }
+                                } catch (e) {
+                                    oAttrLabel.text = MAQ.applyFormatter(oAttrLabel.text, yAxisLabel.formatter);
+                                }
+                            }
+                        }
+
                         oLabel = MAQ.createSVGElement(chartConfigOptions.svgNS, 'text', oAttrLabel);
+                        var ooTitleObj = MAQ.createSVGElement(chartConfigOptions.svgNS, 'title', oAttrLabel);
                         oGrpYAxisLblNTick.appendChild(oLabel);
+                        oLabel.appendChild(ooTitleObj);
                         oLabelDim = MAQ.getObjectDimension(oLabel);
                         MAQ.addAttr(oLabel, 'y', oAttrLabel.y + oLabelDim.height / 4);
                     }
@@ -3452,7 +3553,7 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
             var oRectAttr = {
                 x: 0,
                 y: fNavigatorY,
-                width: .10 * Math.max(document.documentElement.clientWidth, window.innerWidth),
+                width: (liftFormatters.dragWindowWidth / 100) * Math.max(document.documentElement.clientWidth, window.frames.innerWidth),
                 height: fNavigatorHeight,
                 'pointer-events': 'visibleFill',
                 cursor: 'move',
@@ -3466,17 +3567,20 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
             var x2 = 0, intersectionPoints;
             if (window.redrawMarker == true) {
                 if (window.blobWidth == undefined || window.blolOldWidth == undefined) {
-                    oRectAttr.width = .10 * Math.max(document.documentElement.clientWidth, window.innerWidth);
+                    oRectAttr.width = (liftFormatters.dragWindowWidth / 100) * Math.max(document.documentElement.clientWidth, window.frames.innerWidth);
                 } else {
-                    widthManger = (window.blobWidth * Math.max(document.documentElement.clientWidth, window.innerWidth));
+                    widthManger = (window.blobWidth * Math.max(document.documentElement.clientWidth, window.frames.innerWidth));
                     oRectAttr.width = widthManger / window.blolOldWidth;
+                    if (defaultLoad) {
+                        oRectAttr.width = (liftFormatters.dragWindowWidth / 100) * Math.max(document.documentElement.clientWidth, window.frames.innerWidth);
+                    }
                 }
                 if (window.blolblolXValue == undefined || window.blolXValue == undefined) {
                     if (window.previousX == undefined) {
                         oRectAttr.x = 0;
                     }
                     else {
-                        widthManger = (window.previousX * Math.max(document.documentElement.clientWidth, window.innerWidth));
+                        widthManger = (window.previousX * Math.max(document.documentElement.clientWidth, window.frames.innerWidth));
                         oRectAttr.x = widthManger / window.blolOldWidth;
                     }
                 } else {
@@ -3484,7 +3588,7 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
                         oRectAttr.x = 0;
                     }
                     else {
-                        widthManger = (window.previousX * Math.max(document.documentElement.clientWidth, window.innerWidth));
+                        widthManger = (window.previousX * Math.max(document.documentElement.clientWidth, window.frames.innerWidth));
                         oRectAttr.x = widthManger / window.blolOldWidth;
                     }
                 }
@@ -3495,12 +3599,12 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
                 }
             }
             else {
-                if (oRectAttr.x + oRectAttr.width >= Math.max(document.documentElement.clientWidth, window.innerWidth)) {
-                    oRectAttr.x = Math.max(document.documentElement.clientWidth, window.innerWidth) - oRectAttr.width;
+                if (oRectAttr.x + oRectAttr.width >= Math.max(document.documentElement.clientWidth, window.frames.innerWidth)) {
+                    oRectAttr.x = Math.max(document.documentElement.clientWidth, window.frames.innerWidth) - oRectAttr.width;
                 }
             }
 
-            window.blolOldWidth = Math.max(document.documentElement.clientWidth, window.innerWidth);
+            window.blolOldWidth = Math.max(document.documentElement.clientWidth, window.frames.innerWidth);
             window.previousX = oRectAttr.x;
             window.blobWidth = oRectAttr.width;
             var oLineLeftAttr = {
@@ -3637,6 +3741,11 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
                 oIntersectionCircles = [],
                 oCircleTextsAttr = [],
                 oCircleTexts = [];
+            if (chartConfigOptions.series.length < 1) {
+                $('#liftVisual').empty();
+                d3.select('#liftVisual').append('p').text("No data available to plot an intersection").style("margin-left", (window.frames.innerWidth / 2 - window.frames.innerWidth / 15) + 'px').style("margin-top", (window.frames.innerHeight / 2 - window.frames.innerHeight / 15) + 'px');
+                return;
+            }
             for (iCounter = 0; iCounter < chartConfigOptions.series.length; iCounter += 1) {
                 oIntersectionMarkersAttr[iCounter] = {
                     r: chartConfigOptions.plotOptions.lift.intersectionMarker.radius,
@@ -3713,6 +3822,7 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
                 maxX: fNavigatorX + fNavigatorWidth
             };
             //mouse down events
+
             MAQ.addEventListener(oRect, 'mousedown', navigatorMouseDown, oParam);
             MAQ.addEventListener(oExpanderLeft, 'mousedown', stretcherMouseDown, oParam);
             MAQ.addEventListener(oExpanderLeftBottom, 'mousedown', stretcherMouseDown, oParam);
@@ -3722,6 +3832,130 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
             MAQ.addEventListener(oGrpNavigator, 'mouseup', stretcherMouseUp, oParam);
             MAQ.addEventListener(oGrpNavigator, 'mouseup', navigatorMouseUp, oParam);
             MAQ.addEventListener(oGrpNavigator, 'mouseout', navigatorMouseUp, oParam);
+
+            $(document.querySelector('.MAQCharts-RangeSelector').querySelector('rect')).on("touchstart", function (evt) {
+                $(document.querySelector('#liftVisual > div')).hide();
+                var touch = evt.originalEvent.touches[0];
+                var x = touch.clientX;
+                var y = touch.clientY;
+                bExpanderDrag = false;
+                bNavigatorDrag = true;
+                event.preventDefault();
+                var oCurrentElement = event.target || event.srcElement;
+                iCurrentNavigatorX = touch.clientX;
+            }
+            )
+
+            $(document.querySelector('.MAQCharts-RangeSelector').querySelector('rect')).on("touchmove", function (evt) {
+                'use strict';
+                var touch = evt.originalEvent.touches[0];
+                //set the dragging source container id
+                movingSource = oParam.config.chart.renderTo;
+                event.preventDefault();
+                var oCurrentElement = event.target || event.srcElement;
+                if (bNavigatorDrag === true) {
+                    var iMouseXDiff = touch.clientX - iCurrentNavigatorX;
+                    var iCurrX = parseFloat(oCurrentElement.x.baseVal.value + iMouseXDiff);
+                    if (iCurrX >= oParam.x && iCurrX <= oParam.maxX - oCurrentElement.width.baseVal.value) {
+                        oCurrentElement.x.baseVal.value = iCurrX;
+                        oParam.lineLeft.x1.baseVal.value += iMouseXDiff;
+                        oParam.lineLeft.x2.baseVal.value += iMouseXDiff;
+                        oParam.lineRight.x1.baseVal.value += iMouseXDiff;
+                        oParam.lineRight.x2.baseVal.value += iMouseXDiff;
+                        oParam.lineTop.x1.baseVal.value += iMouseXDiff;
+                        oParam.lineTop.x2.baseVal.value += iMouseXDiff;
+                        oParam.lineBottom.x1.baseVal.value += iMouseXDiff;
+                        oParam.lineBottom.x2.baseVal.value += iMouseXDiff;
+                        oParam.expanderLeft.cx.baseVal.value += iMouseXDiff;
+                        oParam.expanderLeftBottom.cx.baseVal.value += iMouseXDiff;
+                        oParam.expanderRight.cx.baseVal.value += iMouseXDiff;
+                        oParam.expanderRightBottom.cx.baseVal.value += iMouseXDiff;
+                        MAQ.addAttr(oParam.leftTopTri, 'd', MAQ.getTriangleCoords(oParam.expanderLeft.cx.baseVal.value, oParam.expanderLeft.cy.baseVal.value, oParam.expanderLeft.r.baseVal.value));
+                        MAQ.addAttr(oParam.leftBottomTri, 'd', MAQ.getTriangleCoords(oParam.expanderLeftBottom.cx.baseVal.value, oParam.expanderLeftBottom.cy.baseVal.value, oParam.expanderLeftBottom.r.baseVal.value));
+                        MAQ.addAttr(oParam.rightTopTri, 'd', MAQ.getTriangleCoords(oParam.expanderRight.cx.baseVal.value, oParam.expanderRight.cy.baseVal.value, -oParam.expanderRight.r.baseVal.value));
+                        MAQ.addAttr(oParam.rightBottomTri, 'd', MAQ.getTriangleCoords(oParam.expanderRightBottom.cx.baseVal.value, oParam.expanderRightBottom.cy.baseVal.value, -oParam.expanderRightBottom.r.baseVal.value));
+                        /*Create intersection circles*/
+                        var oIntersectionPointsAttr = MAQ.getIntersectionPoints(oParam.config, oParam.navigator.x.baseVal.value + oParam.navigator.width.baseVal.value),
+                            iCounter;
+                        for (iCounter = 0; iCounter < oParam.config.series.length; iCounter += 1) {
+                            if (isSeriesEnabled(oParam.config.series, iCounter)) {
+                                oParam.intersectionCircles[iCounter].cx.baseVal.value = oIntersectionPointsAttr.circleX[iCounter];
+                                window.x2 = oParam.intersectionCircles[iCounter].cx.baseVal.value;
+                                if (isNaN(oIntersectionPointsAttr.circleY[iCounter])) {
+                                    continue;
+                                }
+                                oParam.intersectionCircles[iCounter].cy.baseVal.value = oIntersectionPointsAttr.circleY[iCounter];
+                                MAQ.addAttr(oParam.circleTexts[iCounter], 'x', oIntersectionPointsAttr.circleX[iCounter]);
+                                MAQ.addAttr(oParam.circleTexts[iCounter], 'y', oIntersectionPointsAttr.circleY[iCounter]);
+                                if (isNaN(oIntersectionPointsAttr.values[iCounter])) {
+                                    MAQ.addAttr(oParam.circleTexts[iCounter], 'text', '-');
+                                    oParam.circleTexts[iCounter].innerHTML = '-'; /*for chrome*/
+                                    oParam.circleTexts[iCounter].textContent = '-'; /*for IE*/
+                                }
+                                else {
+                                    MAQ.addAttr(oParam.circleTexts[iCounter], 'text', oIntersectionPointsAttr.values[iCounter] + '%');
+                                    oParam.circleTexts[iCounter].innerHTML = oIntersectionPointsAttr.values[iCounter] + '%'; /*for chrome*/
+                                    oParam.circleTexts[iCounter].textContent = oIntersectionPointsAttr.values[iCounter] + '%'; /*for IE*/
+                                }
+                            }
+                        }
+                        var xQuery = document.querySelector(".MAQCharts-RangeSelector").querySelector('rect').x.animVal.value;
+                        var widthQuery = document.querySelector(".MAQCharts-RangeSelector").querySelector('rect').width.animVal.value;
+                        window.previousX = xQuery;
+                        window.oldWidth = Math.max(document.documentElement.clientWidth, window.frames.innerWidth);
+                        window.blolOldWidth = Math.max(document.documentElement.clientWidth, window.frames.innerWidth);
+                        window.variantWidth = document.querySelector(".MAQCharts-RangeSelector").querySelector('rect').width.animVal.value;
+                        window.backer = document.documentElement.clientWidth;
+                        var oRectAttr = {
+                            x: oCurrentElement.x.baseVal.value, //white
+                            y: oCurrentElement.y.baseVal.value,
+                            width: oCurrentElement.width.baseVal.value,
+                            height: oCurrentElement.height.baseVal.value
+                        };
+                        if (isOverlapped) {
+                            oParam.width = totalWindowWidth - 20;
+                        }
+                        window.blobWidth = oRectAttr.width;
+                        var sDattr = ' M ' + oParam.x + ',' + (oParam.height + oParam.y) + ' L ' + oParam.x + ',' + oParam.y + ' L ' + oRectAttr.x + ',' + oRectAttr.y + ' L ' + oRectAttr.x + ',' + (oRectAttr.y + oRectAttr.height) + ' L ' + (oRectAttr.x + oRectAttr.width) + ',' + (oRectAttr.y + oRectAttr.height) + ' L ' + (oRectAttr.x + oRectAttr.width) + ',' + oRectAttr.y + ' L ' + (oParam.x + oParam.width) + ',' + oRectAttr.y + ' L ' + (oParam.x + oParam.width) + ',' + (oParam.height + oParam.y) + ' Z';
+                        MAQ.addAttr(oParam.dimmer, 'd', sDattr);
+
+                        iCurrentNavigatorX = touch.clientX;
+                    }
+                }
+                var rangeStart = oParam.config.plotOptions.timeline.rangeStart,
+                    fNavigatorShiftRatio = oParam.config.plotOptions.timeline.shiftRatio;
+                /*invoke the callback function*/
+                if (typeof oParam.config.events.onNavigatorMove === 'function') {
+                    oParam.config.events.onNavigatorMove(oParam.config, Math.round(rangeStart + fNavigatorShiftRatio * oParam.navigator.x.baseVal.value), Math.round(rangeStart + fNavigatorShiftRatio * (oParam.navigator.x.baseVal.value + oParam.navigator.width.baseVal.value)));
+                }
+            }
+            )
+
+
+            $(document.querySelector('.MAQCharts-RangeSelector').querySelector('rect')).on("touchstop", function (evt) {
+                'use strict';
+                //if this function is not called by the drag source container then simply return
+                if (oParam.config.chart.renderTo !== movingSource && false === bNavigatorDrag) {
+                    return;
+                }
+                event.stopPropagation();
+                event.preventDefault();
+                var rangeStart = oParam.config.plotOptions.timeline.rangeStart,
+                    fNavigatorShiftRatio = oParam.config.plotOptions.timeline.shiftRatio;
+                if (bNavigatorDrag) {
+                    var oCurrentElement = event.target || event.srcElement;
+
+                    if (oParam.config.isTimeLineChart) {
+                        MAQ.updateTimeLineDisplayArea(oParam.config, rangeStart + fNavigatorShiftRatio * oParam.navigator.x.baseVal.value, rangeStart + fNavigatorShiftRatio * (oParam.navigator.x.baseVal.value + oParam.navigator.width.baseVal.value));
+                    } else if (oParam.config.isLiftChart) {
+                        onRangeChange(oParam.config, oParam.navigator.x.baseVal.value, oParam.navigator.x.baseVal.value + oParam.navigator.width.baseVal.value);
+                    }
+                    bNavigatorDrag = false;
+                }
+                var touch = evt.originalEvent.touches[0];
+
+            }
+            )
             /* ------------------------ NAVIGATOR AREA END ------------------------- */
         };
         /*
@@ -3905,6 +4139,7 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
             var oCurrentElement = event.target || event.srcElement;
             if (bNavigatorDrag === true) {
                 var iMouseXDiff = event.clientX - iCurrentNavigatorX;
+
                 var iCurrX = parseFloat(oCurrentElement.x.baseVal.value + iMouseXDiff);
                 if (iCurrX >= oParam.x && iCurrX <= oParam.maxX - oCurrentElement.width.baseVal.value) {
                     oCurrentElement.x.baseVal.value = iCurrX;
@@ -3952,8 +4187,8 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
                     var xQuery = document.querySelector(".MAQCharts-RangeSelector").querySelector('rect').x.animVal.value;
                     var widthQuery = document.querySelector(".MAQCharts-RangeSelector").querySelector('rect').width.animVal.value;
                     window.previousX = xQuery;
-                    window.oldWidth = Math.max(document.documentElement.clientWidth, window.innerWidth);
-                    window.blolOldWidth = Math.max(document.documentElement.clientWidth, window.innerWidth);
+                    window.oldWidth = Math.max(document.documentElement.clientWidth, window.frames.innerWidth);
+                    window.blolOldWidth = Math.max(document.documentElement.clientWidth, window.frames.innerWidth);
                     window.variantWidth = document.querySelector(".MAQCharts-RangeSelector").querySelector('rect').width.animVal.value;
                     window.backer = document.documentElement.clientWidth;
                     var oRectAttr = {
@@ -3968,6 +4203,7 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
                     window.blobWidth = oRectAttr.width;
                     var sDattr = ' M ' + oParam.x + ',' + (oParam.height + oParam.y) + ' L ' + oParam.x + ',' + oParam.y + ' L ' + oRectAttr.x + ',' + oRectAttr.y + ' L ' + oRectAttr.x + ',' + (oRectAttr.y + oRectAttr.height) + ' L ' + (oRectAttr.x + oRectAttr.width) + ',' + (oRectAttr.y + oRectAttr.height) + ' L ' + (oRectAttr.x + oRectAttr.width) + ',' + oRectAttr.y + ' L ' + (oParam.x + oParam.width) + ',' + oRectAttr.y + ' L ' + (oParam.x + oParam.width) + ',' + (oParam.height + oParam.y) + ' Z';
                     MAQ.addAttr(oParam.dimmer, 'd', sDattr);
+
                     iCurrentNavigatorX = event.clientX;
                 }
             }
@@ -4107,7 +4343,7 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
             };
             window.blobWidth = oRectAttr.width;
             window.blolXValue = oCurrentElement.x.baseVal.value;
-            window.blolOldWidth = Math.max(document.documentElement.clientWidth, window.innerWidth);
+            window.blolOldWidth = Math.max(document.documentElement.clientWidth, window.frames.innerWidth);
             window.blolblolXValue = document.querySelector(".MAQCharts-RangeSelector").querySelector('rect').width.animVal.value;
             var xQuery = document.querySelector(".MAQCharts-RangeSelector").querySelector('rect').x.animVal.value;
             window.previousX = xQuery;
@@ -4629,7 +4865,7 @@ function myMAQlibrary(dWagon, nodeData, liftFormatters, tragicPragic) {
                 var circleCoordsStart = MAQ.getIntersectionPoints(config, start);
                 var circleCoordsEnd = MAQ.getIntersectionPoints(config, end);
                 var obj;
-                if(circleCoordsStart &&circleCoordsEnd) {
+                if (circleCoordsStart && circleCoordsEnd) {
                     obj = {
                         values: circleCoordsEnd.values,
                         range: [

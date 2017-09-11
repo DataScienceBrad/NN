@@ -25,7 +25,6 @@ module powerbi.extensibility.visual {
         legend: LegendSettings = new LegendSettings();
     }
 
-
     export class LegendSettings {
         show: boolean = true;
         position: string = "Right";
@@ -91,6 +90,7 @@ module powerbi.extensibility.visual {
         private isInteractiveChart: boolean = false;
         private legend: ILegend;
         private body: Selection<any>;
+        private element: HTMLElement;
 
         private static LegendPropertyIdentifier: DataViewObjectPropertyIdentifier = {
             objectName: "legend",
@@ -102,7 +102,7 @@ module powerbi.extensibility.visual {
         private createLegendData(dataView: DataView, host: IVisualHost, settings: ThermometerSettings): LegendData {
 
             const legendData: LegendData = {
-                fontSize: this.viewport.height*0.032,
+                fontSize: this.viewport.height * 0.032,
                 dataPoints: [],
                 title: settings.legend.showTitle ? (settings.legend.titleText) : null,
                 labelColor: settings.legend.labelColor
@@ -119,9 +119,12 @@ module powerbi.extensibility.visual {
             var category = dataView.categorical.categories[0];
 
             legendData.dataPoints = label.map(
-                (typeMeta: string, index:number): LegendDataPoint => {
+                (typeMeta: string, index: number): LegendDataPoint => {
+                    let lowValue = low[parseInt(typeMeta) - 1] < 0 ? '(' + low[parseInt(typeMeta) - 1] + ')' : low[parseInt(typeMeta) - 1];
+                    let highValue = high[parseInt(typeMeta) - 1] < 0 ? '(' + high[parseInt(typeMeta) - 1] + ')' : high[parseInt(typeMeta) - 1];
+                    let label = lowValue + '-' + highValue;
                     return {
-                        label: (low[parseInt(typeMeta) - 1] + '-' + high[parseInt(typeMeta) - 1]) as string,
+                        label: label as string,
                         color: Thermometer.getFill(dataView, 'fill' + typeMeta).solid.color,
                         icon: LegendIcon.Circle,
                         selected: false,
@@ -135,7 +138,6 @@ module powerbi.extensibility.visual {
             return legendData;
         }
 
-
         /** This is called once when the visual is initialially created */
         constructor(options: VisualConstructorOptions) {
             this.host = options.host;
@@ -145,8 +147,8 @@ module powerbi.extensibility.visual {
             this.ThermometerDiv = this.body.append("div")
                 .classed(Selectors.Body.class, true);
             this.interactivityService = createInteractivityService(this.host);
-
-            this.legend = createLegend($(options.element),
+            this.element = options.element;
+            this.legend = createLegend($(this.element),
                 this.isInteractiveChart,
                 this.interactivityService,
                 true,
@@ -174,7 +176,7 @@ module powerbi.extensibility.visual {
             if (dataView && dataView.categorical) {
                 if (!dataView.categorical.categories || dataView.categorical.categories.length == 0)
                     return;
-                if(typeof dataView.categorical.categories[0].values[0] !== 'number')
+                if (typeof dataView.categorical.categories[0].values[0] !== 'number')
                     return;
                 this.data.value = <number>dataView.categorical.categories[0].values[0];
                 var series = dataView.categorical.values;
@@ -184,7 +186,7 @@ module powerbi.extensibility.visual {
                     var iCount = 0;
                     while (iCount < length) {
                         if (series[iCount].source.roles["TargetValue"]) {
-                            if(typeof series[iCount].values[0] === 'number')
+                            if (typeof series[iCount].values[0] === 'number')
                                 this.data.targetValue = <number>series[iCount].values[0];
                         }
                         if (series[iCount].source.roles["Min"]) {
@@ -215,7 +217,7 @@ module powerbi.extensibility.visual {
                 maximum = Math.max(this.data.value, maximum);
                 minimum = Math.min(this.data.value, minimum);
             }
-            // to handle value greater than max value
+            // To handle values greater than max value
             if (maximum > this.data.max) {
                 this.data.max = Math.ceil(maximum);
             }
@@ -228,7 +230,7 @@ module powerbi.extensibility.visual {
             var viewport = options.viewport;
             var duration = 1000;
 
-            //By default, only category-1
+            // By default, only category-1
             this.range = {
                 range1: this.data.max,
                 range2: this.data.max,
@@ -236,20 +238,34 @@ module powerbi.extensibility.visual {
                 range4: this.data.max
             };
 
-            this.range.range1 = Thermometer.getValue(this.dataView, 'range1', this.data.max);
-            if (this.range.range1 <= this.data.min) this.range.range1 = this.data.min+1;
-            else if(this.range.range1 > this.data.max) this.range.range1 = this.data.max;
+            this.range.range1 = Thermometer.getValue(this.dataView, 'range1', undefined);
+            this.range.range2 = Thermometer.getValue(this.dataView, 'range2', undefined);
+            this.range.range3 = Thermometer.getValue(this.dataView, 'range3', undefined);
+            this.range.range4 = Thermometer.getValue(this.dataView, 'range4', undefined);
 
-            this.range.range2 = Thermometer.getValue(this.dataView, 'range2', this.data.max);
-            if (this.range.range2 <= this.range.range1) this.range.range2 = this.range.range1+1;
-            else if(this.range.range2 > this.data.max) this.range.range2 = this.data.max;
-
-            this.range.range3 = Thermometer.getValue(this.dataView, 'range3', this.data.max);
-            if (this.range.range3 <= this.range.range2) this.range.range3 = this.range.range2+1;
-            else if(this.range.range3 > this.data.max) this.range.range3 = this.data.max;
-
-            //Category-4, being the last category, always ends at maximum value
-            this.range.range4 = this.data.max;
+            if (this.range.range1 <= this.data.min || this.range.range1 > this.data.max || this.range.range2 <= this.range.range1 || this.range.range2 > this.data.max || this.range.range3 <= this.range.range2 || this.range.range3 > this.data.max || this.range.range4 <= this.range.range3) {
+                this.svg.selectAll("*").remove();
+                this.body.select('.legend').style({ 'display': 'none' });
+                this.body.select('.errorMessage').remove();
+                this.body
+                    .append('div')
+                    .classed('errorMessage', true)
+                    .text("Please enter appropriate range values")
+                    .style({
+                        'display': 'block'
+                        , 'top': this.viewport.height / 2 + 'px', 'position': 'absolute'
+                        , 'width': '100%'
+                    });
+                return
+            }
+            else {
+                this.body.select('.errorMessage').remove();
+                this.body.select('.legend').style({ 'display': 'block' });
+                this.range.range1 = Thermometer.getValue(this.dataView, 'range1', this.data.max);
+                this.range.range2 = Thermometer.getValue(this.dataView, 'range2', this.data.max);
+                this.range.range3 = Thermometer.getValue(this.dataView, 'range3', this.data.max);
+                this.range.range4 = this.data.max;
+            }
 
             if (this.data.value >= this.data.min && this.data.value <= this.range.range1) {
                 this.fill = 'fill1';
@@ -275,14 +291,13 @@ module powerbi.extensibility.visual {
                 settings: settings,
                 legendData: legendData
             }
-
             this.renderLegend();
             var height = viewport.height;
             var width = viewport.width;
             this.svg.attr("width", width);
-            this.svg.attr("height", 'inherit');
+            this.svg.attr("height", '100%');
             d3.select(".legend").style('margin-top', parseInt($(".legend").css('marginTop')) - height);
-            this.draw(width, 0.98*height, duration);
+            this.draw(width, 0.98 * height, duration);
         }
 
         public draw(width: number, height: number, duration: number) {
@@ -370,7 +385,6 @@ module powerbi.extensibility.visual {
                         'height': rectHeight - ZeroValue + percentage
                     });
             }
-
         }
 
         private drawTicks(width: number, height: number, radius: number, padding: number) {
@@ -381,8 +395,27 @@ module powerbi.extensibility.visual {
             y.domain([this.data.min, this.data.max]);
             var interval = (this.data.max - this.data.min) / 5;
             tickData[0] = this.data.min;
+            let sTextNew;
             for (iCount = 1; iCount < 6; iCount++) {
                 tickData[iCount] = tickData[iCount - 1] + interval;
+            }
+            for (iCount = 0; iCount < 6; iCount++) {
+                let sText = tickData[iCount] + " " + postFix;
+                sTextNew = postFix;
+                var fTextWidth, iTextHeight;
+                let textProperties: TextProperties = {
+                    text: sText,
+                    fontFamily: 'Segoe UI',
+                    fontSize: (radius * 0.48) + "px"
+                };
+                fTextWidth = textMeasurementService.measureSvgTextWidth(textProperties);
+                iTextHeight = textMeasurementService.measureSvgTextHeight(textProperties);
+                let spaceAvailable = (width - radius) / 2 - (radius * 0.3);
+                let iNumofChars = sText.length;
+                let fCharSpace = fTextWidth / iNumofChars;
+                let iNumofCharsAllowed = spaceAvailable / fCharSpace;
+                if (iNumofCharsAllowed < iNumofChars)
+                    sTextNew = sTextNew.substring(0, iNumofCharsAllowed - 10) + "...";
             }
             yAxis = d3.svg.axis().scale(y).ticks(6).orient("right").tickValues(tickData);
             this.tempMarkings
@@ -396,7 +429,7 @@ module powerbi.extensibility.visual {
                 .call(yAxis);
             this.tempMarkings.selectAll('.axis line, .axis path').style({ 'stroke': '#333', 'fill': 'none' });
             for (iCount = 0; iCount < document.querySelectorAll('.axis text').length; iCount++) {
-                document.querySelectorAll('.axis text')[iCount].innerHTML = document.querySelectorAll('.axis text')[iCount].innerHTML + ' ' + postFix;
+                document.querySelectorAll('.axis text')[iCount].innerHTML = document.querySelectorAll('.axis text')[iCount].innerHTML + ' ' + sTextNew;
             }
             if (!this.data.drawTickBar) {
                 d3.select(".y.axis").attr("visibility", "hidden");
@@ -488,7 +521,20 @@ module powerbi.extensibility.visual {
                     };
                     instances.push(config);
                     break;
-
+                case 'ranges':
+                    var ranges: VisualObjectInstance = {
+                        objectName: 'ranges',
+                        displayName: 'Ranges',
+                        selector: null,
+                        properties: {
+                            range1: Thermometer.getValue<number>(dataView, 'range1', null),
+                            range2: Thermometer.getValue<number>(dataView, 'range2', null),
+                            range3: Thermometer.getValue<number>(dataView, 'range3', null),
+                            range4: Thermometer.getValue<number>(dataView, 'range4', null)
+                        }
+                    };
+                    instances.push(ranges);
+                    break;
                 case 'category1':
                     var category1: VisualObjectInstance = {
                         objectName: 'category1',
@@ -536,20 +582,6 @@ module powerbi.extensibility.visual {
                         }
                     };
                     instances.push(category4);
-                    break;
-                case 'ranges':
-                    var ranges: VisualObjectInstance = {
-                        objectName: 'ranges',
-                        displayName: 'Ranges',
-                        selector: null,
-                        properties: {
-                            range1: Thermometer.getValue<number>(dataView, 'range1', null),
-                            range2: Thermometer.getValue<number>(dataView, 'range2', null),
-                            range3: Thermometer.getValue<number>(dataView, 'range3', null),
-                            range4: Thermometer.getValue<number>(dataView, 'range4', null)
-                        }
-                    };
-                    instances.push(ranges);
                     break;
                 case 'legend':
                     var legend: VisualObjectInstance = {
@@ -601,11 +633,11 @@ module powerbi.extensibility.visual {
                 case LegendPosition.Top:
                 case LegendPosition.TopCenter:
                     this.svg.style('margin-top', parseInt($(".legend").css('height')));
-                    d3.select(".legend").style('margin-top', parseInt($(".legend").css('marginTop')) - 2*this.legend.getMargins().height);
+                    d3.select(".legend").style('margin-top', parseInt($(".legend").css('marginTop')) - 2 * this.legend.getMargins().height);
                 case LegendPosition.Bottom:
                 case LegendPosition.BottomCenter:
-                    this.viewport.height -= 1.9*this.legend.getMargins().height;
-                    d3.select(".legend").style('margin-top', parseInt($(".legend").css('marginTop')) - 2.2*this.legend.getMargins().height);
+                    this.viewport.height -= 1.9 * this.legend.getMargins().height;
+                    d3.select(".legend").style('margin-top', parseInt($(".legend").css('marginTop')) - 2.2 * this.legend.getMargins().height);
                     break;
             }
         }
@@ -654,7 +686,7 @@ module powerbi.extensibility.visual {
                     }
                 }
             }
-            switch(key){
+            switch (key) {
                 case 'fontColor':
                     return { solid: { color: '#000' } };
                 case 'fill1':

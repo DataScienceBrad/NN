@@ -178,7 +178,7 @@
                     "suppressFormatPainterCopy": true
                 },
                 "labelColor": {
-                    "displayName": "Color",
+                    "displayName": "Text Color",
                     "type": {
                         "fill": {
                             "solid": {
@@ -189,6 +189,35 @@
                 }
             }
         },
+		"ranges": {
+			"displayName": "Range",
+			"properties": {
+				"range1": {
+					"type": {
+						"numeric": true
+					},
+					"displayName": "Category 1"
+				},
+				"range2": {
+					"type": {
+						"numeric": true
+					},
+					"displayName": "Category 2"
+				},
+				"range3": {
+					"type": {
+						"numeric": true
+					},
+					"displayName": "Category 3"
+				},
+				"range4": {
+					"type": {
+						"numeric": true
+					},
+					"displayName": "Category 4"
+				}
+			}
+		},
 		"category1": {
 			"displayName": "Category 1",
 			"properties": {
@@ -287,35 +316,6 @@
 					},
 					"displayName": "Border"
 				}		
-			}
-		},
-		"ranges": {
-			"displayName": "Range",
-			"properties": {
-				"range1": {
-					"type": {
-						"numeric": true
-					},
-					"displayName": "Category 1"
-				},
-				"range2": {
-					"type": {
-						"numeric": true
-					},
-					"displayName": "Category 2"
-				},
-				"range3": {
-					"type": {
-						"numeric": true
-					},
-					"displayName": "Category 3"
-				},
-				"range4": {
-					"type": {
-						"numeric": true
-					},
-					"displayName": "Category 4"
-				}
 			}
 		}
 		

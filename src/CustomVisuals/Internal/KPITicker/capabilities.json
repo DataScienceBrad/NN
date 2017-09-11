@@ -1,0 +1,206 @@
+{
+    "dataRoles": [
+        {
+            "displayName": "KPI name",
+            "name": "kpiName",
+            "kind": "Grouping"
+        },
+        {
+            "displayName": "KPI current value",
+            "name": "kpiCurrentValue",
+            "kind": "Measure"
+        },
+        {
+            "displayName": "KPI last value",
+            "name": "kpiLastValue",
+            "kind": "Measure"
+        },
+        {
+            "displayName": "KPI status",
+            "name": "kpiStatus",
+            "kind": "Measure"
+        }
+    ],
+    "dataViewMappings": [
+        {
+            "conditions": [
+                {
+                    "kpiName":{
+                        "max":0
+                    },
+                    "kpiCurrentValue":{
+                        "max":1
+                    },
+                    "kpiLastValue":{
+                        "max":0
+                    },
+                    "kpiStatus":{
+                        "max":0
+                    }
+                },
+                {
+                    "kpiName":{
+                        "max":1
+                    },
+                    "kpiCurrentValue":{
+                        "max":0
+                    },
+                    "kpiLastValue":{
+                        "max":0
+                    },
+                    "kpiStatus":{
+                        "max":0
+                    }
+                },
+                {
+                    "kpiName":{
+                        "min":1,
+                        "max":1
+                    },
+                    "kpiCurrentValue":{
+                        "min":1,
+                        "max":1
+                    },
+                    "kpiLastValue":{
+                        "max":0
+                    },
+                    "kpiStatus":{
+                        "max":0
+                    }
+                },
+                {
+                    "kpiName":{
+                        "max":1
+                    },
+                    "kpiCurrentValue":{
+                        "max":1
+                    },
+                    "kpiLastValue":{
+                        "max":1
+                    },
+                    "kpiStatus":{
+                        "max":1
+                    }
+                }   
+            ],
+            "categorical": {
+                "categories": {
+                    "for": {
+                        "in": "kpiName"
+                    }
+                },
+                "values": {
+                    "select": [
+                        {
+                            "bind": {
+                                "to": "kpiCurrentValue"
+                            }
+                        },
+                        {
+                            "bind": {
+                                "to": "kpiLastValue"
+                            }
+                        },
+                        {
+                            "bind": {
+                                "to": "kpiStatus"
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    ],
+    "objects": {
+        "configuration": {
+            "displayName": "Configuration",
+            "description": "Configurations for KPI Ticker",
+            "properties": {
+                "numberOfKPI": {
+                    "displayName": "KPI Count",
+                    "description": "The number of KPIs to be shown at a time. Minimum number is 1 and maximum number is 4",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "enableDelta":{
+                    "displayName": "Enable Delta",
+                    "description": "Select if percentage change is to be displayed or not",
+                    "type":{
+                        "bool": true
+                    }
+                },
+                "fontSize": {
+                    "displayName": "Size",
+                    "description": "The text size of data",
+                    "type": {
+                        "formatting": {
+                            "fontSize": true
+                        }
+                    }
+                },
+                "fontColor": {
+                    "displayName": "Font Color",
+                    "description": "The font color of KPI names and KPI values",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "backgroundColor": {
+                    "displayName": "Background Color",
+                    "description": "The background color of containers",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "indicators": {
+            "displayName": "Indicators",
+            "description": "Indicator color properties",
+            "properties": {
+                "positiveIndicatorColor": {
+                    "displayName": "Positive Indicator Color",
+                    "description": "Color of positive indicator",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "negativeIndicatorColor": {
+                    "displayName": "Negative Indicator Color",
+                    "description": "Color of negative indicator",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "neutralIndicatorColor": {
+                    "displayName": "Neutral Indicator Color",
+                    "description": "Color of neutral indicator",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
