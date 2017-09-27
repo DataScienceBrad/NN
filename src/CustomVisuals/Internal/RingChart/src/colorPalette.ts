@@ -25,7 +25,7 @@ module powerbi.extensibility.visual {
      *
      * @instance
      */
-    var colorManager: IColorPalette;
+    let colorManager: IColorPalette;
 
     /**
      * Factory method for creating a ColorPalette.
