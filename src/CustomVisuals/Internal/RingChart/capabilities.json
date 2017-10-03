@@ -4,31 +4,31 @@
             "displayName": "Legend",
             "name": "Category",
             "kind": "Grouping",
-            "description": "The categorical field to show for color"
+            "description": "The categorical field to show color"
         },
         {
-            "displayName": "Primary Measure",
+            "displayName": "Primary measure",
             "name": "Y",
             "kind": "Measure",
-            "description": "Primary Measure"
+            "description": "Primary measure"
         },
         {
-            "displayName": "Secondary Measure",
+            "displayName": "Secondary measure",
             "name": "SecondaryMeasure",
             "kind": "Measure",
-            "description": "Secondary Measure"
+            "description": "Secondary measure"
         },
         {
-            "displayName": "Primary Threshold",
+            "displayName": "Primary threshold",
             "name": "PrimaryKPI",
             "kind": "Measure",
-            "description": "Primary Threshold"
+            "description": "Primary threshold"
         },
         {
-            "displayName": "Secondary Threshold",
+            "displayName": "Secondary threshold",
             "name": "SecondaryKPI",
             "kind": "Measure",
-            "description": "Secondary Threshold"
+            "description": "Secondary threshold"
         },
         {
             "displayName": "Tooltips",
@@ -67,7 +67,7 @@
                             },
                             "dataReductionAlgorithm": {
                                 "top": {
-                                    "count": 10000
+                                    "count": 30000
                                 }
                             }
                         },
@@ -127,7 +127,7 @@
                 },
                 "position": {
                     "displayName": "Position",
-                    "description": "Select the location for the legend",
+                    "description": "Select the position for the legend",
                     "type": {
                         "enumeration": [
                             {
@@ -177,7 +177,7 @@
                     }
                 },
                 "titleText": {
-                    "displayName": "Legend Name",
+                    "displayName": "Legend name",
                     "description": "Title text",
                     "type": {
                         "text": true
@@ -194,7 +194,7 @@
                     }
                 },
                 "fontSize": {
-                    "displayName": "Text Size",
+                    "displayName": "Text size",
                     "type": {
                         "formatting": {
                             "fontSize": true
@@ -202,7 +202,7 @@
                     }
                 },
                 "detailedLegend": {
-                    "displayName": "Primary Measure",
+                    "displayName": "Primary measure",
                     "description": "Displaying the legend details based on selection",
                     "type": {
                         "enumeration": [
@@ -226,7 +226,7 @@
                     }
                 },
                 "labelDisplayUnits": {
-                    "displayName": "Display Units",
+                    "displayName": "Display units",
                     "description": "Select the units (millions, billions, etc).",
                     "type": {
                         "formatting": {
@@ -235,7 +235,7 @@
                     }
                 },
                 "labelPrecision": {
-                    "displayName": "Decimal Places",
+                    "displayName": "Decimal places",
                     "description": "Select the number of decimal places to display",
                     "type": {
                         "numeric": true
@@ -260,7 +260,7 @@
             }
         },
         "labels": {
-            "displayName": "Detail Labels",
+            "displayName": "Detail labels",
             "description": "Display data label options",
             "properties": {
                 "show": {
@@ -282,7 +282,7 @@
                     }
                 },
                 "labelDisplayUnits": {
-                    "displayName": "Display Units",
+                    "displayName": "Display units",
                     "description": "Select the units (millions, billions, etc.)",
                     "type": {
                         "formatting": {
@@ -291,7 +291,7 @@
                     }
                 },
                 "labelPrecision": {
-                    "displayName": "Decimal Places",
+                    "displayName": "Decimal places",
                     "description": "Select the number of decimal places to display",
                     "placeHolderText": "Auto",
                     "type": {
@@ -299,7 +299,7 @@
                     }
                 },
                 "fontSize": {
-                    "displayName": "Text Size",
+                    "displayName": "Text size",
                     "type": {
                         "formatting": {
                             "fontSize": true
@@ -307,8 +307,8 @@
                     }
                 },
                 "labelStyle": {
-                    "displayName": "Label Style",
-                    "description": "Select Label style to display",
+                    "displayName": "Label style",
+                    "description": "Select label style to display",
                     "type": {
                         "enumeration": [
                             {
@@ -345,7 +345,7 @@
             }
         },
         "summaryLabels": {
-            "displayName": "Summary Labels",
+            "displayName": "Summary labels",
             "description": "Summary label options",
             "properties": {
                 "show": {
@@ -379,7 +379,7 @@
                     }
                 },
                 "fontSize": {
-                    "displayName": "Text Size",
+                    "displayName": "Text size",
                     "type": {
                         "formatting": {
                             "fontSize": true
@@ -387,7 +387,7 @@
                     }
                 },
                 "primaryMeasureSummaryText": {
-                    "displayName": "Summary Text",
+                    "displayName": "Summary text",
                     "type": {
                         "text": true
                     }
@@ -395,8 +395,8 @@
             }
         },
         "secondarySummaryLabels": {
-            "displayName": "Secondary Summary Labels",
-            "description": "Summary label options for Secondary Measure",
+            "displayName": "Secondary summary labels",
+            "description": "Summary label options for Secondary measure",
             "properties": {
                 "color": {
                     "displayName": "Color",
@@ -424,7 +424,7 @@
                     }
                 },
                 "fontSize": {
-                    "displayName": "Text Size",
+                    "displayName": "Text size",
                     "type": {
                         "formatting": {
                             "fontSize": true
@@ -434,7 +434,7 @@
             }
         },
         "GMODonutTitle": {
-            "displayName": "Donut Title",
+            "displayName": "Donut title",
             "properties": {
                 "show": {
                     "displayName": "Show",
@@ -443,7 +443,7 @@
                     }
                 },
                 "titleText": {
-                    "displayName": "Title Text",
+                    "displayName": "Title text",
                     "description": "The name of the visual",
                     "type": {
                         "text": true
@@ -451,7 +451,7 @@
                 },
                 "fill1": {
                     "displayName": "Font color",
-                    "description": "Font color for the Donut title",
+                    "description": "Font color for the donut title",
                     "type": {
                         "fill": {
                             "solid": {
@@ -461,8 +461,8 @@
                     }
                 },
                 "fontSize": {
-                    "displayName": "Text Size",
-                    "description": "Font size for the Donut title",
+                    "displayName": "Text size",
+                    "description": "Font size for the donut title",
                     "type": {
                         "formatting": {
                             "fontSize": true
@@ -471,7 +471,7 @@
                 },
                 "backgroundColor": {
                     "displayName": "Background color",
-                    "description": "Background color for the Donut title",
+                    "description": "Background color for the donut title",
                     "type": {
                         "fill": {
                             "solid": {
@@ -481,8 +481,8 @@
                     }
                 },
                 "tooltipText": {
-                    "displayName": "Tooltip Text",
-                    "description": "Tooltip text for the Donut title",
+                    "displayName": "Tooltip text",
+                    "description": "Tooltip text for the donut title",
                     "type": {
                         "text": true
                     }
@@ -490,8 +490,8 @@
             }
         },
         "Indicators": {
-            "displayName": "Primary Indicators",
-            "description": "Display Indicators options",
+            "displayName": "Primary indicators",
+            "description": "Display indicators options",
             "properties": {
                 "show": {
                     "displayName": "Show",
@@ -500,28 +500,28 @@
                     }
                 },
                 "PrimaryMeasure": {
-                    "displayName": "Sign Indicator",
-                    "description": "Indicator based on sign for Primary Measure. This is applicable only if 'Primary Threshold' field is not selected",
+                    "displayName": "Sign indicator",
+                    "description": "Indicator based on sign for Primary measure. This is applicable only if 'Primary threshold' field is not selected",
                     "type": {
                         "bool": true
                     }
                 },
                 "Threshold": {
                     "displayName": "Threshold",
-                    "description": "Threshold value for Primary Measure. This is applicable only if 'Primary Threshold' field is not selected",
+                    "description": "Threshold value for Primary measure. This is applicable only if 'Primary threshold' field is not selected",
                     "type": {
                         "numeric": true
                     }
                 },
                 "Total_Threshold": {
-                    "displayName": "Total Value Threshold",
-                    "description": "Threshold value for primary measure total. This is applicable only if 'Primary Threshold' field is not selected",
+                    "displayName": "Total value threshold",
+                    "description": "Threshold value for Primary measure total. This is applicable only if 'Primary threshold' field is not selected",
                     "type": {
                         "numeric": true
                     }
                 },
                 "upArrow": {
-                    "displayName": "Up Arrow Color",
+                    "displayName": "Up arrow color",
                     "description": "Option to set color of up arrow",
                     "type": {
                         "fill": {
@@ -532,7 +532,7 @@
                     }
                 },
                 "downArrow": {
-                    "displayName": "Down Arrow Color",
+                    "displayName": "Down arrow color",
                     "description": "Option to set color of down arrow",
                     "type": {
                         "fill": {
@@ -545,8 +545,8 @@
             }
         },
         "SMIndicator": {
-            "displayName": "Secondary Indicators",
-            "description": "Display Indicators options",
+            "displayName": "Secondary indicators",
+            "description": "Display indicators options",
             "properties": {
                 "show": {
                     "displayName": "Show",
@@ -555,28 +555,28 @@
                     }
                 },
                 "SecondaryMeasure": {
-                    "displayName": "Sign Indicator",
-                    "description": "Indicator for Secondary Measure. This is applicable only if 'Secondary Threshold' field is not selected",
+                    "displayName": "Sign indicator",
+                    "description": "Indicator for secondary measure. This is applicable only if 'Secondary threshold' field is not selected",
                     "type": {
                         "bool": true
                     }
                 },
                 "SMThreshold": {
                     "displayName": "Threshold",
-                    "description": "Threshold value for Secondary Measure. This is applicable only if 'Secondary Threshold' field is not selected",
+                    "description": "Threshold value for secondary measure. This is applicable only if 'Secondary threshold' field is not selected",
                     "type": {
                         "numeric": true
                     }
                 },
                 "SMTotalThreshold": {
-                    "displayName": "Total Value Threshold",
-                    "description": "Threshold value for secondary measure total. This is applicable only if 'Secondary Threshold' field is not selected",
+                    "displayName": "Total value threshold",
+                    "description": "Threshold value for secondary measure total. This is applicable only if 'Secondary threshold' field is not selected",
                     "type": {
                         "numeric": true
                     }
                 },
                 "upArrow": {
-                    "displayName": "Up Arrow Color",
+                    "displayName": "Up arrow color",
                     "description": "Option to set color of up arrow",
                     "type": {
                         "fill": {
@@ -587,7 +587,7 @@
                     }
                 },
                 "downArrow": {
-                    "displayName": "Down Arrow Color",
+                    "displayName": "Down arrow color",
                     "description": "Option to set color of down arrow",
                     "type": {
                         "fill": {
@@ -600,7 +600,7 @@
             }
         },
         "animation": {
-            "displayName": "Animation Settings",
+            "displayName": "Animation settings",
             "description": "Option to turn on or off the animation",
             "properties": {
                 "show": {

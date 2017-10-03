@@ -136,7 +136,7 @@ module powerbi.extensibility.visual {
         decimalPlaces: number;
     }
 
-    // Interface for Detail Lables
+    // Interface for Detail Labels
     export interface IDetailLables {
         show: boolean;
         fontSize: number;
@@ -390,7 +390,8 @@ module powerbi.extensibility.visual {
                         dataView.categorical.values[k].values[i].toString() : '0');
                 }
                 let tooltipDataPoint: ITooltipDataPoints = {
-                    formatter: dataView.categorical.values[k].source.format ? dataView.categorical.values[k].source.format : '',
+                    formatter: dataView.categorical.values[k].source.format ?
+                        dataView.categorical.values[k].source.format : ValueFormatter.DefaultNumericFormat,
                     name: dataView.categorical.values[k].source.displayName,
                     value: dataView.categorical.values[k].values[i] ? (dataView.categorical.values[k].values[i].toString()) : ''
                 };
@@ -450,6 +451,9 @@ module powerbi.extensibility.visual {
             this.tooltipServiceWrapper = createTooltipServiceWrapper(this.host.tooltipService, options.element);
             this.rootElement = d3.select(options.element);
             let svg = this.svg = d3.select(options.element)
+                .style({
+                    cursor: 'default'
+                })
                 .append('svg')
                 .classed('ring_donutChart', true);
 
@@ -473,7 +477,6 @@ module powerbi.extensibility.visual {
         public getLegendData(dataView: DataView, donutChartDataPoints: any, host: IVisualHost): LegendData {
 
             let legendSettings: ILegendConfig = this.getLegendSettings(dataView);
-            // let SelectionId: powerbi.visuals.ISelectionId;
             let sTitle = '';
             let secondaryMeasure = [];
             let primaryTitle;
@@ -551,14 +554,20 @@ module powerbi.extensibility.visual {
             let errorMsg = noDataMessage.textMessage;
 
             if (!viewModel || !viewModel.isLegendAvailable || !viewModel.isPrimaryMeasureAvailable) {
-                let htmlChunk = '<div class="ring_ErrorMessage"' +
-                    'title="Please select Primary Measure and Legend values">Please select "Primary Measure" and "Legend" values</div>';
-                $('#sandbox-host').append(htmlChunk);
+                let message = 'Please select "Primary Measure" and "Legend" values';
+                this.rootElement
+                    .append('div')
+                    .classed('ring_ErrorMessage', true)
+                    .text(message)
+                    .attr('title', message);
 
                 return;
             } else if (!viewModel.legendData || !viewModel.primaryMeasureSum) {
-                let htmlChunk = `<div class="ring_ErrorMessage" title="${errorMsg}">${errorMsg}</div>`;
-                $('#sandbox-host').append(htmlChunk);
+                this.rootElement
+                    .append('div')
+                    .classed('ring_ErrorMessage', true)
+                    .text(errorMsg)
+                    .attr('title', errorMsg);
 
                 return;
             }
@@ -585,7 +594,7 @@ module powerbi.extensibility.visual {
                     text: donutTitleSettings.titleText
                 };
                 let finalText = textMeasurementService.getTailoredTextOrDefault(textProperties, donutWidth - 70);
-                this.rootElement.select('.ring_donutTitle')
+                let titleDiv = this.rootElement.select('.ring_donutTitle')
                     .append('div')
                     .classed('ring_donutTitleDiv', true)
                     .style({
@@ -593,10 +602,14 @@ module powerbi.extensibility.visual {
                         color: donutTitleSettings.fill1,
                         'font-size': PixelConverter.fromPoint(donutTitleSettings.fontSize)
                     })
-                    .text(finalText)
-                    .append('span')
-                    .text(' (?)')
-                    .attr('title', donutTitleSettings.tooltipText);
+                    .text(finalText);
+
+                if (donutTitleSettings.tooltipText.trim() !== '') {
+                    titleDiv
+                        .append('span')
+                        .text(' (?)')
+                        .attr('title', donutTitleSettings.tooltipText);
+                }
                 donutTitleHeight = parseFloat($('.ring_donutTitle').css('height'));
                 donutHeight = donutHeight - donutTitleHeight;
             }
@@ -712,7 +725,7 @@ module powerbi.extensibility.visual {
                 let enteringtext = svg.selectAll('.ring_labelName').data(pie(viewModel.dataPoints)).enter();
                 let textGroups = enteringtext.append('g').attr('class', 'ring_labelName');
                 let labelcolor = lablesettings.color;
-                let labeltextsize = PixelConverter.fromPoint(lablesettings.fontSize); // + 'px';
+                let labeltextsize = PixelConverter.fromPoint(lablesettings.fontSize);
 
                 let label = textGroups
                     .append('text')
@@ -728,18 +741,17 @@ module powerbi.extensibility.visual {
                         return pos[1];
                     })
                     .attr('dy', '.20em')
-
                     .attr('id', function (d, i) {
                         return `ring_label_${i}`;
                     })
                     .text(function (d) {
-                        let primaryFormatter = '';
+                        let primaryFormatter = ValueFormatter.DefaultNumericFormat;
                         if (THIS.dataViews
                             && THIS.dataViews.categorical
                             && THIS.dataViews.categorical.values
                             && THIS.dataViews.categorical.values[0]) {
                             primaryFormatter = THIS.dataViews.categorical.values[0].source.format ?
-                                THIS.dataViews.categorical.values[0].source.format : '';
+                                THIS.dataViews.categorical.values[0].source.format : ValueFormatter.DefaultNumericFormat;
                         }
                         let primaryFormatterVal = 0;
                         if (detaillabelprop.labelDisplayUnits === 0) {
@@ -771,19 +783,19 @@ module powerbi.extensibility.visual {
                             text = `${val}%`;
                         } else if (detaillabelprop.labelStyle === 'Category, percent of total') {
                             let val = (d.data.value / summaryvalue * 100).toFixed(2).toString();
-                            text = `${d.data.category} (${val}%)`;
+                            text = `${d.data.category} ${val}%`;
                         } else if (detaillabelprop.labelStyle === 'Data value, percent of total') {
                             let val1 = formatter.format(d.data.value);
                             let val2 = (d.data.value / summaryvalue * 100).toFixed(2).toString();
                             text = `${val1} (${val2}%)`;
                         } else if (detaillabelprop.labelStyle === 'Both') {
                             let val = formatter.format(d.data.value);
-                            text = `${d.data.category} (${val})`;
+                            text = `${d.data.category} ${val}`;
                         } else {
                             let cat = d.data.category;
                             let val = formatter.format(d.data.value);
                             let percentVal = (d.data.value / summaryvalue * 100).toFixed(2).toString();
-                            text = `${cat} (${val}) (${percentVal}%)`;
+                            text = `${cat} ${val} (${percentVal}%)`;
                         }
 
                         let textProperties: TextProperties = {
@@ -862,7 +874,6 @@ module powerbi.extensibility.visual {
 
                         return finalText;
                     })
-
                     .style(
                     'text-anchor', function (d) {
                         return (midAngle(d)) < Math.PI ? 'start' : 'end';
@@ -870,11 +881,11 @@ module powerbi.extensibility.visual {
                     .style('fill', labelcolor)
                     .style('font-size', labeltextsize)
                     .style('font-family', this.defaultFontFamily)
-
                     .append('title')
                     .text(function (d) {
                         let formatter = ValueFormatter.create({
-                            format: THIS.dataViews.categorical.values[0].source.format,
+                            format: !!THIS.dataViews.categorical.values[0].source.format ?
+                                THIS.dataViews.categorical.values[0].source.format : ValueFormatter.DefaultNumericFormat,
                             precision: 0
                         });
                         let summaryvalue = viewModel.primaryMeasureSum;
@@ -889,18 +900,18 @@ module powerbi.extensibility.visual {
                         } else if (detaillabelprop.labelStyle === 'Category, percent of total') {
                             let cat = d.data.category;
                             let percentVal = (d.data.value / summaryvalue * 100).toFixed(2).toString();
-                            text = `${cat} (${percentVal}%)`;
+                            text = `${cat} ${percentVal}%`;
                         } else if (detaillabelprop.labelStyle === 'Data value, percent of total') {
                             let val = formatter.format(d.data.value);
                             let percentVal = (d.data.value / summaryvalue * 100).toFixed(2).toString();
                             text = `${val} (${percentVal}%)`;
                         } else if (detaillabelprop.labelStyle === 'Both') {
                             let val = formatter.format(d.data.value);
-                            text = `${d.data.category} (${val})`;
+                            text = `${d.data.category} ${val}`;
                         } else {
                             let val = formatter.format(d.data.value);
                             let percentVal = (d.data.value / summaryvalue * 100).toFixed(2).toString();
-                            text = `${d.data.category} (${val}) (${percentVal}%)`;
+                            text = `${d.data.category} ${val} (${percentVal}%)`;
                         }
 
                         return text;
@@ -939,18 +950,17 @@ module powerbi.extensibility.visual {
                                 return pos[1] + heightOfText / 2 + 5;
                             })
                             .attr('dy', '.20em')
-
                             .attr('id', function (d, j) {
                                 return `ring_secondRowLabel_${j}`;
                             })
                             .text(function (d) {
-                                let primaryFormatter = '';
+                                let primaryFormatter = ValueFormatter.DefaultNumericFormat;
                                 if (THIS.dataViews
                                     && THIS.dataViews.categorical
                                     && THIS.dataViews.categorical.values
                                     && THIS.dataViews.categorical.values[0]) {
                                     primaryFormatter = THIS.dataViews.categorical.values[0].source.format ?
-                                        THIS.dataViews.categorical.values[0].source.format : '';
+                                        THIS.dataViews.categorical.values[0].source.format : ValueFormatter.DefaultNumericFormat;
                                 }
                                 let primaryFormatterVal = 0;
                                 if (detaillabelprop.labelDisplayUnits === 0) {
@@ -974,15 +984,17 @@ module powerbi.extensibility.visual {
                                 });
                                 let text = '';
                                 let summaryvalue = viewModel.primaryMeasureSum;
-                                if (detaillabelprop.labelStyle === 'Category, percent of total'
-                                    || detaillabelprop.labelStyle === 'Data value, percent of total') {
+                                if (detaillabelprop.labelStyle === 'Category, percent of total') {
+                                    let percentVal = (d.data.value / summaryvalue * 100).toFixed(2).toString();
+                                    text = `${percentVal}%`;
+                                } else if (detaillabelprop.labelStyle === 'Data value, percent of total') {
                                     let percentVal = (d.data.value / summaryvalue * 100).toFixed(2).toString();
                                     text = `(${percentVal}%)`;
                                 } else if (detaillabelprop.labelStyle === 'Both') {
-                                    text = `(${formatter.format(d.data.value)})`;
+                                    text = `${formatter.format(d.data.value)}`;
                                 } else {
                                     let percentVal = (d.data.value / summaryvalue * 100).toFixed(2).toString();
-                                    text = `(${formatter.format(d.data.value)}) (${percentVal}%)`;
+                                    text = `${formatter.format(d.data.value)} (${percentVal}%)`;
                                 }
 
                                 let textProperties: TextProperties = {
@@ -1037,7 +1049,8 @@ module powerbi.extensibility.visual {
                             .append('title')
                             .text(function (d) {
                                 let formatter = ValueFormatter.create({
-                                    format: THIS.dataViews.categorical.values[0].source.format,
+                                    format: !!THIS.dataViews.categorical.values[0].source.format ?
+                                        THIS.dataViews.categorical.values[0].source.format : ValueFormatter.DefaultNumericFormat,
                                     precision: 0
                                 });
                                 let summaryvalue = viewModel.primaryMeasureSum;
@@ -1046,15 +1059,15 @@ module powerbi.extensibility.visual {
                                 if (detaillabelprop.labelStyle === 'Category, percent of total') {
                                     let catName = d.data.category;
                                     let val = (d.data.value / summaryvalue * 100).toFixed(2).toString();
-                                    text = `${catName} (${val}%)`;
+                                    text = `${catName} ${val}%`;
                                 } else if (detaillabelprop.labelStyle === 'Data value, percent of total') {
                                     let percentVal = (d.data.value / summaryvalue * 100).toFixed(2).toString();
                                     text = `${formatter.format(d.data.value)} (${percentVal}%)`;
                                 } else if (detaillabelprop.labelStyle === 'Both') {
-                                    text = `${d.data.category} (${formatter.format(d.data.value)})`;
+                                    text = `${d.data.category} ${formatter.format(d.data.value)}`;
                                 } else {
                                     let percentVal = (d.data.value / summaryvalue * 100).toFixed(2).toString();
-                                    text = `${d.data.category} (${formatter.format(d.data.value)}) (${percentVal}%)`;
+                                    text = `${d.data.category} ${formatter.format(d.data.value)} (${percentVal}%)`;
                                 }
 
                                 return text;
@@ -1069,11 +1082,12 @@ module powerbi.extensibility.visual {
                             && dataLabelsArr[i].childNodes[0] && dataLabelsArr[i].childNodes[0].textContent : 'no data';
                         let expString = '';
                         if (detaillabelprop.labelStyle === 'Category, percent of total'
-                            || detaillabelprop.labelStyle === 'Data value, percent of total'
                             || detaillabelprop.labelStyle === 'Both') {
-                            expString = '(.*)\\s\\((.+)\\)'; // <title>(.*)\\((.+)\\)<\/title>';
+                            expString = '(.*)\\s(.+)';
+                        } else if (detaillabelprop.labelStyle === 'Data value, percent of total') {
+                            expString = '(.*)\\s\\((.+)\\)';
                         } else {
-                            expString = '(.*)\\s\\((.+)\\)\\s\\((.+)\\)'; // <title>(.*)\\((.+)\\)<\/title>';
+                            expString = '(.*)\\s(.+)\\s\\((.+)\\)';
                         }
                         let pattern = new RegExp(expString, 'gi');
                         // checking the pattern of the data label inorder to display or not
@@ -1228,7 +1242,6 @@ module powerbi.extensibility.visual {
                             .outerRadius(radius * outerMultiplier));
                 });
             }
-
         }
 
         public drawSummaryDiv(radius, options, viewModel, legendHeight, legendWidth, summaryLabelSettings, dataViews) {
@@ -1261,15 +1274,14 @@ module powerbi.extensibility.visual {
 
                     let primaryFormatter = ValueFormatter.create({
                         format: options.dataViews[0].categorical.values[0].source.format ?
-                            options.dataViews[0].categorical.values[0].source.format : '',
+                            options.dataViews[0].categorical.values[0].source.format : ValueFormatter.DefaultNumericFormat,
                         precision: summaryLabelSettings.labelPrecision,
                         value: summaryLabelSettings.labelDisplayUnits === 0 ?
                             primaryFormatterVal : summaryLabelSettings.labelDisplayUnits
                     });
                     let primaryTooltipFormatter = ValueFormatter.create({
                         format: options.dataViews[0].categorical.values[0].source.format ?
-                            options.dataViews[0].categorical.values[0].source.format : '',
-                        precision: 0
+                            options.dataViews[0].categorical.values[0].source.format : ValueFormatter.DefaultNumericFormat
                     });
                     let donutTitleHeight = 0;
                     if (donutTitleSettings.show) {
@@ -1314,7 +1326,7 @@ module powerbi.extensibility.visual {
                             .append('div').style({
                                 color: summaryLabelSettings.color,
                                 'font-family': this.defaultFontFamily,
-                                'font-size': PixelConverter.fromPoint(summaryLabelSettings.fontSize), // + 'px',
+                                'font-size': PixelConverter.fromPoint(summaryLabelSettings.fontSize),
                                 height: `${heightBox}px`,
                                 left: `${x}px`,
                                 overflow: 'hidden',
@@ -1390,7 +1402,6 @@ module powerbi.extensibility.visual {
                                 selectedColor = downColor;
                             }
                             let element = this.rootElement.select('.ring_TotalValue');
-
                             element.append('div')
                                 .classed('ring_primaryMeasureSum', true)
                                 .text(primaryFormatter.format(viewModel.primaryMeasureSum))
@@ -1426,15 +1437,14 @@ module powerbi.extensibility.visual {
 
                         secondaryFormatter = ValueFormatter.create({
                             format: options.dataViews[0].categorical.values[1].source.format ?
-                                options.dataViews[0].categorical.values[1].source.format : '',
+                                options.dataViews[0].categorical.values[1].source.format : ValueFormatter.DefaultNumericFormat,
                             precision: secondarySummarySettings.labelPrecision,
                             value: secondarySummarySettings.labelDisplayUnits === 0 ?
                                 secondaryFormatterVal : secondarySummarySettings.labelDisplayUnits
                         });
                         let secondaryTooltipFormatter = ValueFormatter.create({
                             format: options.dataViews[0].categorical.values[1].source.format ?
-                                options.dataViews[0].categorical.values[1].source.format : '',
-                            precision: 0
+                                options.dataViews[0].categorical.values[1].source.format : ValueFormatter.DefaultNumericFormat
                         });
 
                         let isSecondaryPercentage = false;
@@ -1816,8 +1826,8 @@ module powerbi.extensibility.visual {
             let legendSettings: ILegendConfig = this.getLegendSettings(dataViews);
             let pmIndicatorSettings: IPrimaryIndicator = this.getPrimaryIndicator(dataViews);
             let smIndicatorSettings: ISecondaryIndicator = this.getSecondaryIndicator(dataViews);
-            let primaryFormat = '';
-            let secondaryFormat = '';
+            let primaryFormat = ValueFormatter.DefaultNumericFormat;
+            let secondaryFormat = ValueFormatter.DefaultNumericFormat;
             let primaryFormatter;
             let secondaryFormatter;
             let primaryTooltipFormatter;
@@ -1847,12 +1857,14 @@ module powerbi.extensibility.visual {
 
             if (legendData.primaryTitle) {
                 legendDataTorender.primaryTitle = legendData.primaryTitle;
-                primaryFormat = dataViews.categorical.values[0].source.format ? dataViews.categorical.values[0].source.format : '';
+                primaryFormat = dataViews.categorical.values[0].source.format ?
+                    dataViews.categorical.values[0].source.format : ValueFormatter.DefaultNumericFormat;
                 legendDataTorender.primaryType = legendSettings.primaryMeasure;
             }
             if (legendData.secondaryTitle) {
                 legendDataTorender.secondaryTitle = legendData.secondaryTitle;
-                secondaryFormat = dataViews.categorical.values[1].source.format ? dataViews.categorical.values[1].source.format : '';
+                secondaryFormat = dataViews.categorical.values[1].source.format ?
+                    dataViews.categorical.values[1].source.format : ValueFormatter.DefaultNumericFormat;
 
                 secondaryTooltipFormatter = ValueFormatter.create({
                     format: secondaryFormat,
@@ -2426,9 +2438,7 @@ module powerbi.extensibility.visual {
                 let formattingString = tooltipDataPoints[i].formatter
                     ? tooltipDataPoints[i].formatter : ValueFormatter.DefaultNumericFormat;
                 let formatter = ValueFormatter.create({
-                    format: formattingString,
-                    value: 0,
-                    precision: decimalPlaces
+                    format: formattingString
                 });
                 if (isNaN(parseFloat(tooltipDataPoints[i].value))) {
                     tooltipData.value = tooltipDataPoints[i].value;
