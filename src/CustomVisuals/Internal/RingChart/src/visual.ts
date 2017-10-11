@@ -366,46 +366,35 @@ module powerbi.extensibility.visual {
 
             for (let k = 0; k < dataViews[0].categorical.values.length; k++) {
                 let dataView: DataView = dataViews[0];
-                let dataVal = (Number(dataView.categorical.values[k].values[i]));
+                let dataVal = dataView.categorical.values[k].values[i];
+                dataVal = dataVal < 0 ? 0 : dataVal;
                 let colName = dataView.categorical.values[k].source.displayName;
-                if (isNaN(dataVal)) {
-                    context.isInvalidData = true;
-                }
                 if (dataView.categorical.values[k].source.roles['Y']) {
                     donutDataPoint.primaryName = colName;
                     donutDataPoint.value = dataVal;
-                    primaryMeasureSum += parseFloat(dataView.categorical.values[k].values[i] ?
-                        dataView.categorical.values[k].values[i].toString() : '0');
+                    primaryMeasureSum += parseFloat(dataVal ? dataVal.toString() : '0');
                 }
                 if (dataView.categorical.values[k].source.roles['SecondaryMeasure']) {
                     donutDataPoint.secondaryName = colName;
                     donutDataPoint.secondaryValue = dataVal;
-                    secondaryMeasureSum += parseFloat(dataView.categorical.values[k].values[i] ?
-                        dataView.categorical.values[k].values[i].toString() : '0');
+                    secondaryMeasureSum += parseFloat(dataVal ? dataVal.toString() : '0');
                     context.isSMExists = true;
                 }
                 if (dataView.categorical.values[k].source.roles['PrimaryKPI']) {
                     donutDataPoint.primaryKPIValue = dataVal;
-                    primarykpiSum += parseFloat(dataView.categorical.values[k].values[i] ?
-                        dataView.categorical.values[k].values[i].toString() : '0');
+                    primarykpiSum += parseFloat(dataVal ? dataVal.toString() : '0');
                 }
                 if (dataView.categorical.values[k].source.roles['SecondaryKPI']) {
                     donutDataPoint.secondaryKPIValue = dataVal;
-                    secondarykpiSum += parseFloat(dataView.categorical.values[k].values[i] ?
-                        dataView.categorical.values[k].values[i].toString() : '0');
+                    secondarykpiSum += parseFloat(dataVal ? dataVal.toString() : '0');
                 }
                 let tooltipDataPoint: ITooltipDataPoints = {
                     formatter: dataView.categorical.values[k].source.format ?
                         dataView.categorical.values[k].source.format : ValueFormatter.DefaultNumericFormat,
                     name: colName,
-                    value: dataView.categorical.values[k].values[i] ? (dataView.categorical.values[k].values[i].toString()) : '(Blank)'
+                    value: dataVal ? dataVal.toString() : '(Blank)'
                 };
                 donutDataPoint.tooltipData.push(tooltipDataPoint);
-            }
-
-            if (isNaN(primaryMeasureSum) || isNaN(secondaryMeasureSum)
-                || isNaN(primarykpiSum) || isNaN(secondarykpiSum)) {
-                context.isInvalidData = true;
             }
             donutDataPoint.color = getCategoricalObjectValue<Fill>(category, i, 'dataPoint', 'fill', defaultColor).solid.color;
             donutDataPoint.selectionId = host.createSelectionIdBuilder()
@@ -454,7 +443,6 @@ module powerbi.extensibility.visual {
         private labelFontFamily: string;
         private primaryMeasurePercent: boolean;
         private isSMExists: boolean;
-        private isInvalidData: boolean;
 
         constructor(options: VisualConstructorOptions) {
             this.host = options.host;
@@ -544,7 +532,6 @@ module powerbi.extensibility.visual {
             this.dataViews = options.dataViews[0];
             let THIS = this;
             this.isSMExists = false;
-            this.isInvalidData = false;
 
             let viewModel: IDonutChartViewModel = visualTransform(options, this.host, this);
             let settings = this.donutChartSettings = viewModel.settings;
@@ -572,15 +559,6 @@ module powerbi.extensibility.visual {
                     .classed('ring_ErrorMessage', true)
                     .text(message)
                     .attr('title', message);
-
-                return;
-            } else if (this.isInvalidData) {
-                let errMessage = 'Data not supported';
-                this.rootElement
-                    .append('div')
-                    .classed('ring_ErrorMessage', true)
-                    .text(errMessage)
-                    .attr('title', errMessage);
 
                 return;
             } else if (!viewModel.legendData || !viewModel.primaryMeasureSum) {
