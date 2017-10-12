@@ -366,34 +366,33 @@ module powerbi.extensibility.visual {
 
             for (let k = 0; k < dataViews[0].categorical.values.length; k++) {
                 let dataView: DataView = dataViews[0];
+                let dataVal = dataView.categorical.values[k].values[i];
+                dataVal = dataVal < 0 ? 0 : dataVal;
+                let colName = dataView.categorical.values[k].source.displayName;
                 if (dataView.categorical.values[k].source.roles['Y']) {
-                    donutDataPoint.primaryName = dataView.categorical.values[k].source.displayName;
-                    donutDataPoint.value = (Number(dataView.categorical.values[k].values[i]));
-                    primaryMeasureSum += parseFloat(dataView.categorical.values[k].values[i] ?
-                        dataView.categorical.values[k].values[i].toString() : '0');
+                    donutDataPoint.primaryName = colName;
+                    donutDataPoint.value = dataVal;
+                    primaryMeasureSum += parseFloat(dataVal ? dataVal.toString() : '0');
                 }
                 if (dataView.categorical.values[k].source.roles['SecondaryMeasure']) {
-                    donutDataPoint.secondaryName = dataView.categorical.values[k].source.displayName;
-                    donutDataPoint.secondaryValue = (Number(dataView.categorical.values[k].values[i]));
-                    secondaryMeasureSum += parseFloat(dataView.categorical.values[k].values[i] ?
-                        dataView.categorical.values[k].values[i].toString() : '0');
+                    donutDataPoint.secondaryName = colName;
+                    donutDataPoint.secondaryValue = dataVal;
+                    secondaryMeasureSum += parseFloat(dataVal ? dataVal.toString() : '0');
                     context.isSMExists = true;
                 }
                 if (dataView.categorical.values[k].source.roles['PrimaryKPI']) {
-                    donutDataPoint.primaryKPIValue = (Number(dataView.categorical.values[k].values[i]));
-                    primarykpiSum += parseFloat(dataView.categorical.values[k].values[i] ?
-                        dataView.categorical.values[k].values[i].toString() : '0');
+                    donutDataPoint.primaryKPIValue = dataVal;
+                    primarykpiSum += parseFloat(dataVal ? dataVal.toString() : '0');
                 }
                 if (dataView.categorical.values[k].source.roles['SecondaryKPI']) {
-                    donutDataPoint.secondaryKPIValue = (Number(dataView.categorical.values[k].values[i]));
-                    secondarykpiSum += parseFloat(dataView.categorical.values[k].values[i] ?
-                        dataView.categorical.values[k].values[i].toString() : '0');
+                    donutDataPoint.secondaryKPIValue = dataVal;
+                    secondarykpiSum += parseFloat(dataVal ? dataVal.toString() : '0');
                 }
                 let tooltipDataPoint: ITooltipDataPoints = {
                     formatter: dataView.categorical.values[k].source.format ?
                         dataView.categorical.values[k].source.format : ValueFormatter.DefaultNumericFormat,
-                    name: dataView.categorical.values[k].source.displayName,
-                    value: dataView.categorical.values[k].values[i] ? (dataView.categorical.values[k].values[i].toString()) : ''
+                    name: colName,
+                    value: dataVal ? dataVal.toString() : '(Blank)'
                 };
                 donutDataPoint.tooltipData.push(tooltipDataPoint);
             }

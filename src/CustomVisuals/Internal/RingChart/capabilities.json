@@ -10,25 +10,45 @@
             "displayName": "Primary measure",
             "name": "Y",
             "kind": "Measure",
-            "description": "Primary measure"
+            "description": "Primary measure",
+            "requiredTypes": [
+                {
+                    "numeric": true
+                }
+            ]
         },
         {
             "displayName": "Secondary measure",
             "name": "SecondaryMeasure",
             "kind": "Measure",
-            "description": "Secondary measure"
+            "description": "Secondary measure",
+            "requiredTypes": [
+                {
+                    "numeric": true
+                }
+            ]
         },
         {
             "displayName": "Primary threshold",
             "name": "PrimaryKPI",
             "kind": "Measure",
-            "description": "Primary threshold"
+            "description": "Primary threshold",
+            "requiredTypes": [
+                {
+                    "numeric": true
+                }
+            ]
         },
         {
             "displayName": "Secondary threshold",
             "name": "SecondaryKPI",
             "kind": "Measure",
-            "description": "Secondary threshold"
+            "description": "Secondary threshold",
+            "requiredTypes": [
+                {
+                    "numeric": true
+                }
+            ]
         },
         {
             "displayName": "Tooltips",
