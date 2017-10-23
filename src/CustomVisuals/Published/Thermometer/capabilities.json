@@ -2,8 +2,43 @@
 	"dataRoles": [
 		{
 			"name": "Temperature",
-			"kind": 1,
-			"displayName": "Temperature"
+			"kind": "Measure",
+			"displayName": "Temperature",
+			"requiredTypes": [
+                {
+                    "numeric": true
+                }
+            ]
+		},
+		{
+			"name": "TargetValue",
+			"kind": "Measure",
+			"displayName": "Target Value",
+			"requiredTypes": [
+                {
+                    "numeric": true
+                }
+            ]
+		},
+		{
+			"name": "Min",
+			"kind": "Measure",
+			"displayName": "Min",
+			"requiredTypes": [
+                {
+                    "numeric": true
+                }
+            ]
+		},
+		{
+			"name": "Max",
+			"kind": "Measure",
+			"displayName": "Max",
+			"requiredTypes": [
+                {
+                    "numeric": true
+                }
+            ]
 		}
 	],
 	"dataViewMappings": [
@@ -12,21 +47,46 @@
 				{
 					"Temperature": {
 						"max": 1
+					},
+					"TargetValue": {
+						"max": 1
+					},
+					"Min": {
+						"max": 1
+					},
+					"Max": {
+						"max": 1
 					}
 				}
 			],
 			"categorical": {
-				"values": {
+				"categories": {
 					"select": [
 						{
 							"for": {
 								"in": "Temperature"
 							}
 						}
-					],
-					"dataReductionAlgorithm": {
-						"bottom": {}
-					}
+					]
+				},
+				"values": {
+					"select": [
+						{
+							"for": {
+								"in": "TargetValue"
+							}
+						},
+						{
+							"for": {
+								"in": "Min"
+							}
+						},
+						{
+							"for": {
+								"in": "Max"
+							}
+						}
+					]
 				}
 			}
 		}
@@ -35,26 +95,6 @@
 		"config": {
 			"displayName": "Configurations",
 			"properties": {
-				"fill": {
-					"type": {
-						"fill": {
-							"solid": {
-								"color": true
-							}
-						}
-					},
-					"displayName": "Fill"
-				},
-				"border": {
-					"type": {
-						"fill": {
-							"solid": {
-								"color": true
-							}
-						}
-					},
-					"displayName": "Border"
-				},
 				"max": {
 					"type": {
 						"numeric": true
@@ -73,6 +113,23 @@
 					},
 					"displayName": "Tick bar"
 				},
+				"valDisplayUnits": {
+					"displayName": "Display units",
+					"description": "Display units for target, values and ticks",
+					"type": {
+						"formatting": {
+							"labelDisplayUnits": true
+						}
+					},
+					"suppressFormatPainterCopy": true
+				},
+				"valDecimalValue": {
+					"displayName": "Decimal Value",
+					"description": "Decimal value (Max 4 Places) for target, values and ticks",
+					"type": {
+						"numeric": true
+					}
+				},
 				"fontColor": {
 					"type": {
 						"fill": {
@@ -81,13 +138,223 @@
 							}
 						}
 					},
-					"displayName": "Target Color"
+					"displayName": "Actual value color"
 				},
 				"postfix": {
 					"type": {
 						"text": true
 					},
 					"displayName": "Unit"
+				}
+			}
+		},
+		"legend": {
+			"displayName": "Legend",
+			"description": "Display legend options",
+			"properties": {
+				"show": {
+					"displayName": "Show",
+					"type": {
+						"bool": true
+					}
+				},
+				"position": {
+					"displayName": "Position",
+					"description": "Select the location for the legend",
+					"type": {
+						"enumeration": [
+							{
+								"value": "Top",
+								"displayName": "Top"
+							},
+							{
+								"value": "Bottom",
+								"displayName": "Bottom"
+							},
+							{
+								"value": "Left",
+								"displayName": "Left"
+							},
+							{
+								"value": "Right",
+								"displayName": "Right"
+							},
+							{
+								"value": "TopCenter",
+								"displayName": "Top Center"
+							},
+							{
+								"value": "BottomCenter",
+								"displayName": "Bottom Center"
+							},
+							{
+								"value": "LeftCenter",
+								"displayName": "Left Center"
+							},
+							{
+								"value": "RightCenter",
+								"displayName": "Right Center"
+							}
+						]
+					}
+				},
+				"showTitle": {
+					"displayName": "Title",
+					"description": "Display a title for legend symbols",
+					"type": {
+						"bool": true
+					}
+				},
+				"titleText": {
+					"displayName": "Legend Name",
+					"description": "Title text",
+					"type": {
+						"text": true
+					},
+					"suppressFormatPainterCopy": true
+				},
+				"labelColor": {
+					"displayName": "Color",
+					"type": {
+						"fill": {
+							"solid": {
+								"color": true
+							}
+						}
+					}
+				},
+				"displayUnits": {
+					"displayName": "Display units",
+					"description": "For legends",
+					"type": {
+						"formatting": {
+							"labelDisplayUnits": true
+						}
+					},
+					"suppressFormatPainterCopy": true
+				},
+				"decimalValue": {
+					"displayName": "Decimal Value",
+					"description": "For legends (Max 4 Places)",
+					"type": {
+						"numeric": true
+					}
+				},
+				"range1": {
+					"type": {
+						"numeric": true
+					},
+					"displayName": "Range 1",
+					"description": "Enter value for Range 1"
+				},
+				"fill1": {
+					"type": {
+						"fill": {
+							"solid": {
+								"color": true
+							}
+						}
+					},
+					"displayName": "Fill",
+					"description": "Fill Color for Range 1"
+				},
+				"border1": {
+					"type": {
+						"fill": {
+							"solid": {
+								"color": true
+							}
+						}
+					},
+					"displayName": "Border",
+					"description": "Border Color for Range 1"
+				},
+				"range2": {
+					"type": {
+						"numeric": true
+					},
+					"displayName": "Range 2",
+					"description": "Enter value for Range 2"
+				},
+				"fill2": {
+					"type": {
+						"fill": {
+							"solid": {
+								"color": true
+							}
+						}
+					},
+					"displayName": "Fill",
+					"description": "Fill Color for Range 2"
+				},
+				"border2": {
+					"type": {
+						"fill": {
+							"solid": {
+								"color": true
+							}
+						}
+					},
+					"displayName": "Border",
+					"description": "Border Color for Range 2"
+				},
+				"range3": {
+					"type": {
+						"numeric": true
+					},
+					"displayName": "Range 3",
+					"description": "Enter value for Range 3"
+				},
+				"fill3": {
+					"type": {
+						"fill": {
+							"solid": {
+								"color": true
+							}
+						}
+					},
+					"displayName": "Fill",
+					"description": "Fill Color for Range 3"
+				},
+				"border3": {
+					"type": {
+						"fill": {
+							"solid": {
+								"color": true
+							}
+						}
+					},
+					"displayName": "Border",
+					"description": "Border Color for Range 3"
+				},
+				"range4": {
+					"type": {
+						"numeric": true
+					},
+					"displayName": "Range 4",
+					"description": "Enter value for Range 4"
+				},
+				"fill4": {
+					"type": {
+						"fill": {
+							"solid": {
+								"color": true
+							}
+						}
+					},
+					"displayName": "Fill",
+					"description": "Fill Color for Range 4"
+				},
+				"border4": {
+					"type": {
+						"fill": {
+							"solid": {
+								"color": true
+							}
+						}
+					},
+					"displayName": "Border",
+					"description": "Border Color for Range 4"
 				}
 			}
 		}
