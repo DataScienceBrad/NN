@@ -1,10 +1,10 @@
 {
   "visual": {
-    "name": "CircularGauge",
-    "displayName": "CircularGauge",
+    "name": "CircularGaugeByMAQSoftware",
+    "displayName": "Circular Gauge by MAQ Software",
     "guid": "CircularGauge1458053128559",
     "visualClassName": "CircularGauge",
-    "version": "3.0.0",
+    "version": "3.2.0",
     "description": "Illustrate headway toward goals in either a pie or a donut chart format. One color illustrates actual progress and the other displays the target. The percentage shown tracks progress. Text size and ring size are customizable.",
     "supportUrl": "https://github.com/maqsoftware/PowerBI-visuals/issues",
     "gitHubUrl": "https://github.com/maqsoftware/PowerBI-visuals/"
