@@ -2,6 +2,7 @@
 module powerbi.extensibility.visual {
     //Model  
     import VisualTooltipDataItem = powerbi.extensibility.VisualTooltipDataItem;
+    import ValueFormatter = powerbi.extensibility.utils.formatting.valueFormatter;
     interface ITooltipService {
         enabled(): boolean;
         show(options: TooltipShowOptions): void;
@@ -125,9 +126,9 @@ module powerbi.extensibility.visual {
         globalminLength = 0,
         globalTargetValue = 0,
         globalTargetWidth = 0;
+
     //Visual
     export class LinearGauge implements IVisual {
-        //Variables 
         private static TooltipDisplayName: string = "Name";
         private selectionIdBuilder: ISelectionIdBuilder;
         private host: IVisualHost;
@@ -152,7 +153,6 @@ module powerbi.extensibility.visual {
         private subHeading: d3.Selection<SVGElement>;
         private cardFormatSetting: CardFormatSetting;
         private cardFormatSetting_trend: CardFormatSetting;
-        private metaDataColumn: DataViewMetadataColumn;
         private selectionManager: ISelectionManager;
         public static getDefaultData(): iLinearGauge {
             return {
@@ -235,17 +235,7 @@ module powerbi.extensibility.visual {
                 formatterOptions: null,
             };
         }
-        public getMetaDataColumn(dataView: DataView) {
-            if (dataView && dataView.metadata && dataView.metadata.columns) {
-                for (var i = 0, ilen = dataView.metadata.columns.length; i < ilen; i++) {
-                    var column = dataView.metadata.columns[i];
-                    if (column.isMeasure) {
-                        this.metaDataColumn = column;
-                        break;
-                    }
-                }
-            }
-        }
+
         public getDefaultFormatSettings(): CardFormatSetting {
             return {
                 showTitle: true,
@@ -262,7 +252,7 @@ module powerbi.extensibility.visual {
                 wordWrap: false,
             };
         }
-        //One time setup
+
         //First time it will be called and made the structure of your visual
         constructor(options: VisualConstructorOptions) {
             this.host = options.host;
@@ -299,7 +289,8 @@ module powerbi.extensibility.visual {
                 .classed('trendvalue2', true);
             this.svg = d3.select(options.element)
                 .append('svg')
-                .classed('linearSVG', true);
+                .classed('linearSVG', true)
+                .style('width', '100%');
             this.svgLinear = this.svg
                 .append('g');
             var titleLabels = this.svgLinear
@@ -324,9 +315,8 @@ module powerbi.extensibility.visual {
         //All the variable will be populated with the value we have passed
         public static converter(dataView: DataView): iLinearGauge {
             var data: iLinearGauge = LinearGauge.getDefaultData();
-            if (!dataView.metadata || !dataView)
+            if (!dataView.categorical || !dataView)
                 return;
-            var objects = dataView.metadata.objects;
             var toolTipItems = [];
             if (dataView.categorical.values == undefined)
                 return;
@@ -335,63 +325,93 @@ module powerbi.extensibility.visual {
                 values = dataView.categorical.values;
             if (values == undefined)
                 return;
-            if (values && dataView.metadata.columns) {
-                for (var i = 0; i < values.length; i++) {
-                    var col = dataView.metadata.columns[i];
-                    var value = values[i].values[0] || 0;
-                    if (col && col.roles) {
-                        var pushToTooltips = false;
-                        if (col.roles['Y']) { // we are marching the role and populating value
-                            if (col.format === '\\$#,0;(\\$#,0);\\$#,0') //here we are checking the format Ex:it is a currency format
-                            {
-                                data.actualFormat = '$';
-                            }
-                            data.actual = <number>value;
-                            actualFlag = true;
-                            pushToTooltips = true; // pass the value as true to make it as a tooltip
-                        } else if (col.roles['MinValue']) {
-                            if (col.format === '\\$#,0;(\\$#,0);\\$#,0') {
-                                data.minFormat = '$';
-                            }
-                            data.min = <number>value;
-                        } else if (col.roles['MaxValue']) {
-                            if (col.format === '\\$#,0;(\\$#,0);\\$#,0') {
-                                data.maxFormat = '$';
-                            }
-                            maxFlag = true;
-                            data.max = <number>value;
-                        } else if (col.roles['TargetValue']) {
-                            data.targetSet = true;
-                            if (col.format === '\\$#,0;(\\$#,0);\\$#,0') {
-                                data.targetFormat = '$';
-                            }
-                            data.target = <number>value;
-                            pushToTooltips = true;
-                        } else if (col.roles['QualitativeState1Value']) {
-                            data.trendValue1 = <number>value;
-                            if (col.format == '0%;-0%;0%' || col.format == '0 %;-0 %;0 %')
-                                data.trend1Format = '%';
-                        } else if (col.roles['QualitativeState2Value']) {
-                            data.trendValue2 = <number>value;
-                            if (col.format == '0%;-0%;0%' || col.format == '0 %;-0 %;0 %')
-                                data.trend2Format = '%';
-                        }
-                        if (pushToTooltips)
-                            toolTipItems.push({
-                                value: value,
-                                metadata: values[i]
-                            });
-                    }
+
+            for (var i = 0; i < values.length; i++) {
+                var col = dataView.categorical.values[i].source;
+                var value = values[i].values[0] || 0;
+                var pushToTooltips = false;
+                if (col.roles['Y']) { // we are matching the role and populating value
+                    data.actualFormat = col.format;
+                    data.actual = <number>value;
+                    actualFlag = true;
+                    pushToTooltips = true; // pass the value as true to make it as a tooltip
+                } else if (col.roles['MinValue']) {
+                    data.minFormat = col.format;
+                    data.min = <number>value;
+                } else if (col.roles['MaxValue']) {
+                    data.maxFormat = col.format;
+                    maxFlag = true;
+                    data.max = <number>value;
+                } else if (col.roles['TargetValue']) {
+                    data.targetSet = true;
+                    data.targetFormat = col.format;
+                    data.target = <number>value;
+                    pushToTooltips = true;
+                } else if (col.roles['QualitativeState1Value']) {
+                    data.trendValue1 = <number>value;
+                    data.trend1Format = col.format;
+                } else if (col.roles['QualitativeState2Value']) {
+                    data.trendValue2 = <number>value;
+                    data.trend2Format = col.format;
                 }
-                if (!maxFlag && actualFlag && data.actual > 0) {
-                    data.max = data.actual * 2;
-                }
-                if (data.max == 0) {
-                    data.max = 1;
-                }
+                if (pushToTooltips)
+                    toolTipItems.push({
+                        value: value,
+                        metadata: values[i]
+                    });
+            }
+            if (!maxFlag && actualFlag && data.actual > 0) {
+                data.max = data.actual * 2;
+            }
+            if (data.max == 0) {
+                data.max = 1;
             }
             return data; //Data object we are returning here to the update function
         }
+
+        private format(d: number, displayunitValue: number, precisionValue: number, format: string) {
+            var result: string;
+            var displayUnits: number = displayunitValue;
+            let primaryFormatterVal = 0;
+            if (displayUnits === 0) {
+                let alternateFormatter = parseInt(d.toString(), 10).toString().length;
+                if (alternateFormatter > 9) {
+                    primaryFormatterVal = 1e9;
+                } else if (alternateFormatter <= 9 && alternateFormatter > 6) {
+                    primaryFormatterVal = 1e6;
+                } else if (alternateFormatter <= 6 && alternateFormatter >= 4) {
+                    primaryFormatterVal = 1e3;
+                } else {
+                    primaryFormatterVal = 10;
+                }
+            }
+            let formatter;
+            if (format) {
+                if (format.indexOf('%') >= 0) {
+                    formatter = ValueFormatter.create({
+                        value: 0,
+                        precision: precisionValue,
+                        format: format
+                    });
+                }
+                else {
+                    formatter = ValueFormatter.create({
+                        value: displayUnits === 0 ? primaryFormatterVal : displayUnits,
+                        precision: precisionValue,
+                        format: format
+                    });
+                }
+            }
+            else {
+                formatter = ValueFormatter.create({
+                    value: displayUnits === 0 ? primaryFormatterVal : displayUnits,
+                    precision: precisionValue
+                })
+            }
+            let formattedValue = formatter.format(d);
+            return formattedValue;
+        }
+
         //Drawing the visual
         public update(options: VisualUpdateOptions) {
             this.cardFormatSetting = this.getDefaultFormatSettings();
@@ -406,7 +426,6 @@ module powerbi.extensibility.visual {
             let settingsChanged = this.getSettings(dataView.metadata.objects);
             var value: any;
             if (dataView) {
-                this.getMetaDataColumn(dataView);
                 if (dataView.single) {
                     value = dataView.single.value;
                 }
@@ -419,6 +438,7 @@ module powerbi.extensibility.visual {
             var dataView = this.dataView = options.dataViews[0];
             var viewport = options.viewport; //We will get width and height from viewport object.
             this.data = LinearGauge.converter(dataView); //calling Converter function
+
             var maxValue = Math.max(Math.abs(this.data.target), Math.abs(this.data.value), Math.abs(this.data.comparison), Math.abs(this.data.max));
             if (this.data.states.length === 0)
                 this.data.states = [Math.ceil(maxValue) / 3, (Math.ceil(maxValue) / 3) * 2, Math.ceil(maxValue)];
@@ -434,7 +454,6 @@ module powerbi.extensibility.visual {
                 fontSize: '12px',
                 text: this.data.subTitleLabel
             });
-            var labelWidth = (this.data.showLabel ? Math.max(titleWidth, subtitleWidth) : 0);
             var precisionValue = 0,
                 displayunitValue = 0,
                 color = 'black',
@@ -493,157 +512,23 @@ module powerbi.extensibility.visual {
             } else {
                 percentageVal = ((this.data.actual * 100) / this.data.target).toFixed(2);
             }
-            //we are calculating value dynamically and using in style proerties to make component more responsive                                         
-            function exponentToNumber(input) {
-                var data = String(input).split(/[eE]/);
-                if (data.length == 1) return data[0];
-                var z = '',
-                    sign = this < 0 ? '-' : '',
-                    str = data[0].replace('.', ''),
-                    mag = Number(data[1]) + 1;
-                if (mag < 0) {
-                    z = sign + '0.';
-                    while (mag++) z += '0';
-                    return z + str.replace(/^\-/, '');
-                }
-                mag -= str.length;
-                while (mag--) z += '0';
-                return str + z;
+            actualVal = this.format(this.data.actual, this.settings.labelDisplayUnits, precisionValue, this.data.actualFormat);
+
+            minVal = this.format(this.data.min, this.settings.labelDisplayUnits, precisionValue, this.data.minFormat);
+
+            targetVal = this.format(this.data.target, this.settings.labelDisplayUnits, precisionValue, this.data.targetFormat);
+
+            let formatter = ValueFormatter.create({ format: '#,0.00', value: 0, precision: 0 });
+            for (var a = 0; a < this.data.toolTipInfo.length; a++) {
+                this.data.toolTipInfo[a].value = formatter.format(this.data.toolTipInfo[a].value);
             }
-            function newFormat(c, b) {
-                var length = (typeof (c.toString().split(".")[1]) != 'undefined') ? c.toString().split(".")[1].length : 0
-                var a = (typeof (c.toString().split(".")[1]) != 'undefined') ? c.toString().split(".")[1] : 0
-                var beforeDecimal = c.toString().split(".")[0];
-                var f = beforeDecimal;
-                if (b != 0)
-                    f = f + '.';
-                if (length != 0 || b != 0) {
-                    for (var i = 0; i < b; i++) {
-                        f = f + (typeof (a[i]) != "undefined" ? a[i] : 0);
-                    }
-                }
-                if (f <= 0 && c != 0 && b == length - 1 && b != 0) {
-                    var d = a.slice(-1);
-                    var e = Math.round(Number('.' + d));
-                    var newString = a.substr(0, a.length - 2);
-                    var formatedString = newString + e;
-                    if (formatedString.length == b) {
-                        if (b != 0)
-                            formatedString = beforeDecimal + "." + formatedString;
-                        return formatedString;
-                    }
-                } else if (b == 0 && a.length >= 1) {
-                    f = Math.round(c);
-                    return f;
-                } else {
-                    return f;
-                }
-            }
-            this.settings.labelDisplayUnits
-            this.settings.trendDisplayUnits
-            switch (this.settings.labelDisplayUnits) {
-                case 0:
-                    {
-                        actualVal = newFormat(this.data.actual, precisionValue);
-                        minVal = newFormat(this.data.min, precisionValue);
-                        targetVal = newFormat(this.data.target, precisionValue);
-                        for (var a = 0; a < this.data.toolTipInfo.length; a++) {
-                            this.data.toolTipInfo[a].value = newFormat(this.data.toolTipInfo[a].value, precisionValue);
-                        }
-                        break;
-                    }
-                case 1:
-                    {
-                        actualVal = numberWithCommas(newFormat(this.data.actual, precisionValue));
-                        minVal = numberWithCommas(newFormat(this.data.min, precisionValue));
-                        targetVal = numberWithCommas(newFormat(this.data.target, precisionValue));
-                        for (var a = 0; a < this.data.toolTipInfo.length; a++) {
-                            this.data.toolTipInfo[a].value = numberWithCommas(newFormat(this.data.toolTipInfo[a].value, precisionValue));
-                        }
-                        break;
-                    }
-                case 1000:
-                    {
-                        actualVal = newFormat((this.data.actual / 1000), precisionValue) + 'K';
-                        minVal = newFormat((this.data.min / 1000), precisionValue) + 'K';
-                        targetVal = newFormat((this.data.target / 1000), precisionValue) + 'K';
-                        for (var a = 0; a < this.data.toolTipInfo.length; a++) {
-                            this.data.toolTipInfo[a].value = (newFormat((Number(this.data.toolTipInfo[a].value.replace(/\,/g, '')) / 1000), precisionValue) + 'K').toString();
-                        }
-                        break;
-                    }
-                case 1000000:
-                    {
-                        actualVal = newFormat((this.data.actual / 1000000), precisionValue) + 'M';
-                        minVal = newFormat((this.data.min / 1000000), precisionValue) + 'M';
-                        targetVal = newFormat((this.data.target / 1000000), precisionValue) + 'M';
-                        for (var a = 0; a < this.data.toolTipInfo.length; a++) {
-                            this.data.toolTipInfo[a].value = (newFormat((Number(this.data.toolTipInfo[a].value.replace(/\,/g, '')) / 1000000), precisionValue) + 'M').toString();
-                        }
-                        break;
-                    }
-                case 1000000000:
-                    {
-                        actualVal = newFormat((exponentToNumber(this.data.actual / 1000000000)), precisionValue) + 'bn';
-                        minVal = newFormat((exponentToNumber(this.data.min / 1000000000)), precisionValue) + 'bn';
-                        targetVal = newFormat((exponentToNumber(this.data.target / 1000000000)), precisionValue) + 'bn';
-                        for (var a = 0; a < this.data.toolTipInfo.length; a++) {
-                            this.data.toolTipInfo[a].value = (newFormat((Number(this.data.toolTipInfo[a].value.replace(/\,/g, '')) / 1000000000), precisionValue) + 'bn').toString();
-                        }
-                        break;
-                    }
-                case 1000000000000:
-                    {
-                        actualVal = newFormat((exponentToNumber(this.data.actual / 1000000000000)), precisionValue) + 'T';
-                        minVal = newFormat((exponentToNumber(this.data.min / 1000000000000)), precisionValue) + 'T';
-                        targetVal = newFormat((exponentToNumber(this.data.target / 1000000000000)), precisionValue) + 'T';
-                        for (var a = 0; a < this.data.toolTipInfo.length; a++) {
-                            this.data.toolTipInfo[a].value = (newFormat((Number(this.data.toolTipInfo[a].value.replace(/\,/g, '')) / 1000000000000), precisionValue) + 'T').toString();
-                        }
-                        break;
-                    }
-            }
-            switch (this.settings.trendDisplayUnits) {
-                case 0:
-                    {
-                        trend1Val = newFormat(Math.abs(this.data.trendValue1), precisionValue_trend);
-                        trend2Val = newFormat(Math.abs(this.data.trendValue2), precisionValue_trend);
-                        break;
-                    }
-                case 1:
-                    {
-                        trend1Val = numberWithCommas(newFormat(Math.abs(this.data.trendValue1), precisionValue_trend));
-                        trend2Val = numberWithCommas(newFormat(Math.abs(this.data.trendValue2), precisionValue_trend));
-                        break;
-                    }
-                case 1000:
-                    {
-                        trend1Val = newFormat((Math.abs(this.data.trendValue1) / 1000), precisionValue_trend) + 'K';
-                        trend2Val = newFormat((Math.abs(this.data.trendValue2) / 1000), precisionValue_trend) + 'K';
-                        break;
-                    }
-                case 1000000:
-                    {
-                        trend1Val = newFormat((Math.abs(this.data.trendValue1) / 1000000), precisionValue_trend) + 'M';
-                        trend2Val = newFormat((Math.abs(this.data.trendValue2) / 1000000), precisionValue_trend) + 'M';
-                        break;
-                    }
-                case 1000000000:
-                    {
-                        trend1Val = newFormat((exponentToNumber(Math.abs(this.data.trendValue1) / 1000000000)), precisionValue_trend) + 'bn';
-                        trend2Val = newFormat((exponentToNumber(Math.abs(this.data.trendValue2) / 1000000000)), precisionValue_trend) + 'bn';
-                        break;
-                    }
-                case 1000000000000:
-                    {
-                        trend1Val = newFormat((exponentToNumber(Math.abs(this.data.trendValue1) / 1000000000000)), precisionValue_trend) + 'T';
-                        trend2Val = newFormat((exponentToNumber(Math.abs(this.data.trendValue2) / 1000000000000)), precisionValue_trend) + 'T';
-                        break;
-                    }
-            }
-            this.actual.text(this.data.actualFormat + actualVal); //Using values which are stored in data object
+            trend1Val = this.format(this.data.trendValue1, this.settings.trendDisplayUnits, precisionValue_trend, this.data.trend1Format);
+
+            trend2Val = this.format(this.data.trendValue2, this.settings.trendDisplayUnits, precisionValue_trend, this.data.trend2Format);
+
+            this.actual.text(actualVal); //Using values which are stored in data object
             this.percentage.text((percentageVal) + '%');
-            this.min.text(this.data.minFormat + minVal);
+            this.min.text(minVal);
             var upArrow = '&#8599;',
                 arrowClassTV1, arrowClassTV2;
             var customwidth = (window.getComputedStyle($(this.svg[0][0])[0]).width).slice(0, -2);
@@ -663,7 +548,7 @@ module powerbi.extensibility.visual {
             this.percentage.style('padding-top', (percentageFont + 5) + 'px');
             this.percentage.style('color', this.settings.DataColor);
             var trendValue1Text, trendValue2Text;
-            var indexQualStatVal1, indexQualStatVal2, flagQualStatVal1 = false,
+            var indexQualStatVal1, indexQualStatVal2, flagQualStatVal1 = false, indexActual = -1, indexTarget = -1,
                 flagQualStatVal2 = false,
                 lengthColumn = options.dataViews[0].metadata.columns.length;
             //Populating Trend Value 1 and Trend Value 2 data  
@@ -674,9 +559,15 @@ module powerbi.extensibility.visual {
                     flagQualStatVal1 = true;
                     indexQualStatVal1 = ite;
                 }
-                if (dataView.metadata.columns[ite].roles['QualitativeState2Value'] === true) {
+                else if (dataView.metadata.columns[ite].roles['QualitativeState2Value'] === true) {
                     flagQualStatVal2 = true;
                     indexQualStatVal2 = ite;
+                }
+                else if (dataView.metadata.columns[ite].roles['Y'] === true) {
+                    indexActual = ite;
+                }
+                else if (dataView.metadata.columns[ite].roles['TargetValue'] === true) {
+                    indexTarget = ite;
                 }
             }
             if (flagQualStatVal1) {
@@ -700,6 +591,7 @@ module powerbi.extensibility.visual {
             var scale = d3.scale.linear()
                 .domain([0, Math.max(sortedRanges[0], this.data.target, this.data.value)])
                 .range([0, width]);
+
             if (flagQualStatVal1) {
                 this.trendValue1.style('display', 'inline');
                 this.trendValue1.select('span.trendvalue1arrow').remove();
@@ -707,7 +599,7 @@ module powerbi.extensibility.visual {
                 this.trendValue1.append('span')
                     .classed('trendvalue1arrow', true)
                     .html(upArrow);
-                this.trendValue1.append('span').text(trend1Val + this.data.trend1Format + ' ' + trendValue1Text);
+                this.trendValue1.append('span').text(trend1Val + ' ' + trendValue1Text);
                 if (this.data.trendValue1 < 0) {
                     //$('.trendvalue1arrow').css('Transform','rotate(90deg)');
                     if ((document.querySelectorAll(".trendvalue1arrow")).length != 0) {
@@ -726,7 +618,7 @@ module powerbi.extensibility.visual {
                 this.trendValue2.append('span')
                     .classed('trendvalue2arrow', true)
                     .html(upArrow);
-                this.trendValue2.append('span').text(trend2Val + this.data.trend2Format + ' ' + trendValue2Text);
+                this.trendValue2.append('span').text(trend2Val + ' ' + trendValue2Text);
                 if (this.data.trendValue2 < 0) {
                     if ((document.querySelectorAll(".trendvalue2arrow")).length != 0) {
                         arrowClassTV2 = document.querySelectorAll(".trendvalue2arrow");
@@ -741,7 +633,7 @@ module powerbi.extensibility.visual {
                 arrowClassTV1 = document.querySelectorAll(".trendvalue1arrow");
                 arrowClassTV1[0].style.fontSize = percentageFont + 4 + 'px';
             }
-            if ((document.querySelectorAll(".trendvalue1arrow")).length != 0) {
+            if ((document.querySelectorAll(".trendvalue2arrow")).length != 0) {
                 arrowClassTV2 = document.querySelectorAll(".trendvalue2arrow");
                 arrowClassTV2[0].style.fontsize = percentageFont + 4 + 'px';
             }
@@ -814,7 +706,7 @@ module powerbi.extensibility.visual {
             var fullsvgWidth = Number(customsvgWidth) - 20;
             minvalueWidth = (fullsvgWidth * (((this.data.target - this.data.min) * 100) / (this.data.max - this.data.min))) / 100;
             globalTargetWidth = minvalueWidth;
-            var targetValueText = this.data.targetFormat + targetVal
+            var targetValueText = targetVal
             var targetTextwidth = 9 * targetValueText.length + 10;
             var flag = false;
             if (globalTargetWidth < globalminLength || passingValue < (targetTextwidth + startingPoint)) {
@@ -847,7 +739,7 @@ module powerbi.extensibility.visual {
                 this.svgLinear.selectAll('line.markerTilt').remove();
             }
             //Target Text   
-            
+
             var customwifth = (window.getComputedStyle($(this.svg[0][0])[0]).width).slice(0, -2);
             var wifth = Number(customwifth) - 10;
             var percen = (((this.data.target - this.data.min) * 100) / (this.data.max - this.data.min));
@@ -861,7 +753,7 @@ module powerbi.extensibility.visual {
                     var markerText = this.targetText
                         .append('span')
                         .classed('markerTarget', true)
-                        .text(this.data.targetFormat + targetVal)
+                        .text(targetVal)
                         .style("float", "right")
                         .style('color', 'Black')
                         .style("margin-right", diff + 'px');
@@ -869,10 +761,9 @@ module powerbi.extensibility.visual {
                     var markerText = this.targetText
                         .append('span')
                         .classed('markerTarget', true)
-                        .text(this.data.targetFormat + targetVal)
+                        .text(targetVal)
                         .style("float", "right")
                         .style('color', 'Black')
-                        //.style("margin-right",diff+'px')
                         .style("display", 'none');
                 }
             } else {
@@ -883,7 +774,7 @@ module powerbi.extensibility.visual {
                     .classed('markerTarget', true)
                     .style('color', 'black')
                     .style('text-anchor', 'start')
-                    .text(this.data.targetFormat + targetVal)
+                    .text(targetVal)
                 markerText
                     .attr('width', 1)
                     .attr('height', modHeight)
@@ -901,45 +792,55 @@ module powerbi.extensibility.visual {
                 this.svgLinear.selectAll('line.markerTilt').remove();
             }
             if (this.data.target > this.data.max) {
-                //this.svgLinear.selectAll('.measure').style('display','none');
                 this.svgLinear.selectAll('.marker').style('display', 'none');
                 this.targetText.style('display', 'none');
                 this.svgLinear.selectAll('line.marker').remove();
                 this.svgLinear.selectAll('line.markerTilt').remove();
                 this.svgLinear.selectAll('text.markerTarget').remove();
             } else {
-                //this.svgLinear.selectAll('.measure').style('display','block');
                 this.svgLinear.selectAll('.marker').style('display', 'block');
                 this.targetText.style('display', 'block');
             }
-            if (dataView.metadata.columns[1] == undefined) {
+            let formatterActual = ValueFormatter.create({ format: this.data.actualFormat ? this.data.actualFormat : ValueFormatter.DefaultNumericFormat, value: 0, precision: this.getDecimalPlacesCount(this.data.actual) });
+            let formatterTarget = ValueFormatter.create({ format: this.data.targetFormat ? this.data.targetFormat : ValueFormatter.DefaultNumericFormat, value: 0, precision: this.getDecimalPlacesCount(this.data.target) });
+            if (indexTarget == -1) {
                 this.tooltipServiceWrapper.addTooltip(this.svgLinear.selectAll('data_tab'),
-                    (tooltipEvent: TooltipEventArgs<number>) => LinearGauge.getTwoTooltipData(dataView.metadata.columns[0].displayName, actualVal),
+                    (tooltipEvent: TooltipEventArgs<number>) => LinearGauge.getTwoTooltipData(dataView.metadata.columns[indexActual].displayName, formatterActual.format(this.data.actual)),
                     (tooltipEvent: TooltipEventArgs<number>) => null);
 
                 this.tooltipServiceWrapper.addTooltip(this.svgLinear.selectAll('rect.measure'),
-                    (tooltipEvent: TooltipEventArgs<number>) => LinearGauge.getTwoTooltipData(dataView.metadata.columns[0].displayName, actualVal),
+                    (tooltipEvent: TooltipEventArgs<number>) => LinearGauge.getTwoTooltipData(dataView.metadata.columns[indexActual].displayName, formatterActual.format(this.data.actual)),
                     (tooltipEvent: TooltipEventArgs<number>) => null);
 
                 this.tooltipServiceWrapper.addTooltip(this.svgLinear.selectAll('rect.range'),
-                    (tooltipEvent: TooltipEventArgs<number>) => LinearGauge.getTwoTooltipData(dataView.metadata.columns[0].displayName, actualVal),
+                    (tooltipEvent: TooltipEventArgs<number>) => LinearGauge.getTwoTooltipData(dataView.metadata.columns[indexActual].displayName, formatterActual.format(this.data.actual)),
                     (tooltipEvent: TooltipEventArgs<number>) => null);
-
             } else {
                 this.tooltipServiceWrapper.addTooltip(this.svgLinear.selectAll('data_tab'),
-                    (tooltipEvent: TooltipEventArgs<number>) => LinearGauge.getOneTooltipData(dataView.metadata.columns[0].displayName, actualVal, dataView.metadata.columns[1].displayName, targetVal),
+                    (tooltipEvent: TooltipEventArgs<number>) => LinearGauge.getOneTooltipData(dataView.metadata.columns[indexActual].displayName, formatterActual.format(this.data.actual), dataView.metadata.columns[indexTarget].displayName, formatterTarget.format(this.data.target)),
                     (tooltipEvent: TooltipEventArgs<number>) => null);
 
                 this.tooltipServiceWrapper.addTooltip(this.svgLinear.selectAll('rect.measure'),
-                    (tooltipEvent: TooltipEventArgs<number>) => LinearGauge.getOneTooltipData(dataView.metadata.columns[0].displayName, actualVal, dataView.metadata.columns[1].displayName, targetVal),
+                    (tooltipEvent: TooltipEventArgs<number>) => LinearGauge.getOneTooltipData(dataView.metadata.columns[indexActual].displayName, formatterActual.format(this.data.actual), dataView.metadata.columns[indexTarget].displayName, formatterTarget.format(this.data.target)),
                     (tooltipEvent: TooltipEventArgs<number>) => null);
 
                 this.tooltipServiceWrapper.addTooltip(this.svgLinear.selectAll('rect.range'),
-                    (tooltipEvent: TooltipEventArgs<number>) => LinearGauge.getOneTooltipData(dataView.metadata.columns[0].displayName, actualVal, dataView.metadata.columns[1].displayName, targetVal),
+                    (tooltipEvent: TooltipEventArgs<number>) => LinearGauge.getOneTooltipData(dataView.metadata.columns[indexActual].displayName, formatterActual.format(this.data.actual), dataView.metadata.columns[indexTarget].displayName, formatterTarget.format(this.data.target)),
                     (tooltipEvent: TooltipEventArgs<number>) => null);
             }
             globalminValue = minVal;
             globalTargetValue = targetVal;
+        }
+
+        private getDecimalPlacesCount(value: number): number {
+            let decimalPlacesCount: number = 0;
+            if (value) {
+                let valArr = value.toString().split('.');
+                if (valArr[1]) {
+                    decimalPlacesCount = valArr[1].length > 4 ? 4 : valArr[1].length;
+                }
+            }
+            return decimalPlacesCount;
         }
         //Make visual properties available in the property pane in Power BI
         //values which we can customized from property pane in Power BI 
