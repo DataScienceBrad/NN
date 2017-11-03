@@ -1,30 +1,32 @@
 @import (less) "node_modules/powerbi-visuals-utils-formattingutils/lib/index.css";
 @import (less) "node_modules/powerbi-visuals-utils-interactivityutils/lib/index.css";
 @import (less) "node_modules/powerbi-visuals-utils-chartutils/lib/index.css";
-
-.ring_legend .legendTitle{
+@import (less) "node_modules/powerbi-visuals-utils-interactivityutils/lib/index.css";
+.styleLibrary.compact .typeRamp.authoringPaneText, body.visual-sandbox {
+    font-family: 'Segoe UI',wf_segoe-ui_normal,helvetica,arial,sans-serif;
+}
+.legendTitle{
     font-family:"Segoe UI", wf_segoe-ui_semibold, helvetica, arial, sans-serif;
     font-weight: 500;
     fill:rgb(102, 102, 102);
 }
 
-.ring_legend .legendItem{
+.legendItem{
     font-family:"Segoe UI", wf_segoe-ui_normal, helvetica, arial, sans-serif;
-    cursor: pointer;
 }
 
-.ring_primaryMeasureSum , .ring_secondaryMeasureSum{		
+.primaryMeasureSum , .secondaryMeasureSum{		
     max-width: 80%;		
     display: inline-block;		
     text-overflow: ellipsis;		
     overflow: hidden;	
 }		
-.ring_primaryMeasureIndicator, .ring_secondaryMeasureIndicator{		
+.primaryMeasureIndicator, .secondaryMeasureIndicator{		
     position: absolute;		
     float: left;
     margin-left: 1px;		
 }
-.ring_ErrorMessage{
+.ErrorMessage{
     text-align: center;
     font-size: 20px;
     overflow: hidden;
@@ -33,10 +35,6 @@
     width:100%;
     position: absolute;
 }
-.ring_donutTitle{
+.donutTitle{
     width:100%;
-}
-
-.ring_donutChart .ring_arc{
-    cursor: pointer;
 }

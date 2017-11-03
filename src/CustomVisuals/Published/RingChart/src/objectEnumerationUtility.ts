@@ -10,11 +10,9 @@ module powerbi.extensibility.visual {
      */
     export function getValue<T>(objects: DataViewObjects, objectName: string, propertyName: string, defaultValue: T): T {
         if (objects) {
-            let object: DataViewObject;
-            object = objects[objectName];
+            let object = objects[objectName];
             if (object) {
-                let property: T;
-                property = <T>object[propertyName];
+                let property: T = <T>object[propertyName];
                 if (property !== undefined) {
                     return property;
                 }
@@ -34,19 +32,14 @@ module powerbi.extensibility.visual {
      * @param {string} propertyName             - Name of desired property.
      * @param {T} defaultValue                  - Default value of desired property.
      */
-    export function getCategoricalObjectValue<T>(
-        category: DataViewCategoryColumn, index: number, objectName: string, propertyName: string, defaultValue: T): T {
-        let categoryObjects: DataViewObjects[];
-        categoryObjects = category.objects;
+    export function getCategoricalObjectValue<T>(category: DataViewCategoryColumn, index: number, objectName: string, propertyName: string, defaultValue: T): T {
+        let categoryObjects = category.objects;
         if (categoryObjects) {
-            let categoryObject: DataViewObject;
-            categoryObject = categoryObjects[index];
+            let categoryObject: DataViewObject = categoryObjects[index];
             if (categoryObject) {
-                let object: DataViewPropertyValue;
-                object = categoryObject[objectName];
+                let object = categoryObject[objectName];
                 if (object) {
-                    let property: T;
-                    property = object[propertyName];
+                    let property: T = object[propertyName];
                     if (property !== undefined) {
                         return property;
                     }
