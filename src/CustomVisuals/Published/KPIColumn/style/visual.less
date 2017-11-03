@@ -7,11 +7,19 @@
 }
 
 .rootDiv{
+    height: 100%;
+    overflow-y: hidden;
     overflow-x: overlay;
 }
 
 .baseDiv{
-    overflow-x: visible;
+    overflow-x: hidden;
 }
-
+.legendItem,.legendItem1{
+    float:left;
+    margin-left: 10px;
+}
+.legendInnerPart{
+    float:left;
+}
 @import (less) "node_modules/powerbi-visuals-utils-formattingutils/lib/index.css";

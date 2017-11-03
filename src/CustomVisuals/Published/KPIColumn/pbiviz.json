@@ -1,10 +1,10 @@
 {
   "visual": {
-    "name": "KPIColumn",
-    "displayName": "KPI Column",
+    "name": "KPIColumnByMAQSoftware",
+    "displayName": "KPI Column by MAQ Software",
     "guid": "KPIColumn1823AB39DB23410928ADF752BCB2A457",
     "visualClassName": "BarChart",
-    "version": "3.0.0",
+    "version": "3.1.0",
     "description": "KPI column is a column chart where each column will behave as an indicator when compared with a line displaying individual target value. ",
     "supportUrl": "https://github.com/maqsoftware/PowerBI-visuals/issues",
     "gitHubUrl": "https://github.com/maqsoftware/PowerBI-visuals"
