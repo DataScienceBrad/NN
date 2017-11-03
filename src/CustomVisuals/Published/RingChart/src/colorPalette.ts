@@ -25,7 +25,7 @@ module powerbi.extensibility.visual {
      *
      * @instance
      */
-    var colorManager: IColorPalette;
+    let colorManager: IColorPalette;
 
     /**
      * Factory method for creating a ColorPalette.
@@ -35,8 +35,9 @@ module powerbi.extensibility.visual {
      *                                hex values for colors.
      */
     export function createColorPalette(colors: IColorInfo[]): IColorPalette {
-        if (!colorManager)
+        if (!colorManager) {
             colorManager = new ColorPalette(colors);
+        }
 
         return colorManager;
     }
@@ -57,12 +58,13 @@ module powerbi.extensibility.visual {
          * @param {string} key - Key of assign color in colorPalette.
          */
         public getColor(key: string): IColorInfo {
-            let color = this.colorPalette[key];
+            let color: IColorInfo = this.colorPalette[key];
             if (color) {
                 return color;
             }
 
-            let colors = this.colors;
+            let colors: IColorInfo[];
+            colors = this.colors;
             color = this.colorPalette[key] = colors[this.colorIndex++];
 
             if (this.colorIndex >= colors.length) {
@@ -79,6 +81,7 @@ module powerbi.extensibility.visual {
          */
         public reset(): IColorPalette {
             this.colorIndex = 0;
+
             return this;
         }
 
