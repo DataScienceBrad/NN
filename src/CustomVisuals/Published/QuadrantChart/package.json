@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "d3": "^3.5.5",
+    "powerbi-visuals-utils-chartutils": "^0.3.0",
     "powerbi-visuals-utils-formattingutils": "^0.4.0"
   }
 }
