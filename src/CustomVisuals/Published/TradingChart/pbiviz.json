@@ -1,10 +1,10 @@
 {
   "visual": {
-    "name": "migratedStockChart",
-    "displayName": "migratedStockChart",
+    "name": "TradingChartByMAQSoftware",
+    "displayName": "Trading Chart by MAQ Software",
     "guid": "StockChart1464746768122",
     "visualClassName": "StockChart",
-    "version": "3.0.0",
+    "version": "3.1.0",
     "description": "Stock chart custom visual",
     "supportUrl": "https://github.com/maqsoftware/PowerBI-visuals/issues",
     "gitHubUrl": "https://github.com/maqsoftware/PowerBI-visuals/"
