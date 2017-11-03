@@ -1,10 +1,10 @@
 {
   "visual": {
-    "name": "Dynamic Tooltip",
-    "displayName": "Dynamic Tooltip",
+    "name": "DynamicTooltipByMAQSoftware",
+    "displayName": "Dynamic Tooltip by MAQ Software",
     "guid": "dynamicTooltip1859AB39DB23051788ADF752BCB90749",
     "visualClassName": "Visual",
-    "version": "1.0.0",
+    "version": "3.1.0",
     "description": "Attach dynamic tooltips to add insight to a visual",
     "supportUrl": "https://github.com/maqsoftware/PowerBI-visuals/issues",
     "gitHubUrl": "https://github.com/maqsoftware/PowerBI-visuals"

@@ -24,7 +24,6 @@
  *  THE SOFTWARE.
  */
 
-
 module powerbi.extensibility.visual {
     import valueFormatter = powerbi.extensibility.utils.formatting.valueFormatter;
     export module DataViewObjects {
@@ -68,7 +67,7 @@ module powerbi.extensibility.visual {
         displayUnits: number;
     }
 
-    export var visualProperties = {
+    export let visualProperties = {
         tooltip: {
             text: <DataViewObjectPropertyIdentifier>{ objectName: 'tooltip', propertyName: 'text' },
             header: <DataViewObjectPropertyIdentifier>{ objectName: 'tooltip', propertyName: 'header' },
@@ -103,7 +102,9 @@ module powerbi.extensibility.visual {
             this.updateCount = 0;
             this.root = d3.select(options.element);
             this.imageurl = "https://genericvisual.blob.core.windows.net/images/Tooltip.svg";
-            this.image = this.root.append("div").append("img").attr("src", this.imageurl);
+            this.image = this.root.append("div").classed("dynamicTooltip_div", true)
+                .append("img").classed('dynamicTooltip_img', true)
+                .attr("src", this.imageurl);
             this.tooltipServiceWrapper = createTooltipServiceWrapper(this.host.tooltipService, options.element);
             this.tooltipText = "Tooltip text here";
             this.header = "Tooltip header text here";
@@ -114,21 +115,41 @@ module powerbi.extensibility.visual {
 
         public update(options: VisualUpdateOptions) {
 
-            var textSetting: tooltip = this.getDefaultTextSettings();
-            var img = d3.select('img');
+            let textSetting: tooltip = this.getDefaultTextSettings();
+            let img = d3.select('img');
 
-            this.image.attr("width", options.viewport.width + 'px');
-            this.image.attr("height", options.viewport.height + 'px');
+            let minVal = Math.min(options.viewport.width, options.viewport.height); // Take minimum value of width and height
+            if (options.viewport.width > options.viewport.height) {
+                $('.dynamicTooltip_div').addClass('dt_horizontallyCenter');
+                $('.dynamicTooltip_img').removeClass('dt_verticallyCenter');
+            } else if (options.viewport.width < options.viewport.height) {
+                $('.dynamicTooltip_div').removeClass('dt_horizontallyCenter');
+                $('.dynamicTooltip_img').addClass('dt_verticallyCenter');
+
+                let topPx = options.viewport.height / 2 - minVal / 2;
+                let topPos = topPx > 0 ? topPx + 'px' : '0px';
+                this.image.style({
+                    top: topPos
+                });
+            } else {
+                $('.dynamicTooltip_div').removeClass('dt_horizontallyCenter');
+                $('.dynamicTooltip_img').removeClass('dt_verticallyCenter');
+            }
+
+            this.image.style({
+                width: minVal + 'px',
+                height: minVal + 'px'
+            });
 
             let dataViews = options.dataViews;
             if (dataViews && dataViews[0] && dataViews[0].metadata) {
 
-                var dataView = this.dataViews = options.dataViews[0];
-                var imagePatt = new RegExp('^https?://(?:[a-z0-9\-]+\.)+[a-z]{2,6}(?:/[^/#?]+)+\.(?:jpg|gif|png|svg)$');
-                var selectedImage: string;
-                var validImage: boolean;
-                var tooltipSettings: tooltip = this.getToolTipSettings(dataView);
-                var measureSettings: measureSettings = this.getMeasureSettings(dataView);
+                let dataView = this.dataViews = options.dataViews[0];
+                let imagePatt = new RegExp('^https?://(?:[a-z0-9\-]+\.)+[a-z]{2,6}(?:/[^/#?]+)+\.(?:jpg|gif|png|svg)$');
+                let selectedImage: string;
+                let validImage: boolean;
+                let tooltipSettings: tooltip = this.getToolTipSettings(dataView);
+                let measureSettings: measureSettings = this.getMeasureSettings(dataView);
 
                 this.tooltipText = tooltipSettings.text;
                 this.header = tooltipSettings.header;
@@ -138,8 +159,8 @@ module powerbi.extensibility.visual {
                         this.tooltipText = dataViews[0].categorical.values[0].values.toString() != "" ? dataViews[0].categorical.values[0].values.toString() : tooltipSettings.text;
                         let decimalPlaces = measureSettings.textPrecision;
                         let displayUnits = measureSettings.displayUnits;
-                        var formatter = valueFormatter.create({ format: dataViews[0].categorical.values[0].source.format, value: displayUnits, precision: decimalPlaces });
-                        var formattedData = formatter.format(this.tooltipText);
+                        let formatter = valueFormatter.create({ format: dataViews[0].categorical.values[0].source.format, value: displayUnits, precision: decimalPlaces });
+                        let formattedData = formatter.format(this.tooltipText);
                         this.tooltipText = formattedData;
                     }
                 }
@@ -156,42 +177,26 @@ module powerbi.extensibility.visual {
             }
         }
 
-        private getToolTipSettings(dataView: DataView): tooltip {
-            var objects: DataViewObjects = null;
-            var textSetting: tooltip = this.getDefaultTextSettings();
-
-            if (!dataView.metadata || !dataView.metadata.objects)
-                return textSetting;
-            objects = dataView.metadata.objects;
-            var textProperties = visualProperties;
-            textSetting.text = DataViewObjects.getValue(objects, textProperties.tooltip.text, textSetting.text);
-            textSetting.header = DataViewObjects.getValue(objects, textProperties.tooltip.header, textSetting.header);
-            textSetting.imageurl = DataViewObjects.getValue(objects, textProperties.tooltip.imageurl, textSetting.imageurl);
-
-            return textSetting;
-        }
-
-        public getMeasureSettings(dataView: DataView): measureSettings {
-            var objects: DataViewObjects = null;
-            var settings: measureSettings = this.getDefaultMeasureSettings();
-
-            if (!dataView.metadata || !dataView.metadata.objects)
-                return settings;
-
-            objects = dataView.metadata.objects;
-            var properties = visualProperties;
-            settings.show = DataViewObjects.getValue(objects, properties.measureSettings.show, settings.show);
-            settings.displayUnits = DataViewObjects.getValue(objects, properties.measureSettings.displayUnits, settings.displayUnits);
-            settings.textPrecision = DataViewObjects.getValue(objects, properties.measureSettings.textPrecision, settings.textPrecision);
-            return settings;
-        }
-
         public getDefaultTextSettings(): tooltip {
             return {
                 text: "sample",
                 header: "text",
                 imageurl: "https://genericvisual.blob.core.windows.net/images/Tooltip.svg"
             }
+        }
+        public getToolTipSettings(dataView: DataView): tooltip {
+            let objects: DataViewObjects = null;
+            let textSetting: tooltip = this.getDefaultTextSettings();
+
+            if (!dataView.metadata || !dataView.metadata.objects)
+                return textSetting;
+            objects = dataView.metadata.objects;
+            let textProperties = visualProperties;
+            textSetting.text = DataViewObjects.getValue(objects, textProperties.tooltip.text, textSetting.text);
+            textSetting.header = DataViewObjects.getValue(objects, textProperties.tooltip.header, textSetting.header);
+            textSetting.imageurl = DataViewObjects.getValue(objects, textProperties.tooltip.imageurl, textSetting.imageurl);
+
+            return textSetting;
         }
 
         public getDefaultMeasureSettings(): measureSettings {
@@ -200,6 +205,20 @@ module powerbi.extensibility.visual {
                 textPrecision: 0,
                 displayUnits: 0
             }
+        }
+        public getMeasureSettings(dataView: DataView): measureSettings {
+            let objects: DataViewObjects = null;
+            let settings: measureSettings = this.getDefaultMeasureSettings();
+
+            if (!dataView.metadata || !dataView.metadata.objects)
+                return settings;
+
+            objects = dataView.metadata.objects;
+            let properties = visualProperties;
+            settings.show = DataViewObjects.getValue(objects, properties.measureSettings.show, settings.show);
+            settings.displayUnits = DataViewObjects.getValue(objects, properties.measureSettings.displayUnits, settings.displayUnits);
+            settings.textPrecision = DataViewObjects.getValue(objects, properties.measureSettings.textPrecision, settings.textPrecision);
+            return settings;
         }
 
         private getTooltipData(tooltip: string, header: string): VisualTooltipDataItem[] {
@@ -211,8 +230,8 @@ module powerbi.extensibility.visual {
         }
 
         public enumerateObjectInstances(options: EnumerateVisualObjectInstancesOptions): VisualObjectInstanceEnumeration {
-            var tooltipSetting: tooltip = this.getToolTipSettings(this.dataViews);
-            var measureSettings: measureSettings = this.getMeasureSettings(this.dataViews);
+            let tooltipSetting: tooltip = this.getToolTipSettings(this.dataViews);
+            let measureSettings: measureSettings = this.getMeasureSettings(this.dataViews);
             let objectName = options.objectName;
             let objectEnumeration: VisualObjectInstance[] = [];
 
