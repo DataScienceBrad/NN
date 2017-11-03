@@ -124,8 +124,7 @@
                 },
                 "textPrecision": {
                     "displayName": "Decimal Places",
-                    "type": { "numeric": true },
-                    "suppressFormatPainterCopy": true
+                    "type": { "numeric": true }
                 }
             }
         }
