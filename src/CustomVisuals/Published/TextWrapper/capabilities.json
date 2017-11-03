@@ -3,11 +3,11 @@
         {
             "displayName": "Field",
             "name": "category",
-            "kind": "Grouping"
+            "kind": "GroupingOrMeasure"
         }
     ],
     "dataViewMappings": [
-        {   
+        {
             "conditions": [
                 {
                     "category": {
@@ -17,12 +17,13 @@
             ],
             "categorical": {
                 "categories": {
-                    "for": {
-                        "in": "category"
-                    },
-                    "dataReductionAlgorithm": {
-                        "top": {}
-                    }
+                    "select": [
+                        {
+                            "bind": {
+                                "to": "category"
+                            }
+                        }
+                    ]
                 }
             }
         }
@@ -30,7 +31,7 @@
     "objects": {
         "textSettings": {
             "displayName": "Text settings",
-            "properties":{
+            "properties": {
                 "color": {
                     "displayName": "Color",
                     "type": {
@@ -43,19 +44,19 @@
                 },
                 "fontSize": {
                     "displayName": "Text Size",
-                    "type": { 
-                        "formatting": { 
-                        "fontSize": true 
-                        } 
+                    "type": {
+                        "formatting": {
+                            "fontSize": true
+                        }
                     },
-                "suppressFormatPainterCopy": true
+                    "suppressFormatPainterCopy": true
                 },
                 "postText": {
                     "displayName": "Text to append",
-                    "type": { 
-                        "text": true 
+                    "type": {
+                        "text": true
                     },
-                "suppressFormatPainterCopy": true
+                    "suppressFormatPainterCopy": true
                 }
             }
         }
