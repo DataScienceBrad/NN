@@ -354,7 +354,6 @@ module powerbi.extensibility.visual {
                 rootNodeIndex: number = 0;
                 var arrCategoriesMapping: Array<number> = [];
                 this.formatString = dataView.categorical.values[0].source.format;
-
                 // Level 0 mappings
                 var rootSum = this.calAggregate('none', totalValues);
 
@@ -496,7 +495,6 @@ module powerbi.extensibility.visual {
             else{
                 this.svgLegend.attr('height','0');
             }
-
             var max = d3.max(data.nodes, function(d) { if(d.name === "Root") {return 1;} return d.numberofleads});
             var linearScale = d3.scaleLinear().domain([0, max]).range([10, 30]);
             var linkLinearScale = d3.scaleLinear().domain([0, max]).range([2, 10]);
