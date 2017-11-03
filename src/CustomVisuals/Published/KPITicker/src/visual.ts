@@ -79,7 +79,7 @@ module powerbi.extensibility.visual {
         *                                        the visual had queried.
         */
         public update(options: VisualUpdateOptions) {
-            
+
             //clear interval and timeout when update is called
             if (KPITicker.iInterval != -1) {
                 window.clearTimeout(KPITicker.iInterval);
@@ -87,7 +87,7 @@ module powerbi.extensibility.visual {
             if (KPITicker.iTimeout != -1) {
                 window.clearTimeout(KPITicker.iTimeout);
             }
-            
+
             // check if basic requirements are satisfied else return
             if (options.dataViews.length === 0 || !options.dataViews[0].categorical || ((!options.dataViews[0].categorical.categories) || (!options.dataViews[0].categorical.values))) {
                 KPITicker.displayBasicRequirement(1);
@@ -221,15 +221,15 @@ module powerbi.extensibility.visual {
             $('#wrapper').empty();
             $('<p>').attr('id', 'textToDisplay').appendTo('#wrapper');
             if (iStatus === 1) {
-                document.getElementById('textToDisplay').innerHTML = `Please select 'KPI name' and 'KPI current value' `;
+                document.getElementById('textToDisplay').textContent = `Please select 'KPI name' and 'KPI current value' `;
             }
             // if appropriate column for status is not selected
             else if (iStatus === 2) {
-                document.getElementById('textToDisplay').innerHTML = `Please select a column with values -1, 0 or 1 for 'KPI status' `;
+                document.getElementById('textToDisplay').textContent = `Please select a column with values -1, 0 or 1 for 'KPI status' `;
             }
             // after filters are selected there is no data to display
             else {
-                document.getElementById('textToDisplay').innerHTML = `No Data to display `;
+                document.getElementById('textToDisplay').textContent = `No Data to display `;
             }
         }
         /*
@@ -450,7 +450,8 @@ module powerbi.extensibility.visual {
             document.getElementById(sDivIdName).innerHTML = ``;
             // populate name if KPI Name column is selected
             if (KPITicker.iIndexOfName != -1) {
-                document.getElementById(sDivIdName).innerHTML = `<div class = "tliName">` + oDataView.categorical.categories[KPITicker.iIndexOfName].values[iIndex] + `</div>`;
+                document.getElementById(sDivIdName).innerHTML = `<div class = "tliName"></div>`;
+                $('.tliName').text(<string>oDataView.categorical.categories[KPITicker.iIndexOfName].values[iIndex]);
             }
             // call tliChangeImage to populate other data for the div
             document.getElementById(sDivIdName).innerHTML += KPITicker.tliChangeImage(KPITicker.oDataView, iIndex);
