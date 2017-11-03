@@ -1,15 +1,15 @@
 {
   "visual": {
-    "name": "Rotating Tile",
-    "displayName": "Rotating Tile",
+    "name": "RotatingTileByMAQSoftware",
+    "displayName": "Rotating Tile by MAQ Software",
     "guid": "rotatingTile1859AB39DB23400988ADF752BCB9C967",
     "visualClassName": "Visual",
-    "version": "1.0.0",
+    "version": "3.2.0",
     "description": "A rotating tile which can be used to display different KPIs in each flip.",
     "supportUrl": "https://github.com/maqsoftware/PowerBI-visuals/issues",
     "gitHubUrl": "https://github.com/maqsoftware/PowerBI-visuals"
   },
-  "apiVersion": "1.2.0",
+  "apiVersion": "1.7.0",
   "author": {
     "name": "MAQ Software",
     "email": "sales@maqsoftware.com"
