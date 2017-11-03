@@ -34,13 +34,18 @@
                     ],
                     "dataReductionAlgorithm": {
                         "top": {
-                            "count": 100000
+                            "count": 30000
                         }
                     }
                 },
                 "values": {
                     "for": {
                         "in": "value"
+                    },
+                    "dataReductionAlgorithm": {
+                        "top": {
+                            "count": 30000
+                        }
                     }
                 }
             }
