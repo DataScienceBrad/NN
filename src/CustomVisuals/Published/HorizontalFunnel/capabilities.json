@@ -8,12 +8,22 @@
 		{
 			"name": "primaryMeasure",
 			"kind": "Measure",
-			"displayName": "Primary Measure"
+			"displayName": "Primary measure",
+			"requiredTypes": [
+				{
+					"numeric": true
+				}
+			]
 		},
 		{
 			"name": "secondaryMeasure",
 			"kind": "Measure",
-			"displayName": "Secondary Measure"
+			"displayName": "Secondary measure",
+			"requiredTypes": [
+				{
+					"numeric": true
+				}
+			]
 		}
 	],
 	"dataViewMappings": [
@@ -60,6 +70,7 @@
 			}
 		}
 	],
+	"suppressDefaultTitle": true,
 	"objects": {
 		"dataPoint": {
 			"displayName": "Data colors",
@@ -102,7 +113,7 @@
 					}
 				},
 				"labelDisplayUnits": {
-					"displayName": "Display Units",
+					"displayName": "Display units",
 					"description": "Select the units (millions, billions, etc.)",
 					"type": {
 						"enumeration": [
@@ -134,8 +145,17 @@
 					},
 					"suppressFormatPainterCopy": true
 				},
+				"fontSize": {
+					"displayName": "Text size",
+					"description": "Font size for the Label",
+					"type": {
+						"formatting": {
+							"fontSize": true
+						}
+					}
+				},
 				"labelPrecision": {
-					"displayName": "Decimal Places",
+					"displayName": "Decimal places",
 					"description": "Select the number of decimal places to display",
 					"placeHolderText": "Auto",
 					"type": {
@@ -146,7 +166,7 @@
 			}
 		},
 		"FunnelTitle": {
-			"displayName": "Funnel Title",
+			"displayName": "Funnel title",
 			"properties": {
 				"show": {
 					"displayName": "Show",
@@ -155,7 +175,7 @@
 					}
 				},
 				"titleText": {
-					"displayName": "Title Text",
+					"displayName": "Title text",
 					"description": "The name of the visual",
 					"type": {
 						"text": true
@@ -173,7 +193,7 @@
 					}
 				},
 				"fontSize": {
-					"displayName": "Text Size",
+					"displayName": "Text size",
 					"description": "Font size for the funnel title",
 					"type": {
 						"formatting": {
@@ -193,7 +213,7 @@
 					}
 				},
 				"tooltipText": {
-					"displayName": "Tooltip Text",
+					"displayName": "Tooltip text",
 					"description": "Tooltip text for the funnel title",
 					"type": {
 						"text": true
@@ -205,7 +225,7 @@
 			"displayName": "Sort",
 			"properties": {
 				"SortBy": {
-					"displayName": "Sort By",
+					"displayName": "Sort by",
 					"description": "Sorting of the visual based on Measure",
 					"type": {
 						"enumeration": [
@@ -230,7 +250,7 @@
 					"suppressFormatPainterCopy": true
 				},
 				"OrderBy": {
-					"displayName": "Order By",
+					"displayName": "Order by",
 					"description": "Order",
 					"type": {
 						"enumeration": [
@@ -247,6 +267,30 @@
 						]
 					},
 					"suppressFormatPainterCopy": true
+				}
+			}
+		},
+		"ShowLegend": {
+			"displayName": "Show measure title",
+			"description": "Option to show or hide measure titles",
+			"properties": {
+				"show": {
+					"displayName": "Show Legend",
+					"type": {
+						"bool": true
+					}
+				}
+			}
+		},
+		"ShowConnectors": {
+			"displayName": "Show connectors",
+			"description": "Option to show or hide connectors",
+			"properties": {
+				"show": {
+					"displayName": "Show connectors",
+					"type": {
+						"bool": true
+					}
 				}
 			}
 		}
