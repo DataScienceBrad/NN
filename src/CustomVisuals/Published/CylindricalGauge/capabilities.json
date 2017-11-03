@@ -3,7 +3,12 @@
 		{
 			"name": "Values",
 			"kind": "Measure",
-			"displayName": "Values"
+			"displayName": "Values",
+			"requiredTypes": [
+                {
+                    "numeric": true
+                }
+            ]
 		}
 	],
 	"dataViewMappings": [
@@ -72,8 +77,74 @@
 						"bool": true
 					},
 					"displayName": "Tick bar"
+				},
+				"tickColor": {
+                    "displayName": "Tick color",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
 				}
 			}
-		}
+		},
+        "labels": {
+            "displayName": "Data label",
+            "properties": {
+				"labelPosition": {
+					"displayName": "Label position",
+					"description": "Within/Outside Cylinder",
+					"type": {
+						"enumeration": [
+							{
+								"value": "in",
+								"displayName": "Within the cylinder"
+							},
+							{
+								"value": "out",
+								"displayName": "Outside the cylinder"
+							}
+						]
+					}
+				},
+                "fontSize": {
+                    "displayName": "Text size",
+                    "description": "Font size of data labels",
+                    "type": {
+                        "formatting": {
+                            "fontSize": true
+                        }
+                    }
+                },
+                "dataColor": {
+                    "displayName": "Color",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "displayUnits": {
+                    "displayName": "Display units",
+                    "type": {
+                        "formatting": {
+                            "labelDisplayUnits": true
+                        }
+                    },
+                    "suppressFormatPainterCopy": true
+                },
+                "decimalValue": {
+                    "displayName": "Decimal value",
+                    "description": "Decimal value (Max 4 Places)",
+                    "type": {
+                        "numeric": true
+                    }
+                }
+            }
+        }
 	}
 }
