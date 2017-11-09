@@ -1986,32 +1986,10 @@ function MAQDrawChart(DataStyle, settings, viewPort, valueFormatter) {
                                 else {
                                     y = yFormatter.format(Math.round(oSeries.data.scaleY[iSelectedIndex] * 100) / 100 || 0);
                                 }
-                                if (oConfig.xAxis.title.enabled) {
-                                    oToolTip.innerHTML = '<b id="tooltip1">';
-                                    $('#tooltip1').text(oConfig.xAxis.title.text + ': ');
-                                    oToolTip.innerHTML += x + '<br/>';
-                                }
-                                else {
-                                    oToolTip.innerHTML = '<b>' + xAxisName + ': </b>' + x + '<br/>';
-                                }
-                                if (oConfig.yAxis.dualyAxis.axisRight.title.enabled) {
-                                    oToolTip.innerHTML += '<b id="tooltip2">';
-                                    $('#tooltip2').text(oConfig.yAxis.dualyAxis.axisRight.title.text + ': ');
-                                    oToolTip.innerHTML += y + '<br/>';
-                                }
-                                else {
-                                    oToolTip.innerHTML += '<b>' + yAxisName + ': </b>' + y + '<br/>';
-                                }
+                                oToolTip.innerHTML = '<b>' + (oConfig.xAxis.title.enabled ? oConfig.xAxis.title.text : xAxisName) + ': </b>' + x + '<br/><b>' + (oConfig.yAxis.dualyAxis.axisRight.title.enabled ? oConfig.yAxis.dualyAxis.axisRight.title.text : yAxisName) + ': </b>' + y;
                             }
                             else if (oParam.category == "column") {
-                                if (oConfig.yAxis.dualyAxis.axisLeft.title.enabled) {
-                                    oToolTip.innerHTML = '<b id="tooltip">';
-                                    $('#tooltip').text(oConfig.yAxis.dualyAxis.axisLeft.title.text + ': ');
-                                    oToolTip.innerHTML += oSeries.data.frequency.data[oParam.position];
-                                }
-                                else {
-                                    oToolTip.innerHTML = '<b>' + 'Histogram Count' + ': </b>' + oSeries.data.frequency.data[oParam.position];
-                                }
+                                oToolTip.innerHTML = '<b>' + (oConfig.yAxis.dualyAxis.axisLeft.title.enabled ? oConfig.yAxis.dualyAxis.axisLeft.title.text : 'Histogram Count') + ': </b>' + oSeries.data.frequency.data[oParam.position];
                             }
                             break;
 
