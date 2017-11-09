@@ -585,7 +585,7 @@ module powerbi.extensibility.visual {
                     .style('margin-left', (BowtieChartSVGDestinationWidthPercentage + BowtieChartAggregatedWidthPercentage + 2) + '%')
                     .append('span')
                     .attr('title', this.destinationName)
-                    .html(TextMeasurementService.getTailoredTextOrDefault(textPropertiesDestSourceName, (this.currentViewport.width * (BowtieChartDestinationWidthPercentage / 2 - 1)) / 100));
+                    .text(TextMeasurementService.getTailoredTextOrDefault(textPropertiesDestSourceName, (this.currentViewport.width * (BowtieChartDestinationWidthPercentage / 2 - 1)) / 100));
 
                 this.BowtieChartHeadings.append('div')
                     .style('width', (BowtieChartDestinationWidthPercentage / 2) + '%')
@@ -594,7 +594,7 @@ module powerbi.extensibility.visual {
                     .attr('id', 'HalfBowtieDestSourceVal')
                     .append('span')
                     .attr('title', this.metricName)
-                    .html(TextMeasurementService.getTailoredTextOrDefault(textPropertiesDestSourceValue, (this.currentViewport.width * (BowtieChartDestinationWidthPercentage / 2)) / 100));
+                    .text(TextMeasurementService.getTailoredTextOrDefault(textPropertiesDestSourceValue, (this.currentViewport.width * (BowtieChartDestinationWidthPercentage / 2)) / 100));
 
                 //updated    
                 var heightOfHeadings = 0;
@@ -653,12 +653,12 @@ module powerbi.extensibility.visual {
 
                 AggregatedSum.append('div').append('span')
                     .attr('title', this.metricName)
-                    .html(TextMeasurementService.getTailoredTextOrDefault(textPropertiesMetricName, (this.currentViewport.width * BowtieChartAggregatedWidthPercentage) / 100))
+                    .text(TextMeasurementService.getTailoredTextOrDefault(textPropertiesMetricName, (this.currentViewport.width * BowtieChartAggregatedWidthPercentage) / 100))
 
                 var aggregatedValue = AggregatedSum.append('div');
                 aggregatedValue.append('span')
                     .attr('title', aggregateFormatter.format(convertedData.aggregatedSum))
-                    .html(TextMeasurementService.getTailoredTextOrDefault(textPropertiesAggregateValue, ((this.currentViewport.width * BowtieChartAggregatedWidthPercentage) / 100) - PixelConverter.fromPointToPixel(convertedData.AggregatelabelSettings.fontSize) - 2));
+                    .text(TextMeasurementService.getTailoredTextOrDefault(textPropertiesAggregateValue, ((this.currentViewport.width * BowtieChartAggregatedWidthPercentage) / 100) - PixelConverter.fromPointToPixel(convertedData.AggregatelabelSettings.fontSize) - 2));
                 AggregatedSum
                     .style('font-size', aggregateFontSize)
                     .style('color', convertedData.AggregatelabelSettings.color);
@@ -754,11 +754,10 @@ module powerbi.extensibility.visual {
                         fontFamily: "Segoe UI",
                         fontSize: fontSize
                     };
-
                     showHeading = true;
                     this.BowtieChartDestination.style('display', 'block');
                     oDiv.append('span')
-                        .html(TextMeasurementService.getTailoredTextOrDefault(textPropertiesForLabel, (this.currentViewport.width * (BowtieChartDestinationWidthPercentage / 2 - 1)) / 100))
+                        .text(TextMeasurementService.getTailoredTextOrDefault(textPropertiesForLabel, (this.currentViewport.width * (BowtieChartDestinationWidthPercentage / 2 - 1)) / 100))
                         .attr('title', convertedData.dataPoints[iDiv].DestCategoryLabel)
                         .style('float', 'left')
                         .style('font-size', fontSize)
@@ -766,7 +765,7 @@ module powerbi.extensibility.visual {
                         .style('line-height', divisionHeight + 'px');
 
                     oDiv1.append('span')
-                        .html(TextMeasurementService.getTailoredTextOrDefault(textPropertiesForValue, (this.currentViewport.width * (BowtieChartDestinationWidthPercentage / 2)) / 100))
+                        .text(TextMeasurementService.getTailoredTextOrDefault(textPropertiesForValue, (this.currentViewport.width * (BowtieChartDestinationWidthPercentage / 2)) / 100))
                         .attr('title', formatter.format(convertedData.dataPoints[iDiv].value))
                         .style('float', 'left')
                         .style('font-size', fontSize)
@@ -847,7 +846,6 @@ module powerbi.extensibility.visual {
                     fontFamily: "Segoe UI",
                     fontSize: fontSize
                 };
-
                 this.BowtieChartHeadings.selectAll('div').remove();
                 this.BowtieChartHeadings.append('div')
                     .style('width', (BowtieChartDestinationWidthPercentage / 2) + '%')
@@ -857,7 +855,7 @@ module powerbi.extensibility.visual {
                     .attr('id', 'FullBowtieDestSourceName')
                     .append('span')
                     .attr('title', this.sourceName)
-                    .html(TextMeasurementService.getTailoredTextOrDefault(textPropertiesSourceName, (this.currentViewport.width * (BowtieChartDestinationWidthPercentage / 2)) / 100));
+                    .text(TextMeasurementService.getTailoredTextOrDefault(textPropertiesSourceName, (this.currentViewport.width * (BowtieChartDestinationWidthPercentage / 2)) / 100));
 
                 this.BowtieChartHeadings
                     .append('div')
@@ -868,7 +866,7 @@ module powerbi.extensibility.visual {
                     .attr('id', 'FullBowtieDestSourceValue')
                     .append('span')
                     .attr('title', this.metricName)
-                    .html(TextMeasurementService.getTailoredTextOrDefault(textPropertiesDestSourceValue, (this.currentViewport.width * (BowtieChartDestinationWidthPercentage / 2 - 1)) / 100));
+                    .text(TextMeasurementService.getTailoredTextOrDefault(textPropertiesDestSourceValue, (this.currentViewport.width * (BowtieChartDestinationWidthPercentage / 2 - 1)) / 100));
 
                 var margin = BowtieChartSVGDestinationWidthPercentage * 2 + BowtieChartAggregatedWidthPercentage + 3;
                 this.BowtieChartHeadings.append('div')
@@ -878,7 +876,7 @@ module powerbi.extensibility.visual {
                     .style('font-size', fontSize)
                     .attr('id', 'FullBowtieSourceName')
                     .attr('title', this.destinationName)
-                    .append('span').html(TextMeasurementService.getTailoredTextOrDefault(textPropertiesDestSourceName, (this.currentViewport.width * (BowtieChartDestinationWidthPercentage / 2)) / 100));
+                    .append('span').text(TextMeasurementService.getTailoredTextOrDefault(textPropertiesDestSourceName, (this.currentViewport.width * (BowtieChartDestinationWidthPercentage / 2)) / 100));
 
                 this.BowtieChartHeadings.append('div')
                     .style('width', (BowtieChartDestinationWidthPercentage / 2 - 1) + '%')
@@ -887,7 +885,7 @@ module powerbi.extensibility.visual {
                     .attr('id', 'FullBowtieSourceValue')
                     .append('span')
                     .attr('title', this.metricName)
-                    .html(TextMeasurementService.getTailoredTextOrDefault(textPropertiesDestSourceValue, (this.currentViewport.width * (BowtieChartDestinationWidthPercentage / 2 - 1)) / 100));
+                    .text(TextMeasurementService.getTailoredTextOrDefault(textPropertiesDestSourceValue, (this.currentViewport.width * (BowtieChartDestinationWidthPercentage / 2 - 1)) / 100));
 
                 var heightOfHeadings = 0;
                 if (this.root.select(".BowtieChartHeadings")) {
@@ -966,12 +964,12 @@ module powerbi.extensibility.visual {
                         .style('text-align', 'center');
                 AggregatedSum.append('div').append('span')
                     .attr('title', this.metricName)
-                    .html(TextMeasurementService.getTailoredTextOrDefault(textPropertiesMetricName, (this.currentViewport.width * BowtieChartAggregatedWidthPercentage) / 100))
+                    .text(TextMeasurementService.getTailoredTextOrDefault(textPropertiesMetricName, (this.currentViewport.width * BowtieChartAggregatedWidthPercentage) / 100))
                 var aggregatedValue = AggregatedSum.append('div');
 
                 aggregatedValue.append('span')
                     .attr('title', aggregateFormatter.format(convertedData.aggregatedSum))
-                    .html(TextMeasurementService.getTailoredTextOrDefault(textPropertiesAggregateValue, ((this.currentViewport.width * BowtieChartAggregatedWidthPercentage) / 100) - PixelConverter.fromPointToPixel(convertedData.AggregatelabelSettings.fontSize) - 2));
+                    .text(TextMeasurementService.getTailoredTextOrDefault(textPropertiesAggregateValue, ((this.currentViewport.width * BowtieChartAggregatedWidthPercentage) / 100) - PixelConverter.fromPointToPixel(convertedData.AggregatelabelSettings.fontSize) - 2));
 
                 AggregatedSum
                     .style('font-size', aggregateFontSize)
@@ -1073,7 +1071,7 @@ module powerbi.extensibility.visual {
 
                     this.BowtieChartDestination.style('display', 'block');
                     oDiv.append('span')
-                        .html(TextMeasurementService.getTailoredTextOrDefault(textPropertiesForLabel, (this.currentViewport.width * (BowtieChartDestinationWidthPercentage / 2)) / 100))
+                        .text(TextMeasurementService.getTailoredTextOrDefault(textPropertiesForLabel, (this.currentViewport.width * (BowtieChartDestinationWidthPercentage / 2)) / 100))
                         .attr('title', convertedData.dataPoints[iDiv].DestCategoryLabel)
                         .style('float', 'left')
                         .style('font-size', fontSize)
@@ -1081,7 +1079,7 @@ module powerbi.extensibility.visual {
                         .style('line-height', divisionHeight + 'px');
 
                     oDiv1.append('span')
-                        .html(TextMeasurementService.getTailoredTextOrDefault(textPropertiesForValue, (this.currentViewport.width * (BowtieChartDestinationWidthPercentage / 2 - 1)) / 100))
+                        .text(TextMeasurementService.getTailoredTextOrDefault(textPropertiesForValue, (this.currentViewport.width * (BowtieChartDestinationWidthPercentage / 2 - 1)) / 100))
                         .attr('title', formatter.format(convertedData.dataPoints[iDiv].value))
                         .style('float', 'left')
                         .style('font-size', fontSize)
@@ -1176,7 +1174,7 @@ module powerbi.extensibility.visual {
 
                     this.BowtieChartSource.style('display', 'block');
                     oDiv.append('span')
-                        .html(TextMeasurementService.getTailoredTextOrDefault(textPropertiesForLabel, (this.currentViewport.width * (BowtieChartDestinationWidthPercentage / 2)) / 100))
+                        .text(TextMeasurementService.getTailoredTextOrDefault(textPropertiesForLabel, (this.currentViewport.width * (BowtieChartDestinationWidthPercentage / 2)) / 100))
                         .attr('title', convertedData.dataPoints[iDiv].SourceCategoryLabel)
                         .style('float', 'left')
                         .style('font-size', fontSize)
@@ -1184,7 +1182,7 @@ module powerbi.extensibility.visual {
                         .style('line-height', divisionHeight + 'px');
 
                     oDiv1.append('span')
-                        .html(TextMeasurementService.getTailoredTextOrDefault(textPropertiesForValue, (this.currentViewport.width * (BowtieChartDestinationWidthPercentage / 2 - 1)) / 100))
+                        .text(TextMeasurementService.getTailoredTextOrDefault(textPropertiesForValue, (this.currentViewport.width * (BowtieChartDestinationWidthPercentage / 2 - 1)) / 100))
                         .attr('title', formatter.format(convertedData.dataPoints[iDiv].srcValue))
                         .style('float', 'right')
                         .style('font-size', fontSize)
