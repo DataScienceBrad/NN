@@ -4,15 +4,15 @@
     "displayName": "Linear Gauge by MAQ Software",
     "guid": "LinearGauge1450736844786",
     "visualClassName": "LinearGauge",
-    "version": "3.2.0",
+    "version": "3.2.1",
     "description": "Create at-a-glance visualization to compare your progress against identified goals and warning zones. By allowing you to include multiple data points, the component provides the ability to illustrate trend details, such as monthly or year-to-date completion rates. The pointer notes targets and the colored bar shows the current progress toward those goals.",
     "supportUrl": "https://github.com/maqsoftware/PowerBI-visuals/issues",
     "gitHubUrl": "https://github.com/maqsoftware/PowerBI-visuals/"
   },
   "apiVersion": "1.4.0",
-   "author": {
+  "author": {
     "name": "MAQ Software",
-    "email": "sales@maqsoftware.com"
+    "email": "support@maqsoftware.com"
   },
   "assets": {
     "icon": "assets/icon.png",
