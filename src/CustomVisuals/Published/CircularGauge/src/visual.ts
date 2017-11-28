@@ -403,8 +403,8 @@ module powerbi.extensibility.visual {
                 }
             }
 
-            if (data <= 0 || max <= 0) {
-                this.showMsg('Zero and Negative values are not supported.', 250);
+            if (data < 0 || max < 0) {
+                this.showMsg('Negative values are not supported.', 250);
 
                 return;
             }
@@ -459,10 +459,12 @@ module powerbi.extensibility.visual {
                     }
                 }
             }
+
             let percentCompleted: number = (data2.actual / max);
             percentCompleted = isNaN(percentCompleted) ||
                  !isFinite(percentCompleted) ?
-                0 : (percentCompleted > 1) ? 1 : ((percentCompleted < 0) ? 0 : percentCompleted);
+                ((data2.actual > max) ? 1 : 0) : (percentCompleted > 1) ? 1 : ((percentCompleted < 0) ? 0 : percentCompleted);
+
             this.cardFormatSetting
                 .labelSettings
                 .precision = this.cardFormatSetting.labelSettings.precision < 4 ? this.cardFormatSetting.labelSettings.precision : 4;
@@ -776,13 +778,16 @@ module powerbi.extensibility.visual {
             this.group.attr('transform', `translate(${(width / 2)},${(height / 2)})`);
             this.groupInner.attr('transform', `translate(${(width / 2)},${(height / 2)})`);
             let actualIndex: number;
+            let targetIndex: number;
             for (let i: number = 0; i < options.dataViews[0].metadata.columns.length; i++) {
                 if (options.dataViews[0].metadata.columns[i].roles.hasOwnProperty('ActualValue')) {
                     actualIndex = i;
+                } else {
+                    targetIndex = i;
                 }
             }
             const tValueFormatter: IValueFormatter = valueFormatter
-                .create({ format: options.dataViews[0].metadata.columns[actualIndex].format });
+                .create({ format: options.dataViews[0].metadata.columns[targetIndex].format });
             const target1: string = tValueFormatter.format(this.data.targetTooltip);
             this.data.toolTipInfo[0] = {
                 displayName: 'Target',
