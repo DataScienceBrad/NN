@@ -395,13 +395,11 @@ module powerbi.extensibility.visual {
             this.selectionManager = options.host.createSelectionManager();
             this.tooltipServiceWrapper = createTooltipServiceWrapper(this.host.tooltipService, options.element);
             this.heading = d3.select(options.element)
+                .style({
+                    cursor: 'default'
+                })
                 .append('div')
                 .classed('mainTitle', true);
-            this.svg = d3.select(options.element)
-                .append('div')
-                .classed('data_tab', true);
-            this.svgLinear = this.svg
-                .append('div').classed('data_tab', true);
             this.actual = d3.select(options.element)
                 .append('text')
                 .classed('data_total', true)
@@ -484,22 +482,27 @@ module powerbi.extensibility.visual {
                     data.actual = <number>value;
                     actualFlag = true;
                     pushToTooltips = true; // pass the value as true to make it as a tooltip
-                } else if (col.roles[minValueLiteral]) {
+                }
+                if (col.roles[minValueLiteral]) {
                     data.minFormat = col.format;
                     data.min = <number>value;
-                } else if (col.roles[maxValueLiteral]) {
+                }
+                if (col.roles[maxValueLiteral]) {
                     data.maxFormat = col.format;
                     maxFlag = true;
                     data.max = <number>value;
-                } else if (col.roles[targetValueLiteral]) {
+                }
+                if (col.roles[targetValueLiteral]) {
                     data.targetSet = true;
                     data.targetFormat = col.format;
                     data.target = <number>value;
                     pushToTooltips = true;
-                } else if (col.roles[qualitativeState1ValueLiteral]) {
+                }
+                if (col.roles[qualitativeState1ValueLiteral]) {
                     data.trendValue1 = <number>value;
                     data.trend1Format = col.format;
-                } else if (col.roles[qualitativeState2ValueLiteral]) {
+                }
+                if (col.roles[qualitativeState2ValueLiteral]) {
                     data.trendValue2 = <number>value;
                     data.trend2Format = col.format;
                 }
@@ -765,12 +768,15 @@ module powerbi.extensibility.visual {
                 if (dataView.metadata.columns[ite].roles[qualitativeState1ValueLiteral] === true) {
                     flagQualStatVal1 = true;
                     indexQualStatVal1 = ite;
-                } else if (dataView.metadata.columns[ite].roles[qualitativeState2ValueLiteral] === true) {
+                }
+                if (dataView.metadata.columns[ite].roles[qualitativeState2ValueLiteral] === true) {
                     flagQualStatVal2 = true;
                     indexQualStatVal2 = ite;
-                } else if (dataView.metadata.columns[ite].roles[yLiteral] === true) {
+                }
+                if (dataView.metadata.columns[ite].roles[yLiteral] === true) {
                     indexActual = ite;
-                } else if (dataView.metadata.columns[ite].roles[targetValueLiteral] === true) {
+                }
+                if (dataView.metadata.columns[ite].roles[targetValueLiteral] === true) {
                     indexTarget = ite;
                 }
             }
@@ -1044,44 +1050,42 @@ module powerbi.extensibility.visual {
                     format: this.data.targetFormat ? this.data.targetFormat : ValueFormatter.DefaultNumericFormat,
                     value: 0, precision: this.getDecimalPlacesCount(this.data.target)
                 });
-            if (indexTarget === -1) {
-                this.tooltipServiceWrapper.addTooltip(
-                    this.svgLinear.selectAll('data_tab'),
-                    (tooltipEvent: TooltipEventArgs<number>) => LinearGauge.getTwoTooltipData
-                        (dataView.metadata.columns[indexActual].displayName, formatterActual.format(this.data.actual)),
-                    (tooltipEvent: TooltipEventArgs<number>) => null);
-
+            if (indexTarget === -1 && indexActual > -1) {
                 this.tooltipServiceWrapper.addTooltip(
                     this.svgLinear.selectAll('rect.measure'),
-                    (tooltipEvent: TooltipEventArgs<number>) => LinearGauge.getTwoTooltipData
+                    (tooltipEvent: TooltipEventArgs<number>) => LinearGauge.getOneTooltipData
                         (dataView.metadata.columns[indexActual].displayName, formatterActual.format(this.data.actual)),
                     (tooltipEvent: TooltipEventArgs<number>) => null);
 
                 this.tooltipServiceWrapper.addTooltip(
                     this.svgLinear.selectAll('rect.range'),
-                    (tooltipEvent: TooltipEventArgs<number>) => LinearGauge.getTwoTooltipData
+                    (tooltipEvent: TooltipEventArgs<number>) => LinearGauge.getOneTooltipData
                         (dataView.metadata.columns[indexActual].displayName, formatterActual.format(this.data.actual)),
                     (tooltipEvent: TooltipEventArgs<number>) => null);
-            } else {
+
+            } else if (indexActual === -1 && indexTarget > -1) {
                 this.tooltipServiceWrapper.addTooltip(
-                    this.svgLinear.selectAll('data_tab'),
-                    (tooltipEvent: TooltipEventArgs<number>) => LinearGauge.getOneTooltipData(
-                        dataView.metadata.columns[indexActual].displayName,
-                        formatterActual.format(this.data.actual),
-                        dataView.metadata.columns[indexTarget].displayName,
-                        formatterTarget.format(this.data.target)),
+                    this.svgLinear.selectAll('rect.measure'),
+                    (tooltipEvent: TooltipEventArgs<number>) => LinearGauge.getOneTooltipData
+                        (dataView.metadata.columns[indexTarget].displayName, formatterActual.format(this.data.target)),
                     (tooltipEvent: TooltipEventArgs<number>) => null);
 
                 this.tooltipServiceWrapper.addTooltip(
+                    this.svgLinear.selectAll('rect.range'),
+                    (tooltipEvent: TooltipEventArgs<number>) => LinearGauge.getOneTooltipData
+                        (dataView.metadata.columns[indexTarget].displayName, formatterActual.format(this.data.target)),
+                    (tooltipEvent: TooltipEventArgs<number>) => null);
+            } else if (indexActual > -1 && indexTarget > -1) {
+                this.tooltipServiceWrapper.addTooltip(
                     this.svgLinear.selectAll('rect.measure'),
-                    (tooltipEvent: TooltipEventArgs<number>) => LinearGauge.getOneTooltipData(
+                    (tooltipEvent: TooltipEventArgs<number>) => LinearGauge.getTwoTooltipData(
                         dataView.metadata.columns[indexActual].displayName, formatterActual.format(this.data.actual),
                         dataView.metadata.columns[indexTarget].displayName, formatterTarget.format(this.data.target)),
                     (tooltipEvent: TooltipEventArgs<number>) => null);
 
                 this.tooltipServiceWrapper.addTooltip(
                     this.svgLinear.selectAll('rect.range'),
-                    (tooltipEvent: TooltipEventArgs<number>) => LinearGauge.getOneTooltipData(
+                    (tooltipEvent: TooltipEventArgs<number>) => LinearGauge.getTwoTooltipData(
                         dataView.metadata.columns[indexActual].displayName,
                         formatterActual.format(this.data.actual),
                         dataView.metadata.columns[indexTarget].displayName,
@@ -1142,7 +1146,8 @@ module powerbi.extensibility.visual {
 
             return settingsChanged;
         }
-        private static getOneTooltipData(value: string, tab: string, avalue: string, atab: string): VisualTooltipDataItem[] {
+        private static getTwoTooltipData(value: string, tab: string, avalue: string, atab: string): VisualTooltipDataItem[] {
+
             return [{
                 displayName: value,
                 value: tab
@@ -1151,7 +1156,8 @@ module powerbi.extensibility.visual {
                 value: atab
             }];
         }
-        private static getTwoTooltipData(value: string, tab: string): VisualTooltipDataItem[] {
+        private static getOneTooltipData(value: string, tab: string): VisualTooltipDataItem[] {
+
             return [{
                 displayName: value,
                 value: tab
