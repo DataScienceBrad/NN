@@ -16,17 +16,20 @@ function setLegendEnable(iCounter, total) {
     legendsEnable[iCounter] = total;
 }
 function MAQDrawChart(DataStyle, settings, nodeData, series, assignData, valueFormatter, textMeasurementService) {
+  
     //data binding
     var dataView = DataStyle;
     //format options
     var configChange = settings;
     var chartWidth = Math.max(document.documentElement.clientWidth, window.frames.innerWidth || 0);
     var chartHeight = Math.max(document.documentElement.clientHeight, window.frames.innerHeight || 0);
-    var legendHeight = $('.legend').attr('height');
-    var legendWidth = $('.legend').attr('width');
-    var legendOrient = parseInt($('.legend').attr('orientation'));
+    var legendContainer = $('.legend');
+    var legendHeight = legendContainer.attr('height');
+    var legendWidth = legendContainer.attr('width');
+    var legendOrient = parseInt(legendContainer.attr('orientation'));
     if(settings.showLegend){
-        $('#container').css('margin-right', 0);
+        var container = $('#container');
+        container.css('margin-right', 0);
         switch (legendOrient) {
             case 0:
             case 5:
@@ -38,7 +41,7 @@ function MAQDrawChart(DataStyle, settings, nodeData, series, assignData, valueFo
             }
             case 2:
             case 7:
-                $('#container').css('margin-right', + legendWidth + 'px')
+                container.css('margin-right', + legendWidth + 'px')
             case 8:
             case 3: {
                 chartWidth = (chartWidth - legendWidth) < 0 ? 0 : (chartWidth - legendWidth);
@@ -140,7 +143,7 @@ function MAQDrawChart(DataStyle, settings, nodeData, series, assignData, valueFo
                 "x": 0,
                 "y": 0
             },
-            "numberOfGridLines": 8,
+            "numberOfGridLines": (settings.intervalxAxis === null) ? 8 : settings.intervalxAxis,
             "gridLineX": settings.quadrantDivisionX,
             "gridLineWidth": 1,
             "gridLineColor": "silver",
@@ -184,7 +187,7 @@ function MAQDrawChart(DataStyle, settings, nodeData, series, assignData, valueFo
                 "x": 0,
                 "y": 0
             },
-            "numberOfGridLines": 8,
+            "numberOfGridLines": (settings.intervalyAxis === null) ? 8 : settings.intervalyAxis,
             "gridLineY": settings.quadrantDivisionY,
             "gridLineWidth": 1,
             "gridLineColor": "silver",
@@ -247,7 +250,6 @@ function MAQDrawChart(DataStyle, settings, nodeData, series, assignData, valueFo
     }
     Xformatter = valueFormatter.create({ format: DataStyle.categorical.values[assignData[0]].source.format, value: settings.xDisplayUnits, precision: settings.xTextPrecision  });
     Yformatter = valueFormatter.create({ format: DataStyle.categorical.values[assignData[1]].source.format, value: settings.yDisplayUnits, precision: settings.yTextPrecision  });
-
     (function (config) {
         /*jslint white: true, devel:true, browser: true, this:true, for:true  */
         /*global MAQ, window,oDimensionTotalTitle,oGrpELESum,oData*/
@@ -2600,9 +2602,8 @@ function MAQDrawChart(DataStyle, settings, nodeData, series, assignData, valueFo
                             rTitle.textContent = (radiusAxisName === "" ? "Radius" : radiusAxisName) + ': ';
                             rTitle.style.fontWeight = 'bold';
                             oToolTip.appendChild(rTitle);
-
                             var rTitleValue = document.createElement('span');
-                            rTitleValue.textContent = (assignData[2] === -1 ? (Math.round(oSeries.data.radius[iSelectedIndex] * 100) / 100) : Rformatter.format(Math.round(oSeries.data.scaleY[iSelectedIndex] * 100) / 100));
+                            rTitleValue.textContent = (assignData[2] === -1 ? (Math.round(oSeries.data.radius[iSelectedIndex] * 100) / 100) : Rformatter.format(Math.round(oSeries.data.radius[iSelectedIndex] * 100) / 100));
                             oToolTip.appendChild(rTitleValue);
                             break;
                         default:
@@ -3071,6 +3072,7 @@ function MAQDrawChart(DataStyle, settings, nodeData, series, assignData, valueFo
         */
         MAQ.drawXAxisTitle = function (chartConfigOptions) {
             'use strict';
+
             var oXAxis = chartConfigOptions.xAxis;
             var oTitleObj, oAttr, oGrpELE, oDim = null;
             if (oXAxis.title.text) {
@@ -3219,7 +3221,6 @@ function MAQDrawChart(DataStyle, settings, nodeData, series, assignData, valueFo
         MAQ.drawAxis = function (chartConfigOptions) {
             var ah = chartConfigOptions.availHeight;
             var aw = chartConfigOptions.availWidth;
-
             var iCounter = 0, iLength = 0, sBigData = '', bottomSpacing = 0, leftSpacing = 0, sChartType = chartConfigOptions.chart.type, xAxis = chartConfigOptions.xAxis, yAxis = chartConfigOptions.yAxis, xAxisLabel = xAxis.labels, yAxisLabel = yAxis.labels, xAxisSeries = xAxisLabel.series, yAxisSeries = yAxisLabel.series, xAxisSeriesLength = 0, yAxisSeriesLength = 0, yAxisLimit = 0;
             var oAttr = {
                 class: 'MAQCharts-chartArea',
@@ -3229,6 +3230,7 @@ function MAQDrawChart(DataStyle, settings, nodeData, series, assignData, valueFo
             chartConfigOptions.svgELE.appendChild(oChartContainerGroup);
             var oDataInfo = null, oNormalizedData, iStart, iInterval, oTimelineData, temp, oGridAreaGrpELE, iNumberOfGridLines, oGrpYAxis, oGrpYAxisLblNTick, oAttrYAxis, oYAxisLine, intervalHeight, oAttrTick;
             /* Compute Space for X-Axis Labels */
+
             if (xAxisSeries.length <= 0) {
                 iLength = chartConfigOptions.series[0].data.length;
                 oTimelineData = chartConfigOptions.series[0].timeline;
@@ -3340,7 +3342,7 @@ function MAQDrawChart(DataStyle, settings, nodeData, series, assignData, valueFo
                     maxLen = textwidth;
                 }
             }
-            if(settings.showyAxis){
+            if(settings.showyAxis && settings.showyAxisLabel){
                 leftSpacing = maxLen + 10;
             }
             oAttrYAxis = {
@@ -3413,6 +3415,8 @@ function MAQDrawChart(DataStyle, settings, nodeData, series, assignData, valueFo
             chartConfigOptions.plotIntervalHeight = intervalHeight;
 
             var skipgridsy = yAxis.numberOfGridLines / 2;
+            var oAttrLabelOrg;
+            var yTooltipFormatter = valueFormatter.create({ format: DataStyle.categorical.values[assignData[1]].source.format});
             for (iCounter = yAxisSeriesLength; yAxisLimit <= iCounter; iCounter -= 1) {
                 if (bSkipPlot) {
                     iSkipInterval -= 1;
@@ -3431,11 +3435,12 @@ function MAQDrawChart(DataStyle, settings, nodeData, series, assignData, valueFo
                     oGrpYAxisLblNTick.appendChild(oTick);
                     //y axis label
                     if (yAxisLabel.enabled) {
-
                         oAttrLabel.text = yAxisSeries[iCounter];
+                        oAttrLabelOrg = oAttrLabel.text;
 
                         if (settings.yDisplayUnits == '0') {    //auto option selected then
-                            var maxYLabel = Math.max(...DataStyle.categorical.values[assignData[1]].values);
+                            // oNormalizedDataYAxis.min
+                            var maxYLabel = yAxisSeries[yAxisSeriesLength];
                             if (maxYLabel > 1000000000000) {
                                 Y1formatter = valueFormatter.create({ format: DataStyle.categorical.values[assignData[1]].source.format, value: 1000000000000, precision: settings.yTextPrecision });
                                 oAttrLabel.text = Y1formatter.format(oAttrLabel.text);
@@ -3460,13 +3465,12 @@ function MAQDrawChart(DataStyle, settings, nodeData, series, assignData, valueFo
                         else {
                             oAttrLabel.text = Yformatter.format(oAttrLabel.text);
                         }
-                        var sTempText = oAttrLabel.text;
                         oLabel = MAQ.createSVGElement(chartConfigOptions.svgNS, 'text', oAttrLabel);
                         oGrpYAxisLblNTick.appendChild(oLabel);
                         oLabelDim = MAQ.getObjectDimension(oLabel);
                         MAQ.addAttr(oLabel, 'y', oAttrLabel.y + oLabelDim.height / 4);
                         oParam = {
-                            value: sTempText,
+                            value: yTooltipFormatter.format(oAttrLabelOrg),
                             config: chartConfigOptions,
                             type: 'axis'
                         };
@@ -3499,8 +3503,9 @@ function MAQDrawChart(DataStyle, settings, nodeData, series, assignData, valueFo
                     settings.quadrantDivisionY = yAxisSeries[yAxisSeriesLength / 2];
                 }
                 else {
-                    finalY = (chartConfigOptions.availHeight) * (yAxisSeries[yAxisSeriesLength] - config.yAxis.gridLineY) / yAxisSeries[yAxisSeriesLength];
+                    finalY = (chartConfigOptions.availHeight) * (yAxisSeries[yAxisSeriesLength] + yAxisSeries[0] - config.yAxis.gridLineY) / (yAxisSeries[yAxisSeriesLength] + yAxisSeries[0]);
                 }
+
                 var oAttrGridLine = {
                     x: leftSpacing,
                     y: 0,
@@ -3613,7 +3618,8 @@ function MAQDrawChart(DataStyle, settings, nodeData, series, assignData, valueFo
             iSkipInterval = xAxis.skipInterval;
             var iNumOfCharsAllowed = Math.ceil(chartConfigOptions.plotIntervalWidth * Math.max(iSkipInterval, 1) / oDimAxis.width);
             var sTempText = '', iPrevX, oDim, isDrillBar, oParam, oToolTip, iStartOffset, skipgridsx = xAxis.numberOfGridLines / 2;
-            
+            var oAttrLabelOrg;
+            var xTooltipFormatter = valueFormatter.create({ format: DataStyle.categorical.values[assignData[0]].source.format});
             
             for (iCounter = 0; iCounter < xAxisSeries.length; iCounter += 1) {
                 
@@ -3639,8 +3645,9 @@ function MAQDrawChart(DataStyle, settings, nodeData, series, assignData, valueFo
 
                         iPrevX = oAttrLabel.x;
                         oAttrLabel.text = parseFloat(xAxisSeries[iCounter]);
+                        oAttrLabelOrg = oAttrLabel.text;
                         if (settings.xDisplayUnits == '0') {    //auto option selected then
-                            var maxXLabel = Math.max(...DataStyle.categorical.values[assignData[0]].values);
+                            var maxXLabel = xAxisSeries[xAxisSeries.length - 1];
                             if (maxXLabel > 1000000000000) {
                                 X1formatter = valueFormatter.create({ format: DataStyle.categorical.values[assignData[0]].source.format, value: 1000000000000, precision: settings.xTextPrecision });
                                 oAttrLabel.text = X1formatter.format(oAttrLabel.text);
@@ -3691,7 +3698,7 @@ function MAQDrawChart(DataStyle, settings, nodeData, series, assignData, valueFo
                             }
                         }
                         oParam = {
-                            value: sTempText,
+                            value: xTooltipFormatter.format(oAttrLabelOrg),
                             config: chartConfigOptions,
                             type: 'axis'
                         };
@@ -3728,22 +3735,22 @@ function MAQDrawChart(DataStyle, settings, nodeData, series, assignData, valueFo
                 else {
                     config.xAxis.gridLineX = -1;
                 }
-
             if (settings.showQuadrants) {
                 if(chartConfigOptions.series.length == 1){
                     config.xAxis.gridLineX = -1;
                 }
                 if ((config.xAxis.gridLineX > xAxisSeries[(xAxisSeries.length - 1)] || config.xAxis.gridLineX < xAxisSeries[0]) && quadrantDivisionXFlag) {
-                    config.xAxis.gridLineX = xAxisSeries[(xAxisSeries.length - 1) / 2];
-                    settings.quadrantDivisionX = xAxisSeries[(xAxisSeries.length - 1) / 2];
+                    config.xAxis.gridLineX = (xAxisSeries[0] + xAxisSeries[xAxisSeries.length - 1]) / 2;
+                    settings.quadrantDivisionX = (xAxisSeries[0] + xAxisSeries[xAxisSeries.length - 1]) / 2;
                 }
                 if (config.xAxis.gridLineX === -1) {
-                    finalX = (chartConfigOptions.availWidth) * (xAxisSeries[(xAxisSeries.length - 1) / 2]) / xAxisSeries[xAxisSeries.length - 1];
-                    config.xAxis.gridLineX = xAxisSeries[(xAxisSeries.length - 1) / 2];
-                    settings.quadrantDivisionX = xAxisSeries[(xAxisSeries.length - 1) / 2];
+                    finalX = (chartConfigOptions.availWidth) * ((xAxisSeries[0] + xAxisSeries[xAxisSeries.length - 1]) / 2) / xAxisSeries[xAxisSeries.length - 1];
+                    config.xAxis.gridLineX = (xAxisSeries[0] + xAxisSeries[xAxisSeries.length - 1]) / 2;
+                    settings.quadrantDivisionX = (xAxisSeries[0] + xAxisSeries[xAxisSeries.length - 1]) / 2;
                 }
                 else {
-                    finalX = (chartConfigOptions.availWidth) * (config.xAxis.gridLineX) / xAxisSeries[xAxisSeries.length - 1];
+                    finalX = (chartConfigOptions.availWidth) * (config.xAxis.gridLineX) / (xAxisSeries[0] + xAxisSeries[xAxisSeries.length - 1]);
+                    
                 }
                 oAttrGridLine = {
                     x: finalX,
@@ -3785,8 +3792,8 @@ function MAQDrawChart(DataStyle, settings, nodeData, series, assignData, valueFo
                 config.xAxis.gridLineX = xAxisSeries[(xAxisSeriesLength) / 2];
                 settings.quadrantDivisionX = config.xAxis.gridLineX;
             }
-            var gridX = (chartConfigOptions.availWidth) * (config.xAxis.gridLineX) / xAxisSeries[xAxisSeries.length - 1];
-            var gridY = (chartConfigOptions.availHeight) * (yAxisSeries[yAxisSeriesLength] - config.yAxis.gridLineY / 2) / yAxisSeries[yAxisSeriesLength];
+            var gridX = (chartConfigOptions.availWidth) * (config.xAxis.gridLineX) / (xAxisSeries[0] + xAxisSeries[xAxisSeries.length - 1]);
+            var gridY = (chartConfigOptions.availHeight) * (yAxisSeries[yAxisSeriesLength] + yAxisSeries[0] - config.yAxis.gridLineY / 2) / (yAxisSeries[yAxisSeriesLength] + yAxisSeries[0]);
             var oAttrQuadrantLabel = {
                 x: ((gridX / 2) + leftSpacing),
                 y: gridY,
@@ -3816,10 +3823,10 @@ function MAQDrawChart(DataStyle, settings, nodeData, series, assignData, valueFo
                 //check for the available width to clip the Quadrant labels
                 var availableWidth;
                 if (i === 0 || i === 3) {
-                    availableWidth = (chartConfigOptions.availWidth * (config.xAxis.gridLineX) / xAxisSeries[xAxisSeries.length - 1]) / 2;
+                    availableWidth = (chartConfigOptions.availWidth * (config.xAxis.gridLineX) / (xAxisSeries[0] + xAxisSeries[xAxisSeries.length - 1])) / 2;
                 }
                 else {
-                    availableWidth = chartConfigOptions.availWidth * (xAxisSeries[xAxisSeries.length - 1] - config.xAxis.gridLineX) / xAxisSeries[xAxisSeries.length - 1] / 2;
+                    availableWidth = chartConfigOptions.availWidth * (xAxisSeries[xAxisSeries.length - 1] + xAxisSeries[0] - config.xAxis.gridLineX) / xAxisSeries[xAxisSeries.length - 1] + xAxisSeries[0] / 2;
                 }
                 var titleCopy;
                 while ((iCounter < length) && (quadrantNameWidth) >= (availableWidth)) {
@@ -3842,11 +3849,11 @@ function MAQDrawChart(DataStyle, settings, nodeData, series, assignData, valueFo
                 oQuadrantLabelCopyText.appendChild(title);
                 oGrpQuadrantLabels.appendChild(oQuadrantLabelCopyText);
                 if (i % 2 === 0) {
-                    oAttrQuadrantLabel.x = (chartConfigOptions.availWidth) * (config.xAxis.gridLineX + (xAxisSeries[xAxisSeries.length - 1] - config.xAxis.gridLineX) / 2) / xAxisSeries[xAxisSeries.length - 1] + leftSpacing;
+                    oAttrQuadrantLabel.x = (chartConfigOptions.availWidth) * (config.xAxis.gridLineX + (xAxisSeries[xAxisSeries.length - 1] + xAxisSeries[0] - config.xAxis.gridLineX) / 2) / (xAxisSeries[0] + xAxisSeries[xAxisSeries.length - 1]) + leftSpacing;
                     availableWidth = xAxisSeries[(xAxisSeries.length - 1)] - config.xAxis.gridLineX;
                 }
                 else {
-                    oAttrQuadrantLabel.y = (chartConfigOptions.availHeight) * ((yAxisSeries[yAxisSeriesLength] - config.yAxis.gridLineY) / 2) / yAxisSeries[yAxisSeriesLength];
+                    oAttrQuadrantLabel.y = (chartConfigOptions.availHeight) * ((yAxisSeries[yAxisSeriesLength] + yAxisSeries[0] - config.yAxis.gridLineY) / 2) / (yAxisSeries[yAxisSeriesLength] + yAxisSeries[0]);
                 }
                 if (i === 2) {
                     oAttrQuadrantLabel.x = gridX / 2 + leftSpacing;
@@ -3935,20 +3942,48 @@ function MAQDrawChart(DataStyle, settings, nodeData, series, assignData, valueFo
                     oNormalizedDataYAxis = MAQ.getNormalized_Min_Max_Interval(oDataInfoY.min, oDataInfoY.max, chartConfigOptions.yAxis.numberOfGridLines);
                 }
                 oNormalizedDataXAxis = MAQ.getNormalized_Min_Max_Interval(oDataInfoX.min, oDataInfoX.max, chartConfigOptions.xAxis.numberOfGridLines);
-                oNormalizedDataXAxis.sum = oNormalizedDataXAxis.max + Math.abs(oNormalizedDataXAxis.min);
+                // get Y-Axis start and end data from formatting pane
+                if (settings.startyAxis !== null && settings.startyAxis < oNormalizedDataYAxis.max && settings.endyAxis === null) {
+                    oNormalizedDataYAxis.min = settings.startyAxis;
+                }
+                else if (settings.endyAxis !== null && settings.endyAxis > oNormalizedDataYAxis.min && settings.startyAxis === null) {
+                    oNormalizedDataYAxis.max = settings.endyAxis;
+                }
+                else if (settings.startyAxis !== null && settings.endyAxis !== null && settings.startyAxis < settings.endyAxis) {
+                    oNormalizedDataYAxis.min = settings.startyAxis;
+                    oNormalizedDataYAxis.max = settings.endyAxis;
+                }
+                oNormalizedDataYAxis.interval = (oNormalizedDataYAxis.max - oNormalizedDataYAxis.min) / chartConfigOptions.yAxis.numberOfGridLines;
                 oNormalizedDataYAxis.sum = oNormalizedDataYAxis.max + Math.abs(oNormalizedDataYAxis.min);
+
+                // get/set X-Axis start and end data from formatting pane
+                if (settings.startxAxis !== null && settings.startxAxis < oNormalizedDataXAxis.max && settings.endxAxis === null) {
+                    oNormalizedDataXAxis.min = settings.startxAxis;
+                }
+                else if (settings.endxAxis !== null && settings.endxAxis > oNormalizedDataXAxis.min && settings.startxAxis === null) {
+                    oNormalizedDataXAxis.max = settings.endxAxis;
+                }
+                else if (settings.startxAxis !== null && settings.endxAxis !== null && settings.startxAxis < settings.endxAxis) {
+                    oNormalizedDataXAxis.min = settings.startxAxis;
+                    oNormalizedDataXAxis.max = settings.endxAxis;
+                }
+
+                oNormalizedDataXAxis.interval = (oNormalizedDataXAxis.max - oNormalizedDataXAxis.min) / chartConfigOptions.xAxis.numberOfGridLines;
+                oNormalizedDataXAxis.sum = oNormalizedDataXAxis.max + Math.abs(oNormalizedDataXAxis.min);
+
                 var oxAxisSeries = [];
                 chartConfigOptions.xAxis.labels.series = [];
                 var iStartX = oNormalizedDataXAxis.min, numberParts;
-                iLength = oNormalizedDataXAxis.sum / oNormalizedDataXAxis.interval;
+
+                iLength = (oNormalizedDataXAxis.max - oNormalizedDataXAxis.min) / oNormalizedDataXAxis.interval;
                 if (var1 > 0) {
-                    xinterval = (oNormalizedDataXAxis.max - oNormalizedDataXAxis.min) / 8;
+                    xinterval = (oNormalizedDataXAxis.max - oNormalizedDataXAxis.min) / ((settings.intervalxAxis === null) ? 8 : settings.intervalxAxis);
                 }
                 if (flag === 0) {
                     for (iCounter = 0; iCounter <= iLength; iCounter += 1) {
                         numberParts = iStartX.toString().split('.');
                         if (numberParts[1] && numberParts[1].length > 2) {
-                            oxAxisSeries.push(iStartX.toFixed(2));
+                            oxAxisSeries.push(parseFloat(iStartX.toFixed(2)));
                         } else {
                             oxAxisSeries.push(iStartX);
                         }
@@ -3993,11 +4028,14 @@ function MAQDrawChart(DataStyle, settings, nodeData, series, assignData, valueFo
                 oGrpELE = MAQ.createSVGElement(chartConfigOptions.svgNS, 'g', oAttr);
                 chartConfigOptions.svgELE.appendChild(oGrpELE);
 
-                var iHeightFactor = chartConfigOptions.availHeight / (Math.abs(oNormalizedDataYAxis.min) + oNormalizedDataYAxis.max);
-                var iWidthFactor = chartConfigOptions.availWidth / (Math.abs(oNormalizedDataXAxis.min) + oNormalizedDataXAxis.max);
-                var iZeroXAxis = oNormalizedDataXAxis.min / oNormalizedDataXAxis.sum * chartConfigOptions.availWidth;
-                iZeroXAxis = Math.abs(iZeroXAxis);
-                var iZeroYAxis = oNormalizedDataYAxis.max / oNormalizedDataYAxis.sum * chartConfigOptions.availHeight;
+                var iHeightFactor = chartConfigOptions.availHeight / (oNormalizedDataYAxis.max - Math.abs(oNormalizedDataYAxis.min));
+                var iWidthFactor = chartConfigOptions.availWidth / (oNormalizedDataXAxis.max - Math.abs(oNormalizedDataXAxis.min));
+
+                var iZeroXAxis = iWidthFactor * Math.abs(oNormalizedDataXAxis.min);
+                if (oNormalizedDataXAxis.min > 0) {
+                    iZeroXAxis = -iZeroXAxis;
+                }
+                var iZeroYAxis = (iHeightFactor * Math.abs(oNormalizedDataYAxis.min)) + chartConfigOptions.availHeight;
                 var oBubbleAttr = {
                     class: '',
                     cx: 0,
@@ -4063,7 +4101,7 @@ function MAQDrawChart(DataStyle, settings, nodeData, series, assignData, valueFo
                                     oBubbleAttr.stroke = oBubblePlotOptions.color[iCounter % oBubblePlotOptions.color.length];
                                 }
                             }
-                            oBubbleAttr.cx = Math.abs(iXcord);
+                            oBubbleAttr.cx = iXcord;
                             oBubbleAttr.cy = iYcord;
                             if (maxRadius !== 0) {
                                 oBubbleAttr.r = (oDataArray.radius[iCounter] / maxRadius) * 12; //normalize bubble radius according to input

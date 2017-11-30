@@ -139,6 +139,7 @@ module powerbi.extensibility.visual {
                 width: Math.max(0, options.viewport.width)
             };
             this.rootElement.select('.MAQChartsSvgRoot').remove();
+            d3.select('.errorMessage').remove();
             //document.getElementById('container').innerHTML = "";
             let width = options.viewport.width;
             let height = options.viewport.height;
@@ -173,6 +174,9 @@ module powerbi.extensibility.visual {
             var isLegends = true, isRadius = true;
             if (-1 === assignData[0] || -1 === assignData[1]) {
                 this.rootElement.select('.legend #legendGroup').selectAll('*').style('visibility','hidden');
+                $("#container").removeAttr('style');
+                d3.select('#container').append('svg').classed('errorMessage', true).attr({ "width": width, "height": height })
+                d3.select('svg').append('text').attr({ "x": width / 2, "y": height / 2, "font-size": "20px", "text-anchor": "middle" }).text("Please select both x-axis and y-axis values");
                 return;
             }
             else{
@@ -196,8 +200,8 @@ module powerbi.extensibility.visual {
             }
             if (loopctr1 === iColLength || loopctr2 === iColLength) {
                 $("#container").removeAttr('style');
-                d3.select('#container').append('svg').attr({ "width": width, "height": height })
-                d3.select('svg').append('text').attr({ "x": width / 2, "y": height / 2, "font-size": "20px", "text-anchor": "middle" }).text("Data for x-axis contain only null.");
+                d3.select('#container').append('svg').classed('errorMessage', true).attr({ "width": width, "height": height })
+                d3.select('svg').append('text').attr({ "x": width / 2, "y": height / 2, "font-size": "20px", "text-anchor": "middle" }).text("Only null values present for X axis");
                 return;
             }
             //vacant the visual if x-axis contains negative values.
@@ -207,7 +211,7 @@ module powerbi.extensibility.visual {
             }
             if (loopctr !== iColLength) {
                 $("#container").removeAttr('style');
-                d3.select('#container').append('svg').attr({ "width": width, "height": height })
+                d3.select('#container').append('svg').classed('errorMessage', true).attr({ "width": width, "height": height })
                 d3.select('svg').append('text').attr({ "x": width / 2, "y": height / 2, "font-size": "20px", "text-anchor": "middle" }).text("Data not supported");
                 return;
             }
@@ -229,8 +233,8 @@ module powerbi.extensibility.visual {
             }
             if (loopctr1 === iColLength || loopctr2 === iColLength) {
                 $("#container").removeAttr('style');
-                d3.select('#container').append('svg').attr({ "width": width, "height": height })
-                d3.select('svg').append('text').attr({ "x": width / 2, "y": height / 2, "font-size": "20px", "text-anchor": "middle" }).text("Data for y-axis contain only null.");
+                d3.select('#container').append('svg').classed('errorMessage', true).attr({ "width": width, "height": height })
+                d3.select('svg').append('text').attr({ "x": width / 2, "y": height / 2, "font-size": "20px", "text-anchor": "middle" }).text("Only null values present for Y axis");
                 return;
             }
             //vacant the visual if y-axis contains negative values.
@@ -240,7 +244,7 @@ module powerbi.extensibility.visual {
             }
             if (loopctr !== iColLength) {
                 $("#container").removeAttr('style');
-                d3.select('#container').append('svg').attr({ "width": width, "height": height })
+                d3.select('#container').append('svg').classed('errorMessage', true).attr({ "width": width, "height": height })
                 d3.select('svg').append('text').attr({ "x": width / 2, "y": height / 2, "font-size": "20px", "text-anchor": "middle" }).text("Data not supported");
                 return;
             }
@@ -267,8 +271,8 @@ module powerbi.extensibility.visual {
                 }
                 if (loopctr1 === iColLength || loopctr2 === iColLength) {
                     $("#container").removeAttr('style');
-                    d3.select('#container').append('svg').attr({ "width": width, "height": height })
-                    d3.select('svg').append('text').attr({ "x": width / 2, "y": height / 2, "font-size": "20px", "text-anchor": "middle" }).text("Data for radius-axis contain only null.");
+                    d3.select('#container').append('svg').classed('errorMessage', true).attr({ "width": width, "height": height })
+                    d3.select('svg').append('text').attr({ "x": width / 2, "y": height / 2, "font-size": "20px", "text-anchor": "middle" }).text("Only null values present for Radius axis");
                     return;
                 }
                 //check for negative numbers
@@ -278,7 +282,7 @@ module powerbi.extensibility.visual {
                 }
                 if (loopctr !== iColLength) {
                     $("#container").removeAttr('style');
-                    d3.select('#container').append('svg').attr({ "width": width, "height": height })
+                    d3.select('#container').append('svg').classed('errorMessage', true).attr({ "width": width, "height": height })
                     d3.select('svg').append('text').attr({ "x": width / 2, "y": height / 2, "font-size": "20px", "text-anchor": "middle" }).text("Data not supported");
                     return;
                 }
@@ -306,8 +310,8 @@ module powerbi.extensibility.visual {
                 }
                 if (loopctr1 === iColLength || loopctr2 === iColLength) {
                     $("#container").removeAttr('style');
-                    d3.select('#container').append('svg').attr({ "width": width, "height": height })
-                    d3.select('svg').append('text').attr({ "x": width / 2, "y": height / 2, "font-size": "20px", "text-anchor": "middle" }).text("Data for legend-axis contain only null.");
+                    d3.select('#container').append('svg').classed('errorMessage', true).attr({ "width": width, "height": height })
+                    d3.select('svg').append('text').attr({ "x": width / 2, "y": height / 2, "font-size": "20px", "text-anchor": "middle" }).text("Only null values present for Legend axis");
                     return;
                 }
             }
@@ -323,7 +327,7 @@ module powerbi.extensibility.visual {
             }
             if (skipFlag === length1) {
                 $("#container").removeAttr('style');
-                d3.select('#container').append('svg').attr({ "width": width, "height": height });
+                d3.select('#container').append('svg').classed('errorMessage', true).attr({ "width": width, "height": height });
                 d3.select('svg').append('text').attr({ "x": width / 2, "y": height / 2, "font-size": "20px", "text-anchor": "middle" }).text("No data available");
                 return;
             }
@@ -376,7 +380,7 @@ module powerbi.extensibility.visual {
             if (series.length <= 0) //Return if the query returns no rows.
             {
                 $("#container").removeAttr('style');
-                d3.select('#container').append('svg').attr({ "width": width, "height": height })
+                d3.select('#container').append('svg').classed('errorMessage', true).attr({ "width": width, "height": height })
                 d3.select('svg').append('text').attr({ "x": width / 2, "y": height / 2, "font-size": "20px", "text-anchor": "middle" }).text("No data available");
                 return;
             }
@@ -525,7 +529,6 @@ module powerbi.extensibility.visual {
                         });
                     }
                     break;
-                    
                 case 'legend':
                     objectEnumeration.push({
                         objectName: 'legend',
@@ -561,6 +564,9 @@ module powerbi.extensibility.visual {
                         objectName: objectName,
                         properties: {
                             show: this.settings.showxAxis,
+                            start: this.settings.startxAxis,
+                            end: this.settings.endxAxis,
+                            interval: this.settings.intervalxAxis,
                             titleEnable: this.settings.showxAxisTitle,
                             titleText: this.settings.xTitleText,
                             label: this.settings.showxAxisLabel,
@@ -575,6 +581,9 @@ module powerbi.extensibility.visual {
                         objectName: objectName,
                         properties: {
                             show: this.settings.showyAxis,
+                            start: this.settings.startyAxis,
+                            end: this.settings.endyAxis,
+                            interval: this.settings.intervalyAxis,
                             titleEnable: this.settings.showyAxisTitle,
                             titleText: this.settings.yTitleText,
                             label: this.settings.showyAxisLabel,
@@ -584,15 +593,14 @@ module powerbi.extensibility.visual {
                         selector: null
                     });
                     break;
+                default:
             }
+
             return objectEnumeration;
         }
 
-        public destroy(): void {
-        }
-
         private getSettings(objects: DataViewObjects): boolean {
-            var settingsChanged = false;
+            let settingsChanged: boolean = false;
             if (typeof this.settings === 'undefined' || (JSON.stringify(objects) !== JSON.stringify(this.prevDataViewObjects))) {
                 this.settings = {
                     //Quadrant
@@ -606,6 +614,15 @@ module powerbi.extensibility.visual {
                     //X-Axis and Y-Axis
                     showxAxis: getValue<boolean>(objects, 'xAxis', 'show', true),
                     showyAxis: getValue<boolean>(objects, 'yAxis', 'show', true),
+
+                    startxAxis: getValue<number>(objects, 'xAxis', 'start', null),
+                    startyAxis: getValue<number>(objects, 'yAxis', 'start', null),
+                    endxAxis: getValue<number>(objects, 'xAxis', 'end', null),
+                    endyAxis: getValue<number>(objects, 'yAxis', 'end', null),
+
+                    intervalxAxis: (getValue<number>(objects, 'xAxis', 'interval', null) < 1 && getValue<number>(objects, 'xAxis', 'interval', null) !== null) ? 1 : getValue<number>(objects, 'xAxis', 'interval', null) > 15 ? 15 : getValue<number>(objects, 'xAxis', 'interval', null),
+                    intervalyAxis: (getValue<number>(objects, 'yAxis', 'interval', null) < 1 && getValue<number>(objects, 'yAxis', 'interval', null) !== null) ? 1 : getValue<number>(objects, 'yAxis', 'interval', null) > 15 ? 15 : getValue<number>(objects, 'yAxis', 'interval', null),
+
                     showxAxisTitle: getValue<boolean>(objects, 'xAxis', 'titleEnable', true),
                     showyAxisTitle: getValue<boolean>(objects, 'yAxis', 'titleEnable', true),
                     showxAxisLabel: getValue<boolean>(objects, 'xAxis', 'label', true),
@@ -623,6 +640,7 @@ module powerbi.extensibility.visual {
                 settingsChanged = true;
             }
             this.prevDataViewObjects = objects;
+
             return settingsChanged;
         }
     }
