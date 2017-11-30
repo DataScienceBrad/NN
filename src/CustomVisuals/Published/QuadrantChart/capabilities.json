@@ -36,6 +36,11 @@
             "kind": "Grouping"
         }
     ],
+    "drilldown": {
+        "roles": [
+            "legendAxis"
+        ]
+    },
     "dataViewMappings": [
         {
             "conditions": [
@@ -48,9 +53,6 @@
                     },
                     "radialAxis": {
                         "max": 1
-                    },
-                    "legendAxis": {
-                        "max": 1
                     }
                 }
             ],
@@ -58,6 +60,11 @@
                 "categories": {
                     "for": {
                         "in": "legendAxis"
+                    },
+                    "dataReductionAlgorithm": {
+                        "top": {
+                            "count": 30000
+                        }
                     }
                 },
                 "values": {
@@ -77,7 +84,12 @@
                                 "to": "xAxis"
                             }
                         }
-                    ]
+                    ],
+                    "dataReductionAlgorithm": {
+                        "top": {
+                            "count": 30000
+                        }
+                    }
                 }
             }
         }
@@ -116,19 +128,19 @@
                             },
                             {
                                 "value": "TopCenter",
-                                "displayName": "Top Center"
+                                "displayName": "Top center"
                             },
                             {
                                 "value": "BottomCenter",
-                                "displayName": "Bottom Center"
+                                "displayName": "Bottom center"
                             },
                             {
                                 "value": "LeftCenter",
-                                "displayName": "Left Center"
+                                "displayName": "Left center"
                             },
                             {
                                 "value": "RightCenter",
-                                "displayName": "RightCenter"
+                                "displayName": "Right center"
                             },
                             {
                                 "value": "None",
@@ -155,7 +167,7 @@
                     }
                 },
                 "fontSize": {
-                    "displayName": "Text Size",
+                    "displayName": "Text size",
                     "type": {
                         "formatting": {
                             "fontSize": true
@@ -208,14 +220,14 @@
                 },
                 "quadrantDivisionX": {
                     "displayName": "X-Axis division line",
-                    "description": "Quadrant division line for x-axis",
+                    "description": "Quadrant division line for X-axis",
                     "type": {
                         "numeric": true
                     }
                 },
                 "quadrantDivisionY": {
                     "displayName": "Y-Axis division line",
-                    "description": "Quadrant division line for y-axis",
+                    "description": "Quadrant division line for Y-axis",
                     "type": {
                         "numeric": true
                     }
@@ -228,6 +240,27 @@
                 "show": {
                     "type": {
                         "bool": true
+                    }
+                },
+                "start": {
+                    "displayName": "Start",
+                    "description": "Start value for X-Axis",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "end": {
+                    "displayName": "End",
+                    "description": "End value for X-Axis",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "interval": {
+                    "displayName": "Interval",
+                    "description": "Interval value for X-Axis",
+                    "type": {
+                        "numeric": true
                     }
                 },
                 "titleEnable": {
@@ -252,7 +285,7 @@
                     }
                 },
                 "displayUnits": {
-                    "displayName": "Display Units",
+                    "displayName": "Display units",
                     "type": {
                         "formatting": {
                             "labelDisplayUnits": true
@@ -260,7 +293,7 @@
                     }
                 },
                 "textPrecision": {
-                    "displayName": "Decimal Places",
+                    "displayName": "Decimal places",
                     "type": {
                         "numeric": true
                     },
@@ -276,6 +309,27 @@
                         "bool": true
                     }
                 },
+                "start": {
+                    "displayName": "Start",
+                    "description": "Start value for Y-Axis",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "end": {
+                    "displayName": "End",
+                    "description": "End value for Y-Axis",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "interval": {
+                    "displayName": "Interval",
+                    "description": "Interval value for Y-Axis",
+                    "type": {
+                        "numeric": true
+                    }
+                },
                 "titleEnable": {
                     "displayName": "Title",
                     "description": "Title",
@@ -298,7 +352,7 @@
                     }
                 },
                 "displayUnits": {
-                    "displayName": "Display Units",
+                    "displayName": "Display units",
                     "type": {
                         "formatting": {
                             "labelDisplayUnits": true
@@ -306,7 +360,7 @@
                     }
                 },
                 "textPrecision": {
-                    "displayName": "Decimal Places",
+                    "displayName": "Decimal places",
                     "type": {
                         "numeric": true
                     },

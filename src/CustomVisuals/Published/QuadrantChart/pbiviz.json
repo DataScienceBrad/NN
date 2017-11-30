@@ -4,15 +4,15 @@
     "displayName": "Quadrant chart by MAQ Software",
     "guid": "quadrantChart1257AB39DB23121488AEB752BCB06127",
     "visualClassName": "QuadrantChart",
-    "version": "3.1.0",
+    "version": "3.2.0",
     "description": "Bubble chart that is divided into four sections for plotting data that has a high volume of different results. By visually representing the data in separate quadrants, one can quickly find the distribution of data and set of items that share common traits or attributes.",
     "supportUrl": "https://github.com/maqsoftware/PowerBI-visuals/issues",
     "gitHubUrl": "https://github.com/maqsoftware/PowerBI-visuals"
   },
-  "apiVersion": "1.4.0",
+  "apiVersion": "1.8.0",
   "author": {
     "name": "MAQ Software",
-    "email": "sales@maqsoftware.com"
+    "email": "support@maqsoftware.com"
   },
   "assets": {
     "icon": "./assets/icon.png"
