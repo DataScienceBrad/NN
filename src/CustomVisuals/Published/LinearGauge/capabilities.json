@@ -3,32 +3,62 @@
         {
             "name": "Y",
             "kind": "Measure",
-            "displayName": "Value"
+            "displayName": "Value",
+            "requiredTypes": [
+                {
+                "numeric": true
+                }
+            ]
         },
         {
             "name": "TargetValue",
             "kind": "Measure",
-            "displayName": "Target Value"
+            "displayName": "Target Value",
+            "requiredTypes": [
+                {
+                "numeric": true
+                }
+            ]
         },
         {
             "name": "MinValue",
             "kind": "Measure",
-            "displayName": "Minimum value"
+            "displayName": "Minimum value",
+            "requiredTypes": [
+                {
+                "numeric": true
+                }
+            ]
         },
         {
             "name": "MaxValue",
             "kind": "Measure",
-            "displayName": "Maximum value"
+            "displayName": "Maximum value",
+            "requiredTypes": [
+                {
+                "numeric": true
+                }
+            ]
         },
         {
             "name": "QualitativeState1Value",
             "kind": "Measure",
-            "displayName": "Trend Value 1"
+            "displayName": "Trend Value 1",
+            "requiredTypes": [
+                {
+                "numeric": true
+                }
+            ]
         },
         {
             "name": "QualitativeState2Value",
             "kind": "Measure",
-            "displayName": "Trend Value 2"
+            "displayName": "Trend Value 2",
+            "requiredTypes": [
+                {
+                "numeric": true
+                }
+            ]
         }
     ],
     "objects": {

@@ -1,18 +1,18 @@
 {
   "visual": {
-    "name": "QuadrantChart",
-    "displayName": "Quadrant chart",
-    "guid": "QuadrantChart309E6B4739A54681808F132AFB230871",
+    "name": "QuadrantChartByMAQSoftware",
+    "displayName": "Quadrant chart by MAQ Software",
+    "guid": "quadrantChart1257AB39DB23121488AEB752BCB06127",
     "visualClassName": "QuadrantChart",
-    "version": "3.0.0",
-    "description": "Quadrant chart is used to show points across different quadrants",
+    "version": "3.2.0",
+    "description": "Bubble chart that is divided into four sections for plotting data that has a high volume of different results. By visually representing the data in separate quadrants, one can quickly find the distribution of data and set of items that share common traits or attributes.",
     "supportUrl": "https://github.com/maqsoftware/PowerBI-visuals/issues",
-    "gitHubUrl": "https://github.com/maqsoftware/PowerBI-visuals/"
+    "gitHubUrl": "https://github.com/maqsoftware/PowerBI-visuals"
   },
-  "apiVersion": "1.4.0",
+  "apiVersion": "1.8.0",
   "author": {
     "name": "MAQ Software",
-    "email": "sales@maqsoftware.com"
+    "email": "support@maqsoftware.com"
   },
   "assets": {
     "icon": "./assets/icon.png"
@@ -26,7 +26,9 @@
     "node_modules/powerbi-visuals-utils-typeutils/lib/index.js",
     "node_modules/powerbi-visuals-utils-svgutils/lib/index.js",
     "node_modules/powerbi-visuals-utils-dataviewutils/lib/index.js",
-    "node_modules/powerbi-visuals-utils-formattingutils/lib/index.js"
+    "node_modules/powerbi-visuals-utils-formattingutils/lib/index.js",
+    "node_modules/powerbi-visuals-utils-interactivityutils/lib/index.js",
+    "node_modules/powerbi-visuals-utils-chartutils/lib/index.js"
   ],
   "style": "style/visual.less",
   "capabilities": "capabilities.json"

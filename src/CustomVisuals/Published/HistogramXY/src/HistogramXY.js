@@ -478,7 +478,6 @@ function MAQDrawChart(DataStyle, settings, viewPort, valueFormatter) {
             'use strict';
             //return if the passed array is not 2D
             if (!('[object Array]' === Object.prototype.toString.call(arr) && '[object Array]' === Object.prototype.toString.call(arr[0]))) {
-                console.log('Passed argument is not a 2D array');
                 return;
             }
             var pivotArr = [], iRows = arr.length, iCols = arr[0].length, iCount, jCount;
@@ -498,7 +497,6 @@ function MAQDrawChart(DataStyle, settings, viewPort, valueFormatter) {
             'use strict';
             //return if the passed array is not 2D
             if (!('[object Array]' === Object.prototype.toString.call(arr) && '[object Array]' === Object.prototype.toString.call(arr[0]))) {
-                console.log('Passed argument is not a 2D array');
                 return;
             }
             var linearArr = [], iCount;
@@ -2066,7 +2064,6 @@ function MAQDrawChart(DataStyle, settings, viewPort, valueFormatter) {
         MAQ.showHideStaticTooltips = function (oParam, bShow) {
             'use strict';
             if ('line' !== oParam.config.chart.type.toLowerCase()) {
-                console.log('Static tooltips are only supported for line charts.');
                 return;
             }
             var oConfig = oParam.config, oGrpTooltips = oConfig.plotGroup.querySelectorAll('.MAQCharts-plotArea-tooltips'), oSelGrpTooltip = oConfig.plotGroup.querySelector('#MAQCharts-plotArea-tooltips-' + (oParam.seriesIndex + 1)), oGrp;
@@ -3510,7 +3507,6 @@ function MAQDrawChart(DataStyle, settings, viewPort, valueFormatter) {
                     sFunctionName(event, oParam);
                 }, true);
             } else {
-                console.log(sFunctionName + ' is not a function!');
             }
         };
         /*

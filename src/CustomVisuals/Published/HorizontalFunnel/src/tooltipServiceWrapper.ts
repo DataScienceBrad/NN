@@ -46,7 +46,7 @@ module powerbi.extensibility.visual {
             }
 
             let rootNode = this.rootElement;
-            
+
             // Mouse events
             selection.on("mouseover.tooltip", () => {
                 // Ignore mouseover while handling touch events

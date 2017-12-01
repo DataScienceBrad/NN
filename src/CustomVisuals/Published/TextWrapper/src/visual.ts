@@ -25,27 +25,28 @@
  */
 module powerbi.extensibility.visual {
 
-
+    import valueFormatter = powerbi.extensibility.utils.formatting.valueFormatter;
     export module DataViewObjects {
         /** Gets the value of the given object/property pair. */
         export function getValue<T>(objects: DataViewObjects, propertyId: DataViewObjectPropertyIdentifier, defaultValue?: T): T {
 
-            if (!objects)
+            if (!objects) {
                 return defaultValue;
+            }
+            const objectOrMap: DataViewObject = objects[propertyId.objectName];
 
-            let objectOrMap = objects[propertyId.objectName];
+            const object: DataViewObject = <DataViewObject>objectOrMap;
 
-            let object = <DataViewObject>objectOrMap;
             return DataViewObject.getValue(object, propertyId.propertyName, defaultValue);
         }
 
         /** Gets an object from objects. */
         export function getObject(objects: DataViewObjects, objectName: string, defaultValue?: DataViewObject): DataViewObject {
             if (objects && objects[objectName]) {
-                let object = <DataViewObject>objects[objectName];
+                const object: DataViewObject = <DataViewObject>objects[objectName];
+
                 return object;
-            }
-            else {
+            } else {
                 return defaultValue;
             }
         }
@@ -53,16 +54,19 @@ module powerbi.extensibility.visual {
         /** Gets a map of user-defined objects. */
         export function getUserDefinedObjects(objects: DataViewObjects, objectName: string): DataViewObjectMap {
             if (objects && objects[objectName]) {
-                let map = <DataViewObjectMap>objects[objectName];
+                const map: DataViewObjectMap = <DataViewObjectMap>objects[objectName];
+
                 return map;
             }
         }
 
         /** Gets the solid color from a fill property. */
-        export function getFillColor(objects: DataViewObjects, propertyId: DataViewObjectPropertyIdentifier, defaultColor?: string): string {
-            let value: Fill = getValue(objects, propertyId);
-            if (!value || !value.solid)
+        export function getFillColor(objects: DataViewObjects,
+                                     propertyId: DataViewObjectPropertyIdentifier, defaultColor?: string): string {
+            const value: Fill = getValue(objects, propertyId);
+            if (!value || !value.solid) {
                 return defaultColor;
+            }
 
             return value.solid.color;
         }
@@ -71,95 +75,143 @@ module powerbi.extensibility.visual {
     export module DataViewObject {
         export function getValue<T>(object: DataViewObject, propertyName: string, defaultValue?: T): T {
 
-            if (!object)
+            if (!object) {
                 return defaultValue;
-
-            let propertyValue = <T>object[propertyName];
-            if (propertyValue === undefined)
+            }
+            const propertyValue: T = <T>object[propertyName];
+            if (propertyValue === undefined) {
                 return defaultValue;
+            }
 
             return propertyValue;
         }
 
         /** Gets the solid color from a fill property using only a propertyName */
         export function getFillColorByPropertyName(objects: DataViewObjects, propertyName: string, defaultColor?: string): string {
-            let value: Fill = DataViewObject.getValue(objects, propertyName);
-            if (!value || !value.solid)
+            const value: Fill = DataViewObject.getValue(objects, propertyName);
+            if (!value || !value.solid) {
                 return defaultColor;
+            }
 
             return value.solid.color;
         }
     }
 
-    export interface textSettings {
+    export interface ItextSettings {
         color: string;
         fontSize: number;
-        postText: string
-    };
+        postText: string;
+    }
 
-    export var questTextProperties = {
+    export let questTextProperties: {
         textSettings: {
-            color: <DataViewObjectPropertyIdentifier>{ objectName: 'textSettings', propertyName: 'color' },
-            fontSize: <DataViewObjectPropertyIdentifier>{ objectName: 'textSettings', propertyName: 'fontSize' },
-            postText: <DataViewObjectPropertyIdentifier>{ objectName: 'textSettings', propertyName: 'postText' },
-        },
-    };
+            color: DataViewObjectPropertyIdentifier;
+            fontSize: DataViewObjectPropertyIdentifier;
+            postText: DataViewObjectPropertyIdentifier;
+        };
+    } = {
+            textSettings: {
+                color: <DataViewObjectPropertyIdentifier>{ objectName: 'textSettings', propertyName: 'color' },
+                fontSize: <DataViewObjectPropertyIdentifier>{ objectName: 'textSettings', propertyName: 'fontSize' },
+                postText: <DataViewObjectPropertyIdentifier>{ objectName: 'textSettings', propertyName: 'postText' }
+            }
+        };
 
     export class Visual implements IVisual {
         private target: d3.Selection<SVGElement>;
         private updateCount: number;
-        private data;
-        private dataViews;
-        private textColor;
+        private dataViews: DataView;
 
         constructor(options: VisualConstructorOptions) {
             this.target = d3.select(options.element);
-            this.target.style('overflow-y','auto');
+            this.target.style({
+                'overflow-y': 'auto',
+                cursor: 'default'
+            });
             this.updateCount = 0;
         }
-
-        public update(options: VisualUpdateOptions) {
-
-            this.target.selectAll('.value').remove();
-            var dataView = this.dataViews = options.dataViews[0];
-            var valueLength = 0;
-            var textSettings: textSettings = this.getTextSettings(dataView);
-            
-            if(dataView
-            && dataView.categorical 
-            && dataView.categorical.categories 
-            && dataView.categorical.categories[0]
-            && dataView.categorical.categories[0].values){
-                valueLength = dataView.categorical.categories[0].values.length;
+        // tslint:disable-next-line:no-any
+        public getDecimalPlacesCount(value: any): number {
+            let decimalPlaces: number = 0;
+            if (value > 0) {
+                const arr: string[] = value.toString().split('.');
+                if (!!arr[1] && parseFloat(arr[1]) > 0) {
+                    decimalPlaces = arr[1].length;
+                }
             }
 
-            if(valueLength == 1){
+            return decimalPlaces;
+        }
+        public update(options: VisualUpdateOptions): void {
+
+            this.target.selectAll('.tw_value').remove();
+            const dataView: DataView = this.dataViews = options.dataViews[0];
+            let valueLength: number = 0;
+            const textSettings: ItextSettings = this.getTextSettings(dataView);
+            // tslint:disable-next-line:no-any
+            let textVal: any;
+            if (dataView
+                && dataView.categorical) {
+                if (dataView.categorical.categories
+                    && dataView.categorical.categories[0]
+                    && dataView.categorical.categories[0].values) {
+                    valueLength = dataView.categorical.categories[0].values.length;
+                    textVal = dataView.categorical.categories[0].values[0] ? dataView.categorical.categories[0].values[0] : '(blank)';
+                } else if (dataView.categorical.values
+                    && dataView.categorical.values[0]
+                    && dataView.categorical.values[0].values) {
+                    valueLength = dataView.categorical.values[0].values.length;
+                    textVal = dataView.categorical.values[0].values[0] ? dataView.categorical.values[0].values[0] : 0;
+                    if (!!dataView.categorical.values[0]
+                        && !!dataView.categorical.values[0].source
+                        && !!dataView.categorical.values[0].source.format) {
+
+                        let decimalPlaces: number = this.getDecimalPlacesCount(textVal);
+                        decimalPlaces = decimalPlaces > 4 ? 4 : decimalPlaces;
+                        const formatter: utils.formatting.IValueFormatter = valueFormatter.create({
+                            format: dataView.categorical.values[0].source.format,
+                            precision: decimalPlaces,
+                            value: 1
+                        });
+                        textVal = formatter.format(textVal);
+                    }
+                }
+            }
+            if (valueLength === 1) {
                 this.target.append('div')
-                .classed('value',true)
-                .text(textSettings.postText ? dataView.categorical.categories[0].values[0] + ' : ' + textSettings.postText : dataView.categorical.categories[0].values[0]+'')
-                .style('font-size',textSettings.fontSize + 'px')
-                .style('font-family','Segoe UI Semibold,wf_segoe-ui_semibold,helvetica,arial,sans-serif')
-                .style('color',textSettings.color);
-            }
-            else if(valueLength > 1){
+                    .classed('tw_value hyphens', true)
+                    .text(textSettings.postText ? `${textVal}${' : '}${textSettings.postText}` : textVal)
+                    .style('font-size', `${textSettings.fontSize}px`)
+                    .style('font-family', 'Segoe UI Semibold,wf_segoe-ui_semibold,helvetica,arial,sans-serif')
+                    .style('color', textSettings.color);
+            } else if (valueLength > 1) {
+                const errMsg: string = 'Query returned more than one row, please filter data to return one row';
                 this.target.append('div')
-                .classed('value',true)
-                .text("No Item Selected")
-                .style('font-size',textSettings.fontSize + 'px')
-                .style('font-family','Segoe UI Semibold,wf_segoe-ui_semibold,helvetica,arial,sans-serif')
-                .style('color',textSettings.color)
+                    .classed('tw_value', true)
+                    .text(errMsg)
+                    .attr('title', errMsg)
+                    .style('font-size', `${textSettings.fontSize}px`)
+                    .style('font-family', 'Segoe UI Semibold,wf_segoe-ui_semibold,helvetica,arial,sans-serif')
+                    .style('color', textSettings.color);
             }
-
         }
 
-        private getTextSettings(dataView: DataView): textSettings {
-            var objects: DataViewObjects = null;
-            var textSetting: textSettings = this.getDefaultTextSettings();
+        private getTextSettings(dataView: DataView): ItextSettings {
+            let objects: DataViewObjects = null;
+            const textSetting: ItextSettings = this.getDefaultTextSettings();
 
-            if (!dataView || !dataView.metadata || !dataView.metadata.objects)
+            if (!dataView || !dataView.metadata || !dataView.metadata.objects) {
                 return textSetting;
+            }
             objects = dataView.metadata.objects;
-            var textProperties = questTextProperties;
+            const textProperties: {
+                textSettings: {
+                    color: DataViewObjectPropertyIdentifier;
+                    fontSize: DataViewObjectPropertyIdentifier;
+                    postText: DataViewObjectPropertyIdentifier;
+                };
+            }
+                = questTextProperties;
             textSetting.color = DataViewObjects.getFillColor(objects, textProperties.textSettings.color, textSetting.color);
             textSetting.fontSize = DataViewObjects.getValue(objects, textProperties.textSettings.fontSize, textSetting.fontSize);
             textSetting.postText = DataViewObjects.getValue(objects, textProperties.textSettings.postText, textSetting.postText);
@@ -167,37 +219,38 @@ module powerbi.extensibility.visual {
             return textSetting;
         }
 
-        public getDefaultTextSettings(): textSettings {
+        public getDefaultTextSettings(): ItextSettings {
             return {
                 color: '#777777',
                 fontSize: 18,
                 postText: ''
-            }
+            };
         }
 
         public enumerateObjectInstances(options: EnumerateVisualObjectInstancesOptions): VisualObjectInstanceEnumeration {
-        var textSetting: textSettings = this.getTextSettings(this.dataViews);
-        var objectName = options.objectName;
-        var objectEnumeration: VisualObjectInstance[] = [];
-        
-        switch(objectName) {
-            case 'textSettings':
+            const textSetting: ItextSettings = this.getTextSettings(this.dataViews);
+            const objectName: string = options.objectName;
+            const objectEnumeration: VisualObjectInstance[] = [];
+
+            switch (objectName) {
+                case 'textSettings':
                     objectEnumeration.push({
                         objectName: objectName,
                         displayName: 'Text Settings',
-                        selector: null, 
+                        selector: null,
                         properties: {
                             color: textSetting.color,
                             fontSize: textSetting.fontSize,
                             postText: textSetting.postText
                         }
                     });
-                break;
-        };
-        
-        
-        return objectEnumeration;
-    }
+                    break;
+                default:
+                    break;
+            }
+
+            return objectEnumeration;
+        }
 
         public destroy(): void {
             //TODO: Perform any cleanup tasks here

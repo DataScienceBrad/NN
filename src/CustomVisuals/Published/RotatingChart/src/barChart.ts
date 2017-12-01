@@ -66,52 +66,48 @@ module powerbi.extensibility.visual {
         }
     }
 
-
-
     interface BarChartViewModel {
         dataPoints: BarChartDataPoint[];
         dataMax: number;
         name: string;
-    };
-
+    }
     interface BarChartDataPoint {
         value: number;
         category: string;
         format: string;
         color: string;
         selectionId: powerbi.visuals.ISelectionId;
-    };
-
-    export interface measureTitle {
+    }
+    export interface MeasureTitle {
         fontSize: number;
         color: string;
-    };
-    export interface labelSettings {
+    }
+    export interface LabelSettings {
         fontSize: number;
         color: string;
         displayUnits: number;
         textPrecision: number;
     }
-    export interface animationSettings {
-        duration: number,
+    export interface AnimationSettings {
+        duration: number;
     }
 
 
-    var props = {
-        measureTitle:{
+    let props = {
+        measureTitle: {
             color: <DataViewObjectPropertyIdentifier>{ objectName: 'measureTitle', propertyName: 'color' },
             fontSize: <DataViewObjectPropertyIdentifier>{ objectName: 'measureTitle', propertyName: 'fontSize' },
         },
-        labelSettings:{
+        labelSettings: {
             color: <DataViewObjectPropertyIdentifier>{ objectName: 'labelSettings', propertyName: 'color' },
             fontSize: <DataViewObjectPropertyIdentifier>{ objectName: 'labelSettings', propertyName: 'fontSize' },
             displayUnits: <DataViewObjectPropertyIdentifier>{ objectName: 'labelSettings', propertyName: 'displayUnits' },
             textPrecision: <DataViewObjectPropertyIdentifier>{ objectName: 'labelSettings', propertyName: 'textPrecision' },
         },
-         animationSettings: {
+        animationSettings: {
             duration: <DataViewObjectPropertyIdentifier>{ objectName: 'animationSettings', propertyName: 'duration' }
         },
-    }
+    };
 
     function getValue<T>(objects: DataViewObjects, objectName: string, propertyName: string, defaultValue: T): T {
         if (objects) {
@@ -156,8 +152,8 @@ module powerbi.extensibility.visual {
         if (!dataViews || !dataViews[0] || !dataViews[0].categorical || !dataViews[0].categorical.categories || !dataViews[0].categorical.categories[0].source || !dataViews[0].categorical.values) {
             return viewModel;
         }
-            
-        if(measureIndex > options.dataViews[0].categorical.values.length - 1){
+
+        if (measureIndex > options.dataViews[0].categorical.values.length - 1) {
             measureIndex = 0;
         }
         let categorical = dataViews[0].categorical;
@@ -176,7 +172,7 @@ module powerbi.extensibility.visual {
                 solid: {
                     color: colorPalette.getColor(<string>category.values[i]).value
                 }
-            }
+            };
 
             barChartDataPoints.push({
                 category: <string>category.values[i],
@@ -196,7 +192,7 @@ module powerbi.extensibility.visual {
             dataMax: dataMax,
             name: mName
         };
-    };
+    }
 
     export class BarChart implements IVisual {
         private target: HTMLElement;
@@ -248,16 +244,16 @@ module powerbi.extensibility.visual {
             this.tooltipServiceWrapper = createTooltipServiceWrapper(this.host.tooltipService, options.element);
             this.rootElement = d3.select(options.element);
             let div1 = this.div1 = this.rootElement.append('div')
-                .classed('rootDiv', true).style("xoverflow","visible");
+                .classed('rootDiv', true).style("xoverflow", "visible");
             let div2 = this.div2 = div1.append('div')
                 .classed('baseDiv', true);
 
             let svg = this.svg = div2
                 .append('svg')
-                .classed('horizBarChart', true)
-           
+                .classed('horizBarChart', true);
+
             this.measureTitle = svg.append('text')
-            .classed('measureTitle', true)
+                .classed('measureTitle', true);
 
             this.horizBarContainer = svg.append('g')
                 .classed('horizBarContainer', true);
@@ -273,76 +269,74 @@ module powerbi.extensibility.visual {
         public update(options: VisualUpdateOptions) {
 
             this.options = options;
-            this.dataviews = options.dataViews[0]
+            this.dataviews = options.dataViews[0];
 
             clearInterval(this.frameId);
             clearInterval(this.rotationId);
             this.horizBarContainer.selectAll('*').remove();
             this.yAxis.selectAll('*').remove();
             this.yAxisMeasures.selectAll('*').remove();
-            
+
             this.viewModel = visualTransform(options, this.host, this.measureUpdateCounter);
             this.barDataPoints = this.viewModel.dataPoints;
 
-            
-            let measureTitle: measureTitle = this.getMeasureTitle(this.dataviews);
-            var animationSettings: animationSettings = this.getAnimationSettings(this.dataviews);
-            var labelSettings: labelSettings = this.getLabelSettings(this.dataviews);
+            let measureTitle: MeasureTitle = this.getMeasureTitle(this.dataviews);
+            let animationSettings: AnimationSettings = this.getAnimationSettings(this.dataviews);
+            let labelSettings: LabelSettings = this.getLabelSettings(this.dataviews);
 
-            
             this.svg.attr({
                 width: options.viewport.width,
                 height: options.viewport.height
             });
 
-            this.horizBarChart = $('.horizBarChart')
+            this.horizBarChart = $('.horizBarChart');
             this.horizBarChart.css('transform', 'rotateX(' + 0 + 'deg)');
 
             this.width = options.viewport.width;
             this.height = options.viewport.height;
 
             this.yAxis.style({
-                'font-size': labelSettings.fontSize + 'px', 'fill' : labelSettings.color
+                'font-size': labelSettings.fontSize + 'px', 'fill': labelSettings.color
             });
             this.yAxisMeasures.style({
-                'font-size': labelSettings.fontSize + 'px', 'fill' : labelSettings.color
+                'font-size': labelSettings.fontSize + 'px', 'fill': labelSettings.color
             });
-            
+
             let titleProperties: TextProperties = {
                 text: this.viewModel.name,
                 fontFamily: 'Segoe UI,wf_segoe-ui_normal,helvetica,arial,sans-serif',
                 fontSize: measureTitle.fontSize + 'px'
             };
-            //measure title
+            // measure title
             this.svg.select('.measureTitle')
-                .attr('transform','translate('+ 20 +',' + (measureTitle.fontSize) +')')
-                .attr('font-size',measureTitle.fontSize + 'px')
-                .attr('fill',measureTitle.color)
-            
-            var textHeight = textMeasurementService.measureSvgTextHeight(titleProperties);
+                .attr('transform', 'translate(' + 20 + ',' + (measureTitle.fontSize) + ')')
+                .attr('font-size', measureTitle.fontSize + 'px')
+                .attr('fill', measureTitle.color);
+
+            let textHeight = textMeasurementService.measureSvgTextHeight(titleProperties);
 
             this.rootElement.select('.rootDiv').style('height', options.viewport.height + 'px');
             this.rootElement.select('.baseDiv').style('width', '100%');
 
             this.margin = 15 / 100;
-            
+
             this.xScale = d3.scale.ordinal()
                 .domain(this.viewModel.dataPoints.map(d => d.category))
-                .rangeBands([BarChart.Config.margins.top + textHeight, this.height], 0.2, 0.3);  
+                .rangeBands([BarChart.Config.margins.top + textHeight, this.height], 0.2, 0.3);
 
             let barHeight = this.xScale.rangeBand();
 
             if (barHeight < 20) {
                 this.height = options.viewport.height + (this.viewModel.dataPoints.length * (20 - barHeight));
                 this.width = options.viewport.width - 20;
-                this.xScale.rangeBands([BarChart.Config.margins.top + textHeight, this.height], 0.2, 0.3)
+                this.xScale.rangeBands([BarChart.Config.margins.top + textHeight, this.height], 0.2, 0.3);
                 this.div1.select('.baseDiv').style('height', this.height + 'px');
                 this.div1.select('.horizBarChart').style('height', this.height + 'px');
             }
             else {
                 this.height = options.viewport.height;
                 this.width = options.viewport.width;
-                this.xScale.rangeBands([BarChart.Config.margins.top + textHeight, this.height], 0.2, 0.3)
+                this.xScale.rangeBands([BarChart.Config.margins.top + textHeight, this.height], 0.2, 0.3);
                 this.div1.select('.baseDiv').style('height', this.height + 'px');
                 this.div1.select('.horizBarChart').style('height', this.height + 'px');
             }
@@ -360,25 +354,23 @@ module powerbi.extensibility.visual {
             if (this.measureCount > 1) {
                 clearInterval(this.rotationId);
                 this.rotationId = setInterval(() => this.rotation(), animationSettings.duration * 1000);
-                //click functionality
+                // Click functionality
                 $(".horizBarChart").on("click", () => {
                     clearInterval(this.rotationId);
                     this.rotation();
                     this.rotationId = setInterval(() => this.rotation(), animationSettings.duration * 1000);
                 });
             }
-
-            
         }
 
         public rotation() {
             this.rotationCount = 1;
             clearInterval(this.frameId);
-            this.frameId = setInterval(() => this.frame(), 5)
+            this.frameId = setInterval(() => this.frame(), 5);
         }
 
         public frame() {
-            if (this.rotationCount == 90) {
+            if (this.rotationCount === 90) {
                 this.measureUpdateCounter++;
                 if (this.measureUpdateCounter >= this.measureCount) {
                     this.measureUpdateCounter = 0;
@@ -388,7 +380,7 @@ module powerbi.extensibility.visual {
                 this.viewModel = visualTransform(this.options, this.host, this.measureUpdateCounter);
                 this.renderVisual();
             }
-            else if (this.rotationCount == 0) {
+            else if (this.rotationCount === 0) {
                 clearInterval(this.frameId);
             }
             else {
@@ -398,9 +390,10 @@ module powerbi.extensibility.visual {
         }
 
         public renderVisual() {
-            var width = this.width;
-            let measureTitle: measureTitle = this.getMeasureTitle(this.dataviews);
-            var labelSettings: labelSettings = this.getLabelSettings(this.dataviews);
+            let This = this;
+            let width = this.width;
+            let measureTitle: MeasureTitle = this.getMeasureTitle(this.dataviews);
+            let labelSettings: LabelSettings = this.getLabelSettings(this.dataviews);
             let yScale = d3.scale.linear()
                 .domain([0, this.viewModel.dataMax])
                 .range([this.width, (this.margin * this.width * 2)]);
@@ -418,9 +411,9 @@ module powerbi.extensibility.visual {
                 .append('rect')
                 .classed('bar', true);
 
-            //bars
+            // bars
             bars.attr({
-                width: d => (this.width - yScale(parseFloat(d.value+''))) < 0 ? 0 : (this.width - yScale(d.value)),
+                width: d => (this.width - yScale(parseFloat(d.value + ''))) < 0 ? 0 : (this.width - yScale(d.value)),
                 height: this.xScale.rangeBand(),
                 y: d => this.xScale(d.category),
                 x: d => this.margin * this.width,
@@ -429,43 +422,72 @@ module powerbi.extensibility.visual {
             });
 
             let barHeight = +bars.attr('height');
-            
-            if(this.width > 90){
+
+            if (this.width > 90) {
                 this.yAxisMeasures.selectAll('text').remove();
                 let measureValue = this.yAxisMeasures.selectAll('text').data(this.viewModel.dataPoints);
                 let measureLabel = measureValue.enter()
                     .append('text')
                     .classed('measureValue', true);
-                    
-                //measure value    
+
+                // measure value
                 measureLabel.attr({
                     dy: '0.32em',
                     y: d => this.xScale(d.category) + (barHeight * 0.5),
                     x: d => this.width - (this.margin * this.width) + 10
                 })
-                .text(function (d) {
-                    var formatter = ValueFormatter.create({ format: d.format, value: labelSettings.displayUnits, precision: labelSettings.textPrecision });
-                    let measureProperties: TextProperties = {
-                        text: formatter.format(d.value),
-                        fontFamily: 'sans-serif',
-                        fontSize: labelSettings.fontSize + 'px'
-                    };
-                    return textMeasurementService.getTailoredTextOrDefault(measureProperties, width/9);
-                });
-                measureValue.append('title').text(function(d){
+                    .text(function (d) {
+                        debugger;
+                        let formatter;
+                        let displayVal = 0;
+                        if (labelSettings.displayUnits === 0) {
+                            let valLen = This.viewModel.dataMax.toString().length;
+                            if (valLen > 9) {
+                                displayVal = 1e9;
+                            } else if (valLen <= 9 && valLen > 6) {
+                                displayVal = 1e6;
+                            } else if (valLen <= 6 && valLen >= 4) {
+                                displayVal = 1e3;
+                            } else {
+                                displayVal = 10;
+                            }
+                        }
+                        if (d.format && d.format.indexOf('%') !== -1) {
+                            formatter = ValueFormatter.create({
+                                format: d.format,
+                                value: labelSettings.displayUnits === 0 ? 0 : labelSettings.displayUnits,
+                                precision: labelSettings.textPrecision
+                            });
+                        }
+                        else {
+                            formatter = ValueFormatter.create({
+                                format: d.format,
+                                value: labelSettings.displayUnits === 0 ? displayVal : labelSettings.displayUnits,
+                                precision: labelSettings.textPrecision
+                            });
+                        }
+
+                        let measureProperties: TextProperties = {
+                            text: formatter.format(d.value),
+                            fontFamily: 'sans-serif',
+                            fontSize: labelSettings.fontSize + 'px'
+                        };
+                        return textMeasurementService.getTailoredTextOrDefault(measureProperties, width / 9);
+                    });
+                measureValue.append('title').text(function (d) {
                     return d.value;
                 });
             }
 
-            //Changing the text to ellipsis if the width of the window is small
+            // Changing the text to ellipsis if the width of the window is small
             for (let i = 0; i < this.viewModel.dataPoints.length; i++) {
                 let labelProperties: TextProperties = {
                     text: this.viewModel.dataPoints[i].category,
                     fontFamily: 'sans-serif',
                     fontSize: labelSettings.fontSize + 'px'
                 };
-                let newDataLabel = textMeasurementService.getTailoredTextOrDefault(labelProperties, this.width/9);
-                if($('.tick text') && $('.tick text')[i]){
+                let newDataLabel = textMeasurementService.getTailoredTextOrDefault(labelProperties, this.width / 9);
+                if ($('.tick text') && $('.tick text')[i]) {
                     $('.tick text')[i].textContent = newDataLabel;
                 }
             }
@@ -480,62 +502,62 @@ module powerbi.extensibility.visual {
         }
 
 
-        private getDefaultMeasureTitle(): measureTitle {
-            return{
+        private getDefaultMeasureTitle(): MeasureTitle {
+            return {
                 color: '#666666',
                 fontSize: 20,
-            }
+            };
         }
 
-        private getDefaultLabelSettings(): labelSettings {
-            return{
+        private getDefaultLabelSettings(): LabelSettings {
+            return {
                 color: '#000',
                 fontSize: 12,
                 displayUnits: 0,
                 textPrecision: 0
-            }
+            };
         }
 
-        public getDefaultAnimationSettings(): animationSettings {
+        public getDefaultAnimationSettings(): AnimationSettings {
             return {
                 duration: 6
-            }
+            };
         }
 
-        private getMeasureTitle(dataView: DataView): measureTitle {
-            var objects: DataViewObjects = null;
-            var title: measureTitle = this.getDefaultMeasureTitle();
+        private getMeasureTitle(dataView: DataView): MeasureTitle {
+            let objects: DataViewObjects = null;
+            let title: MeasureTitle = this.getDefaultMeasureTitle();
             if (!dataView.metadata || !dataView.metadata.objects)
                 return title;
             objects = dataView.metadata.objects;
-            var currentmeasurelabelprop = props;
+            let currentmeasurelabelprop = props;
             title.color = DataViewObjects.getFillColor(objects, currentmeasurelabelprop.measureTitle.color, title.color);
             title.fontSize = DataViewObjects.getValue(objects, currentmeasurelabelprop.measureTitle.fontSize, title.fontSize);
-            return title
+            return title;
         }
 
-        private getLabelSettings(dataView: DataView): labelSettings {
-            var objects: DataViewObjects = null;
-            var labelSettings: labelSettings = this.getDefaultLabelSettings();
+        private getLabelSettings(dataView: DataView): LabelSettings {
+            let objects: DataViewObjects = null;
+            let labelSettings: LabelSettings = this.getDefaultLabelSettings();
             if (!dataView.metadata || !dataView.metadata.objects)
                 return labelSettings;
             objects = dataView.metadata.objects;
-            var labelProps = props;
+            let labelProps = props;
             labelSettings.color = DataViewObjects.getFillColor(objects, labelProps.labelSettings.color, labelSettings.color);
             labelSettings.fontSize = DataViewObjects.getValue(objects, labelProps.labelSettings.fontSize, labelSettings.fontSize);
             labelSettings.fontSize = labelSettings.fontSize > 30 ? 30 : labelSettings.fontSize;
             labelSettings.displayUnits = DataViewObjects.getValue(objects, labelProps.labelSettings.displayUnits, labelSettings.displayUnits);
             labelSettings.textPrecision = DataViewObjects.getValue(objects, labelProps.labelSettings.textPrecision, labelSettings.textPrecision);
-            return labelSettings
+            return labelSettings;
         }
 
-        public getAnimationSettings(dataView: DataView): animationSettings {
-            var objects: DataViewObjects = null;
-            var settings: animationSettings = this.getDefaultAnimationSettings();
+        public getAnimationSettings(dataView: DataView): AnimationSettings {
+            let objects: DataViewObjects = null;
+            let settings: AnimationSettings = this.getDefaultAnimationSettings();
             if (!dataView.metadata || !dataView.metadata.objects)
                 return settings;
             objects = dataView.metadata.objects;
-            var properties = props;
+            let properties = props;
             settings.duration = DataViewObjects.getValue(objects, properties.animationSettings.duration, settings.duration);
             settings.duration = settings.duration < 2 ? 2 : settings.duration > 20 ? 20 : settings.duration;
             return settings;
@@ -544,21 +566,21 @@ module powerbi.extensibility.visual {
         public enumerateObjectInstances(options: EnumerateVisualObjectInstancesOptions): VisualObjectInstanceEnumeration {
             let objectName = options.objectName;
             let objectEnumeration: VisualObjectInstance[] = [];
-            var animationSettings: animationSettings = this.getAnimationSettings(this.dataviews);
-            let measureTitle: measureTitle = this.getMeasureTitle(this.dataviews);
-            let labels: labelSettings = this.getLabelSettings(this.dataviews);
+            let animationSettings: AnimationSettings = this.getAnimationSettings(this.dataviews);
+            let measureTitle: MeasureTitle = this.getMeasureTitle(this.dataviews);
+            let labels: LabelSettings = this.getLabelSettings(this.dataviews);
 
             switch (objectName) {
                 case 'animationSettings':
                     objectEnumeration.push({
                         objectName: objectName,
                         displayName: 'Delay (seconds)',
-                        selector: null, 
+                        selector: null,
                         properties: {
                             duration: animationSettings.duration
                         }
                     });
-                break;
+                    break;
                 case 'labelSettings':
                     objectEnumeration.push({
                         objectName: objectName,
@@ -570,7 +592,7 @@ module powerbi.extensibility.visual {
                         },
                         selector: null
                     });
-                    break;    
+                    break;
                 case 'measureTitle':
                     objectEnumeration.push({
                         objectName: objectName,

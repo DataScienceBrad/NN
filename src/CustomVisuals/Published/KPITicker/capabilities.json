@@ -8,17 +8,32 @@
         {
             "displayName": "KPI current value",
             "name": "kpiCurrentValue",
-            "kind": "Measure"
+            "kind": "Measure",
+            "requiredTypes": [
+                {
+                    "numeric": true
+                }
+            ]
         },
         {
             "displayName": "KPI last value",
             "name": "kpiLastValue",
-            "kind": "Measure"
+            "kind": "Measure",
+            "requiredTypes": [
+                {
+                    "numeric": true
+                }
+            ]
         },
         {
             "displayName": "KPI status",
             "name": "kpiStatus",
-            "kind": "Measure"
+            "kind": "Measure",
+            "requiredTypes": [
+                {
+                    "numeric": true
+                }
+            ]
         }
     ],
     "dataViewMappings": [

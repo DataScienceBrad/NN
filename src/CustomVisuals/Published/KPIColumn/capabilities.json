@@ -26,6 +26,11 @@
             "kind": "Measure"
         }
     ],
+    "drilldown": {
+        "roles": [
+            "category"
+        ]
+    },
     "dataViewMappings": [
         {
             "conditions": [
@@ -257,6 +262,81 @@
                             }
                         }
                     }
+                }
+            }
+        },
+        "legend": {
+            "displayName": "Legend",
+            "properties": {
+                "show": {
+                    "displayName": "Show or hide Legend",
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "labelColor": {
+                    "displayName": "Color",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "fontSize": {
+                    "displayName": "Text Size",
+                    "type": {
+                        "formatting": {
+                            "fontSize": true
+                        }
+                    }
+                }
+            }
+        },
+        "dataLabels": {
+            "displayName": "Data Labels",
+            "properties": {
+                "show": {
+                    "displayName": "Show or hide Lables",
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "fontColor":{
+                    "displayName": "Color",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "fontSize": {
+                    "displayName": "Text Size",
+                    "type": {
+                        "formatting": {
+                            "fontSize": true
+                        }
+                    }
+                },
+                "displayUnits": {
+                    "displayName": "Display units",
+                    "description": "Select the units (millions, billions, etc.)",
+                    "type": {
+                        "formatting": {
+                            "labelDisplayUnits": true
+                        }
+                    }
+                },
+                "valueDecimal": {
+                    "displayName": "Decimal Places",
+                    "description": "Select the number of decimal places to display",
+                    "type": {
+                        "numeric": true
+                    },
+                    "suppressFormatPainterCopy": true
                 }
             }
         }

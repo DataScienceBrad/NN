@@ -7,7 +7,8 @@
 	display: inline-block;
 	position: relative;
 	width: 100%;
-	height: ~"calc(100% - 35px)";
+    height: "calc(100% - 35px)";
+    cursor: default;
 }
 
 .jsonGrid{
@@ -112,7 +113,7 @@ Property -moz-background-size is an unknown vendor extension
 	border-top: 1px solid #d2d2d2;
    	width: 100%;
     position: fixed;
-    bottom: 0px;
+    bottom: 0;
     background: white;
 }
 
@@ -185,7 +186,7 @@ td.jsonGridRow {
         height: 12px;
         width: 12px;
     }
-	.SortIndicator  > span.asc {
+	.SortIndicator  > .asc {
 	  	width: 0;
 	  	height: 0;
 	  	border-left: 5px solid transparent;
@@ -194,7 +195,7 @@ td.jsonGridRow {
 	  	border-bottom: 5px solid white;
 	  	float: right;
 	}
-	.SortIndicator  > span.desc {
+	.SortIndicator  > .desc {
 	  	width: 0;
 	  	height: 0;
 	  	border-left: 5px solid transparent;
@@ -228,7 +229,7 @@ table {
     word-wrap: break-word;
 }
 
-td.jsonGridParentHeader {
+.jsonGridParentHeader {
     height: 30px;
     border-right: 1px solid #fff;
     padding: 3px 15px;
@@ -262,11 +263,12 @@ div.PageListItem {
     display: none;
 }
 
-div.ListOptionContainerParent {
+.ListOptionContainerParent {
     width: 60px;
 }
 
 .ListOptionContainer {
+    box-sizing: border-box;
     border: 1px solid #ccc;
     width: 60px;
     background-color: transparent;
@@ -394,7 +396,7 @@ td.jsonGridRow .gridCellWrap {
     overflow: hidden;
 }
 
-td.SubTableHeader {
+.SubTableHeader {
     color: #2a2a2a;
     background-color: #d2d2d2;
 }

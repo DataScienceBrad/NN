@@ -3,17 +3,32 @@
         {
             "displayName": "X Axis",
             "name": "xAxis",
-            "kind": "Grouping"
+            "kind": "Measure",
+            "requiredTypes": [
+                {
+                    "numeric": true
+                }
+            ]
         },
         {
             "displayName": "Y Axis",
             "name": "yAxis",
-            "kind": "Grouping"
+            "kind": "Measure",
+            "requiredTypes": [
+                {
+                    "numeric": true
+                }
+            ]
         },
         {
             "displayName": "Radial Axis",
             "name": "radialAxis",
-            "kind": "Grouping"
+            "kind": "Measure",
+            "requiredTypes": [
+                {
+                    "numeric": true
+                }
+            ]
         },
         {
             "displayName": "Legend Axis",
@@ -21,6 +36,11 @@
             "kind": "Grouping"
         }
     ],
+    "drilldown": {
+        "roles": [
+            "legendAxis"
+        ]
+    },
     "dataViewMappings": [
         {
             "conditions": [
@@ -33,16 +53,18 @@
                     },
                     "radialAxis": {
                         "max": 1
-                    },
-                    "legendAxis": {
-                        "max": 1
                     }
                 }
             ],
             "categorical": {
                 "categories": {
                     "for": {
-                        "in": "xAxis"
+                        "in": "legendAxis"
+                    },
+                    "dataReductionAlgorithm": {
+                        "top": {
+                            "count": 30000
+                        }
                     }
                 },
                 "values": {
@@ -59,19 +81,111 @@
                         },
                         {
                             "bind": {
-                                "to": "legendAxis"
+                                "to": "xAxis"
                             }
                         }
-                    ]
+                    ],
+                    "dataReductionAlgorithm": {
+                        "top": {
+                            "count": 30000
+                        }
+                    }
                 }
             }
         }
     ],
     "objects": {
+        "legend": {
+            "displayName": "Legend",
+            "description": "Display legend options",
+            "properties": {
+                "show": {
+                    "displayName": "Show",
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "position": {
+                    "displayName": "Position",
+                    "description": "Select location for the legend",
+                    "type": {
+                        "enumeration": [
+                            {
+                                "value": "Top",
+                                "displayName": "Top"
+                            },
+                            {
+                                "value": "Bottom",
+                                "displayName": "Bottom"
+                            },
+                            {
+                                "value": "Left",
+                                "displayName": "Left"
+                            },
+                            {
+                                "value": "Right",
+                                "displayName": "Right"
+                            },
+                            {
+                                "value": "TopCenter",
+                                "displayName": "Top center"
+                            },
+                            {
+                                "value": "BottomCenter",
+                                "displayName": "Bottom center"
+                            },
+                            {
+                                "value": "LeftCenter",
+                                "displayName": "Left center"
+                            },
+                            {
+                                "value": "RightCenter",
+                                "displayName": "Right center"
+                            },
+                            {
+                                "value": "None",
+                                "displayName": "None"
+                            }
+                        ]
+                    }
+                },
+                "showTitle": {
+                    "displayName": "Title",
+                    "description": "Display title for legend",
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "labelColor": {
+                    "displayName": "Color",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "fontSize": {
+                    "displayName": "Text size",
+                    "type": {
+                        "formatting": {
+                            "fontSize": true
+                        }
+                    }
+                }
+            }
+        },
         "quadrantNames": {
             "displayName": "Quadrant",
             "properties": {
                 "show": {
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "type": {
+                    "displayName": "Dotted",
                     "type": {
                         "bool": true
                     }
@@ -106,14 +220,14 @@
                 },
                 "quadrantDivisionX": {
                     "displayName": "X-Axis division line",
-                    "description": "Quadrant division line for x-axis",
+                    "description": "Quadrant division line for X-axis",
                     "type": {
                         "numeric": true
                     }
                 },
                 "quadrantDivisionY": {
                     "displayName": "Y-Axis division line",
-                    "description": "Quadrant division line for y-axis",
+                    "description": "Quadrant division line for Y-axis",
                     "type": {
                         "numeric": true
                     }
@@ -128,6 +242,27 @@
                         "bool": true
                     }
                 },
+                "start": {
+                    "displayName": "Start",
+                    "description": "Start value for X-Axis",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "end": {
+                    "displayName": "End",
+                    "description": "End value for X-Axis",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "interval": {
+                    "displayName": "Interval",
+                    "description": "Interval value for X-Axis",
+                    "type": {
+                        "numeric": true
+                    }
+                },
                 "titleEnable": {
                     "displayName": "Title",
                     "description": "Title",
@@ -148,6 +283,21 @@
                     "type": {
                         "bool": true
                     }
+                },
+                "displayUnits": {
+                    "displayName": "Display units",
+                    "type": {
+                        "formatting": {
+                            "labelDisplayUnits": true
+                        }
+                    }
+                },
+                "textPrecision": {
+                    "displayName": "Decimal places",
+                    "type": {
+                        "numeric": true
+                    },
+                    "suppressFormatPainterCopy": true
                 }
             }
         },
@@ -159,6 +309,27 @@
                         "bool": true
                     }
                 },
+                "start": {
+                    "displayName": "Start",
+                    "description": "Start value for Y-Axis",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "end": {
+                    "displayName": "End",
+                    "description": "End value for Y-Axis",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "interval": {
+                    "displayName": "Interval",
+                    "description": "Interval value for Y-Axis",
+                    "type": {
+                        "numeric": true
+                    }
+                },
                 "titleEnable": {
                     "displayName": "Title",
                     "description": "Title",
@@ -179,11 +350,26 @@
                     "type": {
                         "bool": true
                     }
+                },
+                "displayUnits": {
+                    "displayName": "Display units",
+                    "type": {
+                        "formatting": {
+                            "labelDisplayUnits": true
+                        }
+                    }
+                },
+                "textPrecision": {
+                    "displayName": "Decimal places",
+                    "type": {
+                        "numeric": true
+                    },
+                    "suppressFormatPainterCopy": true
                 }
             }
         },
         "legendColors": {
-            "displayName": "Legend colors",
+            "displayName": "Bubble colors",
             "properties": {
                 "legendColor": {
                     "displayName": "Color",
