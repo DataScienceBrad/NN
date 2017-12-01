@@ -8,32 +8,17 @@
         {
             "displayName": "KPI current value",
             "name": "kpiCurrentValue",
-            "kind": "Measure",
-            "requiredTypes": [
-                {
-                    "numeric": true
-                }
-            ]
+            "kind": "Measure"
         },
         {
             "displayName": "KPI last value",
             "name": "kpiLastValue",
-            "kind": "Measure",
-            "requiredTypes": [
-                {
-                    "numeric": true
-                }
-            ]
+            "kind": "Measure"
         },
         {
             "displayName": "KPI status",
             "name": "kpiStatus",
-            "kind": "Measure",
-            "requiredTypes": [
-                {
-                    "numeric": true
-                }
-            ]
+            "kind": "Measure"
         }
     ],
     "dataViewMappings": [
@@ -132,14 +117,14 @@
             "description": "Configurations for KPI Ticker",
             "properties": {
                 "numberOfKPI": {
-                    "displayName": "KPI count",
+                    "displayName": "KPI Count",
                     "description": "The number of KPIs to be shown at a time. Minimum number is 1 and maximum number is 4",
                     "type": {
                         "numeric": true
                     }
                 },
                 "enableDelta":{
-                    "displayName": "Enable delta",
+                    "displayName": "Enable Delta",
                     "description": "Select if percentage change is to be displayed or not",
                     "type":{
                         "bool": true
@@ -155,7 +140,7 @@
                     }
                 },
                 "fontColor": {
-                    "displayName": "Font color",
+                    "displayName": "Font Color",
                     "description": "The font color of KPI names and KPI values",
                     "type": {
                         "fill": {
@@ -166,7 +151,7 @@
                     }
                 },
                 "backgroundColor": {
-                    "displayName": "Background color",
+                    "displayName": "Background Color",
                     "description": "The background color of containers",
                     "type": {
                         "fill": {
@@ -183,7 +168,7 @@
             "description": "Indicator color properties",
             "properties": {
                 "positiveIndicatorColor": {
-                    "displayName": "Positive indicator color",
+                    "displayName": "Positive Indicator Color",
                     "description": "Color of positive indicator",
                     "type": {
                         "fill": {
@@ -194,7 +179,7 @@
                     }
                 },
                 "negativeIndicatorColor": {
-                    "displayName": "Negative indicator color",
+                    "displayName": "Negative Indicator Color",
                     "description": "Color of negative indicator",
                     "type": {
                         "fill": {
@@ -205,7 +190,7 @@
                     }
                 },
                 "neutralIndicatorColor": {
-                    "displayName": "Neutral indicator color",
+                    "displayName": "Neutral Indicator Color",
                     "description": "Color of neutral indicator",
                     "type": {
                         "fill": {
