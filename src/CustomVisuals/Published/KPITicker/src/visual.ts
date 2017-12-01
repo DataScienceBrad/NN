@@ -403,10 +403,10 @@ module powerbi.extensibility.visual {
         * @param {number} iIndicator - to tell if the value to be displayed is Change Percentage or Change Value
         * @param {number} iIndex - index of the data row whose value is to be populated
         */
-        private static appendData(oDataView: DataView, sClassNames: string, iIndicator: number, iIndex: number) : string {
-            let sAppendString : string;
+        private static appendData(oDataView: DataView, sClassNames: string, iIndicator: number, iIndex: number): string {
+            let sAppendString: string;
             let sValueDisplayed: string;
-            let iCurrentValue : number;
+            let iCurrentValue: number;
             let iLastValue: number;
             sAppendString = '';
             // if iIndicator is 0, the value to be displayed is KPI Change Percentage
@@ -416,23 +416,37 @@ module powerbi.extensibility.visual {
                     iCurrentValue = <number>oDataView.categorical.values[KPITicker.iIndexOfCurrentValue].values[iIndex];
                     iLastValue = <number>oDataView.categorical.values[KPITicker.iIndexOfLastValue].values[iIndex];
                     // if the last KPI value is 0, then the percentage change should be calculated with denominator as 1
-                    if (iLastValue === 0) {
-                        sValueDisplayed = (((iCurrentValue - iLastValue) / 1) * 100).toFixed(2);
+
+                    if (iLastValue == null || iCurrentValue == null) {
+                        sValueDisplayed = '-';
+                        // tslint:disable-next-line:prefer-template
+                        sAppendString = `<div class = "${sClassNames}" title = "KPI Change Percentage:
+                        ${sValueDisplayed}">(${sValueDisplayed})</div>`;
                     } else {
-                        sValueDisplayed = (((iCurrentValue - iLastValue) / iLastValue) * 100).toFixed(2);
+                        if (iLastValue === 0) {
+                            sValueDisplayed = (((iCurrentValue - iLastValue) / 1) * 100).toFixed(2);
+                        } else {
+                            sValueDisplayed = (((iCurrentValue - iLastValue) / iLastValue) * 100).toFixed(2);
+                        }
+                        // tslint:disable-next-line:prefer-template
+                        sAppendString = `<div class = "${sClassNames}" title = "KPI Change Percentage:
+                         ${sValueDisplayed}%">(${sValueDisplayed}%)</div>`;
                     }
-                    // tslint:disable-next-line:prefer-template
-                    sAppendString = `<div class = "${sClassNames}" title = "KPI Change Percentage:
-                    ${sValueDisplayed}%">(${sValueDisplayed}%)</div>`;
 
                 }
-            // tslint:disable-next-line:triple-equals
+                // tslint:disable-next-line:triple-equals
             } else if (iIndicator == 1) {  // if iIndicator is 1, the value to be displayed is KPI Change Value
                 // tslint:disable-next-line:triple-equals
                 if (KPITicker.iIndexOfLastValue != -1 && KPITicker.iIndexOfCurrentValue != -1) {
                     iCurrentValue = <number>oDataView.categorical.values[KPITicker.iIndexOfCurrentValue].values[iIndex];
                     iLastValue = <number>oDataView.categorical.values[KPITicker.iIndexOfLastValue].values[iIndex];
-                    sValueDisplayed = (iCurrentValue - iLastValue).toFixed(2);
+                    if (iCurrentValue == null) {
+                        sValueDisplayed = (iLastValue).toFixed(2);
+                    } else if (iLastValue == null) {
+                        sValueDisplayed = (iCurrentValue).toFixed(2);
+                    } else {
+                        sValueDisplayed = (iCurrentValue - iLastValue).toFixed(2);
+                    }
                     sAppendString = `<div class = "${sClassNames}" title = "KPI Change Value: ${sValueDisplayed}">${sValueDisplayed}</div>`;
                 }
             }
@@ -454,7 +468,12 @@ module powerbi.extensibility.visual {
             // if KPI Value column is selected populate it
             if (KPITicker.iIndexOfCurrentValue !== -1) {
                 sKPICurrentValue = <string>oDataView.categorical.values[KPITicker.iIndexOfCurrentValue].values[iIndex];
-                sAppendString += `<br> <div class = "tliPrice" title = "KPI Current Value: ${sKPICurrentValue}">${sKPICurrentValue}</div>`;
+                if (sKPICurrentValue == null) {
+                    sAppendString += `<br> <div class = "tliPrice" title = "KPI Current Value: ${sKPICurrentValue}">-</div>`;
+                } else {
+                    sAppendString += `<br> <div class = "tliPrice"
+                    title = "KPI Current Value: ${sKPICurrentValue}">${sKPICurrentValue}</div>`;
+                }
             }
             // populate the other details on the basis of selection of Status column
             if (KPITicker.iIndexOfStatus !== -1) {
@@ -511,8 +530,10 @@ module powerbi.extensibility.visual {
             const className: string = '.tliName';
             // populate name if KPI Name column is selected
             if (KPITicker.iIndexOfName !== -1) {
+
                 document.getElementById(sDivIdName).innerHTML = `<div class = " tliName tliName${iIndex}">` + `</div>`;
                 d3.select(className + iIndex).text(<string>oDataView.categorical.categories[KPITicker.iIndexOfName].values[iIndex]);
+
             }
             // call tliChangeImage to populate other data for the div
             document.getElementById(sDivIdName).innerHTML += KPITicker.tliChangeImage(KPITicker.oDataView, iIndex);
