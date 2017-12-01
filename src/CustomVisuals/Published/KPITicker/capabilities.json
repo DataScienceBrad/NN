@@ -132,14 +132,14 @@
             "description": "Configurations for KPI Ticker",
             "properties": {
                 "numberOfKPI": {
-                    "displayName": "KPI Count",
+                    "displayName": "KPI count",
                     "description": "The number of KPIs to be shown at a time. Minimum number is 1 and maximum number is 4",
                     "type": {
                         "numeric": true
                     }
                 },
                 "enableDelta":{
-                    "displayName": "Enable Delta",
+                    "displayName": "Enable delta",
                     "description": "Select if percentage change is to be displayed or not",
                     "type":{
                         "bool": true
@@ -155,7 +155,7 @@
                     }
                 },
                 "fontColor": {
-                    "displayName": "Font Color",
+                    "displayName": "Font color",
                     "description": "The font color of KPI names and KPI values",
                     "type": {
                         "fill": {
@@ -166,7 +166,7 @@
                     }
                 },
                 "backgroundColor": {
-                    "displayName": "Background Color",
+                    "displayName": "Background color",
                     "description": "The background color of containers",
                     "type": {
                         "fill": {
@@ -183,7 +183,7 @@
             "description": "Indicator color properties",
             "properties": {
                 "positiveIndicatorColor": {
-                    "displayName": "Positive Indicator Color",
+                    "displayName": "Positive indicator color",
                     "description": "Color of positive indicator",
                     "type": {
                         "fill": {
@@ -194,7 +194,7 @@
                     }
                 },
                 "negativeIndicatorColor": {
-                    "displayName": "Negative Indicator Color",
+                    "displayName": "Negative indicator color",
                     "description": "Color of negative indicator",
                     "type": {
                         "fill": {
@@ -205,7 +205,7 @@
                     }
                 },
                 "neutralIndicatorColor": {
-                    "displayName": "Neutral Indicator Color",
+                    "displayName": "Neutral indicator color",
                     "description": "Color of neutral indicator",
                     "type": {
                         "fill": {
