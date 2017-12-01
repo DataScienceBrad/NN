@@ -1,11 +1,35 @@
-
+/*
+ *  Power BI Visual CLI
+ *
+ *  Copyright (c) Microsoft Corporation
+ *  All rights reserved.
+ *  MIT License
+ *
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  of this software and associated documentation files (the ''Software''), to deal
+ *  in the Software without restriction, including without limitation the rights
+ *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *  copies of the Software, and to permit persons to whom the Software is
+ *  furnished to do so, subject to the following conditions:
+ *
+ *  The above copyright notice and this permission notice shall be included in
+ *  all copies or substantial portions of the Software.
+ *
+ *  THE SOFTWARE IS PROVIDED *AS IS*, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ *  THE SOFTWARE.
+ */
 module powerbi.extensibility.visual {
 
     export class KPITicker implements IVisual {
         // stores the entire data that is selected by the user
         private static oData: DataViewTableRow[];
         // stores the index of data which is to be added next
-        private static iCurrentPosition = 0;
+        private static iCurrentPosition: number = 0;
         // number of KPI that is to be shown at a time. Possible values : 1, 2, 3, 4
         private static iNumberOfKPI: number;
         // stores the dataView of the visual
@@ -28,7 +52,7 @@ module powerbi.extensibility.visual {
         private static iIndexOfName: number;
         // stores the index of measure KPI Last Value
         private static iIndexOfLastValue: number;
-        // stores the index of measure KPI Current Value 
+        // stores the index of measure KPI Current Value
         private static iIndexOfCurrentValue: number;
         // stores the interval value
         private static iInterval: number;
@@ -56,11 +80,11 @@ module powerbi.extensibility.visual {
         * @param {VisualConstructorOptions} options - Contains references to the element that will
         *                                             contain the visual and a reference to the host
         *                                             which contains services.
-        * 
+        *
         */
         constructor(options: VisualConstructorOptions) {
             // this is to make the parent container
-            
+
             d3.select(options.element).append('div').attr('id', 'wrapper');
             // initializing iDelay to 1200ms
             KPITicker.iDelay = 1200;
@@ -78,19 +102,26 @@ module powerbi.extensibility.visual {
         *                                        and the dataView which contains all the data
         *                                        the visual had queried.
         */
-        public update(options: VisualUpdateOptions) {
-            
+        // tslint:disable-next-line:cyclomatic-complexity
+        public update(options: VisualUpdateOptions): void {
+            const kpiName: string = 'kpiName';
+            const kpiCurrentValue: string = 'kpiCurrentValue';
+            const kpiLastValue: string = 'kpiLastValue';
+            const kpiStatus: string = 'kpiStatus';
+
             //clear interval and timeout when update is called
-            if (KPITicker.iInterval != -1) {
+            if (KPITicker.iInterval !== -1) {
                 window.clearTimeout(KPITicker.iInterval);
             }
-            if (KPITicker.iTimeout != -1) {
+            if (KPITicker.iTimeout !== -1) {
                 window.clearTimeout(KPITicker.iTimeout);
             }
-            
+
             // check if basic requirements are satisfied else return
-            if (options.dataViews.length === 0 || !options.dataViews[0].categorical || ((!options.dataViews[0].categorical.categories) || (!options.dataViews[0].categorical.values))) {
+            if (options.dataViews.length === 0 || !options.dataViews[0].categorical ||
+                ((!options.dataViews[0].categorical.categories) || (!options.dataViews[0].categorical.values))) {
                 KPITicker.displayBasicRequirement(1);
+
                 return;
             }
 
@@ -99,19 +130,25 @@ module powerbi.extensibility.visual {
 
             // to pass dataView as a parameter when formatting options are choosen
             KPITicker.oDataView = options.dataViews[0];
-            let oDataCategorical = KPITicker.oDataView.categorical;
-            let iNumberOfValues = oDataCategorical.values.length;
-            let iNumberOfCategories = oDataCategorical.categories.length;
+            let oDataCategorical: DataViewCategorical;
+            oDataCategorical = KPITicker.oDataView.categorical;
+            let iNumberOfValues: number;
+            iNumberOfValues = oDataCategorical.values.length;
+            let iNumberOfCategories: number;
+            iNumberOfCategories = oDataCategorical.categories.length;
+            let iIndex: number = 0;
 
-            // initializing the KPITIcker.iIndexOfName, KPITIcker.iIndexOfStatus, KPITIcker.iIndexOfLastValue,KPITIcker.iIndexOfCurrentValue to -1 so that if they are not selected by user the value corresponding to them is not displayed
-            KPITicker.iIndexOfName = -1
+            // initializing the KPITIcker.iIndexOfName, KPITIcker.iIndexOfStatus,
+            //KPITIcker.iIndexOfLastValue,KPITIcker.iIndexOfCurrentValue to -1 so that
+            //if they are not selected by user the value corresponding to them is not displayed
+            KPITicker.iIndexOfName = -1;
             KPITicker.iIndexOfStatus = -1;
             KPITicker.iIndexOfLastValue = -1;
             KPITicker.iIndexOfCurrentValue = -1;
 
             // assigning proper index for category KPI Name
             for (iIndex = 0; iIndex < iNumberOfCategories; iIndex++) {
-                if (oDataCategorical.categories[iIndex].source.roles["kpiName"]) {
+                if (oDataCategorical.categories[iIndex].source.roles[kpiName]) {
                     KPITicker.iIndexOfName = iIndex;
                     break;
                 }
@@ -119,15 +156,11 @@ module powerbi.extensibility.visual {
             // assigning proper index for measures
             for (iIndex = 0; iIndex < iNumberOfValues; iIndex++) {
                 // assigning index for measure KPI Current Value
-                if (oDataCategorical.values[iIndex].source.roles["kpiCurrentValue"]) {
+                if (oDataCategorical.values[iIndex].source.roles[kpiCurrentValue]) {
                     KPITicker.iIndexOfCurrentValue = iIndex;
-                }
-                // assigning index for measure KPI Last Value
-                else if (oDataCategorical.values[iIndex].source.roles["kpiLastValue"]) {
+                } else if (oDataCategorical.values[iIndex].source.roles[kpiLastValue]) { // assigning index for measure KPI Last Value
                     KPITicker.iIndexOfLastValue = iIndex;
-                }
-                // assigning index for measure KPI Status
-                else if (oDataCategorical.values[iIndex].source.roles["kpiStatus"]) {
+                } else if (oDataCategorical.values[iIndex].source.roles[kpiStatus]) { // assigning index for measure KPI Status
                     KPITicker.iIndexOfStatus = iIndex;
                 }
             }
@@ -135,16 +168,21 @@ module powerbi.extensibility.visual {
             // if KPI current value or KPI name is not selected
             if (KPITicker.iIndexOfCurrentValue === -1 || KPITicker.iIndexOfName === -1) {
                 KPITicker.displayBasicRequirement(1);
+
                 return;
             }
 
             // if status column has values other than -1,0 and 1
-            if (KPITicker.iIndexOfStatus != -1) {
-                var oStatusData = KPITicker.oDataView.categorical.values[KPITicker.iIndexOfStatus].values
-                var iLengthOfData = oStatusData.length;
+            if (KPITicker.iIndexOfStatus !== -1) {
+                let oStatusData: PrimitiveValue[];
+                oStatusData = KPITicker.oDataView.categorical.values[KPITicker.iIndexOfStatus].values;
+                let iLengthOfData: number;
+                iLengthOfData = oStatusData.length;
                 for (iIndex = 0; iIndex < iLengthOfData; iIndex++) {
-                    if (oStatusData[iIndex] === null || !(oStatusData[iIndex] === 1 || oStatusData[iIndex] === -1 || oStatusData[iIndex] === 0)) {
+                    if (oStatusData[iIndex] === null || !(oStatusData[iIndex] === 1 ||
+                        oStatusData[iIndex] === -1 || oStatusData[iIndex] === 0)) {
                         KPITicker.displayBasicRequirement(2);
+
                         return;
                     }
                 }
@@ -156,15 +194,14 @@ module powerbi.extensibility.visual {
             // empty the main div when update is called
             $('#wrapper').empty();
 
-            var iIndex = 0;
-            var iDivStart = 1;
+            let iDivStart: number;
+            iDivStart = 1;
 
             // The number of containers. Possible values 1,2,3,4
             KPITicker.iNumberOfKPI = KPITicker.getValue(KPITicker.oDataView, 'numberOfKPI');
             if (KPITicker.iNumberOfKPI > 4) {
                 KPITicker.iNumberOfKPI = 4;
-            }
-            else if (KPITicker.iNumberOfKPI < 1) {
+            } else if (KPITicker.iNumberOfKPI < 1) {
                 KPITicker.iNumberOfKPI = 1;
             }
             if (KPITicker.oData.length < KPITicker.iNumberOfKPI) {
@@ -173,6 +210,7 @@ module powerbi.extensibility.visual {
             // if KPITicker.iNumberOfKPI is still 0 that means there is no data after filters are applied
             if (KPITicker.iNumberOfKPI === 0) {
                 KPITicker.displayBasicRequirement(0);
+
                 return;
             }
             // The font size of containers. We are normalizing it to be 12 at max as height is not changeable
@@ -209,7 +247,8 @@ module powerbi.extensibility.visual {
             // change the value of KPITIcker.iCurrentPosition to number of containers
             KPITicker.iCurrentPosition = KPITicker.iNumberOfKPI;
 
-            // call add next data in fixed timeout only if some slicer is not applied or the number of data is equal to the number of containers.
+            // call add next data in fixed timeout only if some slicer is not applied or
+            //the number of data is equal to the number of containers.
             if (!(KPITicker.iNumberOfKPI === KPITicker.oData.length)) {
                 KPITicker.iInterval = setTimeout(KPITicker.addNextData, KPITicker.iDuration);
             }
@@ -217,19 +256,15 @@ module powerbi.extensibility.visual {
         /*
         * method to display text if basic requirements are not satisfied
         */
-        private static displayBasicRequirement(iStatus: number) {
+        private static displayBasicRequirement(iStatus: number): void {
             $('#wrapper').empty();
             $('<p>').attr('id', 'textToDisplay').appendTo('#wrapper');
             if (iStatus === 1) {
-                document.getElementById('textToDisplay').innerHTML = `Please select 'KPI name' and 'KPI current value' `;
-            }
-            // if appropriate column for status is not selected
-            else if (iStatus === 2) {
-                document.getElementById('textToDisplay').innerHTML = `Please select a column with values -1, 0 or 1 for 'KPI status' `;
-            }
-            // after filters are selected there is no data to display
-            else {
-                document.getElementById('textToDisplay').innerHTML = `No Data to display `;
+                document.getElementById('textToDisplay').textContent = `Please select 'KPI name' and 'KPI current value' `;
+            } else if (iStatus === 2) { // if appropriate column for status is not selected
+                document.getElementById('textToDisplay').textContent = `Please select a column with values -1, 0 or 1 for 'KPI status' `;
+            } else { // after filters are selected there is no data to display
+                document.getElementById('textToDisplay').textContent = `No Data to display `;
             }
         }
         /*
@@ -237,13 +272,17 @@ module powerbi.extensibility.visual {
         * @param {EnumerateVisualObjectInstancesOptions} options - Map of defined objects
         */
         public enumerateObjectInstances(options: EnumerateVisualObjectInstancesOptions): VisualObjectInstanceEnumeration {
-            let oObjectName = options.objectName;
-            let oObjectEnumeration: VisualObjectInstance[] = [];
-            var oDataView = KPITicker.oDataView;
+            let oObjectName: string;
+            oObjectName = options.objectName;
+            let oObjectEnumeration: VisualObjectInstance[];
+            oObjectEnumeration = [];
+            let oDataView: DataView;
+            oDataView = KPITicker.oDataView;
             switch (oObjectName) {
                 // enumerate containers object from capabilities.json
                 case 'configuration':
-                    var oConfiguration: VisualObjectInstance = {
+                    let oConfiguration: VisualObjectInstance;
+                    oConfiguration = {
                         objectName: 'configuration',
                         displayName: 'Configuration',
                         selector: null,
@@ -252,14 +291,15 @@ module powerbi.extensibility.visual {
                             enableDelta: KPITicker.getValue(oDataView, 'enableDelta'),
                             fontSize: KPITicker.getValue(oDataView, 'fontSize'),
                             fontColor: KPITicker.getFill(oDataView, 'fontColor'),
-                            backgroundColor: KPITicker.getFill(oDataView, 'backgroundColor'),
+                            backgroundColor: KPITicker.getFill(oDataView, 'backgroundColor')
                         }
                     };
                     oObjectEnumeration.push(oConfiguration);
                     break;
                 // enumerate indicators object from capabilities.json
                 case 'indicators':
-                    var oIndicators: VisualObjectInstance = {
+                    let oIndicators: VisualObjectInstance;
+                    oIndicators = {
                         objectName: 'indicators',
                         displayName: 'Indicators',
                         selector: null,
@@ -271,7 +311,10 @@ module powerbi.extensibility.visual {
                     };
                     oObjectEnumeration.push(oIndicators);
                     break;
+                default:
+                    break;
             }
+
             return oObjectEnumeration;
         }
 
@@ -280,39 +323,43 @@ module powerbi.extensibility.visual {
         * @param {DataView} oDataView - contains the DataView of options
         * @param {string} sKey - name of property whose value is needed
         */
-        private static getFill(oDataView: DataView, sKey: string): Fill {
+        // tslint:disable-next-line:no-any
+        private static getFill(oDataView: DataView, sKey: string): any {
             if (oDataView) {
-                var oObjects = oDataView.metadata.objects;
+                let oObjects: DataViewObjects;
+                oObjects = oDataView.metadata.objects;
                 if (oObjects) {
                     // return appropriate value as per the formatting options selected
-                    var oConfiguration = oObjects['configuration'];
+                    let oConfiguration: DataViewObject;
+                    oConfiguration = oObjects[`configuration`];
                     if (oConfiguration) {
-                        var oFill = <Fill>oConfiguration[sKey];
-                        if (oFill)
+                        let oFill: Fill;
+                        oFill = <Fill>oConfiguration[sKey];
+                        if (oFill) {
                             return oFill.solid.color;
+                        }
                     }
-                    var oIndicators = oObjects['indicators'];
+                    let oIndicators: DataViewObject;
+                    oIndicators = oObjects[`indicators`];
                     if (oIndicators) {
-                        var oFill = <Fill>oIndicators[sKey];
-                        if (oFill)
+                        let oFill: Fill;
+                        oFill = <Fill>oIndicators[sKey];
+                        if (oFill) {
                             return oFill.solid.color;
+                        }
                     }
                 }
             }
             // if no value is choosen set default values
             if ('fontColor' === sKey) {
-                return "#043c74";
-            }
-            else if ('backgroundColor' === sKey) {
-                return "#efefef";
-            }
-            else if ('positiveIndicatorColor' === sKey) {
-                return "#009900";
-            }
-            else if ('negativeIndicatorColor' === sKey) {
-                return "#ff0000";
-            }
-            else if ('neutralIndicatorColor' === sKey) {
+                return '#043c74';
+            } else if ('backgroundColor' === sKey) {
+                return '#efefef';
+            } else if ('positiveIndicatorColor' === sKey) {
+                return '#009900';
+            } else if ('negativeIndicatorColor' === sKey) {
+                return '#ff0000';
+            } else if ('neutralIndicatorColor' === sKey) {
                 return '#0000ff';
             }
         }
@@ -324,13 +371,17 @@ module powerbi.extensibility.visual {
         */
         private static getValue(oDataView: DataView, sKey: string): number {
             if (oDataView) {
-                var oObjects = oDataView.metadata.objects;
+                let oObjects: DataViewObjects;
+                oObjects = oDataView.metadata.objects;
                 if (oObjects) {
-                    var oConfiguration = oObjects['configuration'];
+                    let oConfiguration: DataViewObject;
+                    oConfiguration = oObjects[`configuration`];
                     if (oConfiguration) {
-                        var iValue = <number>oConfiguration[sKey];
-                        if (iValue != null)
+                        let iValue: number;
+                        iValue = <number>oConfiguration[sKey];
+                        if (iValue != null) {
                             return iValue;
+                        }
                     }
                 }
             }
@@ -352,34 +403,40 @@ module powerbi.extensibility.visual {
         * @param {number} iIndicator - to tell if the value to be displayed is Change Percentage or Change Value
         * @param {number} iIndex - index of the data row whose value is to be populated
         */
-        private static appendData(oDataView: DataView, sClassNames: string, iIndicator: number, iIndex: number) {
-            let sAppendString, sValueDisplayed: string;
-            let iCurrentValue, iLastValue: number;
-            sAppendString = "";
+        private static appendData(oDataView: DataView, sClassNames: string, iIndicator: number, iIndex: number) : string {
+            let sAppendString : string;
+            let sValueDisplayed: string;
+            let iCurrentValue : number;
+            let iLastValue: number;
+            sAppendString = '';
             // if iIndicator is 0, the value to be displayed is KPI Change Percentage
             if (iIndicator === 0) {
+                // tslint:disable-next-line:triple-equals
                 if (KPITicker.iIndexOfCurrentValue != -1 && KPITicker.iIndexOfLastValue != -1 && KPITicker.iEnableDelta == 1) {
                     iCurrentValue = <number>oDataView.categorical.values[KPITicker.iIndexOfCurrentValue].values[iIndex];
                     iLastValue = <number>oDataView.categorical.values[KPITicker.iIndexOfLastValue].values[iIndex];
                     // if the last KPI value is 0, then the percentage change should be calculated with denominator as 1
                     if (iLastValue === 0) {
                         sValueDisplayed = (((iCurrentValue - iLastValue) / 1) * 100).toFixed(2);
-                    }
-                    else {
+                    } else {
                         sValueDisplayed = (((iCurrentValue - iLastValue) / iLastValue) * 100).toFixed(2);
                     }
-                    sAppendString = `<div class = "` + sClassNames + `" title = "KPI Change Percentage: ` + sValueDisplayed + `%">(` + sValueDisplayed + `%)</div>`;
+                    // tslint:disable-next-line:prefer-template
+                    sAppendString = `<div class = "${sClassNames}" title = "KPI Change Percentage:
+                    ${sValueDisplayed}%">(${sValueDisplayed}%)</div>`;
+
                 }
-            }
-            // if iIndicator is 1, the value to be displayed is KPI Change Value
-            else if (iIndicator === 1) {
+            // tslint:disable-next-line:triple-equals
+            } else if (iIndicator == 1) {  // if iIndicator is 1, the value to be displayed is KPI Change Value
+                // tslint:disable-next-line:triple-equals
                 if (KPITicker.iIndexOfLastValue != -1 && KPITicker.iIndexOfCurrentValue != -1) {
                     iCurrentValue = <number>oDataView.categorical.values[KPITicker.iIndexOfCurrentValue].values[iIndex];
                     iLastValue = <number>oDataView.categorical.values[KPITicker.iIndexOfLastValue].values[iIndex];
                     sValueDisplayed = (iCurrentValue - iLastValue).toFixed(2);
-                    sAppendString = `<div class = "` + sClassNames + `" title = "KPI Change Value: ` + sValueDisplayed + `">` + sValueDisplayed + `</div>`;
+                    sAppendString = `<div class = "${sClassNames}" title = "KPI Change Value: ${sValueDisplayed}">${sValueDisplayed}</div>`;
                 }
             }
+
             return sAppendString;
         }
         /*
@@ -387,53 +444,55 @@ module powerbi.extensibility.visual {
         * @param {DataView} oDataView - DataView of the visual
         * @param {number} iIndex - Index of data to be loaded
         */
-        private static tliChangeImage(oDataView: DataView, iIndex: number) {
+        private static tliChangeImage(oDataView: DataView, iIndex: number): {} {
             // to store the status of the data that is being populated
             let iTliStatus: number;
             // the string to append to the innerHTML of the div and the KPI Current value
-            let sAppendString, sKPICurrentValue: string;
-            sAppendString = "";
+            let sAppendString: string;
+            let sKPICurrentValue: string;
+            sAppendString = '';
             // if KPI Value column is selected populate it
-            if (KPITicker.iIndexOfCurrentValue != -1) {
+            if (KPITicker.iIndexOfCurrentValue !== -1) {
                 sKPICurrentValue = <string>oDataView.categorical.values[KPITicker.iIndexOfCurrentValue].values[iIndex];
-                sAppendString += `<br> <div class = "tliPrice" title = "KPI Current Value: ` + sKPICurrentValue + `">` + sKPICurrentValue + `</div>`;
+                sAppendString += `<br> <div class = "tliPrice" title = "KPI Current Value: ${sKPICurrentValue}">${sKPICurrentValue}</div>`;
             }
             // populate the other details on the basis of selection of Status column
-            if (KPITicker.iIndexOfStatus != -1) {
+            if (KPITicker.iIndexOfStatus !== -1) {
                 // storing the value of status of current data to nTliStatus
                 iTliStatus = Number(oDataView.categorical.values[KPITicker.iIndexOfStatus].values[iIndex]);
                 switch (iTliStatus) {
                     // when nTliStatus is 0 that is no change therefore neutral value
                     case 0:
-                        if (KPITicker.iIndexOfCurrentValue != -1) {
+                        if (KPITicker.iIndexOfCurrentValue !== -1) {
                             sAppendString += `<div class = "neutral indicator"></div>`;
                         }
-                        sAppendString += KPITicker.appendData(oDataView, "tliChangePriceNeutral tliChange", 1, iIndex);
-                        sAppendString += KPITicker.appendData(oDataView, "tliChangeNeutral tliChange", 0, iIndex);
+                        sAppendString += KPITicker.appendData(oDataView, `tliChangePriceNeutral tliChange`, 1, iIndex);
+                        sAppendString += KPITicker.appendData(oDataView, `tliChangeNeutral tliChange`, 0, iIndex);
                         break;
                     // when nTliStatus is 1 that is positive change therefore positive value
                     case 1:
-                        if (KPITicker.iIndexOfCurrentValue != -1) {
+                        if (KPITicker.iIndexOfCurrentValue !== -1) {
                             sAppendString += `<div class = "arrowUp arrow"> </div>`;
                         }
-                        sAppendString += KPITicker.appendData(oDataView, "tliChangePricePositive tliChangePrice", 1, iIndex);
-                        sAppendString += KPITicker.appendData(oDataView, "tliChangePositive tliChange", 0, iIndex);
+                        sAppendString += KPITicker.appendData(oDataView, `tliChangePricePositive tliChangePrice`, 1, iIndex);
+                        sAppendString += KPITicker.appendData(oDataView, `tliChangePositive tliChange`, 0, iIndex);
                         break;
                     // when nTliStatus is -1 that is negative change therefore negative value
                     case -1:
-                        if (KPITicker.iIndexOfCurrentValue != -1) {
+                        if (KPITicker.iIndexOfCurrentValue !== -1) {
                             sAppendString += `<div class = "arrowDown arrow"> </div>`;
                         }
-                        sAppendString += KPITicker.appendData(oDataView, "tliChangePriceNegative tliChangePrice", 1, iIndex);
-                        sAppendString += KPITicker.appendData(oDataView, "tliChangeNegative tliChange", 0, iIndex);
+                        sAppendString += KPITicker.appendData(oDataView, `tliChangePriceNegative tliChangePrice`, 1, iIndex);
+                        sAppendString += KPITicker.appendData(oDataView, `tliChangeNegative tliChange`, 0, iIndex);
+                        break;
+                    default:
                         break;
                 }
+            } else { // if KPITIcker.iIndexOfStatus is -1
+                sAppendString += KPITicker.appendData(oDataView, `tliChangePrice`, 1, iIndex);
+                sAppendString += KPITicker.appendData(oDataView, `tliChange`, 0, iIndex);
             }
-            // if KPITIcker.iIndexOfStatus is -1
-            else {
-                sAppendString += KPITicker.appendData(oDataView, "tliChangePrice", 1, iIndex);
-                sAppendString += KPITicker.appendData(oDataView, "tliChange", 0, iIndex);
-            }
+
             return sAppendString;
         }
 
@@ -443,14 +502,17 @@ module powerbi.extensibility.visual {
         * @param {number} nDivID - ID of div which is to be loaded
         * @param {number} iIndex - Index of data to be loaded
         */
-        private static populateDiv(oDataView: DataView, nDivID: number, iIndex: number) {
+        private static populateDiv(oDataView: DataView, nDivID: number, iIndex: number): void {
             // storing the div name to be used
-            var sDivIdName = "container" + nDivID;
+            let sDivIdName: string;
+            sDivIdName = `container${nDivID}`;
             document.getElementById(sDivIdName).innerHTML = ``;
             document.getElementById(sDivIdName).innerHTML = ``;
+            const className: string = '.tliName';
             // populate name if KPI Name column is selected
-            if (KPITicker.iIndexOfName != -1) {
-                document.getElementById(sDivIdName).innerHTML = `<div class = "tliName">` + oDataView.categorical.categories[KPITicker.iIndexOfName].values[iIndex] + `</div>`;
+            if (KPITicker.iIndexOfName !== -1) {
+                document.getElementById(sDivIdName).innerHTML = `<div class = " tliName tliName${iIndex}">` + `</div>`;
+                d3.select(className + iIndex).text(<string>oDataView.categorical.categories[KPITicker.iIndexOfName].values[iIndex]);
             }
             // call tliChangeImage to populate other data for the div
             document.getElementById(sDivIdName).innerHTML += KPITicker.tliChangeImage(KPITicker.oDataView, iIndex);
@@ -460,29 +522,31 @@ module powerbi.extensibility.visual {
         * method to create wrapper according to parameter passed.
         * @param {number} iWrapperID  - ID of the wrapper to be created
         */
-        private static createWrapper(iWrapperID: number) {
-            var sWrapperName = "wrapper" + iWrapperID;
-            let sWrapperDivName, sClassOfContainer: string;
-            let iStartPoint, iEndPoint: number;
-            var iIndex = 0;
-            sClassOfContainer = "kpi" + KPITicker.iNumberOfKPI;
+        private static createWrapper(iWrapperID: number): void {
+            let sWrapperName: string;
+            sWrapperName = `wrapper${iWrapperID}`;
+            let sWrapperDivName: string;
+            let sClassOfContainer: string;
+            let iStartPoint: number;
+            let iEndPoint: number;
+            let iIndex: number = 0;
+            sClassOfContainer = `kpi${KPITicker.iNumberOfKPI}`;
             // append the wrapper with appropriate id to "wrapper" div and then change its top so that it is below the existing wrapper
             $('<div>').attr('id', sWrapperName).appendTo('#wrapper');
-            $('#' + sWrapperName).css('top', KPITicker.iHeightOfContainer + "px");
+            $(`#${sWrapperName}`).css('top', `${KPITicker.iHeightOfContainer}px`);
             if (iWrapperID === 1) {
                 iStartPoint = 1;
                 iEndPoint = KPITicker.iNumberOfKPI;
-            }
-            else if (iWrapperID === 2) {
+            } else if (iWrapperID === 2) {
                 iStartPoint = KPITicker.iNumberOfKPI + 1;
                 iEndPoint = 2 * KPITicker.iNumberOfKPI;
             }
             // append div to the wrapper just created on the basis of which wrapper id was created and the number of containers
             for (iIndex = iStartPoint; iIndex <= iEndPoint; iIndex++) {
-                sWrapperDivName = "container" + iIndex;
-                $('<div>').attr('id', sWrapperDivName).appendTo('#' + sWrapperName);
+                sWrapperDivName = `container${iIndex}`;
+                $('<div>').attr('id', sWrapperDivName).appendTo(`#${sWrapperName}`);
                 // changing the width according to number of KPI selected
-                $('#' + sWrapperDivName).addClass(sClassOfContainer);
+                $(`#${sWrapperDivName}`).addClass(sClassOfContainer);
             }
         }
 
@@ -491,16 +555,16 @@ module powerbi.extensibility.visual {
         * The css is changed according to the formatting options
         * @param {number} cssDivStart - The id of div from which the wrapper starts
         */
-        private static changeCSS(iCssDivStart: number) {
+        private static changeCSS(iCssDivStart: number): void {
             // change the css according to the number of KPI that are to be displayed at a time
-            var iEndPoint = 0;
-            var iIndex = 0;
-            var sPriceMarginLeft = "10px";
+            let iEndPoint: number = 0;
+            let iIndex: number = 0;
+            let sPriceMarginLeft: string;
+            sPriceMarginLeft = '10px';
             // to decide how many div are there to change the css
             if (iCssDivStart === 1) {
                 iEndPoint = KPITicker.iNumberOfKPI;
-            }
-            else {
+            } else {
                 iEndPoint = 2 * KPITicker.iNumberOfKPI;
             }
             // change the values as per the number of containers selected in the format pane
@@ -520,22 +584,25 @@ module powerbi.extensibility.visual {
                     $('.tliName').addClass('tliNameKPIThree');
                     $('.arrow').addClass('indicatorKPIThree');
                     break;
+                default:
+                    break;
             }
-            // change the background color of the containers on the basis of 
+            // change the background color of the containers on the basis of
             for (iIndex = iCssDivStart; iIndex <= iEndPoint; iIndex++) {
-                var sDivid = "#container" + iIndex;
+                let sDivid: string;
+                sDivid = `#container${iIndex}`;
                 $(sDivid).css('background', <string>KPITicker.iBackgroundColor);
             }
             // change the css on the basis of font size selected in format pane
-            $('.tliName').css('font-size', KPITicker.iFontSize + "px");
-            $('.tliPrice').css('font-size', KPITicker.iFontSize + "px");
-            $('.tliChangePrice').css('font-size', KPITicker.iFontSize + "px");
-            $('.tliChange').css('font-size', KPITicker.iFontSize + "px");
+            $('.tliName').css('font-size', `${KPITicker.iFontSize}px`);
+            $('.tliPrice').css('font-size', `${KPITicker.iFontSize}px`);
+            $('.tliChangePrice').css('font-size', `${KPITicker.iFontSize}px`);
+            $('.tliChange').css('font-size', `${KPITicker.iFontSize}px`);
             // change the css on the basis of font color selected in format pane
             $('.tliName').css('color', <string>KPITicker.iFontColor);
             $('.tliPrice').css('color', <string>KPITicker.iFontColor);
             // change the color of indicators and the font color as per the selection in format pane if the Status column is selected
-            if (KPITicker.iIndexOfStatus != -1) {
+            if (KPITicker.iIndexOfStatus !== -1) {
                 $('.arrowDown').css('border-top-color', <string>KPITicker.iNegativeIndicatorColor);
                 $('.tliChangeNegative').css('color', <string>KPITicker.iNegativeIndicatorColor);
                 $('.tliChangePriceNegative').css('color', <string>KPITicker.iNegativeIndicatorColor);
@@ -545,9 +612,7 @@ module powerbi.extensibility.visual {
                 $('.arrowUp').css('border-bottom-color', <string>KPITicker.iPositiveIndicatorColor);
                 $('.tliChangePositive').css('color', <string>KPITicker.iPositiveIndicatorColor);
                 $('.tliChangePricePositive').css('color', <string>KPITicker.iPositiveIndicatorColor);
-            }
-            // if Status column is not selected then the font color is same as KPI Name and KPI Value
-            else {
+            } else {  // if Status column is not selected then the font color is same as KPI Name and KPI Value
                 $('.tliChange').css('color', <string>KPITicker.iFontColor);
                 $('.tliChangePrice').css('color', <string>KPITicker.iFontColor);
             }
@@ -560,17 +625,19 @@ module powerbi.extensibility.visual {
         /*
         *method to add next data after duration is over
         */
-        private static addNextData() {
+        private static addNextData(): void {
             // flag to check if the index has exceeded the data length
             KPITicker.bFlag = true;
             KPITicker.bIsUpdated = false;
-            var iIndex = 0;
-            var iDivStart = 0;
+            let iIndex: number;
+            iIndex = 0;
+            let iDivStart: number;
+            iDivStart = 0;
             // to change the iCurrentPosition value
             KPITicker.iCheckIndex = 0;
             // to start with first value when div is empty but data is not available
             KPITicker.iFlagIndex = 0;
-            if (KPITicker.iCurrentPosition != KPITicker.oData.length - 1) {
+            if (KPITicker.iCurrentPosition !== KPITicker.oData.length - 1) {
                 KPITicker.iCurrentPosition = KPITicker.iCurrentPosition % (KPITicker.oData.length - 1);
             }
             // if wrapper1 is present, create wrapper2 and remove wrapper1 after animating it.
@@ -578,9 +645,7 @@ module powerbi.extensibility.visual {
                 KPITicker.createWrapper(2);
                 iDivStart = KPITicker.iNumberOfKPI + 1;
                 KPITicker.populateWrapper(2, iDivStart);
-            }
-            // if wrapper2 is present, create wrapper1 and remove wrapper2 after animating it.
-            else {
+            } else { // if wrapper2 is present, create wrapper1 and remove wrapper2 after animating it.
                 KPITicker.createWrapper(1);
                 iDivStart = 1;
                 KPITicker.populateWrapper(1, iDivStart);
@@ -589,15 +654,13 @@ module powerbi.extensibility.visual {
             if (KPITicker.bFlag) {
                 if (KPITicker.iCheckIndex === (KPITicker.oData.length - 1)) {
                     KPITicker.iCurrentPosition = 0;
-                }
-                else {
+                } else {
                     KPITicker.iCurrentPosition += KPITicker.iNumberOfKPI;
                     if (KPITicker.iCurrentPosition > KPITicker.oData.length - 1) {
                         KPITicker.iCurrentPosition = 0;
                     }
                 }
-            }
-            else {
+            } else {
                 KPITicker.iCurrentPosition = KPITicker.iFlagIndex;
             }
             // call addNextData again
@@ -608,9 +671,10 @@ module powerbi.extensibility.visual {
         * @param {number} iWrapperID - id of the wrapper that was created
         * @param {number} iDivStart - id of the first div in the wrapper created
         */
-        private static populateWrapper(iWrapperID: number, iDivStart: number) {
+        private static populateWrapper(iWrapperID: number, iDivStart: number): void {
 
-            var iIndex = 0;
+            let iIndex: number;
+            iIndex = 0;
             KPITicker.iCheckIndex = 0;
             KPITicker.iFlagIndex = 0;
             KPITicker.bFlag = true;
@@ -618,8 +682,7 @@ module powerbi.extensibility.visual {
                 KPITicker.iCheckIndex = iIndex;
                 if (iIndex <= KPITicker.oData.length - 1) {
                     KPITicker.populateDiv(KPITicker.oDataView, iDivStart, iIndex);
-                }
-                else {
+                } else {
                     KPITicker.populateDiv(KPITicker.oDataView, iDivStart, KPITicker.iFlagIndex);
                     KPITicker.iFlagIndex++;
                     KPITicker.bFlag = false;
@@ -638,24 +701,26 @@ module powerbi.extensibility.visual {
         * method to animate wrapper which was created by addNextData
         * @param {number} iWrapperID - id of the wrapper that was created
         */
-        private static animateWrapper(iWrapperID: number) {
+        private static animateWrapper(iWrapperID: number): void {
 
-            let sWrapperTop, sWrapperBottom: string;
+            let sWrapperTop: string;
+            let sWrapperBottom: string;
             if (iWrapperID === 1) {
-                sWrapperTop = "#wrapper2";
-                sWrapperBottom = "#wrapper1";
-            }
-            else {
-                sWrapperTop = "#wrapper1";
-                sWrapperBottom = "#wrapper2";
+                sWrapperTop = '#wrapper2';
+                sWrapperBottom = '#wrapper1';
+            } else {
+                sWrapperTop = '#wrapper1';
+                sWrapperBottom = '#wrapper2';
             }
 
-            $(sWrapperTop).animate({ top: "-=" + KPITicker.iHeightOfContainer + "px" }, KPITicker.iDelay).dequeue();
-            $(sWrapperBottom).animate({ top: "-=" + KPITicker.iHeightOfContainer + "px" }, KPITicker.iDelay, function () {
+            $(sWrapperTop).animate({ top: `-=${KPITicker.iHeightOfContainer}px` }, KPITicker.iDelay).dequeue();
+            // tslint:disable-next-line:typedef
+            $(sWrapperBottom).animate({ top: `-=${KPITicker.iHeightOfContainer}px` }, KPITicker.iDelay, function () {
+                // tslint:disable-next-line:typedef
                 KPITicker.iTimeout = setTimeout(function () {
                     $(sWrapperTop).remove();
                     clearTimeout(KPITicker.iTimeout);
-                }, KPITicker.iDelay);
+                },                              KPITicker.iDelay);
             });
         }
     }
