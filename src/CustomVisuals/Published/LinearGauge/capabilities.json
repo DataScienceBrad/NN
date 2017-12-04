@@ -6,7 +6,7 @@
             "displayName": "Value",
             "requiredTypes": [
                 {
-                "numeric": true
+                    "numeric": true
                 }
             ]
         },
@@ -16,7 +16,7 @@
             "displayName": "Target Value",
             "requiredTypes": [
                 {
-                "numeric": true
+                    "numeric": true
                 }
             ]
         },
@@ -26,7 +26,7 @@
             "displayName": "Minimum value",
             "requiredTypes": [
                 {
-                "numeric": true
+                    "numeric": true
                 }
             ]
         },
@@ -36,27 +36,27 @@
             "displayName": "Maximum value",
             "requiredTypes": [
                 {
-                "numeric": true
+                    "numeric": true
                 }
             ]
         },
         {
             "name": "QualitativeState1Value",
             "kind": "Measure",
-            "displayName": "Trend Value 1",
+            "displayName": "Trend value 1",
             "requiredTypes": [
                 {
-                "numeric": true
+                    "numeric": true
                 }
             ]
         },
         {
             "name": "QualitativeState2Value",
             "kind": "Measure",
-            "displayName": "Trend Value 2",
+            "displayName": "Trend value 2",
             "requiredTypes": [
                 {
-                "numeric": true
+                    "numeric": true
                 }
             ]
         }
@@ -66,7 +66,7 @@
             "displayName": "General",
             "properties": {
                 "ActualFillColor": {
-                    "displayName": "Main Color",
+                    "displayName": "Main color",
                     "type": {
                         "fill": {
                             "solid": {
@@ -76,7 +76,7 @@
                     }
                 },
                 "ComparisonFillColor": {
-                    "displayName": "Comparison Color",
+                    "displayName": "Comparison color",
                     "type": {
                         "fill": {
                             "solid": {
@@ -110,8 +110,8 @@
                     "suppressFormatPainterCopy": true
                 },
                 "markerWidth": {
-                    "displayName": "Decimal Places(Max 4 Places)",
-                    "description": "Decimal Places(Max 4 Places)",
+                    "displayName": "Decimal places(Max 4 Places)",
+                    "description": "Decimal places(Max 4 Places)",
                     "type": {
                         "numeric": true
                     }
@@ -141,7 +141,7 @@
                     "suppressFormatPainterCopy": true
                 },
                 "lineWidth": {
-                    "displayName": "Decimal Places(Max 4 Places)",
+                    "displayName": "Decimal places(Max 4 Places)",
                     "description": "Decimal Places(Max 4 Places)",
                     "type": {
                         "numeric": true

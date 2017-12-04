@@ -1,6 +1,30 @@
-// JavaScript source code
+/*
+ *  Power BI Visual CLI
+ *
+ *  Copyright (c) Microsoft Corporation
+ *  All rights reserved.
+ *  MIT License
+ *
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  of this software and associated documentation files (the ''Software''), to deal
+ *  in the Software without restriction, including without limitation the rights
+ *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *  copies of the Software, and to permit persons to whom the Software is
+ *  furnished to do so, subject to the following conditions:
+ *
+ *  The above copyright notice and this permission notice shall be included in
+ *  all copies or substantial portions of the Software.
+ *
+ *  THE SOFTWARE IS PROVIDED *AS IS*, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ *  THE SOFTWARE.
+ */
+
 module powerbi.extensibility.visual {
-    //Model
     import VisualTooltipDataItem = powerbi.extensibility.VisualTooltipDataItem;
     import ValueFormatter = powerbi.extensibility.utils.formatting.valueFormatter;
     interface ITooltipService {
@@ -289,6 +313,7 @@ module powerbi.extensibility.visual {
                 selector: null
             };
         }
+
         // tslint:disable-next-line:no-any
         public getDefaultLabelSettings(show: boolean, labelColor: string, labelPrecision: number, format: any): {
             show: boolean;
@@ -380,6 +405,7 @@ module powerbi.extensibility.visual {
                 wordWrap: false
             };
         }
+
         public getDefaultFormatSettings_trend(): ICardFormatSetting {
             return {
                 showTitle: true,
@@ -446,6 +472,7 @@ module powerbi.extensibility.visual {
                 .append('div')
                 .classed('targetText', true);
         }
+
         //Convert the dataview into its view model
         //All the variable will be populated with the value we have passed
         public static converter(dataView: DataView): ILinearGauge {
@@ -602,7 +629,6 @@ module powerbi.extensibility.visual {
             if (!options.dataViews || !options.dataViews[0]) {
                 return;
             }
-            // var dataView = this.dataView = options.dataViews[0];
             let viewport: IViewport;
             viewport = options.viewport; //We will get width and height from viewport object.
             this.data = LinearGauge.converter(dataView); //calling Converter function
@@ -729,8 +755,9 @@ module powerbi.extensibility.visual {
             customwidth = (window.getComputedStyle($(this.svg[0][0])[0]).width).slice(0, -2);
             let wifth: number;
             wifth = Number(customwidth) - 20;
+            const minMaxDiff: number = this.data.max - this.data.min === 0 ? 1 : this.data.max - this.data.min;
             let percen: number;
-            percen = (((this.data.target - this.data.min) * 100) / (this.data.max - this.data.min));
+            percen = ((this.data.target - this.data.min) * 100) / minMaxDiff;
             percen = (isNaN(percen)) ? 0 : percen;
             let passingValue: number;
             passingValue = (((wifth * percen) / 100) <= 0) ? 0 : ((wifth * percen) / 100);
@@ -812,7 +839,6 @@ module powerbi.extensibility.visual {
                     .html(upArrow);
                 this.trendValue1.append('span').text(trend1Val + spaceLiteral + trendValue1Text);
                 if (this.data.trendValue1 < 0) {
-                    //$('.trendvalue1arrow').css('Transform','rotate(90deg)');
                     if ((document.querySelectorAll('.trendvalue1arrow')).length !== 0) {
                         arrowClassTV1 = document.querySelectorAll('.trendvalue1arrow');
                         arrowClassTV1[0].style.transform = 'rotate(90deg)';
@@ -881,7 +907,7 @@ module powerbi.extensibility.visual {
                     .attr('y', (modHeight / 3));
             }
             let percent: number;
-            percent = (((this.data.actual - this.data.min) * 100) / (this.data.max - this.data.min));
+            percent = ((this.data.actual - this.data.min) * 100) / minMaxDiff;
             percent = (isNaN(percent)) ? 0 : percent;
             let actual: number;
             actual = (((width * percent) / 100) <= 0) ? 0 : ((width * percent) / 100);
@@ -928,7 +954,7 @@ module powerbi.extensibility.visual {
             customsvgWidth = (window.getComputedStyle($(this.svg[0][0])[0]).width).slice(0, -2);
             let fullsvgWidth: number;
             fullsvgWidth = Number(customsvgWidth) - 20;
-            minvalueWidth = (fullsvgWidth * (((this.data.target - this.data.min) * 100) / (this.data.max - this.data.min))) / 100;
+            minvalueWidth = (fullsvgWidth * (((this.data.target - this.data.min) * 100) / (minMaxDiff))) / 100;
             globalTargetWidth = minvalueWidth;
             // tslint:disable-next-line:no-any
             let targetValueText: any;
@@ -973,7 +999,7 @@ module powerbi.extensibility.visual {
             let iWidth: number;
             iWidth = Number(customWidth) - 10;
             let percen2: number;
-            percen2 = (((this.data.target - this.data.min) * 100) / (this.data.max - this.data.min));
+            percen2 = ((this.data.target - this.data.min) * 100) / minMaxDiff;
             percen2 = (isNaN(percen2)) ? 0 : percen2;
             let passingValue2: number;
             passingValue2 = (((iWidth * percen2) / 100) <= 0) ? 0 : ((iWidth * percen2) / 100);
@@ -1108,6 +1134,7 @@ module powerbi.extensibility.visual {
 
             return decimalPlacesCount;
         }
+
         //Make visual properties available in the property pane in Power BI
         //values which we can customized from property pane in Power BI
         public getSettings(objects: DataViewObjects): boolean {
@@ -1146,6 +1173,7 @@ module powerbi.extensibility.visual {
 
             return settingsChanged;
         }
+
         private static getTwoTooltipData(value: string, tab: string, avalue: string, atab: string): VisualTooltipDataItem[] {
 
             return [{
@@ -1156,6 +1184,7 @@ module powerbi.extensibility.visual {
                 value: atab
             }];
         }
+
         private static getOneTooltipData(value: string, tab: string): VisualTooltipDataItem[] {
 
             return [{
