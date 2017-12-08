@@ -1,20 +1,21 @@
-p {
-    font-size: 20px;
-    font-weight: bold;
-}
-p em {
-    background: yellow;
-    padding: 5px;   
-}
 
 .tw_value{
-    //word-break: break-all;
-    overflow-x: auto
+    white-space: pre-wrap;       
+    white-space: -moz-pre-wrap;  
+    white-space: -pre-wrap;      
+    white-space: -o-pre-wrap;   
+    word-wrap: break-word;
+    overflow-x: hidden;
 }
 
-.hyphens {
-    -webkit-hyphens: auto;
-    -moz-hyphens: auto;
-    -ms-hyphens: auto;
-    hyphens: auto;
-  }
+.tw_bold{
+    font-weight: bold;
+}
+
+.tw_italic{
+    font-style: italic;
+}
+
+.tw_underline{
+    text-decoration: underline;
+}
