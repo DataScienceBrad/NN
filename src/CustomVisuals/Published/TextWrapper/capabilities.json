@@ -4,6 +4,7 @@
             "displayName": "Field",
             "name": "category",
             "kind": "GroupingOrMeasure"
+           
         }
     ],
     "dataViewMappings": [
@@ -28,6 +29,7 @@
             }
         }
     ],
+    "suppressDefaultTitle": true,
     "objects": {
         "textSettings": {
             "displayName": "Text settings",
@@ -43,7 +45,7 @@
                     }
                 },
                 "fontSize": {
-                    "displayName": "Text Size",
+                    "displayName": "Text size",
                     "type": {
                         "formatting": {
                             "fontSize": true
@@ -57,7 +59,332 @@
                         "text": true
                     },
                     "suppressFormatPainterCopy": true
+                },
+                
+                "alignment": {
+                    "displayName": "Text alignment",
+                    "type": {
+                        "enumeration": [
+                            {
+                                "value": "center",
+                                "displayName": "center"
+                            },
+                            {
+                                "value": "left",
+                                "displayName": "left"
+                            },
+                            {
+                                "value": "right",
+                                "displayName": "right"
+                            }
+                        ] 
+                    }
                 }
+               
+            }
+        },
+        "staticText": {
+            "displayName": "Static text settings",
+            "properties": {
+                "showColon": {
+                    "displayName": "Show colon",
+                    "type": {
+                        "bool": true
+                    }
+                },
+                
+                "textPosition": {
+                    "displayName": "Text position",
+                    "type": {
+                        "enumeration": [
+                            {
+                                "value": "prefix",
+                                "displayName": "Prefix"
+                            },
+                            {
+                                "value": "suffix",
+                                "displayName": "Suffix"
+                            }
+                        ]
+                    }
+                },
+                "backgroundcolor": {
+                    "displayName": "Text highlighter",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "postText": {
+                    "displayName": "Text to append",
+                    "type": {
+                        "text": true
+                    },
+                    "suppressFormatPainterCopy": true
+                },
+                "fontFamily": {
+                    "displayName": "Font family",
+                    "description": "Select the font-family",
+                    "type": {
+                        "enumeration": [
+                            {
+                                "value": "Arial",
+                                "displayName": "Arial"
+                            },
+                            {
+                                "value": "Arial Black",
+                                "displayName": "Arial Black"
+                            },
+                            {
+                                "value": "Arial Unicode MS",
+                                "displayName": "Arial Unicode MS"
+                            },
+                            {
+                                "value": "Calibri",
+                                "displayName": "Calibri"
+                            },
+                            {
+                                "value": "Cambria",
+                                "displayName": "Cambria"
+                            },
+                            {
+                                "value": "Cambria Math",
+                                "displayName": "Cambria Math"
+                            },
+                            {
+                                "value": "Candara",
+                                "displayName": "Candara"
+                            },
+                            {
+                                "value": "Comic Sans MS",
+                                "displayName": "Comic Sans MS"
+                            },
+                            {
+                                "value": "Consolas",
+                                "displayName": "Consolas"
+                            },
+                            {
+                                "value": "Constantia",
+                                "displayName": "Constantia"
+                            },
+                            {
+                                "value": "Corbel",
+                                "displayName": "Corbel"
+                            },
+                            {
+                                "value": "Courier New",
+                                "displayName": "Courier New"
+                            },
+                            {
+                                "value": "Georgia",
+                                "displayName": "Georgia"
+                            },
+                            {
+                                "value": "Lucida Sans Unicode",
+                                "displayName": "Lucida Sans Unicode"
+                            },
+                            {
+                                "value": "Segoe (Bold)",
+                                "displayName": "Segoe (Bold)"
+                            },
+                            {
+                                "value": "Segoe UI Semibold",
+                                "displayName": "Segoe UI Semibold"
+                            },
+                            {
+                                "value": "Segoe UI",
+                                "displayName": "Segoe UI"
+                            },
+                            {
+                                "value": "Segoe UI Light",
+                                "displayName": "Segoe UI Light"
+                            },
+                            {
+                                "value": "Symbol",
+                                "displayName": "Symbol"
+                            },
+                            {
+                                "value": "Tahoma",
+                                "displayName": "Tahoma"
+                            },
+                            {
+                                "value": "Times New Roman",
+                                "displayName": "Times New Roman"
+                            },
+                            {
+                                "value": "Trebuchet MS",
+                                "displayName": "Trebuchet MS"
+                            },
+                            {
+                                "value": "Verdana",
+                                "displayName": "Verdana"
+                            },
+                            {
+                                "value": "Wingdings",
+                                "displayName": "Wingdings"
+                            }
+                        ]
+                    }
+                },
+                "boldStyle": {
+                    "displayName": "Bold",
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "italicStyle": {
+                    "displayName": "Italic",
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "underlineStyle": {
+                    "displayName": "Underline",
+                    "type": {
+                        "bool": true
+                    }
+                }
+            }
+        },
+        "Settings": {
+            "displayName": "Dynamic text settings",
+            "properties": {
+                "backgroundcolor": {
+                    "displayName": "Text highlighter",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "fontFamily": {
+                    "displayName": "Font family",
+                    "description": "Select the font-family",
+                    "type": {
+                        "enumeration": [
+                            {
+                                "value": "Arial",
+                                "displayName": "Arial"
+                            },
+                            {
+                                "value": "Arial Black",
+                                "displayName": "Arial Black"
+                            },
+                            {
+                                "value": "Arial Unicode MS",
+                                "displayName": "Arial Unicode MS"
+                            },
+                            {
+                                "value": "Calibri",
+                                "displayName": "Calibri"
+                            },
+                            {
+                                "value": "Cambria",
+                                "displayName": "Cambria"
+                            },
+                            {
+                                "value": "Cambria Math",
+                                "displayName": "Cambria Math"
+                            },
+                            {
+                                "value": "Candara",
+                                "displayName": "Candara"
+                            },
+                            {
+                                "value": "Comic Sans MS",
+                                "displayName": "Comic Sans MS"
+                            },
+                            {
+                                "value": "Consolas",
+                                "displayName": "Consolas"
+                            },
+                            {
+                                "value": "Constantia",
+                                "displayName": "Constantia"
+                            },
+                            {
+                                "value": "Corbel",
+                                "displayName": "Corbel"
+                            },
+                            {
+                                "value": "Courier New",
+                                "displayName": "Courier New"
+                            },
+                            {
+                                "value": "Georgia",
+                                "displayName": "Georgia"
+                            },
+                            {
+                                "value": "Lucida Sans Unicode",
+                                "displayName": "Lucida Sans Unicode"
+                            },
+                            {
+                                "value": "Segoe (Bold)",
+                                "displayName": "Segoe (Bold)"
+                            },
+                            {
+                                "value": "Segoe UI Semibold",
+                                "displayName": "Segoe UI Semibold"
+                            },
+                            {
+                                "value": "Segoe UI",
+                                "displayName": "Segoe UI"
+                            },
+                            {
+                                "value": "Segoe UI Light",
+                                "displayName": "Segoe UI Light"
+                            },
+                            {
+                                "value": "Symbol",
+                                "displayName": "Symbol"
+                            },
+                            {
+                                "value": "Tahoma",
+                                "displayName": "Tahoma"
+                            },
+                            {
+                                "value": "Times New Roman",
+                                "displayName": "Times New Roman"
+                            },
+                            {
+                                "value": "Trebuchet MS",
+                                "displayName": "Trebuchet MS"
+                            },
+                            {
+                                "value": "Verdana",
+                                "displayName": "Verdana"
+                            },
+                            {
+                                "value": "Wingdings",
+                                "displayName": "Wingdings"
+                            }
+                        ]
+                    }
+                },
+                "boldStyle": {
+                    "displayName": "Bold",
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "italicStyle": {
+                    "displayName": "Italic",
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "underlineStyle": {
+                    "displayName": "Underline",
+                    "type": {
+                        "bool": true
+                    }
+                }
+             
             }
         }
     }
