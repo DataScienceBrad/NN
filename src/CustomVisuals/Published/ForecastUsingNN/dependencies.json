@@ -1,0 +1,69 @@
+{
+  "cranPackages": [
+    {
+      "name": "ggplot2",
+      "displayName": "GG Plot 2",
+      "url": "https://cran.r-project.org/web/packages/ggplot2/index.html"
+    },
+    {
+      "name": "plotly",
+      "displayName": "Plotly",
+      "url": "https://cran.r-project.org/web/packages/plotly/index.html"
+    },
+    {
+      "name": "htmlwidgets",
+      "displayName": "HTML Widgets",
+      "url": "https://cran.r-project.org/web/packages/htmlwidgets/index.html"
+    },
+    {
+      "name": "XML",
+      "displayName": "XML",
+      "url": "https://cran.r-project.org/web/packages/XML/index.html"
+    },
+    {
+      "name": "corrplot",
+      "displayName": "corrplot",
+      "url": "https://cran.r-project.org/web/packages/corrplot/index.html"
+    },
+    {
+      "name": "dbscan",
+      "displayName": "dbscan",
+      "url": "https://cran.r-project.org/web/packages/dbscan/index.html"
+    },
+    {
+      "name": "forecast",
+      "displayName": "forecast",
+      "url": "https://cran.r-project.org/web/packages/forecast/index.html"
+    },
+    {
+      "name": "Rcpp",
+      "displayName": "Rcpp",
+      "url": "https://cran.r-project.org/web/packages/Rcpp/index.html"
+    },
+    {
+      "name": "graphics",
+      "displayName": "graphics",
+      "url": "https://cran.r-project.org/web/packages/graphics/index.html"
+    },
+    {
+      "name": "stats",
+      "displayName": "stats",
+      "url": "https://cran.r-project.org/web/packages/stats/index.html"
+    },
+    {
+      "name": "methods",
+      "displayName": "methods",
+      "url": "https://cran.r-project.org/web/packages/methods/index.html"
+    },
+    {
+      "name": "xts",
+      "displayName": "xts",
+      "url": "https://cran.r-project.org/web/packages/xts/index.html"
+    },
+    {
+      "name": "zoo",
+      "displayName": "zoo",
+      "url": "https://cran.r-project.org/web/packages/zoo/index.html"
+    }
+  ]
+}

@@ -1,0 +1,385 @@
+{
+  "dataRoles": [
+    {
+      "displayName": "Series/Date",
+      "kind": "GroupingOrMeasure",
+      "name": "Category"
+    },
+    {
+      "displayName": "Values",
+      "kind": "GroupingOrMeasure",
+      "name": "Value"
+    }
+  ],
+  "dataViewMappings": [
+    {
+      "conditions": [
+        {
+          "Category": {
+            "max": 1
+          },
+          "Value": {
+            "max": 1
+          }
+        }
+      ],
+      "scriptResult": {
+        "dataInput": {
+          "table": {
+            "rows": {
+              "select": [
+                {
+                  "for": {
+                    "in": "Category"
+                  }
+                },
+                {
+                  "for": {
+                    "in": "Value"
+                  }
+                }
+              ],
+              "dataReductionAlgorithm": {
+                "top": {}
+              }
+            }
+          }
+        },
+        "script": {
+          "scriptProviderDefault": "R",
+          "scriptOutputType": "html",
+          "source": {
+            "objectName": "rcv_script",
+            "propertyName": "source"
+          },
+          "provider": {
+            "objectName": "rcv_script",
+            "propertyName": "provider"
+          }
+        }
+      }
+    }
+  ],
+  "objects": {
+    "rcv_script": {
+      "properties": {
+        "provider": {
+          "type": {
+            "text": true
+          }
+        },
+        "source": {
+          "type": {
+            "scripting": {
+              "source": true
+            }
+          }
+        }
+      }
+    },
+    "settings": {
+      "displayName": "Forecast settings",
+      "description": "Settings to control the forecast",
+      "properties": {
+        "parameterSettings": {
+          "displayName": "Parameter setting",
+          "description": "Set the parameters for the forecasting model",
+          "type": {
+            "enumeration": [
+              {
+                "displayName": "Auto",
+                "value": "Auto"
+              },
+              {
+                "displayName": "User defined",
+                "value": "Manual"
+              }
+            ]
+          }
+        },
+        "units": {
+          "displayName": "Units",
+          "description": "Number of units up to which next values would be predicted.",
+          "type": {
+            "numeric": true
+          }
+        },
+        "decay": {
+          "displayName": "Decay",
+          "description": "Decay in weights after each iteration, so that weights don't grow extremely large after successive computations. Should be between 0 to 1.",
+          "type": {
+            "numeric": true
+          }
+        },
+        "maxitr": {
+          "displayName": "Max number of iterations",
+          "description": "Maximum number of iterations to train the neural network in a defined duration called as epoch.",
+          "type": {
+            "numeric": true
+          }
+        },
+        "epochs": {
+          "displayName": "Epochs",
+          "description": "Duration having defined number of iterations for training the network.",
+          "type": {
+            "numeric": true
+          }
+        },
+        "size": {
+          "displayName": "Size",
+          "description": "Defines number of calculation performed to achieve output equation for the model in each iteration",
+          "type": {
+            "numeric": true
+          }
+        },
+        "confLevel": {
+          "displayName": "Confidence levels",
+          "description": "Confidence levels for the plot",
+          "type": {
+            "numeric": true
+          }
+        },
+        "confInterval": {
+          "displayName": "Confidence intervals",
+          "description": "Turn confidence intervals true or false",
+          "type": {
+            "bool": true
+          }
+        }
+      }
+    },
+    "plotSettings": {
+      "displayName": "Plot settings",
+      "description": "Settings for plot appereance",
+      "properties": {
+        "title": {
+          "displayName": "Title",
+          "description": "Title",
+          "type": {
+            "text": true
+          }
+        },
+        "plotColor": {
+          "displayName": "Plot background color",
+          "description": "Plot background color",
+          "type": {
+            "fill": {
+              "solid": {
+                "color": true
+              }
+            }
+          }
+        },
+        "fline": {
+          "displayName": "Forecast color",
+          "description": "Forecast line color",
+          "type": {
+            "fill": {
+              "solid": {
+                "color": true
+              }
+            }
+          }
+        },
+        "hline": {
+          "displayName": "Observed color",
+          "description": "Observation line color",
+          "type": {
+            "fill": {
+              "solid": {
+                "color": true
+              }
+            }
+          }
+        },
+        "flineText": {
+          "displayName": "Forecast name",
+          "description": "Forecast line name",
+          "type": {
+            "text": true
+          }
+        },
+        "hlineText": {
+          "displayName": "Observation name",
+          "description": "Observation line name",
+          "type": {
+            "text": true
+          }
+        },
+        "confText": {
+          "displayName": "Confidence label",
+          "description": "Label for confidence interval",
+          "type": {
+            "text": true
+          }
+        },
+        "confCol": {
+          "displayName": "Confidence color",
+          "description": "Color for confidence interval",
+          "type": {
+            "fill": {
+              "solid": {
+                "color": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "xaxisSettings": {
+      "displayName": "X axis settings",
+      "description": "Appereance settings for x axis",
+      "properties": {
+        "xTitle": {
+          "displayName": "X title",
+          "description": "X title",
+          "type": {
+            "text": true
+          }
+        },
+        "xZeroline": {
+          "displayName": "X zeroline",
+          "description": "X zeroline",
+          "type": {
+            "bool": true
+          }
+        },
+        "xLabels": {
+          "displayName": "X labels",
+          "description": "X labels",
+          "type": {
+            "bool": true
+          }
+        },
+        "xGrid": {
+          "displayName": "X gridlines",
+          "description": "X gridlines",
+          "type": {
+            "bool": true
+          }
+        },
+        "xGridCol": {
+          "displayName": "X grid color",
+          "description": "color of x grid lines",
+          "type": {
+            "fill": {
+              "solid": {
+                "color": true
+              }
+            }
+          }
+        },
+        "xGridWidth": {
+          "displayName": "X grid width",
+          "description": "Width of x grid lines",
+          "type": {
+            "numeric": true
+          }
+        },
+        "xAxisBaseLine": {
+          "displayName": "X base line",
+          "description": "X base line",
+          "type": {
+            "bool": true
+          }
+        },
+        "xAxisBaseLineCol": {
+          "displayName": "X base line color",
+          "description": "Color of x axis base line",
+          "type": {
+            "fill": {
+              "solid": {
+                "color": true
+              }
+            }
+          }
+        },
+        "xAxisBaseLineWidth": {
+          "displayName": "X base line width",
+          "description": "Width of x axis base line",
+          "type": {
+            "numeric": true
+          }
+        }
+      }
+    },
+    "yaxisSettings": {
+      "displayName": "Y axis settings",
+      "description": "Appereance settings for y axis",
+      "properties": {
+        "yTitle": {
+          "displayName": "Y title",
+          "description": "Y title",
+          "type": {
+            "text": true
+          }
+        },
+        "yZeroline": {
+          "displayName": "Y zeroline",
+          "description": "Y zeroline",
+          "type": {
+            "bool": true
+          }
+        },
+        "yLabels": {
+          "displayName": "Y label",
+          "description": "Y label",
+          "type": {
+            "bool": true
+          }
+        },
+        "yGrid": {
+          "displayName": "Y grid lines",
+          "description": "Y grid lines",
+          "type": {
+            "bool": true
+          }
+        },
+        "yGridCol": {
+          "displayName": "Y grid line color",
+          "description": "Color of y grid lines",
+          "type": {
+            "fill": {
+              "solid": {
+                "color": true
+              }
+            }
+          }
+        },
+        "yGridWidth": {
+          "displayName": "Y grid line width",
+          "description": "Width of y grid lines",
+          "type": {
+            "numeric": true
+          }
+        },
+        "yAxisBaseLine": {
+          "displayName": "Y base line",
+          "description": "Y base line",
+          "type": {
+            "bool": true
+          }
+        },
+        "yAxisBaseLineCol": {
+          "displayName": "Y base line color",
+          "description": "Color of y base line",
+          "type": {
+            "fill": {
+              "solid": {
+                "color": true
+              }
+            }
+          }
+        },
+        "yAxisBaseLineWidth": {
+          "displayName": "Y base line width",
+          "description": "Width of y base line",
+          "type": {
+            "numeric": true
+          }
+        }
+      }
+    }
+  },
+  "suppressDefaultTitle": true
+}
