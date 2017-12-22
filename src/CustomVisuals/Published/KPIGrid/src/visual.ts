@@ -24,9 +24,7 @@
  *  THE SOFTWARE.
  */
 
-
 module powerbi.extensibility.visual {
-
 
     import TextProperties = powerbi.extensibility.utils.formatting.TextProperties;
     import textMeasurementService = powerbi.extensibility.utils.formatting.textMeasurementService;
@@ -41,8 +39,9 @@ module powerbi.extensibility.visual {
                 return defaultValue;
             }
 
-            const objectOrMap = objects[propertyId.objectName];
-            const object = <DataViewObject>objectOrMap;
+            let objectOrMap: DataViewObject;
+            objectOrMap = objects[propertyId.objectName];
+            const object: DataViewObject = <DataViewObject>objectOrMap;
 
             return DataViewObject.getValue(object, propertyId.propertyName, defaultValue);
         }
@@ -50,7 +49,7 @@ module powerbi.extensibility.visual {
         /** Gets an object from objects. */
         export function getObject(objects: DataViewObjects, objectName: string, defaultValue?: DataViewObject): DataViewObject {
             if (objects && objects[objectName]) {
-                const object = <DataViewObject>objects[objectName];
+                const object: DataViewObject = <DataViewObject>objects[objectName];
 
                 return object;
             } else {
@@ -61,14 +60,15 @@ module powerbi.extensibility.visual {
         /** Gets a map of user-defined objects. */
         export function getUserDefinedObjects(objects: DataViewObjects, objectName: string): DataViewObjectMap {
             if (objects && objects[objectName]) {
-                const map = <DataViewObjectMap>objects[objectName];
+                const map: DataViewObjectMap = <DataViewObjectMap>objects[objectName];
 
                 return map;
             }
         }
 
         /** Gets the solid color from a fill property. */
-        export function getFillColor(objects: DataViewObjects,
+        export function getFillColor(
+            objects: DataViewObjects,
             propertyId: DataViewObjectPropertyIdentifier, defaultColor?: string): string {
             const value: Fill = getValue(objects, propertyId);
             if (!value || !value.solid) {
@@ -86,7 +86,8 @@ module powerbi.extensibility.visual {
                 return defaultValue;
             }
 
-            const propertyValue = <T>object[propertyName];
+            // tslint:disable-next-line:no-any
+            const propertyValue: any = <T>object[propertyName];
             if (propertyValue === undefined) {
                 return defaultValue;
             }
@@ -104,7 +105,8 @@ module powerbi.extensibility.visual {
         }
     }
 
-    export let visualProperties = {
+    // tslint:disable-next-line:no-any
+    export let visualProperties: any = {
         hierarchyData: {
             expanded: <DataViewObjectPropertyIdentifier>{ objectName: 'hierarchyData', propertyName: 'expanded' }
         },
@@ -135,59 +137,62 @@ module powerbi.extensibility.visual {
         }
     };
 
-    export interface headerSettings {
+    export interface IHeaderSettings {
         headerColor: string;
         bgColor: string;
         fontSize: number;
     }
 
-    export interface labelSettings {
+    export interface ILabelSettings {
         labelColor: string;
         fontSize: number;
         gap: number;
         RowbgColor: string;
     }
 
-    export interface totalSettings {
+    export interface ITotalSettings {
         totalText: string;
         totalColor: string;
         fontSize: number;
     }
 
-    export interface indicatorSettings {
-        IndicatorSwitch: boolean,
+    export interface IIndicatorSettings {
+        IndicatorSwitch: boolean;
 
     }
-    export interface PrefixSettings {
-        prefixText: string
+    export interface IPrefixSettings {
+        prefixText: string;
     }
 
-    export interface KPISettings {
+    export interface IKPISettings {
         value: boolean;
         key: string;
         selectionId: {};
     }
     export class Visual implements IVisual {
-        private static currentLevelData = [];
+        // tslint:disable-next-line:no-any
+        private static currentLevelData: any = [];
         private visualHost: IVisualHost;
         private target: HTMLElement;
-        private data;
+        private data: DataViewCategorical;
         private noOflevels: number;
         private prevNoOfLevels: number;
         private prevNoOfMeasures: number;
         private numberOfMeasures: number;
-        private measuresData;
+        private measuresData: DataViewValueColumn[];
         private totalRowsLength: number;
-        private indicatorsData;
+        private indicatorsData: PrimitiveValue[];
         private viewport: IViewport;
         private dataViews: DataView;
         private levelWidthPercentage: number;
         private measuresWidthPercentage: number;
         private gapDivPercentage: number;
-        private expandedData;
-        private resizeData;
-        private scrollData;
-        private KPIdisplay: KPISettings[];
+        private expandedData: string[];
+        // tslint:disable-next-line:no-any
+        private resizeData: any;
+        private scrollData: number[];
+        private kpiDisplay: IKPISettings[];
+        private contentElement: JQuery;
 
         constructor(options: VisualConstructorOptions) {
             this.visualHost = options.host;
@@ -197,15 +202,15 @@ module powerbi.extensibility.visual {
             this.gapDivPercentage = 1.5;
             this.expandedData = [];
             this.resizeData = {};
-            this.scrollData = {};
+            this.scrollData = [];
         }
 
-        public getDistinctElements(val, i, self) {
+        public getDistinctElements(val: PrimitiveValue, i: number, self: PrimitiveValue[]): boolean {
             return self.indexOf(val) === i;
         }
 
         public getNumberOfGaps(): number {
-            const labelSettings: labelSettings = this.getlabelSettings(this.dataViews);
+            const labelSettings: ILabelSettings = this.getlabelSettings(this.dataViews);
             let numberOfgaps: number = 0;
             if (labelSettings.gap !== 0 && labelSettings.gap < this.numberOfMeasures) {
                 numberOfgaps = this.numberOfMeasures / labelSettings.gap;
@@ -218,22 +223,22 @@ module powerbi.extensibility.visual {
             return numberOfgaps;
         }
 
-        public getAggregate(dataset, measure: number, hierarchyId: String): number {
+        public getAggregate(dataset: DataViewValueColumn[], measure: number, hierarchyId: String): number {
             let sum: number = 0;
             if (hierarchyId !== 'none') {
-                const hierarchyArray = hierarchyId.split('-$>');
-                const level = hierarchyArray.length - 1;
-                let counter;
-                for (let irow = 0; irow < this.totalRowsLength; irow++) {
+                const hierarchyArray: string[] = hierarchyId.split('-$>');
+                const level: number = hierarchyArray.length - 1;
+                let counter: number;
+                for (let irow: number = 0; irow < this.totalRowsLength; irow++) {
                     counter = 0;
-                    for (let iLevel = 0; iLevel <= level; iLevel++) {
+                    for (let iLevel: number = 0; iLevel <= level; iLevel++) {
                         if (this.data.categories[iLevel].values[irow].toString() === hierarchyArray[iLevel].toString()) {
                             counter += 1;
                             if (counter === level + 1) {
                                 if (measure === undefined) {
-                                    sum += dataset[irow];
+                                    sum += parseFloat(dataset[irow].toString());
                                 } else {
-                                    sum += dataset[measure].values[irow];
+                                    sum += dataset[measure].values[irow] ? parseFloat(dataset[measure].values[irow].toString()) : 0;
                                 }
                             }
                         }
@@ -242,11 +247,11 @@ module powerbi.extensibility.visual {
 
                 return sum;
             } else {
-                for (let irow = 0; irow < this.totalRowsLength; irow++) {
+                for (let irow: number = 0; irow < this.totalRowsLength; irow++) {
                     if (measure === undefined) {
-                        sum += dataset[irow];
+                        sum += parseFloat(dataset[irow].toString());
                     } else {
-                        sum += dataset[measure].values[irow];
+                        sum += dataset[measure].values[irow] ? parseFloat(dataset[measure].values[irow].toString()) : 0;
                     }
                 }
 
@@ -254,8 +259,8 @@ module powerbi.extensibility.visual {
             }
         }
 
-        public showNextLevel(hierarchyId, cacheFlag: boolean) {
-            const context = $(`[hierarchyId="${hierarchyId}"]`);
+        public showNextLevel(hierarchyId: string, cacheFlag: boolean): void {
+            const context: JQuery = $(`[hierarchyId="${hierarchyId}"]`);
             if (context &&
                 context[0] &&
                 context[0].children[0] &&
@@ -263,17 +268,17 @@ module powerbi.extensibility.visual {
                 context[0].children[0].children[0].classList.remove('gridPlusIcon');
                 context[0].children[0].children[0].classList.add('gridMinusIcon');
                 context[0].children[0].children[0].setAttribute('status', 'expanded');
-                const tableContent = this.printLevel(hierarchyId);
+                const tableContent: string = this.printLevel(hierarchyId);
                 context.append(tableContent);
 
-                const levelLength = Visual.currentLevelData.length;
-                const hierarchyArray = hierarchyId.split('-$>');
-                const level = hierarchyArray.length;
-                const parentId = hierarchyArray[level - 1];
+                const levelLength: number = Visual.currentLevelData.length;
+                const hierarchyArray: string[] = hierarchyId.split('-$>');
+                const level: number = hierarchyArray.length;
+                const parentId: string = hierarchyArray[level - 1];
 
-                for (let iRow = 0; iRow < levelLength; iRow++) {
+                for (let iRow: number = 0; iRow < levelLength; iRow++) {
 
-                    let newHierarchyId;
+                    let newHierarchyId: string;
                     if (level === 0) {
                         newHierarchyId = Visual.currentLevelData[iRow].value.toString();
                     } else {
@@ -293,8 +298,8 @@ module powerbi.extensibility.visual {
             }
         }
 
-        public hideNextLevel(currentContext): void {
-            for (let iElement = 0; iElement < this.expandedData.length; iElement++) {
+        public hideNextLevel(currentContext: HTMLElement): void {
+            for (let iElement: number = 0; iElement < this.expandedData.length; iElement++) {
                 if (this.expandedData[iElement].indexOf(currentContext.parentElement.parentElement.getAttribute('hierarchyId')) !== -1) {
                     this.expandedData.splice(iElement, 1);
                     iElement--;
@@ -303,28 +308,30 @@ module powerbi.extensibility.visual {
             this.persistExpandedData();
         }
 
+        // tslint:disable-next-line:cyclomatic-complexity
         public printLevel(hierarchyId: String): string {
-            const labelSettings: labelSettings = this.getlabelSettings(this.dataViews);
-            const indicatorSettings: indicatorSettings = this.getindicatorSettings(this.dataViews);
+            const labelSettings: ILabelSettings = this.getlabelSettings(this.dataViews);
+            const indicatorSettings: IIndicatorSettings = this.getindicatorSettings(this.dataViews);
             let tableContent: string = '';
-            const paddingLeft = 0;
-            const hierarchyArray = hierarchyId.split('-$>');
-            let level = hierarchyArray.length;
-            const parentId = hierarchyArray[level - 1];
+            const paddingLeft: number = 0;
+            const hierarchyArray: string[] = hierarchyId.split('-$>');
+            let level: number = hierarchyArray.length;
+            const parentId: string = hierarchyArray[level - 1];
 
             if (hierarchyId === 'root') {
                 level = 0;
             }
-            const filteredCurrentLevelData = this.data.categories[level].values;
-            var currentLevelData = [];
-            const tempValues = [];
+            const filteredCurrentLevelData: PrimitiveValue[] = this.data.categories[level].values;
+            // tslint:disable-next-line:no-any
+            let currentLevelData: any = [];
+            const tempValues: PrimitiveValue[] = [];
             Visual.currentLevelData = [];
 
             if (hierarchyId !== 'root') {
-                let counter;
-                for (let irow = 0; irow < this.totalRowsLength; irow++) {
+                let counter: number;
+                for (let irow: number = 0; irow < this.totalRowsLength; irow++) {
                     counter = 0;
-                    for (let iLevel = 0; iLevel < level; iLevel++) {
+                    for (let iLevel: number = 0; iLevel < level; iLevel++) {
                         if (this.data.categories[iLevel].values[irow].toString() === hierarchyArray[iLevel].toString()) {
                             counter += 1;
                             if (counter === level) {
@@ -339,9 +346,11 @@ module powerbi.extensibility.visual {
                 }
                 if (level !== this.noOflevels - 1) {
                     currentLevelData = [];
-                    let items: any = tempValues.filter(this.getDistinctElements);
-                    let itemsLength = items.length;
-                    for (let iValue = 0; iValue < itemsLength; iValue++) {
+                    let items: PrimitiveValue[];
+                    items = tempValues.filter(this.getDistinctElements);
+                    let itemsLength: number;
+                    itemsLength = items.length;
+                    for (let iValue: number = 0; iValue < itemsLength; iValue++) {
                         currentLevelData.push({
                             key: iValue,
                             value: items[iValue]
@@ -349,9 +358,11 @@ module powerbi.extensibility.visual {
                     }
                 }
             } else {
-                let items: any = filteredCurrentLevelData.filter(this.getDistinctElements);
-                let itemsLength = items.length;
-                for (let iValue = 0; iValue < itemsLength; iValue++) {
+                let items: PrimitiveValue[];
+                items = filteredCurrentLevelData.filter(this.getDistinctElements);
+                let itemsLength: number;
+                itemsLength = items.length;
+                for (let iValue: number = 0; iValue < itemsLength; iValue++) {
                     currentLevelData.push({
                         key: iValue,
                         value: items[iValue]
@@ -359,20 +370,20 @@ module powerbi.extensibility.visual {
                 }
             }
 
-            const levelLength = currentLevelData.length;
-            for (let i = 0; i < levelLength; i++) {
+            const levelLength: number = currentLevelData.length;
+            for (let i: number = 0; i < levelLength; i++) {
                 Visual.currentLevelData[i] = (currentLevelData[i]);
             }
 
-            const numberOfgaps = this.getNumberOfGaps();
+            const numberOfgaps: number = this.getNumberOfGaps();
 
-            const gridWidth = 250 + 20 + (this.numberOfMeasures * 100) + (this.numberOfMeasures * 1) + (numberOfgaps * 20);
+            const gridWidth: number = 250 + 20 + (this.numberOfMeasures * 100) + (this.numberOfMeasures * 1) + (numberOfgaps * 20);
 
-            let levelMarginLeft = 30;
+            let levelMarginLeft: number = 30;
             levelMarginLeft += level * 20;
 
-            for (let iRow = 0; iRow < levelLength; iRow++) {
-                let newHierarchyId;
+            for (let iRow: number = 0; iRow < levelLength; iRow++) {
+                let newHierarchyId: string;
                 if (level === 0) {
                     newHierarchyId = currentLevelData[iRow].value.toString();
                 } else {
@@ -382,6 +393,7 @@ module powerbi.extensibility.visual {
                 //print levels column
                 tableContent += `<div class = "gridRow" style = "width:${gridWidth}px" level="${level}" eleId="" >
                 <div class = "gridLevels rowLevel${level}" style = "color:${labelSettings.labelColor};
+                background-color:${labelSettings.RowbgColor};
                 font-family:Segoe UI, wf_segoe-ui_normal, helvetica, arial, sans-serif; font-size:${labelSettings.fontSize}px">`;
 
                 if (level !== this.noOflevels - 1) {
@@ -390,21 +402,20 @@ module powerbi.extensibility.visual {
                 }
                 tableContent += `<span class="gridText${iRow}" style="margin-left:${levelMarginLeft}px"></span></div>`;
 
-                let gapCounter = -1;
+                let gapCounter: number = -1;
                 tableContent += `<div class="gapDiv"></div>`;
 
                 //print measure columns
-                for (let iMeasure = 0; iMeasure < this.numberOfMeasures; iMeasure++) {
+                for (let iMeasure: number = 0; iMeasure < this.numberOfMeasures; iMeasure++) {
                     gapCounter += 1;
                     if (gapCounter === labelSettings.gap && gapCounter !== 0) {
                         tableContent += '<div class="gapDiv"></div>';
                         gapCounter = 0;
                     }
-                    const formatter = ValueFormatter.create({ format: this.measuresData[iMeasure].source.format });
-                    let measureValue;
-                    let formattedMeasureData;
-                    let tooltipFormattedMeasureData;
-
+                    const formatter: IValueFormatter = ValueFormatter.create({ format: this.measuresData[iMeasure].source.format });
+                    let measureValue: PrimitiveValue;
+                    let formattedMeasureData: string;
+                    let tooltipFormattedMeasureData: string;
                     if (level !== this.noOflevels - 1) {
                         measureValue = this.getAggregate(this.measuresData, iMeasure, newHierarchyId);
                         formattedMeasureData = formatter.format(measureValue);
@@ -414,62 +425,72 @@ module powerbi.extensibility.visual {
                         formattedMeasureData = formatter.format(measureValue);
                         tooltipFormattedMeasureData = formatter.format(measureValue);
                     }
-
                     tableContent += `<div class = "gridMeasures rowLevel${level} measure${(iMeasure + 1)}"
-                         style = "color:${labelSettings.labelColor};
+                         style = "color:${labelSettings.labelColor}; background-color:${labelSettings.RowbgColor};
                         font-family:Segoe UI, wf_segoe-ui_normal, helvetica, arial, sans-serif; font-size:${labelSettings.fontSize}px">
                         <span class="gridText" title="${tooltipFormattedMeasureData}">${formattedMeasureData}</span>`;
 
                     //display indicators
                     if (this.indicatorsData[this.measuresData[iMeasure].source.displayName]) {
-                        let IndicatorMeasureValue: number;
+                        let indicatorMeasureValue: number;
                         let difference: number = 0;
-                        let differenceModified: string = "";
-                        let arrowClass: number;
+                        let differenceModified: string = '';
 
                         if (level !== this.noOflevels - 1) {
-                            IndicatorMeasureValue = this.getAggregate(this.indicatorsData
-                            [this.measuresData[iMeasure].source.displayName],
+                            indicatorMeasureValue = this.getAggregate(
+                                this.indicatorsData
+                                [this.measuresData[iMeasure].source.displayName],
                                 undefined, newHierarchyId);
                         } else {
-                            IndicatorMeasureValue = this.indicatorsData[this.measuresData[iMeasure]
+                            indicatorMeasureValue = this.indicatorsData[this.measuresData[iMeasure]
                                 .source.displayName][currentLevelData[iRow].key];
                         }
 
-                        difference = measureValue - IndicatorMeasureValue;
-                        differenceModified = Math.abs(difference - parseFloat(difference.toString())) > 0 ? difference.toFixed(2) : difference.toString();
-                        // indicator toggle 
-                        for (var l = 0; l < this.KPIdisplay.length; l++) {
-                            if (this.KPIdisplay[l].key === this.measuresData[iMeasure].source.displayName) {
-                                if (this.KPIdisplay[l].value === true) {
+                        difference = parseFloat(measureValue.toString()) - indicatorMeasureValue;
+                        differenceModified = Math.abs(difference -
+                            parseFloat(difference.toString())) > 0 ? difference.toFixed(2) : difference.toString();
+                        // indicator toggle
+                        for (let l: number = 0; l < this.kpiDisplay.length; l++) {
+                            if (this.kpiDisplay[l].key === this.measuresData[iMeasure].source.displayName) {
+                                if (this.kpiDisplay[l].value === true) {
                                     if (difference > 0) {
-                                        tableContent += '<span title="+' + formatter.format(parseFloat(differenceModified)) + '" class="up-red"></span>';
-                                    }
-                                    else if (difference == 0) {
+                                        tableContent += '<span title="+';
+                                        tableContent += formatter.format(parseFloat(differenceModified));
+                                        tableContent += '" class="up-red"></span>';
+                                    } else if (difference === 0) {
                                         tableContent += '<span title="No change" class="right-grey"></span>';
-                                    }
-                                    else {
-                                        if (formatter.format(parseFloat(differenceModified))[0] == '(' && formatter.format(parseFloat(differenceModified))[formatter.format(parseFloat(differenceModified)).length - 1] == ')') {
-                                            tableContent += '<span title="-' + formatter.format(parseFloat(differenceModified)).slice(1, -1) + '" class="down-green"></span>';
+                                    } else {
+                                        if (formatter.format(parseFloat(differenceModified))[0] === '('
+                                            && formatter.format(parseFloat(differenceModified))[formatter.format(
+                                                parseFloat(differenceModified)).length - 1] === ')') {
+                                            tableContent += '<span title="-';
+                                            tableContent += formatter.format(
+                                                parseFloat(differenceModified)).slice(1, -1);
+                                            tableContent += '" class="down-green"></span>';
+                                        } else {
+                                            tableContent += '<span title="';
+                                            tableContent += formatter.format(parseFloat(differenceModified));
+                                            tableContent += '" class="down-green"></span>';
                                         }
-                                        else {
-                                            tableContent += '<span title="' + formatter.format(parseFloat(differenceModified)) + '" class="down-green"></span>';
-                                        }
                                     }
-                                }
-                                else {
+                                } else {
                                     if (difference > 0) {
-                                        tableContent += '<span title="+' + formatter.format(parseFloat(differenceModified)) + '" class="up-green"></span>';
-                                    }
-                                    else if (difference == 0) {
+                                        tableContent += '<span title="+';
+                                        tableContent += formatter.format(parseFloat(differenceModified));
+                                        tableContent += '" class="up-green"></span>';
+                                    } else if (difference === 0) {
                                         tableContent += '<span title="No change" class="right-grey"></span>';
-                                    }
-                                    else {
-                                        if (formatter.format(parseFloat(differenceModified))[0] == '(' && formatter.format(parseFloat(differenceModified))[formatter.format(parseFloat(differenceModified)).length - 1] == ')') {
-                                            tableContent += '<span title="-' + formatter.format(parseFloat(differenceModified)).slice(1, -1) + '" class="down-red"></span>';
-                                        }
-                                        else {
-                                            tableContent += '<span title="' + formatter.format(parseFloat(differenceModified)) + '" class="down-red"></span>';
+                                    } else {
+                                        if (formatter.format(parseFloat(differenceModified))[0] === '(' &&
+                                            formatter.format(parseFloat(differenceModified))[formatter.format(
+                                                parseFloat(differenceModified)).length - 1] === ')') {
+                                            tableContent += '<span title="-';
+                                            tableContent += formatter.format(parseFloat(differenceModified)).slice(1, -1);
+                                            tableContent += '" class="down-red"></span>';
+                                        } else {
+                                            tableContent += '<span title="';
+                                            tableContent += formatter.format(parseFloat(differenceModified));
+                                            tableContent += '" class="down-red"></span>';
                                         }
                                     }
                                 }
@@ -480,13 +501,17 @@ module powerbi.extensibility.visual {
                 }
                 tableContent += '</div>';
             }
+
             return tableContent;
         }
 
-        public update(options: VisualUpdateOptions) {
+        // tslint:disable-next-line:cyclomatic-complexity
+        public update(options: VisualUpdateOptions): void {
             this.target.innerHTML = `<div id = "baseContainer"></div>`;
-            $('#baseContainer').css('width', `${options.viewport.width}px`);
-            $('#baseContainer').css('height', `${options.viewport.height}px`);
+            let baseContainer: JQuery;
+            baseContainer = $('#baseContainer');
+            baseContainer.css('width', `${options.viewport.width}px`);
+            baseContainer.css('height', `${options.viewport.height}px`);
 
             if (options &&
                 options.dataViews[0] &&
@@ -496,12 +521,11 @@ module powerbi.extensibility.visual {
 
                 this.dataViews = options.dataViews[0];
 
-                const headerSettings: headerSettings = this.getheaderSettings(this.dataViews);
-                const labelSettings: labelSettings = this.getlabelSettings(this.dataViews);
-                const totalSettings: totalSettings = this.gettotalSettings(this.dataViews);
-                const indicatorSettings: indicatorSettings = this.getindicatorSettings(this.dataViews);
-                const PrefixSettings: PrefixSettings = this.getPrefixSettings(this.dataViews);
-                var KPIdisplay = [];
+                const headerSettings: IHeaderSettings = this.getheaderSettings(this.dataViews);
+                const labelSettings: ILabelSettings = this.getlabelSettings(this.dataViews);
+                const totalSettings: ITotalSettings = this.gettotalSettings(this.dataViews);
+                const indicatorSettings: IIndicatorSettings = this.getindicatorSettings(this.dataViews);
+                const prefixSettings: IPrefixSettings = this.getPrefixSettings(this.dataViews);
 
                 this.viewport = options.viewport;
                 this.totalRowsLength = options.dataViews[0].categorical.categories[0].values.length;
@@ -511,40 +535,50 @@ module powerbi.extensibility.visual {
 
                 this.measuresData = [];
                 this.indicatorsData = [];
-                this.KPIdisplay = [];
+                this.kpiDisplay = [];
 
-                var objects = this.dataViews.metadata.objects;
+                let objects: DataViewObjects;
+                objects = this.dataViews.metadata.objects;
 
-                var metadataColumns: DataViewMetadataColumn[] = options.dataViews[0].metadata.columns;
-                var measures = [];
+                let metadataColumns: DataViewMetadataColumn[];
+                metadataColumns = options.dataViews[0].metadata.columns;
+                let measures: string[];
+                measures = [];
+                let measureLiteral: string;
+                let measure2Literal: string;
+                measureLiteral = 'measure';
+                measure2Literal = 'measure2';
 
-                for (let iMeasure = 0; iMeasure < options.dataViews[0].categorical.values.length; iMeasure++) {
+                for (let iMeasure: number = 0; iMeasure < options.dataViews[0].categorical.values.length; iMeasure++) {
 
-                    if (options.dataViews[0].categorical.values[iMeasure].source.roles['measure']) {
+                    if (options.dataViews[0].categorical.values[iMeasure].source.roles[measureLiteral]) {
 
                         this.measuresData.push(options.dataViews[0].categorical.values[iMeasure]);
                         measures.push(options.dataViews[0].categorical.values[iMeasure].source.displayName);
                     }
                 }
 
-                for (var iMeasure = 0; iMeasure < options.dataViews[0].categorical.values.length; iMeasure++) {
-                    if (options.dataViews[0].categorical.values[iMeasure].source.roles['measure2']) {
-                        var currentColumn: DataViewMetadataColumn = null;
-                        var measureName: string = options.dataViews[0].categorical.values[iMeasure].source.displayName.toString();
-                        var prefixText = PrefixSettings.prefixText;
-                        if (prefixText && measureName.indexOf(prefixText) == 0 && measures.indexOf(measureName.substr(prefixText.length, measureName.length)) >= 0) {
+                for (let iMeasure: number = 0; iMeasure < options.dataViews[0].categorical.values.length; iMeasure++) {
+                    if (options.dataViews[0].categorical.values[iMeasure].source.roles[measure2Literal]) {
+                        let currentColumn: DataViewMetadataColumn = null;
+                        let measureName: string;
+                        let prefixText: string;
+                        measureName = options.dataViews[0].categorical.values[iMeasure].source.displayName.toString();
+                        prefixText = prefixSettings.prefixText;
+                        if (prefixText && measureName.indexOf(prefixText) === 0
+                            && measures.indexOf(measureName.substr(prefixText.length, measureName.length)) >= 0) {
                             this.indicatorsData[measureName.substr(prefixText.length, measureName.length)] =
                                 options.dataViews[0].categorical.values[iMeasure].values;
 
-                            for (var b = 0; b < metadataColumns.length; b++) {
+                            for (let b: number = 0; b < metadataColumns.length; b++) {
                                 if (metadataColumns[b].displayName === measureName) {
                                     currentColumn = metadataColumns[b];
                                 }
                             }
-                            this.KPIdisplay.push({
+                            this.kpiDisplay.push({
                                 key: measureName.substr(prefixText.length, measureName.length),
-                                value: getValue<boolean>(currentColumn.objects, "indicatorSettings", "IndicatorSwitch", false),
-                                selectionId: { metadata: currentColumn.queryName },
+                                value: getValue<boolean>(currentColumn.objects, 'indicatorSettings', 'IndicatorSwitch', false),
+                                selectionId: { metadata: currentColumn.queryName }
                             });
                         }
                     }
@@ -552,31 +586,31 @@ module powerbi.extensibility.visual {
 
                 this.numberOfMeasures = this.measuresData.length;
 
-                const numberOfgaps = this.getNumberOfGaps();
+                const numberOfgaps: number = this.getNumberOfGaps();
 
-                const gridWidth = 250 + 20 + this.numberOfMeasures * 100 + this.numberOfMeasures * 1 + numberOfgaps * 20;
+                const gridWidth: number = 250 + 20 + this.numberOfMeasures * 100 + this.numberOfMeasures * 1 + numberOfgaps * 20;
 
                 //Add Table headers
-                const tableHeaderRow = document.createElement('div');
+                const tableHeaderRow: HTMLDivElement = document.createElement('div');
                 tableHeaderRow.setAttribute('class', 'gridRow');
                 tableHeaderRow.setAttribute('id', 'headerRow');
                 tableHeaderRow.style.width = `${gridWidth}px`;
 
                 //level headers
-                const gridLevels = document.createElement('div');
+                const gridLevels: HTMLDivElement = document.createElement('div');
                 gridLevels.setAttribute('class', 'gridLevels');
                 gridLevels.style.backgroundColor = headerSettings.bgColor;
                 gridLevels.style.color = headerSettings.headerColor;
                 gridLevels.style.fontSize = `${headerSettings.fontSize}px`;
 
-                let textSpan = document.createElement('span');
+                let textSpan: HTMLSpanElement = document.createElement('span');
                 textSpan.setAttribute('class', 'gridText headerLevel');
                 textSpan.setAttribute('title', options.dataViews[0].categorical.categories[0].source.displayName);
                 textSpan.textContent = options.dataViews[0].categorical.categories[0].source.displayName;
                 gridLevels.appendChild(textSpan);
 
                 //resizers
-                let resizer = document.createElement('span');
+                let resizer: HTMLSpanElement = document.createElement('span');
                 resizer.setAttribute('columnId', 'gridLevels');
                 resizer.setAttribute('class', 'resizer');
                 resizer.style.backgroundColor = headerSettings.bgColor;
@@ -584,23 +618,23 @@ module powerbi.extensibility.visual {
                 tableHeaderRow.appendChild(gridLevels);
 
                 //gap div
-                let gapCounter = -1;
-                let gapDiv = document.createElement('div');
+                let gapCounter: number = -1;
+                let gapDiv: HTMLDivElement = document.createElement('div');
                 gapDiv.setAttribute('class', 'gapDiv');
                 tableHeaderRow.appendChild(gapDiv);
 
                 //measure headers
-                for (let iMeasure = 0; iMeasure < this.numberOfMeasures; iMeasure++) {
+                for (let iMeasure: number = 0; iMeasure < this.numberOfMeasures; iMeasure++) {
                     gapCounter += 1;
                     if (gapCounter === labelSettings.gap && gapCounter !== 0) {
-                        let gapDiv = document.createElement('div');
+                        gapDiv = document.createElement('div');
                         gapDiv.setAttribute('class', 'gapDiv');
                         tableHeaderRow.appendChild(gapDiv);
                         gapCounter = 0;
                     }
 
                     //measureNames
-                    const gridMeasures = document.createElement('div');
+                    const gridMeasures: HTMLDivElement = document.createElement('div');
                     gridMeasures.setAttribute('class', `gridMeasures measure${(iMeasure + 1)}`);
                     gridMeasures.style.backgroundColor = headerSettings.bgColor;
                     gridMeasures.style.color = headerSettings.headerColor;
@@ -621,40 +655,41 @@ module powerbi.extensibility.visual {
                     tableHeaderRow.appendChild(gridMeasures);
                 }
 
-                $('#baseContainer').append(tableHeaderRow);
+                baseContainer.append(tableHeaderRow);
 
                 //hierarchy content
-                const content = document.createElement('div');
+                const content: HTMLDivElement = document.createElement('div');
                 content.setAttribute('id', 'content');
-                $('#baseContainer').append(content);
+                baseContainer.append(content);
 
-                $('#content').css('height', `${options.viewport.height - 25}px`);
-                $('#content').css('width', '100%');
+                this.contentElement = $('#content');
+                this.contentElement.css('height', `${options.viewport.height - 25}px`);
+                this.contentElement.css('width', '100%');
 
                 //print table
-                const tableContent = this.printLevel('root');  //hierarchId=root id=root level=0
-                $('#content').append(tableContent);
+                const tableContent: string = this.printLevel('root');  //hierarchId=root id=root level=0
+                this.contentElement.append(tableContent);
 
-                for (let iRow = 0; iRow < Visual.currentLevelData.length; iRow++) {
+                for (let iRow: number = 0; iRow < Visual.currentLevelData.length; iRow++) {
                     $(`.gridText${iRow}`).parent(`.gridLevels.rowLevel0`).parent(`[class="gridRow"]`)
                         .attr('eleId', Visual.currentLevelData[iRow].value);
                     $(`.gridText${iRow}`).parent('.gridLevels.rowLevel0').parent('[class="gridRow"]').attr('parentId', 'root');
                     $(`.gridText${iRow}`).parent('.gridLevels.rowLevel0').parent('[class="gridRow"]')
                         .attr('hierarchyId', Visual.currentLevelData[iRow].value);
                 }
-                const levelLength = Visual.currentLevelData.length;
-                for (let iRow = 0; iRow < levelLength; iRow++) {
+                const levelLength: number = Visual.currentLevelData.length;
+                for (let iRow: number = 0; iRow < levelLength; iRow++) {
 
                     $(`.gridText${iRow}`).text(Visual.currentLevelData[iRow].value);
                 }
 
                 //total row
-                const tableTotalRow = document.createElement('div');
+                const tableTotalRow: HTMLDivElement = document.createElement('div');
                 tableTotalRow.setAttribute('class', 'gridRow');
                 tableTotalRow.setAttribute('id', 'totalGridRow');
                 tableTotalRow.style.width = `${gridWidth}px`;
 
-                const totalLabel = document.createElement('div');
+                const totalLabel: HTMLDivElement = document.createElement('div');
                 totalLabel.setAttribute('class', 'gridLevels totalGridLevel');
                 totalLabel.style.color = totalSettings.totalColor;
                 totalLabel.style.fontSize = `${totalSettings.fontSize}px`;
@@ -672,7 +707,7 @@ module powerbi.extensibility.visual {
                 tableTotalRow.appendChild(gapDiv);
 
                 //total measures
-                for (let iMeasure = 0; iMeasure < this.numberOfMeasures; iMeasure++) {
+                for (let iMeasure: number = 0; iMeasure < this.numberOfMeasures; iMeasure++) {
 
                     gapCounter += 1;
                     if (gapCounter === labelSettings.gap && gapCounter !== 0) {
@@ -682,16 +717,16 @@ module powerbi.extensibility.visual {
                         gapCounter = 0;
                     }
 
-                    const formatter = ValueFormatter.create({ format: this.measuresData[iMeasure].source.format });
+                    const formatter: IValueFormatter = ValueFormatter.create({ format: this.measuresData[iMeasure].source.format });
 
-                    const totalMeasures = document.createElement('div');
+                    const totalMeasures: HTMLDivElement = document.createElement('div');
                     totalMeasures.setAttribute('class', `gridMeasures totalGridMeasures measure${(iMeasure + 1)}`);
                     totalMeasures.style.color = totalSettings.totalColor;
                     totalMeasures.style.fontSize = `${totalSettings.fontSize}px`;
 
                     textSpan = document.createElement('span');
                     textSpan.setAttribute('class', 'gridText');
-                    const measureValue = this.getAggregate(this.measuresData, iMeasure, 'none');
+                    const measureValue: number = this.getAggregate(this.measuresData, iMeasure, 'none');
                     textSpan.setAttribute('title', formatter.format(measureValue));
                     textSpan.textContent = formatter.format(measureValue);
                     totalMeasures.appendChild(textSpan);
@@ -701,31 +736,36 @@ module powerbi.extensibility.visual {
                         let indicatorMeasureValue: number = 0;
                         let difference: number = 0;
                         const arrowClass: number = 0;
-                        let differenceModified: string = "";
-                        indicatorMeasureValue = this.getAggregate(this.indicatorsData[this.measuresData[iMeasure].source.displayName],
+                        let differenceModified: string = '';
+                        indicatorMeasureValue = this.getAggregate(
+                            this.indicatorsData[this.measuresData[iMeasure].source.displayName],
                             undefined, 'none');
                         difference = measureValue - indicatorMeasureValue;
-                        differenceModified = Math.abs(difference - parseInt(difference.toString())) > 0 ? difference.toFixed(2) : difference.toString();
-                        var kpiArrow = document.createElement('span');
+                        differenceModified = Math.abs(difference -
+                            parseInt(difference.toString(), 10)) > 0 ? difference.toFixed(2) : difference.toString();
+                        let kpiArrow: HTMLSpanElement;
+                        kpiArrow = document.createElement('span');
 
                         // indicator toggle
-                        for (var l = 0; l < this.KPIdisplay.length; l++) {
-                            if (this.KPIdisplay[l].key === this.measuresData[iMeasure].source.displayName) {
-                                if (this.KPIdisplay[l].value === true) {
-                                    const kpiArrow = document.createElement('span');
+                        for (let l: number = 0; l < this.kpiDisplay.length; l++) {
+                            if (this.kpiDisplay[l].key === this.measuresData[iMeasure].source.displayName) {
+                                if (this.kpiDisplay[l].value === true) {
+                                    kpiArrow = document.createElement('span');
                                     if (difference > 0) {
+                                        let addLiteral: string;
+                                        addLiteral = '+';
                                         kpiArrow.setAttribute('class', 'up-red');
-                                        kpiArrow.setAttribute('title', '+' + formatter.format(parseFloat(differenceModified)));
+                                        kpiArrow.setAttribute('title', addLiteral + formatter.format(parseFloat(differenceModified)));
                                     } else if (difference === 0) {
                                         kpiArrow.setAttribute('class', 'right-grey');
                                         kpiArrow.setAttribute('title', 'No change');
-                                    }
-                                    else {
-                                        if (formatter.format(parseFloat(differenceModified))[0] == '(' && formatter.format(parseFloat(differenceModified))[formatter.format(parseFloat(differenceModified)).length - 1] == ')') {
+                                    } else {
+                                        if (formatter.format(parseFloat(differenceModified))[0] === '(' &&
+                                            formatter.format(parseFloat(differenceModified))[formatter.format(
+                                                parseFloat(differenceModified)).length - 1] === ')') {
                                             kpiArrow.setAttribute('class', 'down-green');
                                             kpiArrow.setAttribute('title', formatter.format(parseFloat(differenceModified)).slice(1, -1));
-                                        }
-                                        else {
+                                        } else {
                                             kpiArrow.setAttribute('class', 'down-green');
                                             kpiArrow.setAttribute('title', formatter.format(parseFloat(differenceModified)));
                                         }
@@ -733,19 +773,20 @@ module powerbi.extensibility.visual {
                                     totalMeasures.appendChild(kpiArrow);
                                 } else {
                                     if (difference > 0) {
+                                        let addLiteral: string;
+                                        addLiteral = '+';
                                         kpiArrow.setAttribute('class', 'up-green');
-                                        kpiArrow.setAttribute('title', '+' + formatter.format(parseFloat(differenceModified)));
-                                    }
-                                    else if (difference == 0) {
+                                        kpiArrow.setAttribute('title', addLiteral + formatter.format(parseFloat(differenceModified)));
+                                    } else if (difference === 0) {
                                         kpiArrow.setAttribute('class', 'right-grey');
                                         kpiArrow.setAttribute('title', 'No change');
-                                    }
-                                    else {
-                                        if (formatter.format(parseFloat(differenceModified))[0] == '(' && formatter.format(parseFloat(differenceModified))[formatter.format(parseFloat(differenceModified)).length - 1] == ')') {
+                                    } else {
+                                        if (formatter.format(parseFloat(differenceModified))[0] === '('
+                                            && formatter.format(parseFloat(differenceModified))[formatter.format(
+                                                parseFloat(differenceModified)).length - 1] === ')') {
                                             kpiArrow.setAttribute('class', 'down-red');
                                             kpiArrow.setAttribute('title', formatter.format(parseFloat(differenceModified)).slice(1, -1));
-                                        }
-                                        else {
+                                        } else {
                                             kpiArrow.setAttribute('class', 'down-red');
                                             kpiArrow.setAttribute('title', formatter.format(parseFloat(differenceModified)));
                                         }
@@ -758,10 +799,10 @@ module powerbi.extensibility.visual {
                     }
                     tableTotalRow.appendChild(totalMeasures);
                 }
-                $('#content').append(tableTotalRow);
+                this.contentElement.append(tableTotalRow);
 
                 //add click listener
-                this.addClickListener('');
+                this.addClickListener(undefined);
 
                 if ((!!this.prevNoOfLevels && this.noOflevels !== this.prevNoOfLevels) ||
                     (!!this.prevNoOfMeasures && this.numberOfMeasures !== this.prevNoOfMeasures)) {
@@ -794,25 +835,25 @@ module powerbi.extensibility.visual {
             //end if (dataview validator)
         }
 
-        public addClickListener(currentContext) {
-            const iThis = this;
-            let query = $('.expandCollapseButton');
+        public addClickListener(currentContext: JQuery): void {
+            const iThis: Visual = this;
+            let query: JQuery = $('.expandCollapseButton');
             if (currentContext) {
-                const eleId = currentContext[0].getAttribute('eleId');
-                const hierarchId = currentContext[0].getAttribute('hierarchyId');
+                const eleId: string = currentContext[0].getAttribute('eleId');
                 query = currentContext.children(`[parentid="${eleId}"]`).find('.expandCollapseButton');
             }
-            let flag;
-            $(query).mousedown(function () {
+            // tslint:disable-next-line:no-any
+            let flag: any;
+            $(query).mousedown(function (): void {
                 flag = this;
             });
-            $(query).mouseup(function () {
+            $(query).mouseup(function (): void {
                 if (flag === this) {
                     flag = 0;
                     if ($(this).attr('status') === 'expanded') {
                         iThis.hideNextLevel(this);
                     } else {
-                        const hierarchId = this.parentElement.parentElement.getAttribute('hierarchyId');
+                        const hierarchId: string = this.parentElement.parentElement.getAttribute('hierarchyId');
                         iThis.expandedData.push(hierarchId);
                         iThis.persistExpandedData();
                     }
@@ -820,38 +861,48 @@ module powerbi.extensibility.visual {
             });
         }
 
-        public addScrollListener() {
-            const iThis = this;
-            const scrolling = 0;
-            $('#content').scroll(function () {
-                iThis.scrollData['scrollTop'] = $(this).scrollTop();
-                iThis.scrollData['scrollLeft'] = $(this).scrollLeft();
+        public addScrollListener(): void {
+            const iThis: Visual = this;
+            const scrolling: number = 0;
+            let scrollTopLiteral: string;
+            let scrollLeftLiteral: string;
+            scrollTopLiteral = 'scrollTop';
+            scrollLeftLiteral = 'scrollLeft';
+            this.contentElement = $('#content');
+            this.contentElement.scroll(function (): void {
+                iThis.scrollData[scrollTopLiteral] = $(this).scrollTop();
+                iThis.scrollData[scrollLeftLiteral] = $(this).scrollLeft();
                 $('#headerRow').css('left', `${-$('#content').scrollLeft()}px`);
             });
         }
 
-        public setScrollData() {
+        public setScrollData(): void {
+            let scrollTopLiteral: string;
+            let scrollLeftLiteral: string;
+            scrollTopLiteral = 'scrollTop';
+            scrollLeftLiteral = 'scrollLeft';
+            this.contentElement = $('#content');
             if (this.scrollData) {
-                $('#content').scrollTop(this.scrollData['scrollTop']);
-                $('#content').scrollLeft(this.scrollData['scrollLeft']);
+                this.contentElement.scrollTop(this.scrollData[scrollTopLiteral]);
+                this.contentElement.scrollLeft(this.scrollData[scrollLeftLiteral]);
                 $('#headerRow').css('left', `${-$('#content').scrollLeft()}px`);
             }
         }
 
-        public addResizeListener() {
-            let pressed = false;
-            let moved = false;
-            let start;
-            let columnClass;
-            let startX;
-            let startWidth;
-            let startGridWidth;
-            let xDiff = 0;
-            let calculateWidth;
-            let calculatedGridWidth;
-            const iThis = this;
+        public addResizeListener(): void {
+            let pressed: boolean = false;
+            let moved: boolean = false;
+            let start: JQuery;
+            let columnClass: string;
+            let startX: number;
+            let startWidth: number;
+            let startGridWidth: number;
+            let xDiff: number = 0;
+            let calculateWidth: number;
+            let calculatedGridWidth: number;
+            const iThis: Visual = this;
 
-            $('.resizer').mousedown(function (e) {
+            $('.resizer').mousedown(function (e: JQueryMouseEventObject): void {
                 columnClass = this.getAttribute('columnId');
                 start = $(`.${columnClass}`);
                 pressed = true;
@@ -860,7 +911,7 @@ module powerbi.extensibility.visual {
                 startGridWidth = $('.gridRow').width();
             });
 
-            $(document).mousemove(function (e) {
+            $(document).mousemove(function (e: JQueryMouseEventObject): void {
                 if (pressed) {
                     moved = true;
                     xDiff = (e.pageX - startX);
@@ -872,13 +923,16 @@ module powerbi.extensibility.visual {
                 }
             });
 
-            $(document).mouseup(function () {
+            $(document).mouseup(function (): void {
+                let gridRowLiteral: string;
+                gridRowLiteral = 'gridRow';
+
                 if (pressed) {
                     pressed = false;
                 }
                 if (moved && columnClass) {
                     iThis.resizeData[columnClass] = calculateWidth;
-                    iThis.resizeData['gridRow'] = calculatedGridWidth;
+                    iThis.resizeData[gridRowLiteral] = calculatedGridWidth;
                     iThis.persistResizeData();
                     columnClass = undefined;
                     moved = false;
@@ -886,7 +940,7 @@ module powerbi.extensibility.visual {
             });
         }
 
-        public persistResizeData() {
+        public persistResizeData(): void {
             const properties: { [propertyName: string]: DataViewPropertyValue } = {};
             properties[visualProperties.resizeData.width.propertyName] = JSON.stringify(this.resizeData);
             const width: VisualObjectInstancesToPersist = {
@@ -900,7 +954,7 @@ module powerbi.extensibility.visual {
             this.visualHost.persistProperties(width);
         }
 
-        public persistExpandedData() {
+        public persistExpandedData(): void {
             const properties: { [propertyName: string]: DataViewPropertyValue } = {};
             properties[visualProperties.hierarchyData.expanded.propertyName] = this.expandedData.join('=#=');
             const expanded: VisualObjectInstancesToPersist = {
@@ -914,25 +968,26 @@ module powerbi.extensibility.visual {
             this.visualHost.persistProperties(expanded);
         }
 
-        public printExpandedData() {
+        public printExpandedData(): void {
             let objects: DataViewObjects = null;
             objects = this.dataViews.metadata.objects;
-            const getExpandedDataString = DataViewObjects.getValue<string>(objects, visualProperties.hierarchyData.expanded, '');
+            const getExpandedDataString: string = DataViewObjects.getValue<string>(objects, visualProperties.hierarchyData.expanded, '');
             if (getExpandedDataString) {
-                const expandedDataSplit = getExpandedDataString.split('=#=');
+                const expandedDataSplit: string[] = getExpandedDataString.split('=#=');
                 this.expandedData = expandedDataSplit;
-                expandedDataSplit.forEach(element => {
+                expandedDataSplit.forEach((element: string) => {
                     this.showNextLevel(element, true);
                 });
             }
         }
 
-        public setResizeData() {
+        public setResizeData(): void {
             let objects: DataViewObjects = null;
             objects = this.dataViews.metadata.objects;
-            const getJSONString = DataViewObjects.getValue<string>(objects, visualProperties.resizeData.width, '');
+            const getJSONString: string = DataViewObjects.getValue<string>(objects, visualProperties.resizeData.width, '');
             if (getJSONString) {
-                const parsedString = JSON.parse(getJSONString);
+                // tslint:disable-next-line:no-any
+                const parsedString: any = JSON.parse(getJSONString);
                 this.resizeData = parsedString;
                 for (const iData in this.resizeData) {
                     if (iData === 'gridRow') {
@@ -946,15 +1001,16 @@ module powerbi.extensibility.visual {
             }
         }
 
-        public getheaderSettings(dataView: DataView): headerSettings {
+        public getheaderSettings(dataView: DataView): IHeaderSettings {
             let objects: DataViewObjects = null;
-            const settings: headerSettings = this.getDefaultheaderSettings();
+            const settings: IHeaderSettings = this.getDefaultheaderSettings();
 
             if (!dataView.metadata || !dataView.metadata.objects) {
                 return settings;
             }
             objects = dataView.metadata.objects;
-            const properties = visualProperties;
+            // tslint:disable-next-line:no-any
+            const properties: any = visualProperties;
             settings.headerColor = DataViewObjects.getFillColor(objects, properties.headerSettings.headerColor, settings.headerColor);
             settings.bgColor = DataViewObjects.getFillColor(objects, properties.headerSettings.bgColor, settings.bgColor);
             settings.fontSize = DataViewObjects.getValue(objects, properties.headerSettings.fontSize, settings.fontSize);
@@ -963,33 +1019,36 @@ module powerbi.extensibility.visual {
             return settings;
         }
 
-        public getlabelSettings(dataView: DataView): labelSettings {
+        public getlabelSettings(dataView: DataView): ILabelSettings {
             let objects: DataViewObjects = null;
-            const settings: labelSettings = this.getDefaultlabelSettings();
+            const settings: ILabelSettings = this.getDefaultlabelSettings();
 
             if (!dataView.metadata || !dataView.metadata.objects) {
                 return settings;
             }
             objects = dataView.metadata.objects;
-            const properties = visualProperties;
+            // tslint:disable-next-line:no-any
+            const properties: any = visualProperties;
             settings.labelColor = DataViewObjects.getFillColor(objects, properties.labelSettings.labelColor, settings.labelColor);
             settings.fontSize = DataViewObjects.getValue(objects, properties.labelSettings.fontSize, settings.fontSize);
             settings.fontSize = settings.fontSize > 28 ? 28 : settings.fontSize;
             settings.gap = DataViewObjects.getValue(objects, properties.labelSettings.gap, settings.gap);
             settings.gap = settings.gap >= 0 ? settings.gap : 0;
-            settings.RowbgColor = DataViewObjects.getFillColor(objects, properties.labelSettings.RowbgColor, settings.RowbgColor)
+            settings.RowbgColor = DataViewObjects.getFillColor(objects, properties.labelSettings.RowbgColor, settings.RowbgColor);
+
             return settings;
         }
 
-        public gettotalSettings(dataView: DataView): totalSettings {
+        public gettotalSettings(dataView: DataView): ITotalSettings {
             let objects: DataViewObjects = null;
-            const settings: totalSettings = this.getDefaulttotalSettings();
+            const settings: ITotalSettings = this.getDefaulttotalSettings();
 
             if (!dataView.metadata || !dataView.metadata.objects) {
                 return settings;
             }
             objects = dataView.metadata.objects;
-            const properties = visualProperties;
+            // tslint:disable-next-line:no-any
+            const properties: any = visualProperties;
             settings.totalText = DataViewObjects.getValue(objects, properties.totalSettings.totalText, settings.totalText);
             settings.totalColor = DataViewObjects.getFillColor(objects, properties.totalSettings.totalColor, settings.totalColor);
             settings.fontSize = DataViewObjects.getValue(objects, properties.totalSettings.fontSize, settings.fontSize);
@@ -998,32 +1057,37 @@ module powerbi.extensibility.visual {
             return settings;
         }
 
-        public getindicatorSettings(dataView: DataView): indicatorSettings {
+        public getindicatorSettings(dataView: DataView): IIndicatorSettings {
             let objects: DataViewObjects = null;
-            const settings: indicatorSettings = this.getDefaultindicatorSettings();
+            const settings: IIndicatorSettings = this.getDefaultindicatorSettings();
 
-            if (!dataView.metadata || !dataView.metadata.objects)
-                return settings;
+            if (!dataView.metadata || !dataView.metadata.objects) { return settings; }
             objects = dataView.metadata.objects;
-            var properties = visualProperties;
-            settings.IndicatorSwitch = DataViewObjects.getValue(objects, properties.indicatorSettings.IndicatorSwitch, settings.IndicatorSwitch);
+            // tslint:disable-next-line:no-any
+            let properties: any;
+            properties = visualProperties;
+            settings.IndicatorSwitch = DataViewObjects.getValue(
+                objects, properties.indicatorSettings.IndicatorSwitch, settings.IndicatorSwitch);
+
             return settings;
         }
 
+        public getPrefixSettings(dataView: DataView): IPrefixSettings {
+            let objects: DataViewObjects = null;
+            let settings: IPrefixSettings;
+            settings = this.getDefaultPrefixSettings();
 
-        public getPrefixSettings(dataView: DataView): PrefixSettings {
-            var objects: DataViewObjects = null;
-            var settings: PrefixSettings = this.getDefaultPrefixSettings();
-
-            if (!dataView.metadata || !dataView.metadata.objects)
-                return settings;
+            if (!dataView.metadata || !dataView.metadata.objects) { return settings; }
             objects = dataView.metadata.objects;
-            var properties = visualProperties;
+            // tslint:disable-next-line:no-any
+            let properties: any;
+            properties = visualProperties;
             settings.prefixText = DataViewObjects.getValue(objects, properties.PrefixSettings.prefixText, settings.prefixText);
+
             return settings;
         }
 
-        public getDefaultheaderSettings(): headerSettings {
+        public getDefaultheaderSettings(): IHeaderSettings {
             return {
                 headerColor: '#FFFFFF',
                 bgColor: '#505050',
@@ -1031,7 +1095,7 @@ module powerbi.extensibility.visual {
             };
         }
 
-        public getDefaultlabelSettings(): labelSettings {
+        public getDefaultlabelSettings(): ILabelSettings {
             return {
                 labelColor: '#000000',
                 fontSize: 12,
@@ -1040,33 +1104,34 @@ module powerbi.extensibility.visual {
             };
         }
 
-        public getDefaulttotalSettings(): totalSettings {
+        public getDefaulttotalSettings(): ITotalSettings {
             return {
                 totalText: 'Total',
                 totalColor: '#000000',
                 fontSize: 12
             };
         }
-        public getDefaultindicatorSettings(): indicatorSettings {
+        public getDefaultindicatorSettings(): IIndicatorSettings {
             return {
-                IndicatorSwitch: false,
-            }
+                IndicatorSwitch: false
+            };
         }
 
-        public getDefaultPrefixSettings(): PrefixSettings {
+        public getDefaultPrefixSettings(): IPrefixSettings {
             return {
-                prefixText: '',
-            }
+                prefixText: ''
+            };
         }
         public enumerateObjectInstances(options: EnumerateVisualObjectInstancesOptions): VisualObjectInstanceEnumeration {
 
-            const headerSettings: headerSettings = this.getheaderSettings(this.dataViews);
-            const labelSettings: labelSettings = this.getlabelSettings(this.dataViews);
-            const totalSettings: totalSettings = this.gettotalSettings(this.dataViews);
-            const indicatorSettings: indicatorSettings = this.getindicatorSettings(this.dataViews);
+            const headerSettings: IHeaderSettings = this.getheaderSettings(this.dataViews);
+            const labelSettings: ILabelSettings = this.getlabelSettings(this.dataViews);
+            const totalSettings: ITotalSettings = this.gettotalSettings(this.dataViews);
+            const indicatorSettings: IIndicatorSettings = this.getindicatorSettings(this.dataViews);
 
-            var PrefixSettings: PrefixSettings = this.getPrefixSettings(this.dataViews);
-            const objectName = options.objectName;
+            let prefixSettings: IPrefixSettings;
+            prefixSettings = this.getPrefixSettings(this.dataViews);
+            const objectName: string = options.objectName;
             const objectEnumeration: VisualObjectInstance[] = [];
 
             switch (objectName) {
@@ -1112,28 +1177,28 @@ module powerbi.extensibility.visual {
                         objectName: objectName,
                         selector: null,
                         properties: {
-                            prefixText: PrefixSettings.prefixText
+                            prefixText: prefixSettings.prefixText
                         }
                     });
                     break;
 
-
                 case 'indicatorSettings':
-                    for (var i = 0; i < this.KPIdisplay.length; i++) {
+                    for (let i: number = 0; i < this.kpiDisplay.length; i++) {
                         objectEnumeration.push({
                             objectName: objectName,
-                            displayName: this.KPIdisplay[i].key,
+                            displayName: this.kpiDisplay[i].key,
                             properties: {
-                                IndicatorSwitch: this.KPIdisplay[i].value,
+                                IndicatorSwitch: this.kpiDisplay[i].value
 
                             },
-                            selector: this.KPIdisplay[i].selectionId,
+                            selector: this.kpiDisplay[i].selectionId
                         });
                     }
                     break;
                 default:
 
-            };
+            }
+
             return objectEnumeration;
         }
     }
