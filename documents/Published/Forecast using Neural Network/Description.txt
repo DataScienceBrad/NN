@@ -1,0 +1,14 @@
+Short description
+Uses neural network algorithm to forecast future values based on historical data.
+
+
+Long description
+Forecast the future values based on the historical data by employing Neural Network algorithm for time series forecasting. Forecasting is useful for a variety of professions spread over numerous fields, be it budget, sales, demand or inventory. Better forecasts of future lead to better and more well-informed decisions. Forecasting using Neural Network implements an ‘Artificial Neural Network’ to learn from observed data over a time to predict the values of future. 
+It employs a single layer feed forward network with lagged inputs to deal with time series values. 
+
+Key features include:
+•	Ability to use years or distinct numerical values in place of Date/Date&Time field. (The visual will work for both numerical series i.e. years/numbers and proper Date/Time values).
+•	Ability of hover tooltips and highlighting a portion of the plot.
+•	Capability to manually adjust the parameters of the learning model.
+
+R package dependencies (auto installed): Forecast, plotly, zoo, xts
