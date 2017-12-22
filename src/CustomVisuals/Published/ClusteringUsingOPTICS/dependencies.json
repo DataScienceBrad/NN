@@ -1,0 +1,34 @@
+{
+  "cranPackages": [
+    {
+      "name": "ggplot2",
+      "displayName": "GG Plot 2",
+      "url": "https://cran.r-project.org/web/packages/ggplot2/index.html"
+    },
+    {
+      "name": "plotly",
+      "displayName": "Plotly",
+      "url": "https://cran.r-project.org/web/packages/plotly/index.html"
+    },
+    {
+      "name": "htmlwidgets",
+      "displayName": "HTML Widgets",
+      "url": "https://cran.r-project.org/web/packages/htmlwidgets/index.html"
+    },
+    {
+      "name": "XML",
+      "displayName": "XML",
+      "url": "https://cran.r-project.org/web/packages/XML/index.html"
+    },
+    {
+      "name": "forecast",
+      "displayName": "forecast",
+      "url": "https://cran.r-project.org/web/packages/forecast/index.html"
+    },
+    {
+      "name": "dbscan",
+      "displayName": "dbscan",
+      "url": "https://cran.r-project.org/web/packages/dbscan/index.html"
+    }
+  ]
+}
