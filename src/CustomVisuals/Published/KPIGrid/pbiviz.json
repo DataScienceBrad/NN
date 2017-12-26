@@ -2,9 +2,9 @@
   "visual": {
     "name": "KPIGridByMAQSoftware",
     "displayName": "KPI Grid by MAQ Software",
-    "guid": "KPIGrid39FBAB0336346DBB68AB522063E7241",
+    "guid": "KPIGrid39FBAB0336346DBB68AB522063E7241V3",
     "visualClassName": "Visual",
-    "version": "3.2.2",
+    "version": "3.2.3",
     "description": "Display KPI data in hierarchical order, with options to separate categories and illustrate trends with arrows.",
     "supportUrl": "https://github.com/maqsoftware/PowerBI-visuals/issues",
     "gitHubUrl": "https://github.com/maqsoftware/PowerBI-visuals"

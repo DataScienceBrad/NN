@@ -224,21 +224,28 @@ module powerbi.extensibility.visual {
         }
 
         public getAggregate(dataset: DataViewValueColumn[], measure: number, hierarchyId: String): number {
-            let sum: number = 0;
+            let sum: number = null;
             if (hierarchyId !== 'none') {
                 const hierarchyArray: string[] = hierarchyId.split('-$>');
                 const level: number = hierarchyArray.length - 1;
                 let counter: number;
+                let currentLevelDataName: string;
                 for (let irow: number = 0; irow < this.totalRowsLength; irow++) {
                     counter = 0;
                     for (let iLevel: number = 0; iLevel <= level; iLevel++) {
-                        if (this.data.categories[iLevel].values[irow].toString() === hierarchyArray[iLevel].toString()) {
+                        currentLevelDataName = this.data.categories[iLevel].values[irow] ?
+                            this.data.categories[iLevel].values[irow].toString() : '$blankData$';
+                        if (currentLevelDataName === hierarchyArray[iLevel].toString()) {
                             counter += 1;
                             if (counter === level + 1) {
                                 if (measure === undefined) {
-                                    sum += parseFloat(dataset[irow].toString());
+                                    if (dataset[irow] !== null) {
+                                        sum += parseFloat(dataset[irow].toString());
+                                    }
                                 } else {
-                                    sum += dataset[measure].values[irow] ? parseFloat(dataset[measure].values[irow].toString()) : 0;
+                                    if (dataset[measure].values[irow] !== null) {
+                                        sum += parseFloat(dataset[measure].values[irow].toString());
+                                    }
                                 }
                             }
                         }
@@ -249,9 +256,13 @@ module powerbi.extensibility.visual {
             } else {
                 for (let irow: number = 0; irow < this.totalRowsLength; irow++) {
                     if (measure === undefined) {
-                        sum += parseFloat(dataset[irow].toString());
+                        if (dataset[irow] !== null) {
+                            sum += parseFloat(dataset[irow].toString());
+                        }
                     } else {
-                        sum += dataset[measure].values[irow] ? parseFloat(dataset[measure].values[irow].toString()) : 0;
+                        if (dataset[measure].values[irow] !== null) {
+                            sum += parseFloat(dataset[measure].values[irow].toString());
+                        }
                     }
                 }
 
@@ -279,10 +290,12 @@ module powerbi.extensibility.visual {
                 for (let iRow: number = 0; iRow < levelLength; iRow++) {
 
                     let newHierarchyId: string;
+                    const currentLevelDataName: string = Visual.currentLevelData[iRow].value ?
+                        Visual.currentLevelData[iRow].value.toString() : '$blankData$';
                     if (level === 0) {
-                        newHierarchyId = Visual.currentLevelData[iRow].value.toString();
+                        newHierarchyId = currentLevelDataName;
                     } else {
-                        newHierarchyId = `${hierarchyId}-$>${Visual.currentLevelData[iRow].value}`;
+                        newHierarchyId = `${hierarchyId}-$>${currentLevelDataName}`;
                     }
 
                     $(`.gridText${iRow}`).parent(`.gridLevels.rowLevel${level}`).parent(`[eleId=""]`).attr('parentId', parentId);
@@ -291,7 +304,7 @@ module powerbi.extensibility.visual {
                     $(`.gridText${iRow}`).parent(`.gridLevels.rowLevel${level}`).parent(`[parentId="${parentId}"]`)
                         .attr('hierarchyId', newHierarchyId);
                     $(`[parentId="${parentId}"]`).children(`[class="gridLevels rowLevel${level}"]`)
-                        .children(`.gridText${iRow}`).text(Visual.currentLevelData[iRow].value);
+                        .children(`.gridText${iRow}`).text(currentLevelDataName === '$blankData$' ? '(Blank)' : currentLevelDataName);
                 }
 
                 this.addClickListener(context);
@@ -325,14 +338,16 @@ module powerbi.extensibility.visual {
             // tslint:disable-next-line:no-any
             let currentLevelData: any = [];
             const tempValues: PrimitiveValue[] = [];
+            let currentLevelDataName: string;
             Visual.currentLevelData = [];
-
             if (hierarchyId !== 'root') {
                 let counter: number;
                 for (let irow: number = 0; irow < this.totalRowsLength; irow++) {
                     counter = 0;
                     for (let iLevel: number = 0; iLevel < level; iLevel++) {
-                        if (this.data.categories[iLevel].values[irow].toString() === hierarchyArray[iLevel].toString()) {
+                        currentLevelDataName = this.data.categories[iLevel].values[irow] ?
+                        this.data.categories[iLevel].values[irow].toString() : '$blankData$';
+                        if (currentLevelDataName === hierarchyArray[iLevel].toString()) {
                             counter += 1;
                             if (counter === level) {
                                 currentLevelData.push({
@@ -369,7 +384,6 @@ module powerbi.extensibility.visual {
                     });
                 }
             }
-
             const levelLength: number = currentLevelData.length;
             for (let i: number = 0; i < levelLength; i++) {
                 Visual.currentLevelData[i] = (currentLevelData[i]);
@@ -384,10 +398,11 @@ module powerbi.extensibility.visual {
 
             for (let iRow: number = 0; iRow < levelLength; iRow++) {
                 let newHierarchyId: string;
+                currentLevelDataName = currentLevelData[iRow].value ? currentLevelData[iRow].value.toString() : '$blankData$';
                 if (level === 0) {
-                    newHierarchyId = currentLevelData[iRow].value.toString();
+                    newHierarchyId = currentLevelDataName;
                 } else {
-                    newHierarchyId = `${hierarchyId}-$>${currentLevelData[iRow].value}`;
+                    newHierarchyId = `${hierarchyId}-$>${currentLevelDataName}`;
                 }
 
                 //print levels column
@@ -446,51 +461,60 @@ module powerbi.extensibility.visual {
                                 .source.displayName][currentLevelData[iRow].key];
                         }
 
-                        difference = parseFloat(measureValue.toString()) - indicatorMeasureValue;
-                        differenceModified = Math.abs(difference -
-                            parseFloat(difference.toString())) > 0 ? difference.toFixed(2) : difference.toString();
-                        // indicator toggle
-                        for (let l: number = 0; l < this.kpiDisplay.length; l++) {
-                            if (this.kpiDisplay[l].key === this.measuresData[iMeasure].source.displayName) {
-                                if (this.kpiDisplay[l].value === true) {
-                                    if (difference > 0) {
-                                        tableContent += '<span title="+';
-                                        tableContent += formatter.format(parseFloat(differenceModified));
-                                        tableContent += '" class="up-red"></span>';
-                                    } else if (difference === 0) {
-                                        tableContent += '<span title="No change" class="right-grey"></span>';
-                                    } else {
-                                        if (formatter.format(parseFloat(differenceModified))[0] === '('
-                                            && formatter.format(parseFloat(differenceModified))[formatter.format(
-                                                parseFloat(differenceModified)).length - 1] === ')') {
-                                            tableContent += '<span title="-';
-                                            tableContent += formatter.format(
-                                                parseFloat(differenceModified)).slice(1, -1);
-                                            tableContent += '" class="down-green"></span>';
-                                        } else {
-                                            tableContent += '<span title="';
+                        if (measureValue !== null) {
+                            difference = parseFloat(measureValue.toString()) - indicatorMeasureValue;
+                        } else {
+                            difference = null;
+                        }
+
+                        if (difference !== null) {
+
+                            differenceModified = Math.abs(difference -
+                                parseFloat(difference.toString())) > 0 ? difference.toFixed(2) : difference.toString();
+
+                            // indicator toggle
+                            for (let l: number = 0; l < this.kpiDisplay.length; l++) {
+                                if (this.kpiDisplay[l].key === this.measuresData[iMeasure].source.displayName) {
+                                    if (this.kpiDisplay[l].value === true) {
+                                        if (difference > 0) {
+                                            tableContent += '<span title="+';
                                             tableContent += formatter.format(parseFloat(differenceModified));
-                                            tableContent += '" class="down-green"></span>';
+                                            tableContent += '" class="up-red"></span>';
+                                        } else if (difference === 0) {
+                                            tableContent += '<span title="No change" class="right-grey"></span>';
+                                        } else {
+                                            if (formatter.format(parseFloat(differenceModified))[0] === '('
+                                                && formatter.format(parseFloat(differenceModified))[formatter.format(
+                                                    parseFloat(differenceModified)).length - 1] === ')') {
+                                                tableContent += '<span title="-';
+                                                tableContent += formatter.format(
+                                                    parseFloat(differenceModified)).slice(1, -1);
+                                                tableContent += '" class="down-green"></span>';
+                                            } else {
+                                                tableContent += '<span title="';
+                                                tableContent += formatter.format(parseFloat(differenceModified));
+                                                tableContent += '" class="down-green"></span>';
+                                            }
                                         }
-                                    }
-                                } else {
-                                    if (difference > 0) {
-                                        tableContent += '<span title="+';
-                                        tableContent += formatter.format(parseFloat(differenceModified));
-                                        tableContent += '" class="up-green"></span>';
-                                    } else if (difference === 0) {
-                                        tableContent += '<span title="No change" class="right-grey"></span>';
                                     } else {
-                                        if (formatter.format(parseFloat(differenceModified))[0] === '(' &&
-                                            formatter.format(parseFloat(differenceModified))[formatter.format(
-                                                parseFloat(differenceModified)).length - 1] === ')') {
-                                            tableContent += '<span title="-';
-                                            tableContent += formatter.format(parseFloat(differenceModified)).slice(1, -1);
-                                            tableContent += '" class="down-red"></span>';
-                                        } else {
-                                            tableContent += '<span title="';
+                                        if (difference > 0) {
+                                            tableContent += '<span title="+';
                                             tableContent += formatter.format(parseFloat(differenceModified));
-                                            tableContent += '" class="down-red"></span>';
+                                            tableContent += '" class="up-green"></span>';
+                                        } else if (difference === 0) {
+                                            tableContent += '<span title="No change" class="right-grey"></span>';
+                                        } else {
+                                            if (formatter.format(parseFloat(differenceModified))[0] === '(' &&
+                                                formatter.format(parseFloat(differenceModified))[formatter.format(
+                                                    parseFloat(differenceModified)).length - 1] === ')') {
+                                                tableContent += '<span title="-';
+                                                tableContent += formatter.format(parseFloat(differenceModified)).slice(1, -1);
+                                                tableContent += '" class="down-red"></span>';
+                                            } else {
+                                                tableContent += '<span title="';
+                                                tableContent += formatter.format(parseFloat(differenceModified));
+                                                tableContent += '" class="down-red"></span>';
+                                            }
                                         }
                                     }
                                 }
@@ -669,18 +693,16 @@ module powerbi.extensibility.visual {
                 //print table
                 const tableContent: string = this.printLevel('root');  //hierarchId=root id=root level=0
                 this.contentElement.append(tableContent);
-
+                let currentLevelDataName: string;
                 for (let iRow: number = 0; iRow < Visual.currentLevelData.length; iRow++) {
+                    currentLevelDataName = Visual.currentLevelData[iRow].value ?
+                        Visual.currentLevelData[iRow].value.toString() : '$blankData$';
                     $(`.gridText${iRow}`).parent(`.gridLevels.rowLevel0`).parent(`[class="gridRow"]`)
-                        .attr('eleId', Visual.currentLevelData[iRow].value);
+                        .attr('eleId', currentLevelDataName);
                     $(`.gridText${iRow}`).parent('.gridLevels.rowLevel0').parent('[class="gridRow"]').attr('parentId', 'root');
                     $(`.gridText${iRow}`).parent('.gridLevels.rowLevel0').parent('[class="gridRow"]')
-                        .attr('hierarchyId', Visual.currentLevelData[iRow].value);
-                }
-                const levelLength: number = Visual.currentLevelData.length;
-                for (let iRow: number = 0; iRow < levelLength; iRow++) {
-
-                    $(`.gridText${iRow}`).text(Visual.currentLevelData[iRow].value);
+                        .attr('hierarchyId', currentLevelDataName);
+                    $(`.gridText${iRow}`).text(currentLevelDataName === '$blankData$' ? '(Blank)' : currentLevelDataName);
                 }
 
                 //total row
@@ -740,61 +762,70 @@ module powerbi.extensibility.visual {
                         indicatorMeasureValue = this.getAggregate(
                             this.indicatorsData[this.measuresData[iMeasure].source.displayName],
                             undefined, 'none');
-                        difference = measureValue - indicatorMeasureValue;
-                        differenceModified = Math.abs(difference -
-                            parseInt(difference.toString(), 10)) > 0 ? difference.toFixed(2) : difference.toString();
-                        let kpiArrow: HTMLSpanElement;
-                        kpiArrow = document.createElement('span');
 
-                        // indicator toggle
-                        for (let l: number = 0; l < this.kpiDisplay.length; l++) {
-                            if (this.kpiDisplay[l].key === this.measuresData[iMeasure].source.displayName) {
-                                if (this.kpiDisplay[l].value === true) {
-                                    kpiArrow = document.createElement('span');
-                                    if (difference > 0) {
-                                        let addLiteral: string;
-                                        addLiteral = '+';
-                                        kpiArrow.setAttribute('class', 'up-red');
-                                        kpiArrow.setAttribute('title', addLiteral + formatter.format(parseFloat(differenceModified)));
-                                    } else if (difference === 0) {
-                                        kpiArrow.setAttribute('class', 'right-grey');
-                                        kpiArrow.setAttribute('title', 'No change');
-                                    } else {
-                                        if (formatter.format(parseFloat(differenceModified))[0] === '(' &&
-                                            formatter.format(parseFloat(differenceModified))[formatter.format(
-                                                parseFloat(differenceModified)).length - 1] === ')') {
-                                            kpiArrow.setAttribute('class', 'down-green');
-                                            kpiArrow.setAttribute('title', formatter.format(parseFloat(differenceModified)).slice(1, -1));
+                        if (measureValue !== null) {
+                            difference = measureValue - indicatorMeasureValue;
+                        } else {
+                            difference = null;
+                        }
+
+                        if (difference !== null) {
+                            differenceModified = Math.abs(difference -
+                                parseInt(difference.toString(), 10)) > 0 ? difference.toFixed(2) : difference.toString();
+                            let kpiArrow: HTMLSpanElement;
+                            kpiArrow = document.createElement('span');
+
+                            // indicator toggle
+                            for (let l: number = 0; l < this.kpiDisplay.length; l++) {
+                                if (this.kpiDisplay[l].key === this.measuresData[iMeasure].source.displayName) {
+                                    if (this.kpiDisplay[l].value === true) {
+                                        kpiArrow = document.createElement('span');
+                                        if (difference > 0) {
+                                            let addLiteral: string;
+                                            addLiteral = '+';
+                                            kpiArrow.setAttribute('class', 'up-red');
+                                            kpiArrow.setAttribute('title', addLiteral + formatter.format(parseFloat(differenceModified)));
+                                        } else if (difference === 0) {
+                                            kpiArrow.setAttribute('class', 'right-grey');
+                                            kpiArrow.setAttribute('title', 'No change');
                                         } else {
-                                            kpiArrow.setAttribute('class', 'down-green');
-                                            kpiArrow.setAttribute('title', formatter.format(parseFloat(differenceModified)));
+                                            if (formatter.format(parseFloat(differenceModified))[0] === '(' &&
+                                                formatter.format(parseFloat(differenceModified))[formatter.format(
+                                                    parseFloat(differenceModified)).length - 1] === ')') {
+                                                kpiArrow.setAttribute('class', 'down-green');
+                                                kpiArrow.setAttribute(
+                                                    'title', formatter.format(parseFloat(differenceModified)).slice(1, -1));
+                                            } else {
+                                                kpiArrow.setAttribute('class', 'down-green');
+                                                kpiArrow.setAttribute('title', formatter.format(parseFloat(differenceModified)));
+                                            }
                                         }
-                                    }
-                                    totalMeasures.appendChild(kpiArrow);
-                                } else {
-                                    if (difference > 0) {
-                                        let addLiteral: string;
-                                        addLiteral = '+';
-                                        kpiArrow.setAttribute('class', 'up-green');
-                                        kpiArrow.setAttribute('title', addLiteral + formatter.format(parseFloat(differenceModified)));
-                                    } else if (difference === 0) {
-                                        kpiArrow.setAttribute('class', 'right-grey');
-                                        kpiArrow.setAttribute('title', 'No change');
+                                        totalMeasures.appendChild(kpiArrow);
                                     } else {
-                                        if (formatter.format(parseFloat(differenceModified))[0] === '('
-                                            && formatter.format(parseFloat(differenceModified))[formatter.format(
-                                                parseFloat(differenceModified)).length - 1] === ')') {
-                                            kpiArrow.setAttribute('class', 'down-red');
-                                            kpiArrow.setAttribute('title', formatter.format(parseFloat(differenceModified)).slice(1, -1));
+                                        if (difference > 0) {
+                                            let addLiteral: string;
+                                            addLiteral = '+';
+                                            kpiArrow.setAttribute('class', 'up-green');
+                                            kpiArrow.setAttribute('title', addLiteral + formatter.format(parseFloat(differenceModified)));
+                                        } else if (difference === 0) {
+                                            kpiArrow.setAttribute('class', 'right-grey');
+                                            kpiArrow.setAttribute('title', 'No change');
                                         } else {
-                                            kpiArrow.setAttribute('class', 'down-red');
-                                            kpiArrow.setAttribute('title', formatter.format(parseFloat(differenceModified)));
+                                            if (formatter.format(parseFloat(differenceModified))[0] === '('
+                                                && formatter.format(parseFloat(differenceModified))[formatter.format(
+                                                    parseFloat(differenceModified)).length - 1] === ')') {
+                                                kpiArrow.setAttribute('class', 'down-red');
+                                                kpiArrow.setAttribute(
+                                                    'title', formatter.format(parseFloat(differenceModified)).slice(1, -1));
+                                            } else {
+                                                kpiArrow.setAttribute('class', 'down-red');
+                                                kpiArrow.setAttribute('title', formatter.format(parseFloat(differenceModified)));
+                                            }
                                         }
+                                        totalMeasures.appendChild(kpiArrow);
                                     }
-                                    totalMeasures.appendChild(kpiArrow);
                                 }
                             }
-
                         }
                     }
                     tableTotalRow.appendChild(totalMeasures);
