@@ -62,18 +62,16 @@ if(exists("plotSettings_plotColor"))
 {
   plotColor<-plotSettings_plotColor
 }
-
-title<-'Clusters'
-if(exists("plotSettings_title"))
-{
-  title<-plotSettings_title
-}
-
 ###############################
+
+##################################################
+xdataFrame<-data.frame(Value1)
+ydataFrame<-data.frame(Value2)
+
 ### x axis settings######
 
-xTitle<-'X'
-if(exists("xaxisSettings_xTitle"))
+xTitle <- names(xdataFrame)[1]
+if(exists("xaxisSettings_xTitle") && xaxisSettings_xTitle!= '')
 {
     xTitle<-xaxisSettings_xTitle
 }
@@ -129,8 +127,8 @@ if(exists("xaxisSettings_xAxisBaseLineWidth") && xaxisSettings_xAxisBaseLineWidt
 ##############################
 ####y axis settings ########
 
-yTitle<-'Y'
-if(exists("yaxisSettings_yTitle"))
+yTitle <- names(ydataFrame)[1]
+if(exists("yaxisSettings_yTitle") && yaxisSettings_yTitle!='')
 {
     yTitle<-yaxisSettings_yTitle
 }
@@ -182,6 +180,7 @@ if(exists("yaxisSettings_yAxisBaseLineWidth") && yaxisSettings_yAxisBaseLineWidt
 {
     yAxisBaseLineWidth<-yaxisSettings_yAxisBaseLineWidth
 }
+
 ############################################################
 ############################################################
 ###################plot setting lists#############
@@ -209,11 +208,6 @@ yAesthetics <- list(
   linewidth=yAxisBaseLineWidth
 )
 
-
-
-##################################################
-xdataFrame<-data.frame(Value1)
-ydataFrame<-data.frame(Value2)
 
 ############################################################
 ############################################################
@@ -485,7 +479,7 @@ x<-getTooltips()
 if(exists("Tooltip")){
   p<-p+geom_point(data = x, aes(x =x,y = y, xTooltip =X, yTooltip=Y, userTooltip=Tooltip), colour = pointCol)
   p<-ggplotly(p, tooltip=c('xTooltip','yTooltip','userTooltip'))%>%
-  layout(title = title,
+  layout(title = '',
          xaxis = xAesthetics, 
          yaxis = yAesthetics,
          margin = list(l = 50,
@@ -498,7 +492,7 @@ if(exists("Tooltip")){
 else{
   p<-p+geom_point(data = x, aes(x =x,y = y, xTooltip =X, yTooltip=Y), colour = pointCol)
   p<-ggplotly(p, tooltip=c('xTooltip','yTooltip'))%>%
-  layout(title = title,
+  layout(title = '',
          xaxis = xAesthetics, 
          yaxis = yAesthetics,
          margin = list(l = 50,

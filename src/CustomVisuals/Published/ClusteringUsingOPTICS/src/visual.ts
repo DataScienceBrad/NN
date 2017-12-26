@@ -223,7 +223,7 @@ module powerbi.extensibility.visual {
                 plotColor: getValue<string>(objects, 'plotSettings', 'plotColor', '#FFFFFF')
             };
             this.xAxisSettings = {
-                title: getValue<string>(objects, 'xaxisSettings', 'xTitle', 'X'),
+                title: getValue<string>(objects, 'xaxisSettings', 'xTitle', ''),
                 zeroline: getValue<boolean>(objects, 'xaxisSettings', 'xZeroline', true),
                 labels: getValue<boolean>(objects, 'xaxisSettings', 'xLabels', true),
                 grid: getValue<boolean>(objects, 'xaxisSettings', 'xGrid', true),
@@ -235,7 +235,7 @@ module powerbi.extensibility.visual {
             };
 
             this.yAxisSettings = {
-                title: getValue<string>(objects, 'yaxisSettings', 'yTitle', 'Y'),
+                title: getValue<string>(objects, 'yaxisSettings', 'yTitle', ''),
                 zeroline: getValue<boolean>(objects, 'yaxisSettings', 'yZeroline', true),
                 labels: getValue<boolean>(objects, 'yaxisSettings', 'yLabels', true),
                 grid: getValue<boolean>(objects, 'yaxisSettings', 'yGrid', true),
@@ -278,8 +278,7 @@ module powerbi.extensibility.visual {
                     objectEnum.push({
                         objectName: objectName,
                         properties: {
-
-                            title: this.plotSettings.title,
+                            // title: this.plotSettings.title,
                             plotColor: this.plotSettings.plotColor
                         },
                         selector: null
