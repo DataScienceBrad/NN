@@ -11,6 +11,16 @@
       "name": "Value"
     }
   ],
+  "sorting": {
+      "implicit": {
+          "clauses": [
+              {
+                  "role": "Category",
+                  "direction": 1
+              }
+          ]
+      }
+  },
   "dataViewMappings": [
     {
       "conditions": [
@@ -40,7 +50,7 @@
                 }
               ],
               "dataReductionAlgorithm": {
-                "top": {}
+                "top": {"count": 30000}
               }
             }
           }
@@ -108,35 +118,152 @@
           "displayName": "Decay",
           "description": "Decay in weights after each iteration, so that weights don't grow extremely large after successive computations. Should be between 0 to 1.",
           "type": {
-            "numeric": true
+            "enumeration": [
+              {
+                "value": "0.009",
+                "displayName": "0.009"
+              },
+              {
+                "value": "0.01",
+                "displayName": "0.01"
+              },
+              {
+                "value": "0.25",
+                "displayName": "0.25"
+              },
+              {
+                "value": "0.5",
+                "displayName": "0.5"
+              },
+              {
+                "value": "0.75",
+                "displayName": "0.75"
+              },
+              {
+                "value": "0.9",
+                "displayName": "0.9"
+              },
+              {
+                "value": "0.99",
+                "displayName": "0.99"
+              }
+            ]
           }
         },
         "maxitr": {
           "displayName": "Max number of iterations",
           "description": "Maximum number of iterations to train the neural network in a defined duration called as epoch.",
           "type": {
-            "numeric": true
+            "enumeration": [
+              {
+                "value": "150",
+                "displayName": "150"
+              },
+              {
+                "value": "200",
+                "displayName": "200"
+              },
+              {
+                "value": "300",
+                "displayName": "300"
+              },
+              {
+                "value": "500",
+                "displayName": "500"
+              }
+            ]
           }
         },
         "epochs": {
           "displayName": "Epochs",
           "description": "Duration having defined number of iterations for training the network.",
           "type": {
-            "numeric": true
+            "enumeration": [
+              {
+                "value": "5",
+                "displayName": "5"
+              },
+              {
+                "value": "8",
+                "displayName": "8"
+              },
+              {
+                "value": "15",
+                "displayName": "15"
+              },
+              {
+                "value": "20",
+                "displayName": "20"
+              }
+            ]
           }
         },
         "size": {
           "displayName": "Size",
           "description": "Defines number of calculation performed to achieve output equation for the model in each iteration",
           "type": {
-            "numeric": true
+            "enumeration": [
+              {
+                "value": "4",
+                "displayName": "4"
+              },
+              {
+                "value": "8",
+                "displayName": "8"
+              },
+              {
+                "value": "12",
+                "displayName": "12"
+              },
+              {
+                "value": "20",
+                "displayName": "20"
+              }
+            ]
           }
         },
         "confLevel": {
           "displayName": "Confidence levels",
           "description": "Confidence levels for the plot",
           "type": {
-            "numeric": true
+            "enumeration": [
+              {
+                "value": "0.1",
+                "displayName": "0.1"
+              },
+              {
+                "value": "0.2",
+                "displayName": "0.2"
+              },
+              {
+                "value": "0.4",
+                "displayName": "0.4"
+              },
+              {
+                "value": "0.5",
+                "displayName": "0.5"
+              },
+              {
+                "value": "0.75",
+                "displayName": "0.75"
+              },
+              {
+                "value": "0.8",
+                "displayName": "0.8"
+              },
+              {
+                "value": "0.85",
+                "displayName": "0.85"
+              },
+              {
+                "value": "0.95",
+                "displayName": "0.95"
+              },
+              {
+                "value": "0.99",
+                "displayName": "0.99"
+              }
+            ]
           }
         },
         "confInterval": {
