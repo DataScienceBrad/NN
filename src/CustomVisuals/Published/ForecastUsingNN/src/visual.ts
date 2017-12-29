@@ -98,20 +98,8 @@ module powerbi.extensibility.visual {
             this.headNodes = [];
             this.bodyNodes = [];
 
-            this.isettings = {
-                parameterSettings: 'Auto',
-                decay: 0.0009,
-                units: 10,
-                maxitr: 500,
-                epochs: 20,
-                size: 20,
-                confInterval: false,
-                confLevel: 0.80
-            };
-
             this.plotSettings = {
-
-                title: 'Forecast',
+                title: '',
                 plotColor: '#FFFFFF',
                 fline: '#F2C80F',
                 hline: '#01B8AA',
@@ -134,7 +122,7 @@ module powerbi.extensibility.visual {
             };
 
             this.yaxisSettings = {
-                yTitle: 'Values',
+                yTitle: 'Y',
                 yZeroline: true,
                 yLabels: true,
                 yGrid: true,
@@ -226,16 +214,11 @@ module powerbi.extensibility.visual {
         public updateObjects(objects: DataViewObjects): void {
             let units: number = getValue<number>(objects, 'settings', 'units', 10);
             units = units <= 0 ? 10 : getValue<number>(objects, 'settings', 'units', 10);
-            let decay: number = getValue<number>(objects, 'settings', 'decay', 0.009);
-            decay = decay < 0 ? 0.009 : decay > 1 ? 0.009 : getValue<number>(objects, 'settings', 'decay', 0.009);
-            let maxitr: number = getValue<number>(objects, 'settings', 'maxitr', 500);
-            maxitr = maxitr <= 0 ? 500 : getValue<number>(objects, 'settings', 'maxitr', 500);
-            let epochs: number = getValue<number>(objects, 'settings', 'epochs', 20);
-            epochs = epochs <= 0 ? 20 : getValue<number>(objects, 'settings', 'epochs', 20);
-            let size : number = getValue<number>(objects, 'settings', 'size', 20);
-            size = size >= 0 ? 20 : getValue<number>(objects, 'settings', 'size', 20);
-            let confLevel : number = getValue<number>(objects, 'settings', 'confLevel', 0.80);
-            confLevel = confLevel < 0 ? 0.80 : confLevel > 1 ? 0.80 : getValue<number>(objects, 'settings', 'confLevel', 0.80);
+            const decay: number = parseFloat(getValue<string>(objects, 'settings', 'decay', '0.009'));
+            const maxitr: number = parseFloat(getValue<string>(objects, 'settings', 'maxitr', '200'));
+            const epochs: number = parseFloat(getValue<string>(objects, 'settings', 'epochs', '8'));
+            const size : number = parseFloat(getValue<string>(objects, 'settings', 'size', '20'));
+            const confLevel : number = parseFloat(getValue<string>(objects, 'settings', 'confLevel', '0.8'));
 
             let xGridWidth: number = getValue<number>(objects, 'xaxisSettings', 'xGridWidth', 0.1);
             xGridWidth = xGridWidth < 0 ? 0.1 : xGridWidth > 5 ? 0.1 : getValue<number>(objects, 'xaxisSettings', 'xGridWidth', 0.1);
@@ -306,9 +289,10 @@ module powerbi.extensibility.visual {
             objectName = options.objectName;
             let objectEnum: VisualObjectInstance[];
             objectEnum = [];
+            let props: { [propertyName: string]: DataViewPropertyValue; };
             switch (objectName) {
                 case 'settings':
-                    const props: { [propertyName: string]: DataViewPropertyValue; } = {};
+                    props = {};
                     props[`parameterSettings`] = this.isettings.parameterSettings;
                     if (this.isettings.parameterSettings === 'Auto') {
                         props[`units`] = this.isettings.units;
@@ -349,39 +333,45 @@ module powerbi.extensibility.visual {
                     break;
 
                 case 'xaxisSettings':
+                    props = {};
+                    props[`xTitle`] = this.xaxisSettings.xTitle;
+                    props[`xZeroline`] = this.xaxisSettings.xZeroline;
+                    props[`xLabels`] = this.xaxisSettings.xLabels;
+                    props[`xGrid`] = this.xaxisSettings.xGrid;
+                    if (this.xaxisSettings.xGrid) {
+                        props[`xGridCol`] = this.xaxisSettings.xGridCol;
+                        props[`xGridWidth`] = this.xaxisSettings.xGridWidth;
+                    }
+                    props[`xAxisBaseLine`] = this.xaxisSettings.xAxisBaseLine;
+                    if (this.xaxisSettings.xAxisBaseLine) {
+                        props[`xAxisBaseLineCol`] = this.xaxisSettings.xAxisBaseLineCol;
+                        props[`xAxisBaseLineWidth`] = this.xaxisSettings.xAxisBaseLineWidth;
+                    }
                     objectEnum.push({
                         objectName: objectName,
-                        properties: {
-                            xTitle: this.xaxisSettings.xTitle,
-                            xZeroline: this.xaxisSettings.xZeroline,
-                            xLabels: this.xaxisSettings.xLabels,
-                            xGrid: this.xaxisSettings.xGrid,
-                            xGridCol: this.xaxisSettings.xGridCol,
-                            xGridWidth: this.xaxisSettings.xGridWidth,
-                            xAxisBaseLine: this.xaxisSettings.xAxisBaseLine,
-                            xAxisBaseLineCol: this.xaxisSettings.xAxisBaseLineCol,
-                            xAxisBaseLineWidth: this.xaxisSettings.xAxisBaseLineWidth
-
-                        },
+                        properties: props,
                         selector: null
                     });
                     break;
 
                 case 'yaxisSettings':
+                    props = {};
+                    props[`yTitle`] = this.yaxisSettings.yTitle;
+                    props[`yZeroline`] = this.yaxisSettings.yZeroline;
+                    props[`yLabels`] = this.yaxisSettings.yLabels;
+                    props[`yGrid`] = this.yaxisSettings.yGrid;
+                    if (this.yaxisSettings.yGrid) {
+                        props[`yGridCol`] = this.yaxisSettings.yGridCol;
+                        props[`yGridWidth`] = this.yaxisSettings.yGridWidth;
+                    }
+                    props[`yAxisBaseLine`] = this.yaxisSettings.yAxisBaseLine;
+                    if (this.yaxisSettings.yAxisBaseLine) {
+                        props[`yAxisBaseLineCol`] = this.yaxisSettings.yAxisBaseLineCol;
+                        props[`yAxisBaseLineWidth`] = this.yaxisSettings.yAxisBaseLineWidth;
+                    }
                     objectEnum.push({
                         objectName: objectName,
-                        properties: {
-                            yTitle: this.yaxisSettings.yTitle,
-                            yZeroline: this.yaxisSettings.yZeroline,
-                            yLabels: this.yaxisSettings.yLabels,
-                            yGrid: this.yaxisSettings.yGrid,
-                            yGridCol: this.yaxisSettings.yGridCol,
-                            yGridWidth: this.yaxisSettings.yGridWidth,
-                            yAxisBaseLine: this.yaxisSettings.yAxisBaseLine,
-                            yAxisBaseLineCol: this.yaxisSettings.yAxisBaseLineCol,
-                            yAxisBaseLineWidth: this.yaxisSettings.yAxisBaseLineWidth
-
-                        },
+                        properties: props,
                         selector: null
                     });
                     break;

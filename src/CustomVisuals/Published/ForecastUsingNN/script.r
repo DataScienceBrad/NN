@@ -30,26 +30,17 @@ source('./r_files/flatten_HTML.r')
 #setting localization and language
 Sys.setlocale("LC_ALL","English")
 #graphics libraries
-libraryRequireInstall("corrplot")
-libraryRequireInstall("graphics")
-libraryRequireInstall("ggplot2")
 libraryRequireInstall("plotly")
-#statistical libraries
-libraryRequireInstall("stats")
-libraryRequireInstall("methods")
 #forecast libraries
 libraryRequireInstall("forecast")
-libraryRequireInstall("Rcpp")
-#date time libraries
-libraryRequireInstall("xts")
-libraryRequireInstall("zoo")
 
+set.seed (100)
 ###############################
-
 tryCatch({
 ###############################
 #forecast settings
 forecastUnits<-10
+
 if(exists("settings_units") && settings_units > 0)
 {
     forecastUnits<-settings_units
@@ -60,7 +51,6 @@ if(exists("settings_decay") && settings_decay <= 1 && settings_decay >= 0)
 {
     decayRate<-settings_decay
 }
-
 maxitr<-500
 if(exists("settings_maxitr") && settings_maxitr > 0)
 {
@@ -94,7 +84,7 @@ if(exists("settings_confLevel") && settings_confLevel >= 0 && settings_confLevel
 ######################################
 ###########plot settings
 
-title<-'Forecast'
+title<-''
 if(exists("plotSettings_title"))
 {
     title<-plotSettings_title
@@ -201,7 +191,7 @@ if(exists("xaxisSettings_xAxisBaseLineWidth") && xaxisSettings_xAxisBaseLineWidt
 ##############################
 ######y axis settings ########
 
-yTitle<-'Values'
+yTitle<-'Y'
 if(exists("yaxisSettings_yTitle"))
 {
     yTitle<-yaxisSettings_yTitle
@@ -300,14 +290,12 @@ tryCatch({
 #form a time series
 tsSeries<-ts(data=feature, end = tsEnd, start=tsStart, frequency = 1)
 #initating procedure to coerce non date time data into series
+
 pretsSeries<-data.frame(Category,Value)
                         colnames(pretsSeries)<-c("seriesStamps","dataValues")
                         x<-(pretsSeries$seriesStamps)
 
                         tsSeries<-structure(list(y=c(pretsSeries$dataValues), date=c(x)))
-#fit NN
-fit <- nnetar(tsSeries$y)
-fit <- nnetar(tsSeries$y)
 
 ## arguments can be passed to nnet()
 fit <- nnetar(tsSeries$y, lambda=0.5)
@@ -401,10 +389,6 @@ error=function(e)
                         x<-as.POSIXct(pretsSeries$seriesStamps)
 
                         tsSeries<-structure(list(y=c(pretsSeries$dataValues), date=c(x)))
-
-#fit NN
-fit <- nnetar(tsSeries$y)
-fit <- nnetar(tsSeries$y)
 
 
 ## arguments can be passed to nnet()
