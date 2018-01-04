@@ -34,13 +34,17 @@ libraryRequireInstall("plotly")
 #forecast libraries
 libraryRequireInstall("forecast")
 
+
 set.seed (100)
 ###############################
 tryCatch({
+
+
+feature<-data.frame(Value)
+tSeries<-data.frame(Category)
 ###############################
 #forecast settings
 forecastUnits<-10
-
 if(exists("settings_units") && settings_units > 0)
 {
     forecastUnits<-settings_units
@@ -51,7 +55,7 @@ if(exists("settings_decay") && settings_decay <= 1 && settings_decay >= 0)
 {
     decayRate<-settings_decay
 }
-maxitr<-500
+maxitr<-200
 if(exists("settings_maxitr") && settings_maxitr > 0)
 {
     maxitr<-settings_maxitr
@@ -63,7 +67,7 @@ if(exists("settings_size") && settings_size >0)
     hnodes<-settings_size
 }
 
-epochs<-20
+epochs<-8
 if(exists("settings_epochs") && settings_epochs >0)
 {
     epochs<-settings_epochs
@@ -83,13 +87,6 @@ if(exists("settings_confLevel") && settings_confLevel >= 0 && settings_confLevel
 
 ######################################
 ###########plot settings
-
-title<-''
-if(exists("plotSettings_title"))
-{
-    title<-plotSettings_title
-}
-
 plotColor<-"#FFFFFF"
 if(exists("plotSettings_plotColor"))
 {
@@ -108,13 +105,13 @@ if(exists("plotSettings_hline"))
     historyLineCol<-plotSettings_hline
 }
 
-forecastLineText<-"predicted"
+forecastLineText<-"Predicted"
 if(exists("plotSettings_flineText"))
 {
     forecastLineText<-plotSettings_flineText
 }
 
-historyLineText<-"observed"
+historyLineText<-"Observed"
 if(exists("plotSettings_hlineText"))
 {
     historyLineText<-plotSettings_hlineText
@@ -134,8 +131,8 @@ if(exists("plotSettings_confText"))
 ###############################
 ######### x axis settings######
 
-xTitle<-'X'
-if(exists("xaxisSettings_xTitle"))
+xTitle<-names(tSeries)[1]
+if(exists("xaxisSettings_xTitle") && xaxisSettings_xTitle!= '')
 {
     xTitle<-xaxisSettings_xTitle
 }
@@ -165,7 +162,7 @@ if(exists("xaxisSettings_xGridCol"))
 }
 
 xGridWidth<-0.1
-if(exists("xaxisSettings_xGridWidth") && xaxisSettings_xGridWidth < 5 && xaxisSettings_xGridWidth > 0)
+if(exists("xaxisSettings_xGridWidth") && xaxisSettings_xGridWidth <= 5 && xaxisSettings_xGridWidth >= 0.1)
 {
     xGridWidth<-xaxisSettings_xGridWidth
 }
@@ -183,7 +180,7 @@ if(exists("xaxisSettings_xAxisBaseLineCol"))
 }
 
 xAxisBaseLineWidth<-4
-if(exists("xaxisSettings_xAxisBaseLineWidth") && xaxisSettings_xAxisBaseLineWidth < 11 && xaxisSettings_xAxisBaseLineWidth > 0)
+if(exists("xaxisSettings_xAxisBaseLineWidth") && xaxisSettings_xAxisBaseLineWidth <= 11 && xaxisSettings_xAxisBaseLineWidth >= 1)
 {
     xAxisBaseLineWidth<-xaxisSettings_xAxisBaseLineWidth
 }
@@ -191,8 +188,8 @@ if(exists("xaxisSettings_xAxisBaseLineWidth") && xaxisSettings_xAxisBaseLineWidt
 ##############################
 ######y axis settings ########
 
-yTitle<-'Y'
-if(exists("yaxisSettings_yTitle"))
+yTitle<-names(feature)[1]
+if(exists("yaxisSettings_yTitle") && yaxisSettings_yTitle!='')
 {
     yTitle<-yaxisSettings_yTitle
 }
@@ -222,7 +219,7 @@ if(exists("yaxisSettings_yGridCol"))
 }
 
 yGridWidth<-0.1
-if(exists("yaxisSettings_yGridWidth") && yaxisSettings_yGridWidth < 5 && yaxisSettings_yGridWidth > 0)
+if(exists("yaxisSettings_yGridWidth") && yaxisSettings_yGridWidth <= 5 && yaxisSettings_yGridWidth >= 0.1)
 {
     yGridWidth<-yaxisSettings_yGridWidth
 }
@@ -240,7 +237,7 @@ if(exists("yaxisSettings_yAxisBaseLineCol"))
 }
 
 yAxisBaseLineWidth<-4
-if(exists("yaxisSettings_yAxisBaseLineWidth") && yaxisSettings_yAxisBaseLineWidth < 11 && yaxisSettings_yAxisBaseLineWidth > 0)
+if(exists("yaxisSettings_yAxisBaseLineWidth") && yaxisSettings_yAxisBaseLineWidth <= 11 && yaxisSettings_yAxisBaseLineWidth >= 1)
 {
     yAxisBaseLineWidth<-yaxisSettings_yAxisBaseLineWidth
 }
@@ -250,8 +247,6 @@ if(exists("yaxisSettings_yAxisBaseLineWidth") && yaxisSettings_yAxisBaseLineWidt
 ###############################
 #prepare dataset
 
-feature<-data.frame(Value)
-tSeries<-data.frame(Category)
 tsStart<-tSeries[1,]
 rows<-NROW(tSeries)
 tsEnd<-tSeries[rows,]
@@ -338,7 +333,7 @@ plotOutput <- plot_ly() %>%
   add_ribbons(x = ribbonFrame$xValues, ymin = ribbonFrame$yMin, ymax = ribbonFrame$yMax, color = I(confCol), name = ConfText)%>%
   add_segments(x = segStartx, xend = segEndx, y = segStarty, yend = segEndy, showlegend = FALSE, color = I(forecastLineCol)) %>%
   add_lines(x = forecastedDates, y = forecastedValues$mean, color = I(forecastLineCol), name = forecastLineText)%>%
-  layout(title = title,
+  layout(title = '',
          xaxis = xAesthetics, 
          yaxis = yAesthetics,
          margin = list(l = 50,
@@ -360,7 +355,7 @@ plotOutput <- plot_ly() %>%
 
            add_segments(x = segStartx, xend = segEndx, y = segStarty, yend = segEndy, showlegend = FALSE, color = I(forecastLineCol)) %>%
   add_lines(x = forecastedDates, y = forecastedValues$mean, color = I(forecastLineCol), name = forecastLineText)%>%
-  layout(title = title,
+  layout(title = '',
          xaxis = xAesthetics, 
          yaxis = yAesthetics,
          margin = list(l = 50,

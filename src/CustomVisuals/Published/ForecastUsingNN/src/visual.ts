@@ -41,7 +41,6 @@ module powerbi.extensibility.visual {
     }
 
     export interface IPlotSettings {
-        title: string;
         plotColor: string;
         fline: string;
         hline: string;
@@ -97,41 +96,6 @@ module powerbi.extensibility.visual {
             }
             this.headNodes = [];
             this.bodyNodes = [];
-
-            this.plotSettings = {
-                title: '',
-                plotColor: '#FFFFFF',
-                fline: '#F2C80F',
-                hline: '#01B8AA',
-                flineText: 'prediction',
-                hlineText: 'observed',
-                confCol: 'Gray95',
-                confText: 'Confidence'
-            };
-
-            this.xaxisSettings = {
-                xTitle: 'X',
-                xZeroline: true,
-                xLabels: true,
-                xGrid: true,
-                xGridCol: '#BFC4C5',
-                xGridWidth: 0.1,
-                xAxisBaseLine: true,
-                xAxisBaseLineCol: '#000000',
-                xAxisBaseLineWidth: 4
-            };
-
-            this.yaxisSettings = {
-                yTitle: 'Y',
-                yZeroline: true,
-                yLabels: true,
-                yGrid: true,
-                yGridCol: '#BFC4C5',
-                yGridWidth: 0.1,
-                yAxisBaseLine: true,
-                yAxisBaseLineCol: '#000000',
-                yAxisBaseLineWidth: 4
-            };
         }
 
         public update(options: VisualUpdateOptions): void {
@@ -221,15 +185,15 @@ module powerbi.extensibility.visual {
             const confLevel : number = parseFloat(getValue<string>(objects, 'settings', 'confLevel', '0.8'));
 
             let xGridWidth: number = getValue<number>(objects, 'xaxisSettings', 'xGridWidth', 0.1);
-            xGridWidth = xGridWidth < 0 ? 0.1 : xGridWidth > 5 ? 0.1 : getValue<number>(objects, 'xaxisSettings', 'xGridWidth', 0.1);
+            xGridWidth = xGridWidth < 0.1 ? 0.1 : xGridWidth > 5 ? 0.1 : getValue<number>(objects, 'xaxisSettings', 'xGridWidth', 0.1);
             let xAxisBaseLineWidth: number = getValue<number>(objects, 'xaxisSettings', 'xAxisBaseLineWidth', 4);
-            xAxisBaseLineWidth = xAxisBaseLineWidth < 0 ? 4 :
+            xAxisBaseLineWidth = xAxisBaseLineWidth < 1 ? 4 :
             xAxisBaseLineWidth > 11 ? 4 : getValue<number>(objects, 'xaxisSettings', 'xAxisBaseLineWidth', 4);
 
             let yGridWidth: number = getValue<number>(objects, 'yaxisSettings', 'yGridWidth', 0.1);
-            yGridWidth = yGridWidth < 0 ? 0.1 : yGridWidth > 5 ? 0.1 : getValue<number>(objects, 'yaxisSettings', 'yGridWidth', 0.1);
+            yGridWidth = yGridWidth < 0.1 ? 0.1 : yGridWidth > 5 ? 0.1 : getValue<number>(objects, 'yaxisSettings', 'yGridWidth', 0.1);
             let yAxisBaseLineWidth: number = getValue<number>(objects, 'yaxisSettings', 'yAxisBaseLineWidth', 4);
-            yAxisBaseLineWidth = yAxisBaseLineWidth < 0 ? 4 :
+            yAxisBaseLineWidth = yAxisBaseLineWidth < 1 ? 4 :
             yAxisBaseLineWidth > 11 ? 4 : getValue<number>(objects, 'yaxisSettings', 'yAxisBaseLineWidth', 4);
 
             this.isettings = {
@@ -244,17 +208,16 @@ module powerbi.extensibility.visual {
             };
 
             this.plotSettings = {
-                title: getValue<string>(objects, 'plotSettings', 'title', 'Forecast'),
                 plotColor: getValue<string>(objects, 'plotSettings', 'plotColor', '#FFFFFF'),
                 fline: getValue<string>(objects, 'plotSettings', 'fline', '#F2C80F'),
                 hline: getValue<string>(objects, 'plotSettings', 'hline', '#01B8AA'),
-                flineText: getValue<string>(objects, 'plotSettings', 'flineText', 'prediction'),
-                hlineText: getValue<string>(objects, 'plotSettings', 'hlineText', 'observed'),
+                flineText: getValue<string>(objects, 'plotSettings', 'flineText', 'Prediction'),
+                hlineText: getValue<string>(objects, 'plotSettings', 'hlineText', 'Observed'),
                 confCol: getValue<string>(objects, 'plotSettings', 'confCol', 'Gray95'),
                 confText: getValue<string>(objects, 'plotSettings', 'confText', 'Confidence')
             };
             this.xaxisSettings = {
-                xTitle: getValue<string>(objects, 'xaxisSettings', 'xTitle', 'X'),
+                xTitle: getValue<string>(objects, 'xaxisSettings', 'xTitle', ''),
                 xZeroline: getValue<boolean>(objects, 'xaxisSettings', 'xZeroline', true),
                 xLabels: getValue<boolean>(objects, 'xaxisSettings', 'xLabels', true),
                 xGrid: getValue<boolean>(objects, 'xaxisSettings', 'xGrid', true),
@@ -266,7 +229,7 @@ module powerbi.extensibility.visual {
             };
 
             this.yaxisSettings = {
-                yTitle: getValue<string>(objects, 'yaxisSettings', 'yTitle', 'Values'),
+                yTitle: getValue<string>(objects, 'yaxisSettings', 'yTitle', ''),
                 yZeroline: getValue<boolean>(objects, 'yaxisSettings', 'yZeroline', true),
                 yLabels: getValue<boolean>(objects, 'yaxisSettings', 'yLabels', true),
                 yGrid: getValue<boolean>(objects, 'yaxisSettings', 'yGrid', true),
@@ -318,7 +281,6 @@ module powerbi.extensibility.visual {
                     objectEnum.push({
                         objectName: objectName,
                         properties: {
-                            title: this.plotSettings.title,
                             plotColor: this.plotSettings.plotColor,
                             fline: this.plotSettings.fline,
                             hline: this.plotSettings.hline,
