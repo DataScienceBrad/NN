@@ -109,14 +109,14 @@
         },
         "units": {
           "displayName": "Units",
-          "description": "Number of units up to which next values would be predicted.",
+          "description": "Number of units up to which next values would be predicted",
           "type": {
             "numeric": true
           }
         },
         "decay": {
           "displayName": "Decay",
-          "description": "Decay in weights after each iteration, so that weights don't grow extremely large after successive computations. Should be between 0 to 1.",
+          "description": "Decay in weights after each iteration, so that weights don't grow extremely large after successive computations",
           "type": {
             "enumeration": [
               {
@@ -152,7 +152,7 @@
         },
         "maxitr": {
           "displayName": "Max number of iterations",
-          "description": "Maximum number of iterations to train the neural network in a defined duration called as epoch.",
+          "description": "Maximum number of iterations to train the neural network in a defined duration called as epoch",
           "type": {
             "enumeration": [
               {
@@ -176,7 +176,7 @@
         },
         "epochs": {
           "displayName": "Epochs",
-          "description": "Duration having defined number of iterations for training the network.",
+          "description": "Duration having defined number of iterations for training the network",
           "type": {
             "enumeration": [
               {
@@ -279,13 +279,6 @@
       "displayName": "Plot settings",
       "description": "Settings for plot appereance",
       "properties": {
-        "title": {
-          "displayName": "Title",
-          "description": "Title",
-          "type": {
-            "text": true
-          }
-        },
         "plotColor": {
           "displayName": "Plot background color",
           "description": "Plot background color",
@@ -360,6 +353,7 @@
         "xTitle": {
           "displayName": "X title",
           "description": "X title",
+          "placeHolderText": "Auto",
           "type": {
             "text": true
           }
@@ -387,7 +381,7 @@
         },
         "xGridCol": {
           "displayName": "X grid color",
-          "description": "color of x grid lines",
+          "description": "Color of x grid lines",
           "type": {
             "fill": {
               "solid": {
@@ -437,6 +431,7 @@
         "yTitle": {
           "displayName": "Y title",
           "description": "Y title",
+          "placeHolderText": "Auto",
           "type": {
             "text": true
           }
