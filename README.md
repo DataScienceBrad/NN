@@ -77,6 +77,12 @@ The Microsoft Power BI visuals project provides high quality data visualizations
 <br />
 <br />
 
+| [Forecast using Neural Network by <br/>  MAQ Software](https://github.com/maqsoftware/PowerBI-visuals/blob/master/src/CustomVisuals/Published/ForecastUsingNN/src/visual.ts)| [Clustering using OPTICS by <br/> MAQ Software](https://github.com/maqsoftware/PowerBI-visuals/blob/master/src/CustomVisuals/Published/ClusteringUsingOPTICS/src/visual.ts)|  |
+|----------|------------|------|
+| <img src="https://github.com/maqsoftware/PowerBI-visuals/blob/master/documents/Published/Forecast%20using%20Neural%20Network/Images/ForecastUsingNN_300x300.png" alt="Forecast using Neural Network by MAQ Software" height="268" width="268"> <br/>Forecast the future values <br />based on the historical data <br />by employing Neural Network <br />algorithm for time series <br />forecasting. Forecasting is <br />useful for a variety of <br />professions spread over <br />numerous fields, be it <br />budget, sales, demand or <br />inventory. Better forecasts <br />of future lead to better and <br />more well-informed decisions. <br />Forecasting using Neural <br />Network implements an <br />‘Artificial Neural Network’ <br />to learn from observed data <br />over a time to predict the <br />values of future. <br />It employs a single layer feed <br />forward network with lagged <br />inputs to deal with time <br />series values. <br />Key features include: <br />1. Ability to use years or <br />distinct numerical values in <br />place of Date/Date&Time <br />field. (The visual will work <br />for both numerical series <br />i.e. years/numbers and proper <br />Date/Time values). <br />2. Ability of hover tooltips <br />and highlighting a portion of <br />the plot. <br />3. Capability to manually <br />adjust the parameters of the <br />learning model. <br />R package dependencies (auto <br />installed): Forecast, plotly, <br />zoo, xts <br />  | <img src="https://github.com/maqsoftware/PowerBI-visuals/blob/master/documents/Published/Clustering%20using%20OPTICS/Images/ClusteringUsingOPTICS_300_300.png" alt="Clustering using OPTICS by MAQ Software" height="268" width="268"> <br/>Analyse a given dataset based <br />on OPTICS algorithm and <br />identifies clusters in your <br />data. The algorithm works on <br />density based clustering, so <br />you can also identify <br />individual points that don’t <br />belong to any of the groups. <br />You can also perform <br />hierarchical clustering on <br />your data to identify more <br />closely-knit groups within <br />larger groups. This visual <br />also allows you to adjust the <br />clustering parameters to <br />control hierarchy depth and <br />cluster sizes. <br />Key features include:  <br />1. Ability to identify <br />outliers based on convex hull <br />plots. <br />2. Data is scaled and <br />pre-processed automatically <br />so no need to do so externally. <br />3. Add your own dataset for <br />tooltips. <br />4. Ability to identify sub <br />clusters/hierarchal clusters <br />in your data. <br />5. Ability of hover tooltips <br />and zoom effects. <br />6. Capability to manually <br />adjust the parameters of the <br />clustering model. <br />7. No need to define the <br />number of clusters. <br />R package dependencies (auto <br />installed): Dbscan, plotly, <br />ggplot2 <br /> |     &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; |
+<br />
+<br />
+
 # PowerBI Visual Tools (pbiviz) - Installation
 
 Before you can get started you'll need to install the tools. This should only take a few seconds.
@@ -97,7 +103,7 @@ To install the command line tools simply run the following command
 npm install -g powerbi-visuals-tools
 ```
 
-To confirm it was installed correctly you can run the command without any paremeters which should display the help screen.
+To confirm it was installed correctly you can run the command without any parameters which should display the help screen.
 
 ```bash
 pbiviz
