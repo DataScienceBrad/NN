@@ -30,13 +30,25 @@ libraryRequireInstall("plotly");
 #clustering libraries
 libraryRequireInstall("dbscan");
 
-
 ############################################
 
 #optics clustering
 version<-packageVersion("dbscan")
 
 tryCatch({
+
+##################################################
+xdataFrame<-data.frame(Value1)
+ydataFrame<-data.frame(Value2)
+##################################################
+nColumnsY<-NCOL(ydataFrame)
+nColumnsX<-NCOL(xdataFrame)
+nRowsY<-NROW(ydataFrame)
+nRowsX<-NROW(xdataFrame)
+
+ynumericCheck<-sapply(ydataFrame, is.numeric)
+xnumericCheck<-sapply(xdataFrame, is.numeric)
+
 epsilon<-1
 if(exists("clusterSettings_epsilon") && clusterSettings_epsilon > 1)
 {
@@ -62,20 +74,17 @@ if(exists("plotSettings_plotColor"))
 {
   plotColor<-plotSettings_plotColor
 }
-
-title<-'Clusters'
-if(exists("plotSettings_title"))
-{
-  title<-plotSettings_title
-}
-
 ###############################
 ### x axis settings######
 
-xTitle<-'X'
-if(exists("xaxisSettings_xTitle"))
+xTitle <- names(xdataFrame)[1]
+if(exists("xaxisSettings_xTitle") && xaxisSettings_xTitle!= '')
 {
     xTitle<-xaxisSettings_xTitle
+}
+
+if(nColumnsX > 1) {
+  xTitle<- paste(xTitle, "(PCA 1)", sep=" ")
 }
 
 xZeroline<-TRUE
@@ -103,7 +112,7 @@ if(exists("xaxisSettings_xGridCol"))
 }
 
 xGridWidth<-0.1
-if(exists("xaxisSettings_xGridWidth") && xaxisSettings_xGridWidth <= 5 && xaxisSettings_xGridWidth > 0)
+if(exists("xaxisSettings_xGridWidth") && xaxisSettings_xGridWidth <= 5 && xaxisSettings_xGridWidth >= 0.1)
 {
     xGridWidth<-xaxisSettings_xGridWidth
 }
@@ -121,7 +130,7 @@ if(exists("xaxisSettings_xAxisBaseLineCol"))
 }
 
 xAxisBaseLineWidth<-4
-if(exists("xaxisSettings_xAxisBaseLineWidth") && xaxisSettings_xAxisBaseLineWidth <= 11 && xaxisSettings_xAxisBaseLineWidth > 0)
+if(exists("xaxisSettings_xAxisBaseLineWidth") && xaxisSettings_xAxisBaseLineWidth <= 11 && xaxisSettings_xAxisBaseLineWidth >= 1)
 {
     xAxisBaseLineWidth<-xaxisSettings_xAxisBaseLineWidth
 }
@@ -129,10 +138,13 @@ if(exists("xaxisSettings_xAxisBaseLineWidth") && xaxisSettings_xAxisBaseLineWidt
 ##############################
 ####y axis settings ########
 
-yTitle<-'Y'
-if(exists("yaxisSettings_yTitle"))
+yTitle <- names(ydataFrame)[1]
+if(exists("yaxisSettings_yTitle") && yaxisSettings_yTitle!='')
 {
     yTitle<-yaxisSettings_yTitle
+}
+if(nColumnsY > 1) {
+  yTitle<- paste(yTitle, "(PCA 1)", sep=" ")
 }
 
 yZeroline<-TRUE
@@ -160,7 +172,7 @@ if(exists("yaxisSettings_yGridCol"))
 }
 
 yGridWidth<-0.1
-if(exists("yaxisSettings_yGridWidth") && yaxisSettings_yGridWidth <= 5 && yaxisSettings_yGridWidth > 0)
+if(exists("yaxisSettings_yGridWidth") && yaxisSettings_yGridWidth <= 5 && yaxisSettings_yGridWidth >= 0.1)
 {
     yGridWidth<-yaxisSettings_yGridWidth
 }
@@ -178,7 +190,7 @@ if(exists("yaxisSettings_yAxisBaseLineCol"))
 }
 
 yAxisBaseLineWidth<-4
-if(exists("yaxisSettings_yAxisBaseLineWidth") && yaxisSettings_yAxisBaseLineWidth <= 11 && yaxisSettings_yAxisBaseLineWidth > 0)
+if(exists("yaxisSettings_yAxisBaseLineWidth") && yaxisSettings_yAxisBaseLineWidth <= 11 && yaxisSettings_yAxisBaseLineWidth >= 1)
 {
     yAxisBaseLineWidth<-yaxisSettings_yAxisBaseLineWidth
 }
@@ -209,11 +221,6 @@ yAesthetics <- list(
   linewidth=yAxisBaseLineWidth
 )
 
-
-
-##################################################
-xdataFrame<-data.frame(Value1)
-ydataFrame<-data.frame(Value2)
 
 ############################################################
 ############################################################
@@ -255,16 +262,18 @@ getTooltips<- function(){
   return (x)
 }
 
+dataScaling <- function (dataFrame)
+{
+  nMin<--3
+  nMax<-3
+  min<-min(dataFrame)
+  max<-max(dataFrame)
+  nX = nMin + (nMax - nMin) * (dataFrame - min)/(max - min)
+  return(nX)
+}
+
 ###############################################################
 #handle missing values and generalize different formats of data
-
-nColumnsY<-NCOL(ydataFrame)
-nColumnsX<-NCOL(xdataFrame)
-nRowsY<-NROW(ydataFrame)
-nRowsX<-NROW(xdataFrame)
-
-ynumericCheck<-sapply(ydataFrame, is.numeric)
-xnumericCheck<-sapply(xdataFrame, is.numeric)
 
 for(iCounter in 1:nColumnsY)
 {
@@ -333,19 +342,25 @@ for(iCounter in 1:nColumnsX)
 ###################data Scaling#############################
 
 if (exists("clusterSettings_scaling") && clusterSettings_scaling) {
-  
-  scaledYdata<-scale(ydataFrame)
-  scaledXdata<-scale(xdataFrame)
-
+  scaledYdata<-ydataFrame;
+  scaledXdata<-xdataFrame;
+  for (iCounter in 1:nColumnsY) {
+    tempF<-dataScaling(scaledYdata[,iCounter])
+    scaledYdata[,iCounter]<-tempF
+  }
+  for (iCounter in 1:nColumnsX) {
+    tempF<-dataScaling(scaledXdata[,iCounter])
+    scaledXdata[,iCounter]<-tempF
+  }
 } else {
-    maxYData<-max(ydataFrame)
-    maxXData<-max(xdataFrame)
-    maxXYData<-max(c(maxYData, maxXData))
-    
-    epsilon<-epsilon * ((maxXYData * 5) / 100)
+  maxYData<-max(ydataFrame)
+  maxXData<-max(xdataFrame)
+  maxXYData<-max(c(maxYData, maxXData))
+  
+  epsilon<-epsilon * ((maxXYData * 5) / 100)
 
-    scaledYdata<-ydataFrame
-    scaledXdata<-xdataFrame
+  scaledYdata<-ydataFrame
+  scaledXdata<-xdataFrame
 }
 
 scaledYdata<-data.frame(scaledYdata)
@@ -485,7 +500,7 @@ x<-getTooltips()
 if(exists("Tooltip")){
   p<-p+geom_point(data = x, aes(x =x,y = y, xTooltip =X, yTooltip=Y, userTooltip=Tooltip), colour = pointCol)
   p<-ggplotly(p, tooltip=c('xTooltip','yTooltip','userTooltip'))%>%
-  layout(title = title,
+  layout(title = '',
          xaxis = xAesthetics, 
          yaxis = yAesthetics,
          margin = list(l = 50,
@@ -498,7 +513,7 @@ if(exists("Tooltip")){
 else{
   p<-p+geom_point(data = x, aes(x =x,y = y, xTooltip =X, yTooltip=Y), colour = pointCol)
   p<-ggplotly(p, tooltip=c('xTooltip','yTooltip'))%>%
-  layout(title = title,
+  layout(title = '',
          xaxis = xAesthetics, 
          yaxis = yAesthetics,
          margin = list(l = 50,

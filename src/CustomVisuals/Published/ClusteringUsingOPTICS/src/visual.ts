@@ -202,13 +202,13 @@ module powerbi.extensibility.visual {
             let xGridWidth: number = getValue<number>(objects, 'xaxisSettings', 'xGridWidth', 0.1);
             xGridWidth = xGridWidth < 0.1 ? 0.1 : xGridWidth > 5 ? 0.1 : getValue<number>(objects, 'xaxisSettings', 'xGridWidth', 0.1);
             let xAxisBaseLineWidth: number = getValue<number>(objects, 'xaxisSettings', 'xAxisBaseLineWidth', 4);
-            xAxisBaseLineWidth = xAxisBaseLineWidth < 0 ? 4 :
+            xAxisBaseLineWidth = xAxisBaseLineWidth < 1 ? 4 :
                 xAxisBaseLineWidth > 11 ? 4 : getValue<number>(objects, 'xaxisSettings', 'xAxisBaseLineWidth', 4);
 
             let yGridWidth: number = getValue<number>(objects, 'yaxisSettings', 'yGridWidth', 0.1);
             yGridWidth = yGridWidth < 0.1 ? 0.1 : yGridWidth > 5 ? 0.1 : getValue<number>(objects, 'yaxisSettings', 'yGridWidth', 0.1);
             let yAxisBaseLineWidth: number = getValue<number>(objects, 'yaxisSettings', 'yAxisBaseLineWidth', 4);
-            yAxisBaseLineWidth = yAxisBaseLineWidth < 0 ? 4 :
+            yAxisBaseLineWidth = yAxisBaseLineWidth < 1 ? 4 :
                 yAxisBaseLineWidth > 11 ? 4 : getValue<number>(objects, 'yaxisSettings', 'yAxisBaseLineWidth', 4);
 
             this.clusterSettings = {
@@ -223,7 +223,7 @@ module powerbi.extensibility.visual {
                 plotColor: getValue<string>(objects, 'plotSettings', 'plotColor', '#FFFFFF')
             };
             this.xAxisSettings = {
-                title: getValue<string>(objects, 'xaxisSettings', 'xTitle', 'X'),
+                title: getValue<string>(objects, 'xaxisSettings', 'xTitle', ''),
                 zeroline: getValue<boolean>(objects, 'xaxisSettings', 'xZeroline', true),
                 labels: getValue<boolean>(objects, 'xaxisSettings', 'xLabels', true),
                 grid: getValue<boolean>(objects, 'xaxisSettings', 'xGrid', true),
@@ -235,7 +235,7 @@ module powerbi.extensibility.visual {
             };
 
             this.yAxisSettings = {
-                title: getValue<string>(objects, 'yaxisSettings', 'yTitle', 'Y'),
+                title: getValue<string>(objects, 'yaxisSettings', 'yTitle', ''),
                 zeroline: getValue<boolean>(objects, 'yaxisSettings', 'yZeroline', true),
                 labels: getValue<boolean>(objects, 'yaxisSettings', 'yLabels', true),
                 grid: getValue<boolean>(objects, 'yaxisSettings', 'yGrid', true),
@@ -278,8 +278,6 @@ module powerbi.extensibility.visual {
                     objectEnum.push({
                         objectName: objectName,
                         properties: {
-
-                            title: this.plotSettings.title,
                             plotColor: this.plotSettings.plotColor
                         },
                         selector: null
