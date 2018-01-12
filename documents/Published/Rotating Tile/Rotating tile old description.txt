@@ -1,0 +1,11 @@
+Brief description:
+Automatically flipping tile with a set frequency which can be used to display different KPIs
+
+Long description:
+Useful when multiple KPIs or metrics are required to be displayed but in less real estate space on report.
+
+This saves space for other important charts. This visual basically is a tile which will display one KPI value at a time and then flip to display other.
+
+Each flip can have a new value based on number of KPIs that needs to be displayed. Based on the requirement of report in terms of space the tile can be rotated either on horizontal axis or vertical axis. For better visibility and ensuring end user can go through the Tile data conveniently timer can be set for the tile for flip delay. Additionally this visual has option for providing 3D effect as well which provide additional rotational effect to the tile.
+
+It has basic formatting options for label/title/text fonts, background and borders in terms of size and color.

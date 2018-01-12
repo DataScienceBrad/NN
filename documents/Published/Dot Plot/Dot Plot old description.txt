@@ -1,0 +1,7 @@
+Brief description:
+Dot Plot displays distributions among multiple categories using dots.
+
+Long description:
+This is a statistical chart consisting of data points (bubbles) plotted on XY axis distributed over desired set of values. Size of the bubble represents magnitude while color represents the type of category. It enables viewing data through multiple categories like parent category and child sub-category.
+
+It supports selection, partial highlighting, multi selection, legends, tooltips, display different color bubble for different category, and all other default formatting options available in Power BI. User can modify bubble size, orientation of chart, X-axis and Y-axis text, background and start the axis from a specified value.

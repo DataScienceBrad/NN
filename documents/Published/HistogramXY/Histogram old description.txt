@@ -1,0 +1,11 @@
+Brief description:
+Combines benefits of showing distribution along with actual values
+
+Long description:
+Below formatting options are provided in this visual
+•	Show or hide points in the chart
+•	Show or hide histogram bars
+•	Show or hide X-axis
+•	Show or hide Y-axis-right
+•	Show or hide Y-axis-left (Y-axis of histogram)
+•	Show or hide Grid lines

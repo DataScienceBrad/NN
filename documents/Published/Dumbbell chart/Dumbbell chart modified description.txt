@@ -1,0 +1,15 @@
+Brief description:
+Dumbbell Chart displays critical measures and shows changes over a duration or across categories.
+
+Long description:
+Dumbbell Chart helps users analyze changes in critical data. This visual is an excellent choice for illustrating the change between two data points and comparing the distances between them. 
+ 
+Dumbbell Chart gets its name thanks to its resemblance to a gym weight. The visual consists of a dual-axis combination chart, where one axis is marked by a circle and the other is marked by a line that spans data points provided by the user. 
+ 
+Key features include:
+·       The ability to display the performance of multiple indicators.
+·       The ability to compare the growth or loss of indicators across various categories.
+·       Easy interaction with many data points using the zoom functionality.
+·       Quick downloading of an image of the chart with the capture image widget.
+
+R package dependencies (auto installed): plotly and ggplot2

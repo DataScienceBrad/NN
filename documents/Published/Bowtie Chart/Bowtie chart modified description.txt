@@ -1,0 +1,12 @@
+Brief description:
+Displays categorization of a value by branching out smooth interpolated nodes to the left and/or right to show a flow of data from one process or category to another.
+
+Long description:
+The purpose of the Bowtie Chart is to present data flow from one category to another or to showcase the distribution of data. For example, an ideal use case for Bowtie is to display how much of each channel category sales flowed into the corresponding subcategory sales. 
+
+The Bowtie visualization can be used to swiftly compare the values of one or more categories. The branches of the bowtie offer a quick visual assessment for analysis due to their thickness, which indicates the relative weight of each category. The categories are based on the Source and/or Destination fields. The Source and Value fields are required to create a half bowtie chart, which can be used to showcase the distribution of data within a Source. The Source, Destination and Value fields are required for a full bowtie chart, which can be used for showcasing how one aggregated value can be bifurcated into two distinct categories 
+
+Key features include:
+•	Configurable branch color 
+•	Option to change font-size, color and decimal precision for data labels and summary labels
+•	Can be used in two formats, either as half bowtie or full bowtie 

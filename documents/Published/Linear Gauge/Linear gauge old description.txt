@@ -1,0 +1,5 @@
+Brief description:
+Create at-a-glance visualization to compare your progress against identified goals and warning zones
+
+Long description:
+This visual allows you to include multiple data points, the component provides the ability to illustrate trend details, such as monthly or year-to-date completion rates. The pointer notes targets, and the colored bar shows the current progress toward those goals. Best suited for showing progress as compared to target.

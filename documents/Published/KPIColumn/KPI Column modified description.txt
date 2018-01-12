@@ -1,0 +1,22 @@
+Brief description:
+Combination of a line and column chart where the column behaves as an indicator by changing its color based on the value of the line which represents the KPI (Key Performing Indicator).
+
+Long description:
+KPI Column is a combination of a line and column chart where each column value changes color depending on its relation to a target line value. 
+For example, suppose a line chart represents the sales target of an entire year, divided into months. A column chart can be added to represent the actual sales data of each month. When compared, each month’s actual sales may miss the target, meet it, or surpasses it. Depending on the results, the color of the columns will change to red, yellow, or green, respectively. The same target line can be used to forecast future values. For such values, the columns will be displayed translucently with a dashed bar.
+Users can set a minimum threshold value for all columns. 
+
+The basic requirements and methods to use KPI Column are as follows:
+1) “Measure” and “category” data fields are mandatory.
+2) To differentiate forecasted data, add a column which contains 0's and 1's in the forecasted field. 0 = normal, 1 = forecasted (dashed bars).
+3) Adding data in the full-year target field will display a target line in the chart.
+4) Add data in the individual target field to display an individual target line in the chart.
+5) If the individual target field is set, you can update bar colors based on values specified in the zone 1 and zone 2 upper bound fields in the formatting pane.
+Example: Zone 1 upper bound = 90 and zone 2 upper bound = 101.
+This will create three zones: 0-89, 90-100, and 101, as seen above.
+If the bar value is less than the individual target of 90%, the “low” color will be applied.
+If the bar value is greater than or equal to the individual target of 90%, and less than 101, the “medium” color will be applied.
+If the bar value is greater than or equal to 101, the “high” color will be applied.
+6) Formatting options for the y-axis include color, display units, and decimal points.
+7) Formatting options for the individual target include on/off, line color, and stroke width.
+8) Formatting options for the target include on/off, line color, and stroke width.

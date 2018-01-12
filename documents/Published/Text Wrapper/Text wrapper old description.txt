@@ -1,0 +1,5 @@
+Brief description:
+Wraps a static text string (statement) along with a dynamic text field value
+
+Long description:
+This dynamic field value will update according to the selected filter/slicer keeping the static text intact. The static string needs to be provided by the user which will be appended as “ : <>” after the dynamic field value in the visual resulting the final value in the visual as: “<> : <>”

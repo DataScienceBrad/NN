@@ -1,0 +1,12 @@
+Brief description:
+Track current values against a target with an intuitive 3D cylinder visual.
+
+Long description:
+The cylindrical gauge’s fill line gives the user an easy way to understand how actual values weigh against a target capacity. The tool is useful for evaluating inventory, fuel, or other repository levels.
+
+Features:
+
+•	Actual value display. For added clarity, the fill line’s actual value is listed below the cylinder.
+•	Tick marks. You may adjust or disable this feature. By default, tick values are enabled, with the minimum set to 0 and the maximum set to 100.
+•	Max threshold definition. You may include a maximum threshold to see whether the actual value is over capacity.
+•	Scroll bar. When height restrictions limit the how much of the gauge is visible, a vertical scroll bar allows you to navigate up and down.

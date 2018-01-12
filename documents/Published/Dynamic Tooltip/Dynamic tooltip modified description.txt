@@ -1,0 +1,10 @@
+Brief description:
+Enhance readability of reporting charts by providing additional data points as tooltips and clues using symbolic images.
+
+Long description:
+Tooltips provide additional data points for a chart. While most available tooltips display static information, Dynamic Tooltip by MAQ Software can display data fetched from a data source in addition to having the ability to show static text as well. So, with changing data, there is no requirement to adjust tooltip time and again. Dynamic Tooltip can also be used as a visual imagery aid for charts by providing symbolic indication images, such as a glowing bulb icon at the corner of a chart that suggests to the audience that clicking the icon will yield ‘tips’. 
+
+Key features include:
+•	Enables static and dynamic tooltip for report charts.
+•	Customized icon image configuration.
+•	Decimal and display unit data formatting options.

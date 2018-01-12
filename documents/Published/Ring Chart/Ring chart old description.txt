@@ -1,0 +1,11 @@
+Brief description:
+Used to represent data as slices where sizes are relative to data
+
+Long description:
+The size of each slice is determined by the slice value relative to the sum of the values of all slices. Each data series that you plot in the chart adds a ring to the chart. These rings have different colors for easy representation of the data slices in chart.
+
+Key features:
+•	Ability to turn on animation to focus on specific slices. It visually pulls out slices of the ring chart.
+•	Dynamic indicator displayed along with the summary at the center of ring. Threshold values define the color and direction of the indicator.
+•	Ability to display primary and secondary measures in legends with indicators.
+•	Ability to showcase multiple data fields in tooltips.

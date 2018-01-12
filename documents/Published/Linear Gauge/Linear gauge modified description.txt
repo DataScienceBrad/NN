@@ -1,0 +1,12 @@
+Brief description:
+Create an at-a-glance visualization to compare your progress against identified goals and warning zones.
+
+Long description:
+Linear Gauge is best suited for showcasing progress towards to a goal, such as the achieved sales vs. the target sales in a month. This visual allows you to include multiple data points and the component provides the ability to illustrate trend details, such as monthly or year-to-date completion rates. The pointer notes targets and the colored bar shows the current progress toward those goals.
+
+Key features include:
+•	The color and size of text labels are adjustable
+•	Labels and tooltips for additional data sources can be added
+•	Modify orientation from horizontal to vertical
+•	Option to add scale
+•	Add color and target range 

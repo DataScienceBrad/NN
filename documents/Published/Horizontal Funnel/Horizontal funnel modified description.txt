@@ -1,0 +1,14 @@
+Brief description:
+Displays various stages of a process and its related metrics in a horizontally oriented funnel.
+
+Long description:
+Funnel charts have become synonymous with sales pipeline analysis. These charts allow users to view both the sales process and conversion rates at each stage.  Funnel charts are also useful in website traffic analysis, order fulfillment, or any business process analysis involving multiple stages.  
+While other Power BI funnels are limited to displaying one key metric for each funnel stage, Horizontal Funnel by MAQ Software allows users to display a second, customizable metric beneath the primary measure, defining the size of the colored funnel segments. For example, users can call out the dropout value or percentage next to the primary measure.  
+Horizontal Funnel also includes a tooltip option. Users can tailor the tooltip to display a brief explanation of the data, to provide contextual information, or to give any other kind of information.
+
+Key features include:
+•	Ability to display a secondary measure below the colored bars.
+•	Tool tip to display a brief explanation of the data
+•	“Data Colors” setting enable color configuration of funnel stages.
+•	“Labels” settings update the color, font size, display units and decimal places.
+

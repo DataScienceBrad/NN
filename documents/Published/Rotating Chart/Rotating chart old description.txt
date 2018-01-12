@@ -1,0 +1,17 @@
+Brief description:
+Automatically flipping chart with a set frequency to display different KPIs in each flip
+
+Long description:
+This is a horizontal bar chart which rotates on the horizontal axis to showcase multiple KPIs with each flip or rotation. It is useful when multiple KPIs or metrics sliced by categories are to be displayed, but in less real estate space on report thus saving space on the report or dashboard.
+
+Each flip can have a new value based on the number of KPIs that need to be displayed. For better visibility and to ensure end user can go through the visual data conveniently, timer can be set for the visual for the flip/rotation delay. It has basic formatting options for label/title/text fonts, background and borders in terms of size and color.
+
+Below formatting options will provide more clarity on how to better use the visual:
+
+•	'Data Colors’ settings can be used to update the color of the bars. Expand ‘Data Colors’ settings, update the color of the bars
+
+•	‘Animation settings’ can be used to update the flip delay time. Expand ‘Animation settings’, update the flip delay time
+
+•	‘Labels’ settings can be used to update the color, font size, display units and decimal places. Expand ‘Labels’ settings, update the color, font size, display units and decimal places
+
+•	‘Measure title’ settings can be used to update the color and font size of the Title text. Expand ‘Measure title’ settings, update the color and font size of the Title text

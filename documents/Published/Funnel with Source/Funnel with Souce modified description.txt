@@ -1,0 +1,5 @@
+Brief description:
+Displays stage-wise metric with the source (entry point) of any data point
+
+Long description:
+Funnel with Source, as the name suggests, showcases the funnel journey of any metric/ data point. The visual can help visualizing count of any metric of interest over various stages along with the source of entry or entry channel of the data point through which it reaches the funnel. For example, in the case of sales journey data, this visual displays the channel through which any lead enters the funnel and then the corresponding journey through the various stages of sales cycle. We can also filter data based on the selection of channel and on the selection of any stage of the sales journey. Cross visual filter is also supported by this visual

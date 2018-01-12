@@ -1,0 +1,11 @@
+Brief description:
+Automatically flipping tile with a set frequency which can be used to display different KPIs.
+
+Long description:
+This visual is useful for displaying multiple KPIs or metrics on a report using less real estate. This saves space for other important charts. For example, a summarizing year-end financial report of a company may require showcasing many financial ratios as KPIs within a limited space. A rotating tile can be used in this case. This visual is a tile that displays one KPI value at a time before flipping to display the next value. Each flip can have a new value based on the number of KPIs that needs to be displayed.
+
+Key features include:
+•	The tile can be rotated either on the horizontal axis or vertical axis. 
+•	To ensure that all data shown in the tile is conveniently readable, the flip delay time can be specified. 
+•	Includes a 3D effect option that rotates the tile, which makes it easier to notice when different data is displayed.
+•	Includes basic formatting options such as font type, size, and color for label and title, background, and tile borders.

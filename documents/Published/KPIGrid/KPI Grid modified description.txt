@@ -1,0 +1,13 @@
+Brief description:
+Display data in hierarchical order with options to separate categories and illustrate trends.
+
+Long description:
+KPI Grid allows users to effortlessly track productivity and performance data. This visual displays key data in hierarchical order, up to a user-defined number of levels. The visual also allows users to include custom images, such as rising or falling arrows.   
+One use for KPI Grid is to display yearly sales data. In addition to displaying categorical sales data, users can add images as a visual aid to emphasize yearly or quarterly trends. Users can also specify the time periods shown, making it easy to gauge performance according to internal deadlines and benchmarks.
+
+Key features include:
+•	Option to include separators between columns, highlighting certain categories and making them easy to compare or emphasize.
+•	Numerous options for formatting text, backgrounds, and units.
+•	Option to tailor the look and feel of the visual by changing row background colors, text size, and text color.
+•	Ability to easily call attention to headers and totals by creating first and last rows that are visually distinct from the rest of the grid.
+

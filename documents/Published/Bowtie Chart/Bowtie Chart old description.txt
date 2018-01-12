@@ -1,0 +1,5 @@
+Brief description:
+Displays categorization of a value by branching out smooth interpolated nodes
+
+Long description:
+The thickness of the branch indicates the weightage of the category. You can display Half Bowtie or Full Bowtie by providing source category or both source and destination categories respectively. Used for displaying the categorization of an aggregated value.

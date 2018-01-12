@@ -1,0 +1,13 @@
+Brief description:
+Represent data in separate quadrants to show distribution and items that share common traits.
+
+Long description:
+Quadrant Chart is a bubble chart with a background that is divided into four equal sections. This visual is useful for plotting data that contains three measures using an X-axis, a Y-axis, and a bubble size that represents the value of the third measure.
+For example, to show the relationship between production cost and gross profit, users can place the cost value on the X-axis and profit on the Y-axis. The four sections can be used to rate the performance (cost vs profit) as bad, good, better, best. Bubbles in each quadrant represent the health of the respective quadrant. The size of each bubble represents the number of units sold. This makes for a compact chart that shows a great deal of information.
+
+Key features include:
+• Ability to change the color of each bubble.
+• Customizable legend settings including the ability to show or hide the legend, as well as adjustments for position, title, color, and text size.
+• Formatting options for quadrants and quadrant lines including naming for each quadrant, X-Axis division line, Y-Axis division line, and a choice of dotted or solid lines.
+• Formatting options for the X-Axis include custom title, title text, labels, display units, and decimal points.
+• Formatting options for the Y-Axis include custom title, title text, labels, display units, and decimal points.

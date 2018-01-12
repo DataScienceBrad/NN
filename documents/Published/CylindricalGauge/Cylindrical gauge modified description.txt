@@ -1,0 +1,11 @@
+Brief description:
+Track current values against a target with an intuitive 3D cylinder visual.
+
+Long description:
+Cylindrical Gauge allows users to easily compare actual values against a target capacity. Each gauge in the visual represents a single metric. This visual is helpful for evaluating inventory, average customer satisfaction scores, fuel, or other repository levels.
+
+Key features include:
+•	Ability to change the color of the cylinder or the border of the visual.
+•	Ability to enable or disable adjustable tick marks. By default, tick values are enabled, with the minimum set to 0 and the maximum set to 100.
+•	Ability to define a maximum threshold to see whether the actual value is over capacity.
+

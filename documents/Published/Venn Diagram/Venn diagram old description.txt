@@ -1,0 +1,5 @@
+Brief description
+Overlapping circles illustrating the relationship among finite (two or more) datasets
+
+Long description:
+This visual displays all possible logical relations between a collection of datasets, each typically represented as a circle. Each circle (set) is a collection of objects or array of data that all have something in common. When multiple circles (sets) overlap, it is known as the intersection - this is where data that has all the qualities that the overlapping sets have. Each circle can have their distinguishing name and color to differentiate from other circle or sets. Labeling of each circle helps in knowing its individual or intersected region's value. The same information is also visible by hovering on any of the regions.
