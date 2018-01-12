@@ -1,0 +1,5 @@
+Brief description:
+This chart shows a graphical representation of value against threshold
+
+Long description:
+Can allow configuring threshold values and render data per threshold. It could be a good way to represent data when you have the actual value and the target value (maximum threshold)

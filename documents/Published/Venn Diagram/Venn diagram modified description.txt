@@ -1,0 +1,10 @@
+Brief description:
+Overlapping circles illustrating the relationship among two to four datasets
+
+Long description:
+This visual displays all possible logical relations between a collection of datasets, each typically represented as a circle. Each circle (set) is a collection of objects or an array of data that all have something in common. When multiple circles (sets) overlap, it is known as the intersection. The data at an intersection has all the qualities that are present in the overlapping sets. Let us take the example of getting insights of employee involvement in product, services and/or processes categories. Using Venn diagram by MAQ Software simplifies finding insights of how many employees are in product and process, how many in process and services, and other such combinations.
+
+Key features include:
+•	Each circle can have their distinguishing name and color to differentiate from other or sets.
+•	Labeling of each circle helps in knowing its individual or intersected region's value. 
+•	The value of a particular region inside Venn diagram is visible by hovering on any of the regions.

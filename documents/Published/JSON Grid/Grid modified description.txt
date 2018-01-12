@@ -1,0 +1,12 @@
+Brief description:
+Showcase data in a grid format with features such as pagination and sorting
+
+Long description:
+At times we need to represent data in a simpler form such as a grid, and we may need to present only specific information in a complex dataset. Grid by MAQ Software is the best visual to use for such a case. In the case of large datasets, sifting through the data to find required information defeats the purpose of easy visualization. The pagination feature of Grid simplifies data sifting. The grid also allows the user to sort data based on any specific column. This visual supports the calling of an API on any column if further processing on the data needs to be done.
+
+Key features include:
+•	Pagination of the grid
+•	Ability to add an image to the grid using a URL
+•	Ability to sort the data
+•	Support for various formats such as CSV, etc.
+•	Supports special characters as well

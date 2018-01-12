@@ -1,0 +1,20 @@
+Brief description:
+Here is a column chart where each column will behave as an indicator when compared with a line
+
+Long description:
+Column color updates dynamically based on the difference in column height and their respective target line value. Adding common threshold value exists for all columns. For upcoming values, the same target line can be used for forecasting and column will be displayed in separate manner (in translucent color) to show them as forecasted values.
+
+Below mentioned are the basic requirement and method to use the KPI column:
+1) Measure data field and category data field are required.
+2) To differentiate forecasted data, add a column which will contain 0's and 1's in forecasted field. 0 - normal, 1 - forecasted (dashed bars)
+3) Adding data in full year target field will display a target line in the chart.
+4) Add data in individual target field to display individual target line in the chart.
+5) If individual target field is set, then you can update bar colors based on values specified in zone 1 upper bound and zone 2 upper bound fields in formatting pane.
+Ex: zone 1 upper bound – 90 and zone 2 upper bound - 101
+This will create three zones: 0-89, 90-100 and 101 - above.
+If bar value is < individual target by 90% then 'Low' color will be applied.
+If bar value is >= individual target by 90% and < 101, then 'Medium' color will be applied.
+If bar value is >= 101, then 'High' color will be applied.
+6) Formatting options for Y-Axis - color, display units and decimal points.
+7) Formatting options for individual target - on/off, line color and stroke width.
+8) Formatting options for Target - on/off, line color and stroke width.

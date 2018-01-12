@@ -1,0 +1,13 @@
+Brief description:
+Rectangular box chart consisting of 100 brick segments that are colored according to the percentage breakdown of a dataset.
+
+Long description:
+Brick Chart gives users the ability to display a percentage breakdown of a category in an alternative format to a donut or pie chart. This visual is useful for showing percentages or positions occupied, such as seats in a legislature. It also easily displays a comparison of each portion of the category in relation to the whole.
+
+Key features include:
+•	Tooltip to indicate the category each color represents and its corresponding percentage.
+•	Option to include a legend with a customizable title, size, and color.
+•	Customizable chart width and height.
+
+
+

@@ -1,0 +1,5 @@
+Brief description:
+Consists of 100 squares that are colored according to the percentage breakdown of your datasets
+
+Long description:
+Brick Chart consists of 100 squares that are colored according to the percentage breakdown of your datasets. Hover your mouse over a square to bring up a tooltip. The tooltip indicates which dataset the color represents and the percentage value of that category. An optional legend above the chart identifies which datasets correspond with which colors. You may tailor the legend’s title, size and color. You may also customize the chart’s width and height

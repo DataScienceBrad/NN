@@ -1,0 +1,17 @@
+Brief description:
+Represent data in separate quadrants to show distribution of data and items that share common traits
+
+Long description:
+Bubble chart with a background that is divided into four equal sections. This visual is useful for plotting data that contains three measures using an X-axis, a Y-axis, and a bubble size that represents the value of the third measure. 
+
+Below is step by step use of quadrant chart:
+1) X-Axis field and Y-Axis field are required.
+2) Adding a column in Legend Axis field will slice the X-Axis and Y-Axis measures.
+3) To set radius size of bubbles, select a measure in Radial Axis field.
+
+Below formatting options are provided for the visual:
+•	Set color of each bubble.
+•	Legends setting: On/off, position, title, color and text size.
+•	Formatting option for quadrants and quadrant lines: 4 Quadrant names, X-Axis division line, Y-Axis division line and Dotted/solid.
+•	Formatting option for X-Axis: Title, title text, labels, display units and decimal points.
+•	Formatting option for Y-Axis: Title, title text, labels, display units and decimal points.

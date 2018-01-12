@@ -1,0 +1,14 @@
+Brief description:
+Displays density of distribution using bars along with actual values represented by points
+
+
+Long description:
+While a Histogram gives a sense of the density for distributed data in ranges or bins, at times there is a requirement to get the actual data represented for each range. Points, in this case, become useful to present actual data for each range. For example, employee distribution density in different salary buckets can be gauged using a Histogram, however, to observe the variation of data for employees in a single salary bucket you would need to see exact data points. The ‘Histogram with Points by MAQ Software’ visual can display those exact data points as well.  
+
+Key features include:
+•	Show or hide points in the chart
+•	Show or hide histogram bars
+•	Show or hide X-axis
+•	Show or hide Y-axis-right
+•	Show or hide Y-axis-left (Y-axis of histogram)
+•	Show or hide Gridlines

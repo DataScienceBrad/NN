@@ -1,0 +1,5 @@
+Brief description:
+Displays significant stock price points as colored vertical bars.
+
+Long description:
+Low and high price values are represented by grey bars. Open and close price values are shown as either red or green bars, which are superimposed over the low and high values. If a stock’s price dropped the bar will be red, and if the price rose the bar will be green. Prices are listed on the vertical axis and time increments are listed on the horizontal axis. The ranges for prices and time increments are customizable.

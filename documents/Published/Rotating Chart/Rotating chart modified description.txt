@@ -1,0 +1,12 @@
+Brief description:
+Automatically flipping tile with a horizontal bar chart. Set frequency displays different KPIs with each flip.
+
+Long description:
+Business reports often require many KPIs to be displayed in a single report, especially when showcasing historical data. Rotating Chart allows users to display multiple KPIs or metrics in a compact viewing area, thus saving space on lengthy reports and dashboards. 
+
+Rotating Chart is a horizontal bar chart that rotates on the horizontal axis to showcase multiple KPIs. Each flip can have a new value based on the number of KPIs that need to be displayed. For better visibility and to ensure ease of use, a timer can be set for the flip or rotation delay.
+
+Key features include:
+•	“Data Colors” setting to enable color configuration of the bars
+•	“Animation” setting to adjust flip delay time
+•	“Labels” setting to adjust the label color, font size, display units, and decimal places

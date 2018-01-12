@@ -1,0 +1,16 @@
+Brief description:
+Transform dense statistical data into graphs that show clear networks of categories and relationships.
+
+Long description:
+Journey Chart enables you to display complex, multi-stage lead paths in a clean, uncluttered visual. 
+In this intuitive visual, nodes represent categories and vertices represent relationships between categories. The bigger the node or vertex, the larger the value.
+Customizable node colors make it easy for your audience to distinguish between categories. This visual can be used in numerous scenarios such as:
+•	Explaining a process’ flow
+•	Uncovering underlying patterns
+•	Highlighting subcategories stemming from a single source
+•	Showing the connectedness of key categories
+
+Key features include:
+•	Option to add text labels and tooltip for each node to provide additional information such as title or value
+•	Adjustable colors and sizes for text labels
+•	Option to add a legend to add clarity to complex graphs 

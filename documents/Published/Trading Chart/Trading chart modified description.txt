@@ -1,0 +1,6 @@
+Brief description:
+Displays significant stock price points as colored vertical bars.
+
+Long description:
+Tracking stock movement is crucial to making informed trading decisions. Trading Chart allows users to enter historical trading records which are translated into an easy to read chart. 
+Low and high price values are represented by gray bars. Open and close values are shown as either red or green bars (depending on stock movement), which are superimposed over the low and high values. If a stock’s price has dropped, the bar will be red. If the price rose, the bar will be green. Prices are listed on the vertical axis and time increments are listed on the horizontal axis. The ranges for prices and time increments are customizable.

@@ -1,0 +1,12 @@
+Brief description:
+Illustrate headway toward goals in either a pie chart or a donut chart format.
+
+Long description:
+Circular gauge visualizes the progress status of a given task in a circular design. Status can be displayed in terms of either the actual value or the percentage against the target in a pie chart or a donut chart format. Also, a threshold value can be defined in this visual. 
+An example use case of this visual is to display KPIs such as sales achieved against the set target.
+
+Key features include:
+•	One color illustrates actual progress and the other displays the target. 
+•	The percentage displayed on the report tracks progress against the target. 
+•	A range can be defined for the threshold value
+•	Text size and ring size are customizable.

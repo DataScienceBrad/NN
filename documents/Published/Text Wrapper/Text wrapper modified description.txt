@@ -1,0 +1,10 @@
+Brief description:
+Wraps a dynamic text string (statement) and can concatenate a dynamic text field with static text to improve the readability of a report.
+
+Long description:
+Text content for business reports is often long and at times dynamic such that it needs to be retrieved from a data source rather than having a static input like the text box. 
+Text Wrapper by MAQ Software can retrieve long text content from any data source and wrap them effectively to present the data in a readable format. If a static text is required to be appended before or after the dynamic text, then it can be done using this visual.  
+
+Key features include:
+•	The dynamic text field value will update according to the selected filter/slicer, keeping the static text intact. 
+•	The status text provided by the user is appended as “:<>” after the dynamic field value in the visual, resulting in the final value of the visual appearing as “<>: <>”. Option to hide the “:” is also provided.

@@ -1,0 +1,5 @@
+Brief description:
+Allows you to visualize customizable primary measure as colored bars.
+
+Long description:
+Use this to display a number of metric types, such as sales stages, time or geographic locations. A second customizable value is displayed beneath the colored bars. This feature provides you the ability to track an additional metric against your primary measure. The component includes the option to create a tool tip, which you may tailor to your specific needs.

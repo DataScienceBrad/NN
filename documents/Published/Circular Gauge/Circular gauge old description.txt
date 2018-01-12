@@ -1,0 +1,5 @@
+Brief description:
+Illustrate headway toward goals in either a pie or a donut chart format.
+
+Long description:
+One color illustrates actual progress and the other displays the target. The percentage displayed on the report tracks progress against the target. Text size and ring size are customizable.

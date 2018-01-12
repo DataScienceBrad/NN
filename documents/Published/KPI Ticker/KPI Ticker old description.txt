@@ -1,0 +1,5 @@
+Brief description:
+Automatically flipping visual that allows users to view various metrics along with trend indicators.
+
+Long description:
+It allows you to configure set of metrics that should be shown in rotation. It also allows you to specify the trend indicators that show the percentage or value drop/increase. Suitable for applications that focus on certain key metrics and are interested in knowing the metric value increase or decrease. Visually attractive with ability to change colors of tiles and trend indicators

@@ -1,0 +1,7 @@
+Brief description:
+Easy to use control with pagination, sorting and GET Rest API call functionality
+
+Long description:
+Grid allows you to add a paginated grid on the report. It allows you to specify on which column should the grid be sorted by default and in which order. It also allows you to call an API on any column if further processing needs to be done.
+Want to have a grid with a pagination feature? Want to have a grid which supports API calling?
+If yes, then you can use Grid Power BI custom visual.

@@ -1,0 +1,16 @@
+Brief description:
+Shows data distribution with mean, standard deviation, quartile deviation, and other data points
+
+Long description:
+Box and whisker charts are most commonly used in statistical analysis like comparing medical trial results or teachers' test scores et. al. It consists of two parts—the main body called the Box and the thin vertical lines coming out of the Box called Whiskers. The first quartile forms the bottom and the third quartile forms the top of the Box. The Whiskers connect the minimum and the maximum values to the Box. In addition to showing median, first and third quartile and maximum and minimum values, the Box and Whisker chart is also used to depict Mean, Standard Deviation and Quartile Deviation.
+While other Power BI Box plots have the capability to display these statistics data, Box Plot by MAQ Software provides more details and clarity of the figures by providing more user controls and capabilities to suit the exact needs of the use case like ability to add parent axis and flip visual horizontally or vertically based on reporting requirement.
+Other common feature includes:
+•	Option to enable/disable - mean dot and median line
+•	Option to choose the type of quartile - inclusive/exclusive
+•	Option to choose type of whiskers - Min/Max, < 1.5 IQR, > 1.5 IQR or custom
+•	Option to choose shapes of mean and data points – circle, square, rectangle
+•	Option to hide/show all data points
+•	Option to hide/show outliers
+•	Option to control the opacity of boxes
+Thus, this visual lets you visualize the complete picture of your statistical data comparison, in a glance.
+

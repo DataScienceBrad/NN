@@ -1,0 +1,9 @@
+Brief description:
+Automatically flipping visual that allows users to view various metrics along with trend indicators.
+
+Long description:
+KPI Ticker allows users to conveniently display a set of frequently changing metrics. Such metrics might include multiple stock values for tracking by brokers or flight delay information for multiple carriers. Additional information such as trend indicators allows users to know at a glance if the metric is increasing and decreasing in value. 
+
+Key features include:
+•	Ability to change colors of tiles and trend indicators.
+•	Configurable text size and fonts.

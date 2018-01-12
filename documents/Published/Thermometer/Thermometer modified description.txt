@@ -1,0 +1,9 @@
+Brief description:
+Thermometer where filled portion represents the achieved value in relation to a target value.
+
+Long description:
+Thermometer is a straightforward chart that indicates the progress (task status) of a well-defined measure by illustrating the percentage of the task that's already completed. Thermometer is especially useful in illustrating sales data against a target value. 
+
+Key features include:
+•	Ability to configure threshold value.
+•	Ability to change thermometer color and size of text.

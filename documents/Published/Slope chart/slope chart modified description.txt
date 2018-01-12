@@ -1,0 +1,13 @@
+Brief description:
+Slope Chart is used to illustrate change between two data points and indicate trends.
+
+Long description:
+Slope Chart allows users to analyze trends in data at a glance. This visual is useful for comparing interactions between two data points based on time or other user-chosen parameters. Slope Chart places primary emphasis on end points by focusing on the difference between the start and end values.
+
+Key features include:
+•            The ability to display trends across various indicators.
+•            Quick comparison of indicator growth or loss across categories.
+•            Easy interaction with many data points using the zoom functionality.
+•            Quick downloading of an image of the chart with the capture image widget.
+
+R package dependencies (auto installed): plotly and ggplot2

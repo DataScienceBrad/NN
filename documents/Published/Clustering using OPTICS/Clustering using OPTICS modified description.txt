@@ -1,0 +1,16 @@
+Brief description:	
+OPTICS based clustering algorithm to analyze groups and hierarchies within a group.
+
+Long description:
+Analyze a given dataset based on OPTICS algorithm and identifies clusters in your data. The algorithm works on density based clustering, so you can also identify individual points that don’t belong to any of the groups. You can also perform hierarchical clustering on your data to identify more closely-knit groups within larger groups. This visual also allows you to adjust the clustering parameters to control hierarchy depth and cluster sizes.
+
+Key features include: 
+•	Ability to identify outliers based on convex hull plots.
+•	Data is scaled and pre-processed automatically so no need to do so externally.
+•	Add your own dataset for tooltips
+•	Ability to identify sub clusters/hierarchal clusters in your data. 
+•	Ability of hover tooltips and zoom effects.
+•	Capability to manually adjust the parameters of the clustering model.
+•	No need to define the number of clusters.
+
+R package dependencies (auto installed): dbscan, plotly, ggplot2

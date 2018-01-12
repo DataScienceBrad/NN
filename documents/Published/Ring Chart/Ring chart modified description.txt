@@ -1,0 +1,12 @@
+Brief description:
+Represent subsets of data as slices of a ring where slice sizes are relative to all data available or all data used in the ring. Displays the relationship, in terms of values or percentages, of slices of a ring with all data that is represented by the ring.
+
+
+Long description:
+The size of each slice is determined by the slice value relative to the sum of the values of all slices. For example, to display the contribution of various channels to the total sales, data for channels such as e-mail, store and online can be represented as slices of the ring, where the entire ring represents total sales. Slices of the ring can have distinct colors for easy representation of the data. A 3D effect for slices to move little out of the ring on hovering, helps the user to identify and focus on the slice being observed. 
+
+Key features include:
+•	Ability to turn on animation to focus on specific slices. It visually pulls out slices of the ring chart.
+•	Dynamic indicator displayed along with the summary at the center of the ring. The direction and customizable color of the indicator change depending on the threshold values specified.
+•	Ability to display primary and secondary measures in legends with indicators.
+•	Ability to showcase multiple data fields in tooltips.

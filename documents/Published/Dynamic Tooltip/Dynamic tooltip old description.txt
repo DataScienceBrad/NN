@@ -1,0 +1,7 @@
+Brief description:
+Increase your audience’s understanding of your data by adding data to your visuals.
+
+Long description:
+Most tooltips display static information or images. With this visual, you can display data fetched from a data source. This function allows you the freedom to create a tooltip that does not require constant adjustment. When your data changes, the tooltip changes too. It’s as easy as that.
+This works well with static statements. If you would just like to add some helpful information for your audience, simply enter your text into the display field.
+The decimal points, type of display units, and the tooltip’s icon image are all customizable.
