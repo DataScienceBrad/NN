@@ -1,0 +1,450 @@
+{
+    "dataRoles": [
+        {
+            "displayName": "Values",
+            "name": "category",
+            "kind": "GroupingOrMeasure"
+        }
+    ],
+    "dataViewMappings": [
+        {
+            "categorical": {
+                "categories": {
+                    "for": {
+                        "in": "category"
+                    },
+                    "dataReductionAlgorithm": {
+                        "top": {
+                            "count": 1000000
+                        }
+                    }
+                }
+            }
+        }
+    ],
+    "sorting": {
+        "implicit": {
+            "clauses": [
+                {
+                    "role": "category",
+                    "direction": 1
+                }
+            ]
+        }
+    },
+    "objects": {
+        "orient": {
+            "displayName": "View As",
+            "properties": {
+                "prop": {
+                    "displayName": "Selected view",
+                    "type": {
+                        "text": true
+                    }
+                },
+                "xaxis": {
+                    "displayName": "X axis",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "yaxis": {
+                    "displayName": "Y axis",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "bin": {
+                    "displayName": "Facet",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "icolor": {
+                    "displayName": "Color",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "jcolor": {
+                    "displayName": "Color",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "noOfBins": {
+                    "displayName": "Number Of Bins",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "icolortext": {
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "jcolortext": {
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "columns": {
+                    "displayName": "Columns",
+                    "type": {
+                        "text": true
+                    }
+                }
+            }
+        },
+        "presentation": {
+            "displayName": "Presentation",
+            "properties": {
+                "show": {
+                    "displayName": "Presentation",
+                    "type": {
+                        "bool": true
+                    }
+                }
+            }
+        },
+        "analytics": {
+            "displayName": "Analytics Options",
+            "properties": {
+                "maxLine": {
+                    "displayName": "Max line",
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "maxLineStyle": {
+                    "displayName": "Line style",
+                    "type": {
+                        "enumeration": [
+                            {
+                                "value": "dashed",
+                                "displayName": "Dashed"
+                            },
+                            {
+                                "value": "solid",
+                                "displayName": "Solid"
+                            },
+                            {
+                                "value": "dotted",
+                                "displayName": "Dotted"
+                            }
+                        ]
+                    }
+                },
+                "maxLineFill": {
+                    "displayName": "Max line color",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "maxLineOpacity": {
+                    "displayName": "Opacity %",
+                    "type": {
+                        "formatting": {
+                            "fontSize": true
+                        }
+                    }
+                },
+                "maxLineDataLabel": {
+                    "displayName": "Data label for max line",
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "minLine": {
+                    "displayName": "Min line",
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "minLineStyle": {
+                    "displayName": "Line style",
+                    "type": {
+                        "enumeration": [
+                            {
+                                "value": "dashed",
+                                "displayName": "Dashed"
+                            },
+                            {
+                                "value": "solid",
+                                "displayName": "Solid"
+                            },
+                            {
+                                "value": "dotted",
+                                "displayName": "Dotted"
+                            }
+                        ]
+                    }
+                },
+                "minLineFill": {
+                    "displayName": "Min line color",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "minLineOpacity": {
+                    "displayName": "Opacity %",
+                    "type": {
+                        "formatting": {
+                            "fontSize": true
+                        }
+                    }
+                },
+                "minLineDataLabel": {
+                    "displayName": "Data label for min line",
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "avgLine": {
+                    "displayName": "Average line",
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "avgLineStyle": {
+                    "displayName": "Line style",
+                    "type": {
+                        "enumeration": [
+                            {
+                                "value": "dashed",
+                                "displayName": "Dashed"
+                            },
+                            {
+                                "value": "solid",
+                                "displayName": "Solid"
+                            },
+                            {
+                                "value": "dotted",
+                                "displayName": "Dotted"
+                            }
+                        ]
+                    }
+                },
+                "avgLineFill": {
+                    "displayName": "Average line color",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "avgLineOpacity": {
+                    "displayName": "Opacity %",
+                    "type": {
+                        "formatting": {
+                            "fontSize": true
+                        }
+                    }
+                },
+                "avgLineDataLabel": {
+                    "displayName": "Data label for average line",
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "constantLine": {
+                    "displayName": "Constant line",
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "constantLineValue": {
+                    "displayName": "Value",
+                    "type": {
+                        "text": true
+                    }
+                },
+                "constantLineStyle": {
+                    "displayName": "Line style",
+                    "type": {
+                        "enumeration": [
+                            {
+                                "value": "dashed",
+                                "displayName": "Dashed"
+                            },
+                            {
+                                "value": "solid",
+                                "displayName": "Solid"
+                            },
+                            {
+                                "value": "dotted",
+                                "displayName": "Dotted"
+                            }
+                        ]
+                    }
+                },
+                "constantLineFill": {
+                    "displayName": "Constant line color",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "constantLineOpacity": {
+                    "displayName": "Opacity %",
+                    "type": {
+                        "formatting": {
+                            "fontSize": true
+                        }
+                    }
+                },
+                "constantLineDataLabel": {
+                    "displayName": "Data label for average line",
+                    "type": {
+                        "bool": true
+                    }
+                }
+            }
+        },
+        "value": {
+            "displayName": "Value",
+            "properties": {
+                "displayValue": {
+                    "displayName": "Display value",
+                    "type": {
+                        "enumeration": [
+                            {
+                                "value": "inside",
+                                "displayName": "Inside"
+                            },
+                            {
+                                "value": "outside",
+                                "displayName": "Outside"
+                            }
+                        ]
+                    }
+                }
+            }
+        },
+        "fontSettings": {
+            "displayName": "Font settings",
+            "properties": {
+                "fontSize": {
+                    "displayName": "Font size",
+                    "type": {
+                        "formatting": {
+                            "fontSize": true
+                        }
+                    }
+                },
+                "fontFamily": {
+                    "displayName": "Font Family",
+                    "type": {
+                        "enumeration": [
+                            {
+                                "value": "Arial",
+                                "displayName": "Arial"
+                            },
+                            {
+                                "value": "Arial Black",
+                                "displayName": "Arial Black"
+                            },
+                            {
+                                "value": "Arial Unicode MS",
+                                "displayName": "Arial Unicode MS"
+                            },
+                            {
+                                "value": "Calibri",
+                                "displayName": "Calibri"
+                            },
+                            {
+                                "value": "Cambria",
+                                "displayName": "Cambria"
+                            },
+                            {
+                                "value": "Cambria Math",
+                                "displayName": "Cambria Math"
+                            },
+                            {
+                                "value": "Candara",
+                                "displayName": "Candara"
+                            },
+                            {
+                                "value": "Comic Sans MS",
+                                "displayName": "Comic Sans MS"
+                            },
+                            {
+                                "value": "Consolas",
+                                "displayName": "Consolas"
+                            },
+                            {
+                                "value": "Constantia",
+                                "displayName": "Constantia"
+                            },
+                            {
+                                "value": "Corbel",
+                                "displayName": "Corbel"
+                            },
+                            {
+                                "value": "Courier New",
+                                "displayName": "Courier New"
+                            },
+                            {
+                                "value": "Georgia",
+                                "displayName": "Georgia"
+                            },
+                            {
+                                "value": "Lucida Sans Unicode",
+                                "displayName": "Lucida Sans Unicode"
+                            },
+                            {
+                                "value": "Segoe (Bold)",
+                                "displayName": "Segoe (Bold)"
+                            },
+                            {
+                                "value": "Segoe UI",
+                                "displayName": "Segoe UI"
+                            },
+                            {
+                                "value": "Segoe UI Light",
+                                "displayName": "Segoe UI Light"
+                            },
+                            {
+                                "value": "Symbol",
+                                "displayName": "Symbol"
+                            },
+                            {
+                                "value": "Tahoma",
+                                "displayName": "Tahoma"
+                            },
+                            {
+                                "value": "Times New Roman",
+                                "displayName": "Times New Roman"
+                            },
+                            {
+                                "value": "Trebuchet MS",
+                                "displayName": "Trebuchet MS"
+                            },
+                            {
+                                "value": "Verdana",
+                                "displayName": "Verdana"
+                            },
+                            {
+                                "value": "Wingdings",
+                                "displayName": "Wingdings"
+                            }
+                        ]
+                    }
+                }
+            }
+        }
+    }
+}
