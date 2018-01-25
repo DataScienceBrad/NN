@@ -34,8 +34,10 @@ libraryRequireInstall("plotly")
 #forecast libraries
 libraryRequireInstall("forecast")
 
-
+#Set seed for random number generation
 set.seed (100)
+#Remove screenshot feature from plotly utilities
+disabledButtonsList <- list('toImage', 'sendDataToCloud')
 ###############################
 tryCatch({
 
@@ -368,7 +370,8 @@ plotOutput <- plot_ly() %>%
 }
 
 
-
+###############################
+plotOutput$x$config$modeBarButtonsToRemove = disabledButtonsList
 #rendering plot to visual device
 internalSaveWidget(config(plotOutput, collaborate = FALSE, displaylogo=FALSE), 'out.html');
 quit()
@@ -463,7 +466,10 @@ plotOutput <- plot_ly() %>%
   )
 }
 
-
+###############################
+#Remove screenshot feature
+disabledButtonsList <- list('toImage')
+plotOutput$x$config$modeBarButtonsToRemove = disabledButtonsList
 
 
 ###############################
@@ -494,6 +500,8 @@ xAesthetics <- list(
      layout(title = '',
                      xaxis = xAesthetics, 
                      yaxis = yAesthetics)
+
+     plotOutput$x$config$modeBarButtonsToRemove = disabledButtonsList
      internalSaveWidget(plotOutput, 'out.html');
      quit()
 })
@@ -522,6 +530,8 @@ xAesthetics <- list(
      layout(title = '',
                      xaxis = xAesthetics, 
                      yaxis = yAesthetics)
+                     
+     plotOutput$x$config$modeBarButtonsToRemove = disabledButtonsList
      internalSaveWidget(plotOutput, 'out.html');
      quit()
 }
