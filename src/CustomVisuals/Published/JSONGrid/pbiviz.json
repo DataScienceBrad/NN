@@ -4,7 +4,7 @@
     "displayName": "Grid by MAQ Software",
     "guid": "PBI_CV_309E6B47_39A5_4681_808F_132AFB230860",
     "visualClassName": "Grid",
-    "version": "3.0.3",
+    "version": "3.0.5",
     "description": "Grid with Pagination, Sorting and GET Rest API call functionality",
     "supportUrl": "https://github.com/maqsoftware/PowerBI-visuals/issues",
     "gitHubUrl": "https://github.com/maqsoftware/PowerBI-visuals/"
