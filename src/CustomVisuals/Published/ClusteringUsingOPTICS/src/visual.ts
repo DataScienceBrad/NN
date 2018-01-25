@@ -192,8 +192,10 @@ module powerbi.extensibility.visual {
 
         public updateObjects(objects: DataViewObjects): void {
             const scaling: boolean = getValue<boolean>(objects, 'clusterSettings', 'scaling', false);
-            let epsilon: number = getValue<number>(objects, 'clusterSettings', 'epsilon', 1);
-            epsilon = epsilon < 1 ? 1 : getValue<number>(objects, 'clusterSettings', 'epsilon', 1);
+            let epsilon: number = getValue<number>(objects, 'clusterSettings', 'epsilon', null);
+            if (epsilon !== null) {
+                epsilon = epsilon < 1 ? 1 : epsilon;
+            }
             let minptsClust: number = getValue<number>(objects, 'clusterSettings', 'minptsClust', 10);
             minptsClust = minptsClust < 1 ? 10 : getValue<number>(objects, 'clusterSettings', 'minptsClust', 10);
             let steepThres: number = getValue<number>(objects, 'clusterSettings', 'steepThres', 0.08);

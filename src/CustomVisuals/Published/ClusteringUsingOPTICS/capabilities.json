@@ -104,6 +104,7 @@
         "epsilon": {
           "displayName": "Epsilon neighbours",
           "description": "It is the upper limit of the size of the epsilon neighborhood. Limiting the neighborhood size improves performance and has no or very little impact on the ordering as long as it is not set too low",
+          "placeHolderText": "Auto",
           "type": {
             "numeric": true 
           }
@@ -155,6 +156,7 @@
         "xTitle": {
           "displayName": "X title",
           "description": "X title",
+          "placeHolderText": "Auto",
           "type": {
             "text": true 
           }
@@ -232,6 +234,7 @@
         "yTitle": {
           "displayName": "Y title",
           "description": "Y title",
+          "placeHolderText": "Auto",
           "type": {
             "text": true 
           }

@@ -35,6 +35,35 @@ libraryRequireInstall("dbscan");
 #optics clustering
 version<-packageVersion("dbscan")
 
+#Remove screenshot feature
+disabledButtonsList <- list('toImage', 'sendDataToCloud')
+
+generateError <- function (errorMsg)
+{
+  xAesthetics <- list(
+     title = sprintf("Invalid parametric values/essential fields missing. %s",errorMsg),
+     zeroline = FALSE,
+     showline = FALSE,
+     showticklabels = FALSE,
+     showgrid = FALSE
+     )
+     yAesthetics <- list(
+     title = "",
+     zeroline = FALSE,
+     showline = FALSE,
+     showticklabels = FALSE,
+     showgrid = FALSE
+     )
+     p <- plot_ly() %>%
+     layout(title = '',
+                     xaxis = xAesthetics, 
+                     yaxis = yAesthetics)
+     
+     p$x$config$modeBarButtonsToRemove = disabledButtonsList                
+     internalSaveWidget(p, 'out.html');
+     quit()
+}
+
 tryCatch({
 
 ##################################################
@@ -50,9 +79,11 @@ ynumericCheck<-sapply(ydataFrame, is.numeric)
 xnumericCheck<-sapply(xdataFrame, is.numeric)
 
 epsilon<-1
-if(exists("clusterSettings_epsilon") && clusterSettings_epsilon > 1)
+epsilonSet<-FALSE
+if(exists("clusterSettings_epsilon") && clusterSettings_epsilon >= 1)
 {
   epsilon<-clusterSettings_epsilon
+  epsilonSet<-TRUE
 }
 
 minptsClust<-10
@@ -341,6 +372,10 @@ for(iCounter in 1:nColumnsX)
 ############################################################
 ###################data Scaling#############################
 
+maxYData<-max(ydataFrame)
+maxXData<-max(xdataFrame)
+maxXYData<-max(c(maxYData, maxXData))
+
 if (exists("clusterSettings_scaling") && clusterSettings_scaling) {
   scaledYdata<-ydataFrame;
   scaledXdata<-xdataFrame;
@@ -353,12 +388,7 @@ if (exists("clusterSettings_scaling") && clusterSettings_scaling) {
     scaledXdata[,iCounter]<-tempF
   }
 } else {
-  maxYData<-max(ydataFrame)
-  maxXData<-max(xdataFrame)
-  maxXYData<-max(c(maxYData, maxXData))
-  
   epsilon<-epsilon * ((maxXYData * 5) / 100)
-
   scaledYdata<-ydataFrame
   scaledXdata<-xdataFrame
 }
@@ -424,17 +454,63 @@ x <- cbind(
 # generating color palette for clusters by using Power BI Colors
 colPalette<-c("#DFBFDF","#3599B8","#A66999","#FE9666","#8AD4EB","#F2C80F","#FD625E","#01B8AA")
 
+getOpticsXi <- function (x, epsilon, minptsClust, steepThres)
+{
+  tryCatch ({
+  res <- optics(x, eps = epsilon, minPts = minptsClust)
+  res <- opticsXi(res, xi = steepThres)
+  return (res);
+  },
+  error=function(e)
+  {
+    epsilon <- epsilon * 2
+    if (epsilon < maxXYData) {
+      res = getOpticsXi(x, epsilon, minptsClust, steepThres)
+    } else {
+      generateError (e)
+    }
+    return (res);
+  })
+}
+
+getExtractXi <- function (x, epsilon, minptsClust, steepThres)
+{
+  tryCatch ({
+  res <- optics(x, eps = epsilon, minPts = minptsClust)
+  res <- extractXi(res, xi = steepThres)
+  return (res);
+  },
+  warning=function(w)
+  {
+    epsilon <- epsilon * 2
+    if (epsilon < maxXYData) {
+      res = getExtractXi(x, epsilon, minptsClust, steepThres)
+    } else {
+      generateError (w)
+    }
+    return (res);
+  })
+}
+
 ############################################################
 if(version<1){
   # handling for older libraries (used in Power BI app sevice)
-res <- optics(x, eps = epsilon, minPts = minptsClust)
-res <- opticsXi(res, xi = steepThres)
+  if(epsilonSet == TRUE) {
+    res <- optics(x, eps = epsilon, minPts = minptsClust)
+    res <- opticsXi(res, xi = steepThres)
+  } else {
+    res <- getOpticsXi(x, epsilon, minptsClust, steepThres)
+  }
 ############################################################
 }
 else{
   # handling for newer libraries (Power BI desktop)
-  res <- optics(x, eps = epsilon, minPts = minptsClust)
-  res <- extractXi(res, xi = steepThres)
+  if(epsilonSet == TRUE) {
+    res <- optics(x, eps = epsilon, minPts = minptsClust)
+    res <- extractXi(res, xi = steepThres)
+  } else {
+    res <- getExtractXi(x, epsilon, minptsClust, steepThres)
+  }
 }
 
 ########## Function for hull plot ############
@@ -523,9 +599,7 @@ else{
          plot_bgcolor=plotColor
   )
 }
-
-############################################################
-
+p$x$config$modeBarButtonsToRemove = disabledButtonsList
 #printing the plot on visual device
 internalSaveWidget(config(p, collaborate = FALSE, displaylogo=FALSE), 'out.html');
 quit()
@@ -533,25 +607,6 @@ quit()
 error=function(e)
 {
   #catching error and displaying message
-  xAesthetics <- list(
-     title = sprintf("Invalid parametric values/essential fields missing. %s",e),
-     zeroline = FALSE,
-     showline = FALSE,
-     showticklabels = FALSE,
-     showgrid = FALSE
-     )
-     yAesthetics <- list(
-     title = "",
-     zeroline = FALSE,
-     showline = FALSE,
-     showticklabels = FALSE,
-     showgrid = FALSE
-     )
-     p <- plot_ly() %>%
-     layout(title = '',
-                     xaxis = xAesthetics, 
-                     yaxis = yAesthetics)
-     internalSaveWidget(p, 'out.html');
-     quit()
+  generateError (e)
 }
 )

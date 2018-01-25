@@ -4,8 +4,8 @@
     "displayName": "Clustering using OPTICS by MAQ Software",
     "guid": "ClusteringUsingOPTICSCAD9384DAA1042E78771F55A0BD811D8",
     "visualClassName": "ClusteringUsingOPTICS",
-    "version": "3.0.1",
-    "description": "Use density based clustering algorithm OPTICS to analyse groups and hierarchies within group in a dataset, identify outliers and interact with the plot by using hover tooltips.",
+    "version": "3.0.3",
+    "description": "OPTICS based clustering algorithm to analyze groups and hierarchies within a group.​",
     "supportUrl": "https://github.com/maqsoftware/PowerBI-visuals/issues",
     "gitHubUrl": "https://github.com/maqsoftware/PowerBI-visuals/"
   },
