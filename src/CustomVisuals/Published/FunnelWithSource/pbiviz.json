@@ -4,7 +4,7 @@
     "displayName": "Funnel with Source by MAQ Software",
     "guid": "funnelwithsource1823AB39DB234AB522063E728AD51",
     "visualClassName": "HorizontalFunnelSource",
-    "version": "3.0.0",
+    "version": "3.0.2",
     "description": "",
     "supportUrl": "https://github.com/maqsoftware/PowerBI-visuals/issues",
     "gitHubUrl": "https://github.com/maqsoftware/PowerBI-visuals/"

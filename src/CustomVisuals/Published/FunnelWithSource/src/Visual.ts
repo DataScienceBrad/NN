@@ -134,6 +134,7 @@ module powerbi.extensibility.visual {
                 };
             });
 
+            // tslint:disable-next-line:cyclomatic-complexity
             groups.forEach((group: DataViewValueColumnGroup) => {
                 if (!!group && group.values
                     && group.values[0] && group.values[0].values) {
@@ -271,6 +272,10 @@ module powerbi.extensibility.visual {
             });
         }
         const bowtieDataPoints: IBowtieDataPoint[] = [];
+        let uniqueCategories: string[];
+        let uniqueCategoriesValues: number[];
+        uniqueCategories = [];
+        uniqueCategoriesValues = [];
         if (categoryExists) {
             // Create mapping for category and sub category for bowtie
             const arrCategory: string[] = [];
@@ -285,13 +290,20 @@ module powerbi.extensibility.visual {
                     && hfDataPoints[i].subCategory !== ''
                     && hfDataPoints[i].category !== ''
                     && arrCategory.indexOf(hfDataPoints[i].category) < 0) {
-
+                    uniqueCategories.push(hfDataPoints[i].category);
+                    uniqueCategoriesValues[hfDataPoints[i].category] = 0;
                     arrCategory.push(hfDataPoints[i].category);
                     bowtieDataPoint.source = hfDataPoints[i].category;
                     bowtieDataPoint.destination = hfDataPoints[i].subCategory;
                     bowtieDataPoint.value = hfDataPoints[i].primaryVal;
                     bowtieDataPoints.push(bowtieDataPoint);
                 }
+            }
+            for (let i: number = 0; i < hfDataPoints.length; i++) {
+                uniqueCategoriesValues[hfDataPoints[i].category] += hfDataPoints[i].primaryVal;
+            }
+            for (let i: number = 0; i < bowtieDataPoints.length; i++) {
+                bowtieDataPoints[i].value = uniqueCategoriesValues[bowtieDataPoints[i].source];
             }
         }
         viewModel.hfDataPoints = hfDataPointFinal;
@@ -698,6 +710,7 @@ module powerbi.extensibility.visual {
 
             renderVisual(this.filterName, this.filterID);
 
+            // tslint:disable-next-line:cyclomatic-complexity
             function renderVisual(filterName: string, filterID: string): void {
                 THIS.root.selectAll('div.hf_parentdiv').remove();
                 index = 0;
@@ -1119,8 +1132,8 @@ module powerbi.extensibility.visual {
                 THIS.tooltipServiceWrapper
                     .addTooltip(
                     THIS.root.selectAll('.hf_datapoint'),
-                    (tooltipEvent: TooltipEventArgs<number>) => THIS.getTooltipData(tooltipEvent.data),
-                    (tooltipEvent: TooltipEventArgs<number>) => null
+                    (tooltipEvent: ITooltipEventArgs<number>) => THIS.getTooltipData(tooltipEvent.data),
+                    (tooltipEvent: ITooltipEventArgs<number>) => null
                     );
 
                 // adding selection manager feature on click of the bars
@@ -1186,13 +1199,15 @@ module powerbi.extensibility.visual {
                 const firstArc: any = d3.selectAll('.bowtie_arcs_svg path:first-of-type').node();
                 // tslint:disable-next-line:no-any
                 const lastArc: any = d3.selectAll('.bowtie_arcs_svg path:last-of-type').node();
-                const firstArcHeight: number = firstArc.getBBox().height;
-                const lastArcHeight: number = lastArc.getBBox().height;
-                const hfHeight: number = $('.hf_parentdiv').height() / 2;
-                const topMarginForHF: number = firstArcHeight + ((firstArcHeight - lastArcHeight) / 2) - hfHeight + 20;
-                if (topMarginForHF > 0) {
-                    $('.hf_parentdiv').css('margin-top', topMarginForHF);
-                    $('html, .rootDiv').animate({ scrollTop: topMarginForHF }, 100);
+                if (firstArc != null && lastArc != null && firstArc.getBBox != null && lastArc.getBBox != null) {
+                    const firstArcHeight: number = firstArc.getBBox().height;
+                    const lastArcHeight: number = lastArc.getBBox().height;
+                    const hfHeight: number = $('.hf_parentdiv').height() / 2;
+                    const topMarginForHF: number = firstArcHeight + ((firstArcHeight - lastArcHeight) / 2) - hfHeight + 20;
+                    if (topMarginForHF > 0) {
+                        $('.hf_parentdiv').css('margin-top', topMarginForHF);
+                        $('html, .rootDiv').animate({ scrollTop: topMarginForHF }, 100);
+                    }
                 }
             }
             $(document).on('click', () => {
