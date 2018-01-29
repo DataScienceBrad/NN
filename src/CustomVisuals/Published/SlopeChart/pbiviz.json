@@ -1,0 +1,27 @@
+{
+  "visual": {
+    "name": "SlopeChartByMAQSoftware",
+    "displayName": "Slope chart by MAQ Software",
+    "guid": "SlopeChartRHTMLA849C818E46E4556B53BF9C8E9E82798",
+    "visualClassName": "SlopeChart",
+    "version": "3.0.1",
+    "description": "Slope Chart is an excellent tool for illustrating the change between two data points. This visual is commonly used to show upward or downward trends.",
+    "supportUrl": "https://github.com/maqsoftware/PowerBI-visuals/issues",
+    "gitHubUrl": "https://github.com/maqsoftware/PowerBI-visuals/"
+  },
+  "apiVersion": "1.8.0",
+  "author": {
+    "name": "MAQ Software",
+    "email": "support@maqsoftware.com"
+  },
+  "assets": {
+    "icon": "assets/icon.png"
+  },
+  "externalJS": [
+    "node_modules/powerbi-visuals-utils-dataviewutils/lib/index.js"
+  ],
+  "style": "style/visual.less",
+  "capabilities": "capabilities.json",
+  "dependencies": "dependencies.json",
+  "stringResources": []
+}

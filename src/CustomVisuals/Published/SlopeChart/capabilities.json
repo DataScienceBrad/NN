@@ -1,0 +1,197 @@
+{
+  "dataRoles": [
+    {
+      "displayName": "Category",
+      "kind": "Grouping",
+      "name": "category"
+    },
+    {
+      "displayName": "Measure",
+      "kind": "Measure",
+      "name": "measure"
+    }
+  ],
+  "dataViewMappings": [
+    {
+      "conditions": [
+        {
+          "category": {
+            "max": 1
+          },
+          "measure": {
+            "max": 2
+          }
+        }
+      ],
+      "scriptResult": {
+        "dataInput": {
+          "table": {
+            "rows": {
+              "select": [
+                {
+                  "for": {
+                    "in": "category"
+                  }
+                },
+                {
+                  "for": {
+                    "in": "measure"
+                  }
+                }
+              ],
+              "dataReductionAlgorithm": {
+                "top": {}
+              }
+            }
+          }
+        },
+        "script": {
+          "scriptProviderDefault": "R",
+          "scriptOutputType": "html",
+          "source": {
+            "objectName": "rcv_script",
+            "propertyName": "source"
+          },
+          "provider": {
+            "objectName": "rcv_script",
+            "propertyName": "provider"
+          }
+        }
+      }
+    }
+  ],
+  "objects": {
+    "rcv_script": {
+      "properties": {
+        "provider": {
+          "type": {
+            "text": true
+          }
+        },
+        "source": {
+          "type": {
+            "scripting": {
+              "source": true
+            }
+          }
+        }
+      }
+    },
+    "SlopeColor": {
+      "displayName": "Slope color",
+      "properties": {
+        "upColor": {
+          "displayName": "Up color",
+          "description": "Color of upward slope",
+          "type": {
+            "fill": {
+              "solid": {
+                "color": true
+              }
+            }
+          }
+        },
+        "downColor": {
+          "displayName": "Down color",
+          "description": "Color of downward slope",
+          "type": {
+            "fill": {
+              "solid": {
+                "color": true
+              }
+            }
+          }
+        },
+        "neutralColor": {
+          "displayName": "Neutral color",
+          "description": "Color of neutral line",
+          "type": {
+            "fill": {
+              "solid": {
+                "color": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "yAxis": {
+      "displayName": "Axis",
+      "properties": {
+        "yTitle": {
+          "displayName": "Y title",
+          "description": "Enter the title for y-axis",
+          "placeHolderText": "Auto",
+          "type": {
+            "text": true
+          },
+          "suppressFormatPainterCopy": false
+        },
+        "yGrid": {
+          "displayName": "Y grid line",
+          "description": "Turn grid lines for y-axis on or off",
+          "type": {
+            "bool": true
+          }
+        },
+        "yGridCol": {
+          "displayName": "Y grid color",
+          "description": "Choose the color for y-axis grid lines",
+          "type": {
+            "fill": {
+              "solid": {
+                "color": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "intercept": {
+      "displayName": "Intercepts",
+      "properties": {
+        "intercept1Title": {
+          "displayName": "Intercept 1 title",
+          "description": "Title of first intercept",
+          "placeHolderText": "Auto",
+          "type": {
+            "text": true
+          },
+          "suppressFormatPainterCopy": false
+        },
+        "intercept2Title": {
+          "displayName": "Intercept 2 title",
+          "description": "Title of second intercept",
+          "placeHolderText": "Auto",
+          "type": {
+            "text": true
+          },
+          "suppressFormatPainterCopy": false
+        },
+        "intercept1Color": {
+          "displayName": "Intercept 1 color",
+          "description": "Color of first intercept",
+          "type": {
+            "fill": {
+              "solid": {
+                "color": true
+              }
+            }
+          }
+        },
+        "intercept2Color": {
+          "displayName": "Intercept 2 color",
+          "description": "Color of second intercept",
+          "type": {
+            "fill": {
+              "solid": {
+                "color": true
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "suppressDefaultTitle": true
+}
