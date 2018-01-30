@@ -128,7 +128,12 @@ module powerbi.extensibility.visual {
                 this.draw(width, visualheight - labelHeight + 15);
             }
             //adding ellipsis for ticks
-            const tickstarting: number = parseInt(d3.select('.yLabels.axis').attr('transform').split('(')[1].split(',')[0], 10);
+            // tslint:disable-next-line:no-any
+            let tickstarting: number = 0;
+            const transformAttribute: string = d3.select('.yLabels.axis').attr('transform');
+            if (transformAttribute) {
+                tickstarting = d3.transform(transformAttribute).translate[0];
+            }
             const measureTextProperties1: TextProperties = {
                 text: d3.selectAll('.tick:last-of-type text').text(),
                 fontFamily: 'Segoe UI',
