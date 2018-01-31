@@ -3697,6 +3697,27 @@ module powerbi.extensibility.visual {
             // tslint:disable-next-line:no-any
             const binData: any = thisObj.createBinData(categories);
 
+            // Limit on number of rows
+            if (thisObj.viewModel.dataPoints.length > 20000) {
+                thisObj.mainCont.append('div')
+                     .classed('tableCont', true)
+                     .text('Please filter the dataset and reduce the number of rows')
+                     .style('margin-top', '40px');
+                d3.select('.label0').text('None');
+
+                return;
+            }
+            // Limit on unique values of binning category
+            if (categories.length > 1200) {
+                thisObj.mainCont.append('div')
+                     .classed('tableCont', true)
+                     .text('Please use a different binning category as this one has many unique values')
+                     .style('margin-top', '40px');
+                d3.select('.label0').text('None');
+
+                return;
+            }
+
             const numberString: string = 'number';
             // tslint:disable-next-line:no-any
             let finalData: any = [];
@@ -4244,6 +4265,7 @@ module powerbi.extensibility.visual {
             if (null === thisObj.chartType || undefined === thisObj.chartType) {
                 thisObj.chartType = 'Bar';
             }
+
             thisObj.setOrient(options);
             this.renderChart();
             this.setMargin();
