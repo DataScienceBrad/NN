@@ -24,6 +24,11 @@
             "displayName": "Individual target",
             "name": "ytdtarget",
             "kind": "Measure"
+        },
+        {
+            "displayName": "Tooltip",
+            "name": "tooltipData",
+            "kind": "Measure"
         }
     ],
     "drilldown": {
@@ -65,6 +70,7 @@
                                 "in": "forecasted"
                             }
                         }
+                        
                     ],
                     "dataReductionAlgorithm": {
                         "top": {}
@@ -86,6 +92,11 @@
                             "bind": {
                                 "to": "ytdtarget"
                             }
+                        },
+                        {
+                            "bind": {
+                                "to": "tooltipData"
+                            }
                         }
                     ]
                 }
@@ -102,6 +113,17 @@
                 "show": {
                     "displayName": "Enable axis",
                     "type": {
+                        "bool": true
+                    }
+                }
+            }
+        },
+        "horizontal": {
+            "displayName": "Horizontal",
+            "properties": {
+                "show": {
+                    "displayName": "Horizontal",
+                    "type":{
                         "bool": true
                     }
                 }
@@ -146,6 +168,27 @@
                         "formatting": {
                             "fontSize": true
                         }
+                    }
+                },
+                "gridLines":{
+                    "displayName": "Enable Grid Lines",
+                    "description": "Turn on to display grid lines",
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "start":{
+                    "displayName": "Y axis start",
+                    "description": "Start value of Y Axis",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "end":{
+                    "displayName": "Y axis end",
+                    "description": "End value of Y Axis",
+                    "type": {
+                        "numeric": true
                     }
                 }
             }
@@ -202,6 +245,104 @@
                 },
                 "strokeSize": {
                     "displayName": "Stroke Width",
+                    "type": {
+                        "numeric": true
+                    }
+                }
+            }
+        },
+        "analytics": {
+            "displayName": "Analytics",
+            "description": "Analytics",
+            "properties": {
+                "min": {
+                    "displayName": "Min line",
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "lineColorMin": {
+                    "displayName": "Min line color",
+                    "description": "",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "strokeSizeMin": {
+                    "displayName": "Min line stroke width",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "max": {
+                    "displayName": "Max line",
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "lineColorMax": {
+                    "displayName": "Max line color",
+                    "description": "",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "strokeSizeMax": {
+                    "displayName": "Max line stroke width",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "avg": {
+                    "displayName": "Avg line",
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "lineColorAvg": {
+                    "displayName": "Avg line color",
+                    "description": "",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "strokeSizeAvg": {
+                    "displayName": "Avg line stroke width",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "median": {
+                    "displayName": "Median line",
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "lineColorMedian": {
+                    "displayName": "Median line color",
+                    "description": "",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "strokeSizeMedian": {
+                    "displayName": "Median line stroke width",
                     "type": {
                         "numeric": true
                     }
@@ -265,6 +406,25 @@
                 }
             }
         },
+        "backgroundImage": {
+            "displayName": "Background Image",
+            "properties": {
+                "imageUrl": {
+                    "displayName": "Image url",
+                        "type": {
+                            "text": true
+                        }
+                },
+                "transparency": {
+                    "displayName": "Opacity",
+                    "type": {
+                        "formatting": {
+                            "fontSize": true
+                        }
+                    }
+                }
+            }
+        },
         "legend": {
             "displayName": "Legend",
             "properties": {
@@ -290,6 +450,112 @@
                         "formatting": {
                             "fontSize": true
                         }
+                    }
+                },
+                "title": {
+                    "displayName": "Title",
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "fontFamily": {
+                    "displayName": "Font family",
+                    "description": "Font family",
+                    "type": {
+                        "enumeration": [
+                            {
+                              "value": "Arial",
+                              "displayName": "Arial"
+                            },
+                            {
+                              "value": "Arial Black",
+                              "displayName": "Arial Black"
+                            },
+                            {
+                              "value": "Arial Unicode MS",
+                              "displayName": "Arial Unicode MS"
+                            },
+                            {
+                              "value": "Calibri",
+                              "displayName": "Calibri"
+                            },
+                            {
+                              "value": "Cambria",
+                              "displayName": "Cambria"
+                            },
+                            {
+                              "value": "Cambria Math",
+                              "displayName": "Cambria Math"
+                            },
+                            {
+                              "value": "Candara",
+                              "displayName": "Candara"
+                            },
+                            {
+                              "value": "Comic Sans MS",
+                              "displayName": "Comic Sans MS"
+                            },
+                            {
+                              "value": "Consolas",
+                              "displayName": "Consolas"
+                            },
+                            {
+                              "value": "Constantia",
+                              "displayName": "Constantia"
+                            },
+                            {
+                              "value": "Corbel",
+                              "displayName": "Corbel"
+                            },
+                            {
+                              "value": "Courier New",
+                              "displayName": "Courier New"
+                            },
+                            {
+                              "value": "Georgia",
+                              "displayName": "Georgia"
+                            },
+                            {
+                              "value": "Lucida Sans Unicode",
+                              "displayName": "Lucida Sans Unicode"
+                            },
+                            {
+                              "value": "Segoe (Bold)",
+                              "displayName": "Segoe (Bold)"
+                            },
+                            {
+                              "value": "Segoe UI",
+                              "displayName": "Segoe UI"
+                            },
+                            {
+                              "value": "Segoe UI Light",
+                              "displayName": "Segoe UI Light"
+                            },
+                            {
+                              "value": "Symbol",
+                              "displayName": "Symbol"
+                            },
+                            {
+                              "value": "Tahoma",
+                              "displayName": "Tahoma"
+                            },
+                            {
+                              "value": "Times New Roman",
+                              "displayName": "Times New Roman"
+                            },
+                            {
+                              "value": "Trebuchet MS",
+                              "displayName": "Trebuchet MS"
+                            },
+                            {
+                              "value": "Verdana",
+                              "displayName": "Verdana"
+                            },
+                            {
+                              "value": "Wingdings",
+                              "displayName": "Wingdings"
+                            }
+                          ]
                     }
                 }
             }
@@ -330,6 +596,26 @@
                         }
                     }
                 },
+                "position": {
+                    "displayName": "Position",
+                    "description": "Position",
+                    "type": {
+                        "enumeration": [
+                            {
+                              "value": "insideEnd",
+                              "displayName": "Inside End"
+                            },
+                            {
+                              "value": "insideCenter",
+                              "displayName": "Inside Center"
+                            },
+                            {
+                                "value": "insideBase",
+                                "displayName": "Inside Base"
+                            }
+                        ]
+                    }
+                },
                 "valueDecimal": {
                     "displayName": "Decimal Places",
                     "description": "Select the number of decimal places to display",
@@ -337,6 +623,106 @@
                         "numeric": true
                     },
                     "suppressFormatPainterCopy": true
+                },
+                "fontFamily": {
+                    "displayName": "Font family",
+                    "description": "Font family",
+                    "type": {
+                        "enumeration": [
+                            {
+                              "value": "Arial",
+                              "displayName": "Arial"
+                            },
+                            {
+                              "value": "Arial Black",
+                              "displayName": "Arial Black"
+                            },
+                            {
+                              "value": "Arial Unicode MS",
+                              "displayName": "Arial Unicode MS"
+                            },
+                            {
+                              "value": "Calibri",
+                              "displayName": "Calibri"
+                            },
+                            {
+                              "value": "Cambria",
+                              "displayName": "Cambria"
+                            },
+                            {
+                              "value": "Cambria Math",
+                              "displayName": "Cambria Math"
+                            },
+                            {
+                              "value": "Candara",
+                              "displayName": "Candara"
+                            },
+                            {
+                              "value": "Comic Sans MS",
+                              "displayName": "Comic Sans MS"
+                            },
+                            {
+                              "value": "Consolas",
+                              "displayName": "Consolas"
+                            },
+                            {
+                              "value": "Constantia",
+                              "displayName": "Constantia"
+                            },
+                            {
+                              "value": "Corbel",
+                              "displayName": "Corbel"
+                            },
+                            {
+                              "value": "Courier New",
+                              "displayName": "Courier New"
+                            },
+                            {
+                              "value": "Georgia",
+                              "displayName": "Georgia"
+                            },
+                            {
+                              "value": "Lucida Sans Unicode",
+                              "displayName": "Lucida Sans Unicode"
+                            },
+                            {
+                              "value": "Segoe (Bold)",
+                              "displayName": "Segoe (Bold)"
+                            },
+                            {
+                              "value": "Segoe UI",
+                              "displayName": "Segoe UI"
+                            },
+                            {
+                              "value": "Segoe UI Light",
+                              "displayName": "Segoe UI Light"
+                            },
+                            {
+                              "value": "Symbol",
+                              "displayName": "Symbol"
+                            },
+                            {
+                              "value": "Tahoma",
+                              "displayName": "Tahoma"
+                            },
+                            {
+                              "value": "Times New Roman",
+                              "displayName": "Times New Roman"
+                            },
+                            {
+                              "value": "Trebuchet MS",
+                              "displayName": "Trebuchet MS"
+                            },
+                            {
+                              "value": "Verdana",
+                              "displayName": "Verdana"
+                            },
+                            {
+                              "value": "Wingdings",
+                              "displayName": "Wingdings"
+                            }
+                          ]
+                    }
                 }
             }
         }
