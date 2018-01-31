@@ -3701,7 +3701,7 @@ module powerbi.extensibility.visual {
             if (thisObj.viewModel.dataPoints.length > 20000) {
                 thisObj.mainCont.append('div')
                      .classed('tableCont', true)
-                     .text('Please filter the dataset and reduce the number of rows')
+                     .text('Current visual supports up to 20K rows. Please filter the dataset and reduce the number of rows.')
                      .style('margin-top', '40px');
                 d3.select('.label0').text('None');
 

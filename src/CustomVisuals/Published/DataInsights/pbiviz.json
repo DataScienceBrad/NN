@@ -4,7 +4,7 @@
     "displayName": "Data Insights by MAQ Software",
     "guid": "dataInsightsEC19A7A1FF1C44B784A13A27E1A145AB",
     "visualClassName": "Visual",
-    "version": "3.0.0.0",
+    "version": "3.0.0.1",
     "description": "",
     "supportUrl": "https://github.com/maqsoftware/PowerBI-visuals/issues",
     "gitHubUrl": "https://github.com/maqsoftware/PowerBI-visuals"
