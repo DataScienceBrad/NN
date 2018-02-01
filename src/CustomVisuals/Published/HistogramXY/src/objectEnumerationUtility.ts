@@ -10,17 +10,19 @@ module powerbi.extensibility.visual {
      */
     export function getValue<T>(objects: DataViewObjects, objectName: string, propertyName: string, defaultValue: T): T {
         if (objects) {
-        let object:any = objects[objectName];
+            // tslint:disable-next-line:no-any
+            const object: any = objects[objectName];
             if (object) {
-            let property: T = object[propertyName];
+                const property: T = object[propertyName];
                 if (property !== undefined) {
                     return property;
                 }
             }
         }
+
         return defaultValue;
     }
-    
+
     /**
      * Gets property value for a particular object in a category.
      *
@@ -31,20 +33,22 @@ module powerbi.extensibility.visual {
      * @param {string} propertyName             - Name of desired property.
      * @param {T} defaultValue                  - Default value of desired property.
      */
-    export function getCategoricalObjectValue<T>(category: DataViewCategoryColumn, index: number, objectName: string, propertyName: string, defaultValue: T): T {
-    let categoryObjects = category.objects;
+    export function getCategoricalObjectValue<T>(category: DataViewCategoryColumn,
+                                                 index: number, objectName: string, propertyName: string, defaultValue: T): T {
+        const categoryObjects: DataViewObject[] = category.objects;
         if (categoryObjects) {
-        let categoryObject: DataViewObject = categoryObjects[index];
+            const categoryObject: DataViewObject = categoryObjects[index];
             if (categoryObject) {
-            let object = categoryObject[objectName];
+                const object: DataViewPropertyValue = categoryObject[objectName];
                 if (object) {
-                let property: T = object[propertyName];
+                    const property: T = object[propertyName];
                     if (property !== undefined) {
                         return property;
                     }
                 }
             }
         }
+
         return defaultValue;
     }
 }
