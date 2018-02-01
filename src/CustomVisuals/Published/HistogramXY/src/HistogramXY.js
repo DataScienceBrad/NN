@@ -1967,39 +1967,96 @@ function MAQDrawChart(DataStyle, settings, viewPort, valueFormatter) {
                     if (oParam.rowIndex) {
                         oExtParam.rowIndex = oParam.rowIndex;
                     }
-                    oToolTip.innerHTML = MAQ.applyFormatter(oExtParam, sToolTipFunctionName);
+                   oToolTip.textContent = MAQ.applyFormatter(oExtParam, sToolTipFunctionName);
                 } else {
                     var sChartType = oConfig.chart.type, iLen, i, tempValue;
                     switch (sChartType.toLowerCase()) {
                         case 'histogram':
+                             while (oToolTip.firstChild) {
+                                 oToolTip.removeChild(oToolTip.firstChild);
+                             }
                             if (oParam.category == "histogram") {
                                 var x, y;
+                                //X value in tooltip
                                 if (xFormatter.format(Math.round(oSeries.data.scaleX[iSelectedIndex] * 100) / 100) === "(Blank)") {
-                                    x = MAQ.applyFormatter(Math.round(oSeries.data.scaleX[iSelectedIndex] * 100) / 100 || 0);
+                                    var container = document.createElement('div');
+                                    var xTitle = document.createElement('span');
+                                    xTitle.textContent = (config.xAxis.title.text ? oConfig.xAxis.title.text : xAxisName) + ' : ';
+                                    xTitle.style.fontWeight = 'bold';
+                                    container.appendChild(xTitle);
+
+                                    var xTitleValue = document.createElement('span');
+                                    xTitleValue.textContent = xFormatter.format(Math.round(oSeries.data.scaleX[iSelectedIndex] * 100) / 100 || 0);
+                                    container.appendChild(xTitleValue);
+                                    oToolTip.appendChild(container);
                                 }
                                 else {
-                                    x = xFormatter.format(Math.round(oSeries.data.scaleX[iSelectedIndex] * 100) / 100 || 0);
+                                    var container = document.createElement('div');
+                                    var xTitle = document.createElement('span');
+                                    xTitle.textContent = (config.xAxis.title.text ? oConfig.xAxis.title.text : xAxisName) + ': ';
+                                    xTitle.style.fontWeight = 'bold';
+                                    container.appendChild(xTitle);
+                    
+                                    var xTitleValue = document.createElement('span');
+                                    xTitleValue.textContent = xFormatter.format(Math.round(oSeries.data.scaleX[iSelectedIndex] * 100) / 100 || 0);
+                                    container.appendChild(xTitleValue);
+                                    oToolTip.appendChild(container);
                                 }
+                                //y value in tooltip
                                 if (yFormatter.format(Math.round(oSeries.data.scaleY[iSelectedIndex] * 100) / 100) === "(Blank)") {
-                                    y = MAQ.applyFormatter(Math.round(oSeries.data.scaleY[iSelectedIndex] * 100) / 100 || 0);
+                                    var container = document.createElement('div');
+                                    var yTitle = document.createElement('span');
+                                    yTitle.textContent = (oConfig.yAxis.dualyAxis.axisRight.title.text ? oConfig.yAxis.dualyAxis.axisRight.title.text : yAxisName) + ': ';
+                                    yTitle.style.fontWeight = 'bold';
+                                    container.appendChild(yTitle);
+
+                                    var yTitleValue = document.createElement('span');
+                                    yTitleValue.textContent = yFormatter.format(Math.round(oSeries.data.scaleY[iSelectedIndex] * 100) / 100 || 0);
+                                     container.appendChild(yTitleValue);
+                                     oToolTip.appendChild(container);
                                 }
                                 else {
-                                    y = yFormatter.format(Math.round(oSeries.data.scaleY[iSelectedIndex] * 100) / 100 || 0);
+                                    var container = document.createElement('div');
+                                    var yTitle = document.createElement('span');
+                                    yTitle.textContent = (oConfig.yAxis.dualyAxis.axisRight.title.text ? oConfig.yAxis.dualyAxis.axisRight.title.text : yAxisName) + ': ';
+                                    yTitle.style.fontWeight = 'bold';
+                                    container.appendChild(yTitle);
+
+                                    var yTitleValue = document.createElement('span');
+                                    yTitleValue.textContent = yFormatter.format(Math.round(oSeries.data.scaleY[iSelectedIndex] * 100) / 100 || 0);
+                                    container.appendChild(yTitleValue);
+                                    oToolTip.appendChild(container);
                                 }
-                                oToolTip.innerHTML = '<b>' + (oConfig.xAxis.title.enabled ? oConfig.xAxis.title.text : xAxisName) + ': </b>' + x + '<br/><b>' + (oConfig.yAxis.dualyAxis.axisRight.title.enabled ? oConfig.yAxis.dualyAxis.axisRight.title.text : yAxisName) + ': </b>' + y;
+                             
                             }
+                           
                             else if (oParam.category == "column") {
-                                oToolTip.innerHTML = '<b>' + (oConfig.yAxis.dualyAxis.axisLeft.title.enabled ? oConfig.yAxis.dualyAxis.axisLeft.title.text : 'Histogram Count') + ': </b>' + oSeries.data.frequency.data[oParam.position];
+                                debugger
+                                if (oConfig.yAxis.dualyAxis.axisLeft.title.text) {
+                                var container = document.createElement('div');
+                                var yTitle = document.createElement('span');
+                                yTitle.textContent = (config.yAxis.dualyAxis.axisLeft.title.text ? oConfig.yAxis.dualyAxis.axisLeft.title.text : yAxisName) + ': ';
+                                yTitle.style.fontWeight = 'bold';
+                                container.appendChild(yTitle);
+
+                                var yTitleValue = document.createElement('span');
+                                yTitleValue.textContent += oSeries.data.frequency.data[oParam.position];
+                                 container.appendChild(yTitleValue);
+                                 oToolTip.appendChild(container);
+                                }
+                                else {
+                                    oToolTip.innerText =  'Histogram Count' + ':' + oSeries.data.frequency.data[oParam.position];
+                                }
                             }
                             break;
 
                         default:
-                            oToolTip.innerHTML = '<b>' + oSeries.name + '</b><br/>' + oLabels[iSelectedIndex] + ': ' + (Math.round(oSeries.data[iSelectedIndex] * 100) / 100 || 0);
+                            oToolTip.innerText =  oSeries.name + oLabels[iSelectedIndex] + ': ' + (Math.round(oSeries.data[iSelectedIndex] * 100) / 100 || 0);
                             break;
                     }
                 }
             } else {
-                oToolTip.innerHTML = oParam.value;
+                oToolTip.innerText = oParam.value;
             }
             //if changeBorder is true and series level tool tip is false then change the border color
             var oPlotOptions;
