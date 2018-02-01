@@ -4321,7 +4321,7 @@ function MAQDrawChart(DataStyle, settings, nodeData, series, assignData, valueFo
                                 MAQ.addAttr(oParam.circleTexts[iCounter], 'x', oIntersectionPointsAttr.circleX[iCounter]);
                                 MAQ.addAttr(oParam.circleTexts[iCounter], 'y', oIntersectionPointsAttr.circleY[iCounter]);
                                 MAQ.addAttr(oParam.circleTexts[iCounter], 'text', oIntersectionPointsAttr.values[iCounter] + '%');
-                                oParam.circleTexts[iCounter].innerHTML = oIntersectionPointsAttr.values[iCounter] + '%';
+                                oParam.circleTexts[iCounter].innerText = oIntersectionPointsAttr.values[iCounter] + '%';
                                 /*for chrome*/
                                 oParam.circleTexts[iCounter].textContent = oIntersectionPointsAttr.values[iCounter] + '%';  /*for IE*/
                             }
@@ -4446,7 +4446,7 @@ function MAQDrawChart(DataStyle, settings, nodeData, series, assignData, valueFo
                                 MAQ.addAttr(oParam.circleTexts[iCounter], 'x', oIntersectionPointsAttr.circleX[iCounter]);
                                 MAQ.addAttr(oParam.circleTexts[iCounter], 'y', oIntersectionPointsAttr.circleY[iCounter]);
                                 MAQ.addAttr(oParam.circleTexts[iCounter], 'text', oIntersectionPointsAttr.values[iCounter] + '%');
-                                oParam.circleTexts[iCounter].innerHTML = oIntersectionPointsAttr.values[iCounter] + '%';
+                                oParam.circleTexts[iCounter].innerText = oIntersectionPointsAttr.values[iCounter] + '%';
                                 /*for chrome*/
                                 oParam.circleTexts[iCounter].textContent = oIntersectionPointsAttr.values[iCounter] + '%';  /*for IE*/
                             }
@@ -4819,8 +4819,8 @@ function MAQDrawChart(DataStyle, settings, nodeData, series, assignData, valueFo
             sDatePart = getNextDrillLevel(currentDrillLevel);
             var iCounter = 0, oRectAttr, oRect, iWidth, iRectX = 0, oTextAttr, oText;
             if (undefined !== divRangeSlider) {
-                if (undefined !== divRangeSlider.innerHTML) {
-                    divRangeSlider.innerHTML = '';
+                if (undefined !== divRangeSlider.innerText) {
+                    divRangeSlider.innerText = '';
                 } else {
                     while (0 < divRangeSlider.childNodes.length) {
                         divRangeSlider.removeChild(divRangeSlider.lastChild);
