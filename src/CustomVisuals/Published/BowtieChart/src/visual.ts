@@ -141,9 +141,12 @@ module powerbi.extensibility.visual {
                 .append('div')
                 .classed('Title_Div_Text', true)
                 .style({ 'width': '100%', 'display': 'inline-block' })
-                .html('<div class = "GMODonutTitleDiv" style = "max-width: 80%; display: inline-block">' + '</div>'
-                + '<span class = "GMODonutTitleIcon" style = "width: 2%; display: none; cursor: pointer;">&nbsp(&#063;)</span>');
-
+                .append('div')
+                .classed('GMODonutTitleDiv', true)
+                .style({'max-width' : '80%', 'display': 'inline-block'})
+                .append('span')
+                .classed('GMODonutTitleIcon', true)
+                .style({ 'width': '2%', 'display': 'none', 'cursor': 'pointer', 'white-space':'pre' });
 
             var BowtieChartError: d3.Selection<SVGElement> = this.BowtieChartError = container
                 .append('div')
@@ -450,7 +453,7 @@ module powerbi.extensibility.visual {
             }
 
             this.BowtieChartError.append('span')
-                .html(errorMessage)
+                .text(errorMessage)
                 .style('font-size', '12px')
                 .style({ 'display': 'block' })
                 .style('height', this.currentViewport.height - 20)
@@ -483,7 +486,7 @@ module powerbi.extensibility.visual {
             var viewport = options.viewport;
             this.root.select('.errorMessage').style({ 'display': 'none' });
             this.root.select('.donutChartGMO').style({ 'display': '' });
-            var GMODonutTitleOnOffStatus: IDataLabelSettings = false
+            var GMODonutTitleOnOffStatus = false
                 , titleText: string = ""
                 , tooltiptext: string = ""
                 , titlefontsize
@@ -687,7 +690,7 @@ module powerbi.extensibility.visual {
                         .style('margin-left', '2px')
                         .style('margin-bottom', '-1px')
                         .attr('id', 'indicator')
-                        .html('&#9650');
+                        .text(`▲`);
                 } else {
                     aggregatedValue.select('span#indicator').remove();
                 }
@@ -986,7 +989,6 @@ module powerbi.extensibility.visual {
                 if (convertedData.AggregatelabelSettings.signIndicator) {
                     convertedData.AggregatelabelSettings.Threshold = 0;
                 }
-
                 if (convertedData.AggregatelabelSettings.Indicator) {
                     if (convertedData.AggregatelabelSettings.signIndicator) {
                         color = convertedData.aggregatedSum > 0 ? 'green' : 'red';
@@ -999,7 +1001,7 @@ module powerbi.extensibility.visual {
                         .style('margin-left', '2px')
                         .style('margin-bottom', '-1px')
                         .attr('id', 'indicator')
-                        .html('&#9650');
+                        .text('▲');
                 } else {
                     aggregatedValue.select('span#indicator').remove();
                 }
@@ -1255,7 +1257,7 @@ module powerbi.extensibility.visual {
         }
 
         /* This function returns the title text given for the title in the format window */
-        private getTitleText(dataView: DataView): IDataLabelSettings {
+        private getTitleText(dataView: DataView): String {
             var returnTitleValues: string, returnTitleLegend: string, returnTitleDetails: string, returnTitle: string, tempTitle: string;
             returnTitleValues = "";
             returnTitleLegend = "";
@@ -1266,7 +1268,7 @@ module powerbi.extensibility.visual {
                 if (dataView.metadata.objects.hasOwnProperty('GMODonutTitle')) {
                     var titletext = dataView.metadata.objects['GMODonutTitle'];
                     if (titletext && titletext.hasOwnProperty('titleText')) {
-                        return titletext['titleText'];
+                        return titletext['titleText'].toString();
                     }
                 }
             }
@@ -1305,6 +1307,7 @@ module powerbi.extensibility.visual {
             }
 
             returnTitle = returnTitleValues + tempTitle;
+
             return returnTitle;
         }
 
