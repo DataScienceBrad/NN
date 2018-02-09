@@ -473,7 +473,7 @@ module powerbi.extensibility.visual {
                 let defaultColor: Fill;
                 defaultColor = {
                     solid: {
-                        color: colorPalette.getColor(category.values[i].toString()).value
+                        color: colorPalette.getColor(category.values[i] === null ? 'Null' : category.values[i].toString()).value
                     }
                 };
 
@@ -592,8 +592,8 @@ module powerbi.extensibility.visual {
                             color: donutChartDataPoints[i].color,
                             icon: powerbi.extensibility.utils.chart.legend.LegendIcon.Box,
                             identity: host.createSelectionIdBuilder().withCategory(
-                                dataView.categorical.categories[0], i).createSelectionId(),
-                            label: donutChartDataPoints[i].category,
+                                (dataView.categorical.categories[0]), i).createSelectionId(),
+                            label: donutChartDataPoints[i].category === '' ? '(Blank)' : donutChartDataPoints[i].category,
                             measure: donutChartDataPoints[i].value,
                             secondaryMeasure: donutChartDataPoints[i].secondaryValue,
                             selected: false
@@ -2764,7 +2764,7 @@ module powerbi.extensibility.visual {
                     format: formattingString
                 });
                 if (isNaN(parseFloat(tooltipDataPoints[i].value))) {
-                    tooltipData.value = tooltipDataPoints[i].value;
+                    tooltipData.value = (tooltipDataPoints[i].value === '' ? '(Blank)' : tooltipDataPoints[i].value);
                 } else {
                     tooltipData.value = formatter.format(parseFloat(tooltipDataPoints[i].value));
                 }
