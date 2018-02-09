@@ -190,7 +190,6 @@ module powerbi.extensibility.visual {
 
             // storing all the data in one variable
             KPITicker.oData = KPITicker.oDataView.table.rows;
-
             // empty the main div when update is called
             $('#wrapper').empty();
 
@@ -199,6 +198,9 @@ module powerbi.extensibility.visual {
 
             // The number of containers. Possible values 1,2,3,4
             KPITicker.iNumberOfKPI = KPITicker.getValue(KPITicker.oDataView, 'numberOfKPI');
+            if (KPITicker.iNumberOfKPI % 1 !== 0) {
+                KPITicker.iNumberOfKPI -= KPITicker.iNumberOfKPI % 1;
+            }
             if (KPITicker.iNumberOfKPI > 4) {
                 KPITicker.iNumberOfKPI = 4;
             } else if (KPITicker.iNumberOfKPI < 1) {
@@ -436,7 +438,7 @@ module powerbi.extensibility.visual {
                         d3.select(sDivIdName).append('div')
                         .classed(sClassNames, true)
                         .attr('title', title + sValueDisplayed + percent)
-                        .text(openBracket + sValueDisplayed + closeBracket);
+                        .text(openBracket + sValueDisplayed + percent + closeBracket);
                     }
 
                 }
@@ -534,7 +536,9 @@ module powerbi.extensibility.visual {
             const tliName: string = 'tliName';
             // populate name if KPI Name column is selected
             if (KPITicker.iIndexOfName !== -1) {
-                d3.select(sDivIdName).append('div').classed('tliName', true).classed(tliName + iIndex, true);
+                d3.select(sDivIdName).append('div').classed('tliName', true)
+                    .classed(tliName + iIndex, true)
+                    .text(<string>oDataView.categorical.categories[KPITicker.iIndexOfName].values[iIndex]);
                 d3.select(className + iIndex).text(<string>oDataView.categorical.categories[KPITicker.iIndexOfName].values[iIndex]);
             }
             KPITicker.tliChangeImage(KPITicker.oDataView, iIndex, sDivIdName);
@@ -591,6 +595,7 @@ module powerbi.extensibility.visual {
             }
             // change the values as per the number of containers selected in the format pane
             switch (KPITicker.iNumberOfKPI) {
+
                 case 1:
                     $('.tliName').addClass('tliNameKPIOne');
                     $('.tliPrice').addClass('tliPriceKPIOne');
@@ -724,7 +729,6 @@ module powerbi.extensibility.visual {
         * @param {number} iWrapperID - id of the wrapper that was created
         */
         private static animateWrapper(iWrapperID: number): void {
-
             let sWrapperTop: string;
             let sWrapperBottom: string;
             if (iWrapperID === 1) {
@@ -734,7 +738,6 @@ module powerbi.extensibility.visual {
                 sWrapperTop = '#wrapper1';
                 sWrapperBottom = '#wrapper2';
             }
-
             $(sWrapperTop).animate({ top: `-=${KPITicker.iHeightOfContainer}px` }, KPITicker.iDelay).dequeue();
             // tslint:disable-next-line:typedef
             $(sWrapperBottom).animate({ top: `-=${KPITicker.iHeightOfContainer}px` }, KPITicker.iDelay, function () {
