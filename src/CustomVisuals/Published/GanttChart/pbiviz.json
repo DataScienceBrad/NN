@@ -1,0 +1,38 @@
+{
+  "visual": {
+    "name": "GanttChartByMAQSoftware",
+    "displayName": "Gantt Chart By MAQ Software",
+    "guid": "GanttChartByMAQSoftware1448688115701",
+    "visualClassName": "Gantt",
+    "version": "3.1.0",
+    "description": "A Gantt Chart with added grid, having the capability to provide additional details of task or schedule along with KPIs",
+    "supportUrl": "https://github.com/maqsoftware/PowerBI-visuals/issues",
+    "gitHubUrl": "https://github.com/maqsoftware/PowerBI-visuals"
+  },
+  "apiVersion": "1.8.0",
+  "author": {
+    "name": "MAQ Software",
+    "email": "support@maqsoftware.com"
+  },
+  "assets": {
+    "icon": "assets/icon.png"
+  },
+  "externalJS": [
+    "node_modules/jquery/dist/jquery.min.js",
+    "node_modules/d3/d3.min.js",
+    "node_modules/lodash/lodash.min.js",
+    "node_modules/globalize/lib/globalize.js",
+    "node_modules/globalize/lib/cultures/globalize.culture.en-US.js",
+    "node_modules/powerbi-visuals-utils-dataviewutils/lib/index.js",
+    "node_modules/powerbi-visuals-utils-typeutils/lib/index.js",
+    "node_modules/powerbi-visuals-utils-svgutils/lib/index.js",
+    "node_modules/powerbi-visuals-utils-formattingutils/lib/index.js",
+    "node_modules/powerbi-visuals-utils-interactivityutils/lib/index.js",
+    "node_modules/powerbi-visuals-utils-tooltiputils/lib/index.js",
+    "node_modules/powerbi-visuals-utils-colorutils/lib/index.js",
+    "node_modules/powerbi-visuals-utils-chartutils/lib/index.js"
+  ],
+  "style": "style/gantt.less",
+  "capabilities": "capabilities.json",
+  "dependencies": "dependencies.json"
+}

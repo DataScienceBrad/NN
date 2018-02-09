@@ -1,0 +1,823 @@
+{
+  "dataRoles": [
+    {
+      "name": "Category",
+      "displayName": "Category",
+      "kind": "Grouping"
+    },
+    {
+      "name": "StartDate",
+      "displayName": "Start",
+      "kind": "Measure"
+    },
+    {
+      "name": "EndDate",
+      "displayName": "End",
+      "kind": "Measure"
+    },
+    {
+      "name": "Resource",
+      "displayName": "Data label",
+      "kind": "Measure"
+    },
+    {
+      "name": "KPIValueBag",
+      "displayName": "KPI",
+      "kind": "Grouping"
+    },
+    {
+      "name": "Tooltip",
+      "displayName": "Tooltip",
+      "kind": "Measure"
+    }
+  ],
+  "dataViewMappings": [
+    {
+      "conditions": [
+        {
+          "Category": {
+            "min": 0,
+            "max": 4
+          },
+          "StartDate": {
+            "min": 0,
+            "max": 1
+          },
+          "EndDate": {
+            "min": 0,
+            "max": 1
+          },
+          "Resource": {
+            "min": 0,
+            "max": 1
+          },
+          "KPIValueBag": {
+            "min": 0,
+            "max": 10
+          },
+          "Tooltip": {
+            "min": 0,
+            "max": 10
+          }
+        }
+      ],
+      "categorical": {
+        "categories": {
+          "select": [
+            {
+              "for": {
+                "in": "Category"
+              }
+            },
+            {
+              "for": {
+                "in": "KPIValueBag"
+              }
+            }
+          ],
+          "dataReductionAlgorithm": {
+            "top": {
+              "count": 1000
+            }
+          }
+        },
+        "values": {
+          "select": [
+            {
+              "bind": {
+                "to": "Tooltip"
+              }
+            },
+            {
+              "bind": {
+                "to": "StartDate"
+              }
+            },
+            {
+              "bind": {
+                "to": "EndDate"
+              }
+            },
+            {
+              "bind": {
+                "to": "Resource"
+              }
+            }
+          ],
+          "dataReductionAlgorithm": {
+            "top": {
+              "count": 1000
+            }
+          }
+        }
+      }
+    }
+  ],
+  "objects": {
+    "general": {
+      "displayName": "General",
+      "properties": {
+        "groupTasks": {
+          "displayName": "Group Tasks",
+          "type": {
+            "bool": true
+          }
+        }
+      }
+    },
+    "legend": {
+      "displayName": "Legend",
+      "description": "Display legend options",
+      "properties": {
+        "show": {
+          "displayName": "Show",
+          "type": {
+            "bool": true
+          }
+        }
+      }
+    },
+    "columnHeader": {
+      "displayName": "Column headers",
+      "properties": {
+        "fill": {
+          "displayName": "Font color",
+          "type": {
+            "fill": {
+              "solid": {
+                "color": true
+              }
+            }
+          }
+        },
+        "fill2": {
+          "displayName": "Background color",
+          "type": {
+            "fill": {
+              "solid": {
+                "color": true
+              }
+            }
+          }
+        },
+        "columnOutline": {
+          "displayName": "Outline",
+          "description": "Select the location for the outline in column header",
+          "type": {
+            "enumeration": [
+              {
+                "value": "none",
+                "displayName": "None"
+              },
+              {
+                "value": "bottomOnly",
+                "displayName": "Bottom Only"
+              },
+              {
+                "value": "topOnly",
+                "displayName": "Top Only"
+              },
+              {
+                "value": "leftOnly",
+                "displayName": "Left Only"
+              },
+              {
+                "value": "rightOnly",
+                "displayName": "Right Only"
+              },
+              {
+                "value": "leftRight",
+                "displayName": "Left + Right"
+              },
+              {
+                "value": "frame",
+                "displayName": "Frame"
+              }
+            ]
+          }
+        },
+        "fontFamily": {
+          "displayName": "Font family",
+          "description": "Select the font-family for column headers",
+          "type": {
+            "enumeration": [
+              {
+                "value": "Arial",
+                "displayName": "Arial",
+                "font-family": "Arial"
+              },
+              {
+                "value": "Arial Black",
+                "displayName": "Arial Black",
+                "font-family": "Arial Black"
+              },
+              {
+                "value": "Arial Unicode MS",
+                "displayName": "Arial Unicode MS"
+              },
+              {
+                "value": "Calibri",
+                "displayName": "Calibri"
+              },
+              {
+                "value": "Cambria",
+                "displayName": "Cambria"
+              },
+              {
+                "value": "Cambria Math",
+                "displayName": "Cambria Math"
+              },
+              {
+                "value": "Candara",
+                "displayName": "Candara"
+              },
+              {
+                "value": "Comic Sans MS",
+                "displayName": "Comic Sans MS"
+              },
+              {
+                "value": "Consolas",
+                "displayName": "Consolas"
+              },
+              {
+                "value": "Constantia",
+                "displayName": "Constantia"
+              },
+              {
+                "value": "Corbel",
+                "displayName": "Corbel"
+              },
+              {
+                "value": "Courier New",
+                "displayName": "Courier New"
+              },
+              {
+                "value": "Georgia",
+                "displayName": "Georgia"
+              },
+              {
+                "value": "Lucida Sans Unicode",
+                "displayName": "Lucida Sans Unicode"
+              },
+              {
+                "value": "Segoe (Bold)",
+                "displayName": "Segoe (Bold)"
+              },
+              {
+                "value": "Segoe UI",
+                "displayName": "Segoe UI"
+              },
+              {
+                "value": "Segoe UI Light",
+                "displayName": "Segoe UI Light"
+              },
+              {
+                "value": "Symbol",
+                "displayName": "Symbol"
+              },
+              {
+                "value": "Tahoma",
+                "displayName": "Tahoma"
+              },
+              {
+                "value": "Times New Roman",
+                "displayName": "Times New Roman"
+              },
+              {
+                "value": "Trebuchet MS",
+                "displayName": "Trebuchet MS"
+              },
+              {
+                "value": "Verdana",
+                "displayName": "Verdana"
+              },
+              {
+                "value": "Wingdings",
+                "displayName": "Wingdings"
+              }
+            ]
+          }
+        },
+        "fontSize": {
+          "displayName": "Text size",
+          "type": {
+            "formatting": {
+              "fontSize": true
+            }
+          }
+        }
+      }
+    },
+    "taskLabels": {
+      "displayName": "Category labels",
+      "properties": {
+        "show": {
+          "displayName": "Show",
+          "type": {
+            "bool": true
+          }
+        },
+        "fill": {
+          "displayName": "Fill",
+          "type": {
+            "fill": {
+              "solid": {
+                "color": true
+              }
+            }
+          }
+        },
+        "fontSize": {
+          "displayName": "Text size",
+          "type": {
+            "formatting": {
+              "fontSize": true
+            }
+          }
+        },
+        "fontFamily": {
+          "displayName": "Font family",
+          "description": "Select the font-family for category labels",
+          "type": {
+            "enumeration": [
+              {
+                "value": "Arial",
+                "displayName": "Arial"
+              },
+              {
+                "value": "Arial Black",
+                "displayName": "Arial Black"
+              },
+              {
+                "value": "Arial Unicode MS",
+                "displayName": "Arial Unicode MS"
+              },
+              {
+                "value": "Calibri",
+                "displayName": "Calibri"
+              },
+              {
+                "value": "Cambria",
+                "displayName": "Cambria"
+              },
+              {
+                "value": "Cambria Math",
+                "displayName": "Cambria Math"
+              },
+              {
+                "value": "Candara",
+                "displayName": "Candara"
+              },
+              {
+                "value": "Comic Sans MS",
+                "displayName": "Comic Sans MS"
+              },
+              {
+                "value": "Consolas",
+                "displayName": "Consolas"
+              },
+              {
+                "value": "Constantia",
+                "displayName": "Constantia"
+              },
+              {
+                "value": "Corbel",
+                "displayName": "Corbel"
+              },
+              {
+                "value": "Courier New",
+                "displayName": "Courier New"
+              },
+              {
+                "value": "Georgia",
+                "displayName": "Georgia"
+              },
+              {
+                "value": "Lucida Sans Unicode",
+                "displayName": "Lucida Sans Unicode"
+              },
+              {
+                "value": "Segoe (Bold)",
+                "displayName": "Segoe (Bold)"
+              },
+              {
+                "value": "Segoe UI",
+                "displayName": "Segoe UI"
+              },
+              {
+                "value": "Segoe UI Light",
+                "displayName": "Segoe UI Light"
+              },
+              {
+                "value": "Symbol",
+                "displayName": "Symbol"
+              },
+              {
+                "value": "Tahoma",
+                "displayName": "Tahoma"
+              },
+              {
+                "value": "Times New Roman",
+                "displayName": "Times New Roman"
+              },
+              {
+                "value": "Trebuchet MS",
+                "displayName": "Trebuchet MS"
+              },
+              {
+                "value": "Verdana",
+                "displayName": "Verdana"
+              },
+              {
+                "value": "Wingdings",
+                "displayName": "Wingdings"
+              }
+            ]
+          }
+        },
+        "width": {
+          "displayName": "Number of characters",
+          "type": {
+            "numeric": true
+          }
+        },
+        "isExpanded": {
+          "displayName": "Is expanded",
+          "type": {
+            "bool": true
+          }
+        },
+        "isHierarchy": {
+          "displayName": "Hierarchy layout",
+          "type": {
+            "bool": true
+          }
+        }
+      }
+    },
+    "taskResource": {
+      "displayName": "Data labels",
+      "properties": {
+        "show": {
+          "displayName": "Show",
+          "type": {
+            "bool": true
+          }
+        },
+        "position": {
+          "displayName": "Position",
+          "description": "Select the location for the label",
+          "type": {
+            "enumeration": [
+              {
+                "value": "Left",
+                "displayName": "Left"
+              },
+              {
+                "value": "Top",
+                "displayName": "Center"
+              },
+              {
+                "value": "Right",
+                "displayName": "Right"
+              }
+            ]
+          }
+        },
+        "fill": {
+          "displayName": "Color",
+          "type": {
+            "fill": {
+              "solid": {
+                "color": true
+              }
+            }
+          }
+        },
+        "fontSize": {
+          "displayName": "Text size",
+          "type": {
+            "formatting": {
+              "fontSize": true
+            }
+          }
+        },
+        "fontFamily": {
+          "displayName": "Font family",
+          "description": "Select the font-family for data labels",
+          "type": {
+            "enumeration": [
+              {
+                "value": "Arial",
+                "displayName": "Arial"
+              },
+              {
+                "value": "Arial Black",
+                "displayName": "Arial Black"
+              },
+              {
+                "value": "Arial Unicode MS",
+                "displayName": "Arial Unicode MS"
+              },
+              {
+                "value": "Calibri",
+                "displayName": "Calibri"
+              },
+              {
+                "value": "Cambria",
+                "displayName": "Cambria"
+              },
+              {
+                "value": "Cambria Math",
+                "displayName": "Cambria Math"
+              },
+              {
+                "value": "Candara",
+                "displayName": "Candara"
+              },
+              {
+                "value": "Comic Sans MS",
+                "displayName": "Comic Sans MS"
+              },
+              {
+                "value": "Consolas",
+                "displayName": "Consolas"
+              },
+              {
+                "value": "Constantia",
+                "displayName": "Constantia"
+              },
+              {
+                "value": "Corbel",
+                "displayName": "Corbel"
+              },
+              {
+                "value": "Courier New",
+                "displayName": "Courier New"
+              },
+              {
+                "value": "Georgia",
+                "displayName": "Georgia"
+              },
+              {
+                "value": "Lucida Sans Unicode",
+                "displayName": "Lucida Sans Unicode"
+              },
+              {
+                "value": "Segoe (Bold)",
+                "displayName": "Segoe (Bold)"
+              },
+              {
+                "value": "Segoe UI",
+                "displayName": "Segoe UI"
+              },
+              {
+                "value": "Segoe UI Light",
+                "displayName": "Segoe UI Light"
+              },
+              {
+                "value": "Symbol",
+                "displayName": "Symbol"
+              },
+              {
+                "value": "Tahoma",
+                "displayName": "Tahoma"
+              },
+              {
+                "value": "Times New Roman",
+                "displayName": "Times New Roman"
+              },
+              {
+                "value": "Trebuchet MS",
+                "displayName": "Trebuchet MS"
+              },
+              {
+                "value": "Verdana",
+                "displayName": "Verdana"
+              },
+              {
+                "value": "Wingdings",
+                "displayName": "Wingdings"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "barColor": {
+      "displayName": "Bars formatting",
+      "properties": {
+        "defaultColor": {
+          "displayName": "Default color",
+          "type": {
+            "fill": {
+              "solid": {
+                "color": true
+              }
+            }
+          }
+        },
+        "showall":{
+          "displayName": "Show All",
+          "type" : {
+            "bool": true
+          }
+        },
+        "fillColor": {
+          "type": {
+            "fill": {
+              "solid": {
+                "color": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "scrollPosition": {
+      "displayName": "Scroll position",
+      "properties": {
+        "position": {
+          "displayName": "Position",
+          "type": {
+            "enumeration": [
+              {
+                "value": "Start",
+                "displayName": "Start"
+              },
+              {
+                "value": "Today",
+                "displayName": "Today"
+              },
+              {
+                "value": "End",
+                "displayName": "End"
+              }
+            ]
+          }
+        },
+        "position2": {
+          "displayName": "Position",
+          "type": {
+            "enumeration": [
+              {
+                "value": "Start",
+                "displayName": "Start"
+              },
+              {
+                "value": "End",
+                "displayName": "End"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "kpiColumnType": {
+      "displayName": "KPI column type",
+      "properties": {
+        "type": {
+          "displayName": "ColumnType",
+          "type": {
+            "enumeration": [
+              {
+                "value": "Value",
+                "displayName": "Value"
+              },
+              {
+                "value": "Indicator",
+                "displayName": "Indicator"
+              },
+              {
+                "value": "Type",
+                "displayName": "Type"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "dateType": {
+      "displayName": "Gantt date type",
+      "properties": {
+        "type": {
+          "displayName": "Type",
+          "type": {
+            "enumeration": [
+              {
+                "value": "Day",
+                "displayName": "Day"
+              },
+              {
+                "value": "Week",
+                "displayName": "Week"
+              },
+              {
+                "value": "Month",
+                "displayName": "Month"
+              },
+              {
+                "value": "Quarter",
+                "displayName": "Quarter"
+              },
+              {
+                "value": "Year",
+                "displayName": "Year"
+              }
+            ]
+          }
+        },
+        "enableToday": {
+          "displayName": "Show today indicator",
+          "type": {
+            "bool": true
+          }
+        }
+      }
+    },
+    "taskGridlines": {
+      "displayName": "Grid lines",
+      "properties": {
+        "show": {
+          "displayName": "Show",
+          "type": {
+            "bool": true
+          }
+        },
+        "fill": {
+          "displayName": "Color",
+          "type": {
+            "fill": {
+              "solid": {
+                "color": true
+              }
+            }
+          }
+        },
+        "interval": {
+          "displayName": "Interval",
+          "type": {
+            "text": true
+          }
+        }
+      }
+    },
+    "displayRatio": {
+      "displayName": "Display ratio",
+      "description": "Aspect ratio of category labels and gantt chart",
+      "properties": {
+        "ratio": {
+          "displayName": "Ratio",
+          "type": {
+            "formatting": {
+              "fontSize": true
+            }
+          }
+        }
+      }
+    },
+    "categoryColumnsWidth": {
+      "displayName": "Category Columns Width",
+      "properties": {
+        "width": {
+          "displayName": "Width",
+          "type": {
+            "text": true
+          }
+        },
+        "categoryLength": {
+          "displayName": "Resize started",
+          "type": {
+            "numeric": true
+          }
+        }
+      }
+    },
+    "sortAttributes": {
+      "displayName": "Sorting attribures",
+      "properties": {
+        "sortOrder": {
+          "displayName": "Sort order",
+          "type": {
+            "text": true
+          }
+        },
+        "sortLevel": {
+          "displayName": "Sort level",
+          "type": {
+            "numeric": true
+          }
+        },
+        "prevSortedColumn": {
+          "displayName": "Previous sorted level",
+          "type": {
+            "numeric": true
+          }
+        }
+      }
+    }
+  },
+  "sorting": {
+    "custom": {}
+  }
+}
