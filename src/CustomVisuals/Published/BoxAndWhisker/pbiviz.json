@@ -28,7 +28,7 @@
     "node_modules/powerbi-visuals-utils-dataviewutils/lib/index.js",
     "node_modules/powerbi-visuals-utils-formattingutils/lib/index.js",
     "node_modules/powerbi-visuals-utils-interactivityutils/lib/index.js",
-    "node_modules/powerbi-visuals-utils-chartutils/lib/index.js"
+    "node_modules/maq-utils-chartutils/lib/index.js"
   ],
   "style": "style/visual.less",
   "capabilities": "capabilities.json",
