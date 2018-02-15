@@ -120,7 +120,6 @@ function myMAQlibrary(dWagon, gridFormatters) {
         if (loopctr == dWagon.table.rows.length) {
             sort_type = typeof (dWagon.table.rows[0][iCount]);
         }
-
         else {
             sort_type = typeof (dWagon.table.rows[loopctr][iCount]);
         }
@@ -194,7 +193,6 @@ function myMAQlibrary(dWagon, gridFormatters) {
                     }
                 }
         }
-        ;
         sortKey--;
         col = dWagon.table.columns[sortKey].queryName;
         gridSort.sortby = col.substring(col.indexOf(".") + 1, col.length).replaceAll("\"", "'");
@@ -210,7 +208,6 @@ function myMAQlibrary(dWagon, gridFormatters) {
     }
 
     switch (typeof (dWagon.table.rows[0][sortKey])) {
-
         case "number":
             gridSort.sortType = "parseDecimal"; //to sort numeric data, be it integers or floating-point numbers.
             break;
@@ -222,7 +219,7 @@ function myMAQlibrary(dWagon, gridFormatters) {
             break;
     }
     config.gridSort = gridSort;
-    $("#KPIGrid").html("");
+    $("#KPIGrid").text("");
 
     function intializeEvents() {
         var apiUrl = gridFormatters.apiUrl;
@@ -237,7 +234,6 @@ function myMAQlibrary(dWagon, gridFormatters) {
 
     dataViewObj = dWagon;
     config.callBackFunc = intializeEvents;
-
 
     MAQ.JsonGrid(config);
     d3.select(".DataDiv").style({ "font-size": gridFormatters.fontSize + "px" });
@@ -628,519 +624,6 @@ function insertCommasOnly(sInput, iDecimalPlaces) {
     return sFinalValue;
 };
 
-// insertCommasOnlyWithOnePlace: Returns data with 1 decimal place in format (x,xxx,xxx.xx)
-function insertCommasOnlyWithOnePlace(sInput) {
-    if (0 === parseFloat(sInput)) {
-        return "0";
-    } else if (!sInput || isNaN(parseFloat(sInput))) {
-        return "N/A";
-    } else {
-        return insertCommasOnly(sInput, 1);
-    }
-}
-
-// revenueFormatter: Formats the number in revenue format ($x,xx.xxK).
-function revenueFormatter(sInput, iDecimalPlaces) {
-    if (0 === parseFloat(sInput)) {
-        return "$0";
-    } else if (!sInput || isNaN(sInput)) {
-        return "N/A";
-    }
-
-    // Check for validity of decimal places parameter
-    if (!iDecimalPlaces || isNaN(iDecimalPlaces)) {
-        iDecimalPlaces = 1; // Default value is 0
-    }
-    var sTempValue = thousandFormatter(sInput, iDecimalPlaces);
-    return ((parseFloat(sTempValue) < 0) ? "-$" + sTempValue.substr(1) : "$" + sTempValue);
-};
-
-// roundNoDecimalPercent: Formats the number with percentage and removes decimal places (xx%).
-function roundNoDecimalPercent(sCellValue) {
-    if ("N/A" !== sCellValue) {
-        return Math.round(sCellValue) + "%";
-    }
-    return sCellValue;
-};
-
-// insertPercentages: Formats the number with percentage after multiplying by 100 (xx.xx%).
-function insertPercentages(sCellValue, iDecimalPlaces) {
-    if (0 === parseFloat(sCellValue)) {
-        return "0%";
-    } else if (!sCellValue || isNaN(sCellValue)) {
-        return "N/A";
-    }
-    if ((!iDecimalPlaces || isNaN(iDecimalPlaces)) && iDecimalPlaces !== 0) {
-        iDecimalPlaces = 0; // Default value is 0
-    }
-    sCellValue = sCellValue * 100;
-    var sTempValue = insertCommasOnly(sCellValue, iDecimalPlaces);
-    return sTempValue + "%";
-};
-
-// insertPercentageOnly: Formats the number with percentage (xx.xx%).
-function insertPercentageOnly(sCellValue, iDecimalPlaces) {
-    if (0 === parseFloat(sCellValue)) {
-        return "0%";
-    } else if (!sCellValue || isNaN(parseFloat(sCellValue))) {
-        return "N/A";
-    }
-    if ((!iDecimalPlaces || isNaN(iDecimalPlaces)) && iDecimalPlaces !== 0) {
-        iDecimalPlaces = 0; // Default value is 0
-    }
-    var sTempValue = insertCommasOnly(sCellValue, iDecimalPlaces);
-    return sTempValue + "%";
-};
-
-// insertPercentageWithThousandFormatter: Returns data with decimal place in format x.xK/M/B%
-function insertPercentageWithThousandFormatter(sInput, iDecimalPlaces) {
-    if (0 === parseFloat(sInput)) {
-        return "0%";
-    } else if (!sInput || isNaN(parseFloat(sInput))) {
-        return "N/A";
-    } else {
-        return thousandFormatter(sInput, iDecimalPlaces) + "%";
-    }
-};
-
-// insertPercentageWithThousandFormatter: Returns data with decimal place in format x.xK/M/B%
-function insertPercentageWithThousandFormatterOneDecimal(sInput, iDecimalPlaces) {
-    if (0 === parseFloat(sInput)) {
-        return "0%";
-    } else if (!sInput || isNaN(parseFloat(sInput))) {
-        return "N/A";
-    } else {
-        return thousandFormatter(sInput, 1) + "%";
-    }
-};
-
-// insertPercentageWithThousandFormatter: Returns data with decimal place in format for tile x.xK/M/B%
-function insertPercentageWithThousandFormatterForTile(sInput, iDecimalPlaces) {
-    if (0 === parseFloat(sInput)) {
-        return "0" + "<span class='tileUnitSymbol'>%</span>";
-    } else if (!sInput || isNaN(parseFloat(sInput))) {
-        return "N/A";
-    } else {
-        return thousandFormatter(sInput, 1) + "<span class='tileUnitSymbol'>%</span>";
-    }
-};
-
-// dateStringToMonthFormatter: Converts the date passed as string to mmm, yyyy format
-function dateStringToMonthFormatter(sInput) {
-    if (sInput) {
-        var dInputDate = new Date(sInput);
-        if ("Invalid Date" !== dInputDate.toDateString()) {
-            return formatDateFunction(dInputDate, "mmm, yyyy");
-        }
-        return "N/A";
-    }
-    return "N/A";
-}
-
-// formatDateFunction: Date formatting function.
-function formatDateFunction(formatDate, formatString) {
-    if (formatDate instanceof Date) {
-        var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-        var sFullYear = formatDate.getFullYear();
-        var yy = sFullYear.toString().substring(2);
-        var m = formatDate.getMonth();
-        var mm = m < 10 ? "0" + m : m;
-        var sMonthName = months[m];
-        var d = formatDate.getDate();
-        var dd = d < 10 ? "0" + d : d;
-
-        var h = formatDate.getHours();
-        var hh = h < 10 ? "0" + h : h;
-        var n = formatDate.getMinutes();
-        var nn = n < 10 ? "0" + n : n;
-        var s = formatDate.getSeconds();
-        var ss = s < 10 ? "0" + s : s;
-
-        formatString = formatString.toLowerCase();
-        formatString = formatString.replace("hh", hh);
-        formatString = formatString.replace("h", h);
-        formatString = formatString.replace("nn", nn);
-        formatString = formatString.replace("n", n);
-        formatString = formatString.replace("ss", ss);
-        formatString = formatString.replace("s", s);
-        formatString = formatString.replace("dd", dd);
-        formatString = formatString.replace("d", d);
-        formatString = formatString.replace("yyyy", sFullYear);
-        formatString = formatString.replace("yy", yy);
-        formatString = formatString.replace("mmm", sMonthName);
-        formatString = formatString.replace("mm", (mm + 1));
-        formatString = formatString.replace("m", (m + 1));
-        return formatString;
-    }
-    return "";
-};
-
-// customRevenueFormatter: Formats the number in revenue format and returns object with sign, value and currency ({"$","x,xx.xx","K"})
-function customRevenueFormatter(sInput, iDecimalPlaces) {
-    if (0 === sInput) {
-        return {
-            sign: "$",
-            value: 0,
-            currency: ""
-        };
-    } else if (isNaN(sInput) || !sInput) {
-        return {
-            sign: "N/A"
-        };
-    }
-
-    // Check for validity of decimal places parameter
-    if ((!iDecimalPlaces || isNaN(iDecimalPlaces)) && iDecimalPlaces !== 0) {
-        iDecimalPlaces = 0; // Default value is 2
-    }
-    var fTempValue = parseFloat(sInput);
-    if (fTempValue < 0) {
-        sInput = -1 * fTempValue;
-    }
-
-    // Check for validity of decimal places parameter
-    if ((!iDecimalPlaces || isNaN(iDecimalPlaces)) && iDecimalPlaces !== 0) {
-        iDecimalPlaces = 2; // Default value is 2
-    }
-    var sTempValue = sInput.toString();
-
-    if (-1 !== sTempValue.indexOf(".")) {
-        var decimalLength = sTempValue.substring(sTempValue.indexOf(".") + 1).length;
-        if (iDecimalPlaces < decimalLength) {
-            sTempValue = sInput.toFixed(iDecimalPlaces).toString();
-        }
-    }
-    var aDigits = sTempValue.split("."),
-        sIntegerDigits = aDigits[0],
-        sFractionDigits = aDigits.length > 1 ? "." + aDigits[1] : "";
-
-    // Converting thousand to M
-    var bConvert = false,
-        kConvert = false,
-        iTempValue = parseInt(sIntegerDigits),
-        sCurrency = "";
-    if (iTempValue >= 1000000000) {
-        sIntegerDigits = iTempValue / 1000000000;
-        sCurrency = "B";
-        sFractionDigits = "";
-        sIntegerDigits = sIntegerDigits.toFixed(iDecimalPlaces).toString();
-    } else if (iTempValue < 1000000000 && iTempValue >= 1000000) {
-        sIntegerDigits = iTempValue / 1000000;
-        sCurrency = "M";
-        sFractionDigits = "";
-        sIntegerDigits = sIntegerDigits.toFixed(iDecimalPlaces).toString();
-    } else if (iTempValue < 1000000 && iTempValue >= 1000) {
-        sIntegerDigits = iTempValue / 1000;
-        sCurrency = "K";
-        sFractionDigits = "";
-        sIntegerDigits = sIntegerDigits.toFixed(iDecimalPlaces).toString();
-    }
-
-    var rPattern = /(\d+)(\d{3})/;
-    while (rPattern.test(sIntegerDigits)) {
-        sIntegerDigits = sIntegerDigits.replace(rPattern, "$1" + "," + "$2");
-    }
-    return {
-        sign: ((fTempValue < 0) ? "-$" : "$"),
-        value: sIntegerDigits + sFractionDigits,
-        currency: sCurrency
-    };
-};
-
-// customRevenueFormatter: Formats the number in revenue format and returns object with sign, value and currency ({"-","x,xx.xx","K"})
-function customThousandFormatter(sInput, iDecimalPlaces) {
-    if (0 === sInput) {
-        return {
-            sign: "",
-            value: "0",
-            currency: ""
-        };
-    } else if (isNaN(sInput) || !sInput) {
-        return {
-            sign: "N/A"
-        };
-    }
-
-    // Check for validity of decimal places parameter
-    if ((!iDecimalPlaces || isNaN(iDecimalPlaces)) && iDecimalPlaces !== 0) {
-        iDecimalPlaces = 0; // Default value is 0
-    }
-    var fTempValue = parseFloat(sInput);
-    if (fTempValue < 0) {
-        sInput = -1 * fTempValue;
-    }
-
-    // Check for validity of decimal places parameter
-    if ((!iDecimalPlaces || isNaN(iDecimalPlaces)) && iDecimalPlaces !== 0) {
-        iDecimalPlaces = 2; // Default value is 2
-    }
-    var sTempValue = sInput.toString();
-
-    if (-1 !== sTempValue.indexOf(".")) {
-        var decimalLength = sTempValue.substring(sTempValue.indexOf(".") + 1).length;
-        if (iDecimalPlaces < decimalLength) {
-            sTempValue = parseFloat(sInput).toFixed(iDecimalPlaces).toString();
-        }
-    }
-    var aDigits = sTempValue.split("."),
-        sIntegerDigits = aDigits[0],
-        sFractionDigits = aDigits.length > 1 ? "." + aDigits[1] : "";
-
-    // Converting thousand to M
-    var bConvert = false,
-        kConvert = false,
-        iTempValue = parseInt(sIntegerDigits),
-        sCurrency = "";
-    if (iTempValue >= 1000000000) {
-        sIntegerDigits = iTempValue / 1000000000;
-        sCurrency = "B";
-        sFractionDigits = "";
-        sIntegerDigits = sIntegerDigits.toFixed(iDecimalPlaces).toString();
-    } else if (iTempValue < 1000000000 && iTempValue >= 1000000) {
-        sIntegerDigits = iTempValue / 1000000;
-        sCurrency = "M";
-        sFractionDigits = "";
-        sIntegerDigits = sIntegerDigits.toFixed(iDecimalPlaces).toString();
-    } else if (iTempValue < 1000000 && iTempValue >= 1000) {
-        sIntegerDigits = iTempValue / 1000;
-        sCurrency = "K";
-        sFractionDigits = "";
-        sIntegerDigits = sIntegerDigits.toFixed(iDecimalPlaces).toString();
-    }
-
-    var rPattern = /(\d+)(\d{3})/;
-    while (rPattern.test(sIntegerDigits)) {
-        sIntegerDigits = sIntegerDigits.replace(rPattern, "$1" + "," + "$2");
-    }
-    return {
-        sign: ((fTempValue < 0) ? "-" : ""),
-        value: sIntegerDigits + sFractionDigits,
-        currency: sCurrency
-    };
-};
-
-function customHighPercentFormatter(sInput, iDecimalPlaces) {
-    var rPattern = /(\d+)(\d{3})/,
-        sTempValue, bConvert, kConvert, iTempValue, sCurrency, decimalLength, fTempValue;
-    if (0 === sInput) {
-        return {
-            sign: "",
-            value: 0,
-            currency: ""
-        };
-    } else if (isNaN(sInput) || !sInput) {
-        return {
-            sign: "N/A"
-        };
-    }
-
-    // Check for validity of decimal places parameter
-    if ((!iDecimalPlaces || isNaN(iDecimalPlaces)) && iDecimalPlaces !== 0) {
-        iDecimalPlaces = 0; // Default value is 0
-    }
-    fTempValue = parseFloat(sInput);
-    if (fTempValue < 0) {
-        sInput = -1 * fTempValue;
-    }
-
-    // Check for validity of decimal places parameter
-    if ((!iDecimalPlaces || isNaN(iDecimalPlaces)) && iDecimalPlaces !== 0) {
-        iDecimalPlaces = 2; // Default value is 2
-    }
-    sTempValue = sInput.toString();
-
-    if (-1 !== sTempValue.indexOf(".")) {
-        decimalLength = sTempValue.substring(sTempValue.indexOf(".") + 1).length;
-        if (iDecimalPlaces < decimalLength) {
-            sTempValue = sInput.toFixed(iDecimalPlaces).toString();
-        }
-    }
-    var aDigits = sTempValue.split("."),
-        sIntegerDigits = aDigits[0],
-        sFractionDigits = aDigits.length > 1 ? "." + aDigits[1] : "";
-
-    // Converting thousand to M
-    bConvert = false, kConvert = false, iTempValue = parseInt(sIntegerDigits), sCurrency = "";
-    if (iTempValue >= 100000000) {
-        sIntegerDigits = iTempValue / 1000000000;
-        sCurrency = "B";
-        sFractionDigits = "";
-        sIntegerDigits = sIntegerDigits.toFixed(iDecimalPlaces).toString();
-    } else if (iTempValue < 100000000 && iTempValue >= 100000) {
-        sIntegerDigits = iTempValue / 1000000;
-        sCurrency = "M";
-        sFractionDigits = "";
-        sIntegerDigits = sIntegerDigits.toFixed(iDecimalPlaces).toString();
-    } else if (iTempValue < 100000 && iTempValue >= 100) {
-        sIntegerDigits = iTempValue / 1000;
-        sCurrency = "K";
-        sFractionDigits = "";
-        sIntegerDigits = sIntegerDigits.toFixed(iDecimalPlaces).toString();
-    }
-
-    while (rPattern.test(sIntegerDigits)) {
-        sIntegerDigits = sIntegerDigits.replace(rPattern, "$1" + "," + "$2");
-    }
-    return {
-        sign: ((fTempValue < 0) ? "-" : ""),
-        value: sIntegerDigits + sFractionDigits,
-        currency: sCurrency
-    };
-};
-
-// parseCustomBarChart: Renders bar chart and corresponding cell value
-function parseCustomBarChart(cellValue, oRowJsonObject, oFormatterOptions) {
-    var fMax = 1,
-        sField, sNumberFormatter, fPercentValue = 0,
-        sReturnValue, sBgColor, funFormatter, sCustomBarChartTemplate = "<div class='CustomerBarChartValue'>{2}</div><div style='width:{a}px' class='CustomerBarChart_Container'><div class='CustomerBarChart_{0}' style='width:{1}%; height:20px {3}'></div></div>",
-        fParentWidth = 0;
-
-    if (oFormatterOptions) {
-        fMax = oFormatterOptions.maxValue;
-        sField = oFormatterOptions.field;
-        sNumberFormatter = oFormatterOptions.numberFormatter;
-    }
-    fParentWidth = (oFormatterOptions.fCell).replace("px", "").replace("%", "");
-
-    if (!sNumberFormatter) {
-        funFormatter = window["thousandFormatter"];
-    } else {
-        funFormatter = window[sNumberFormatter];
-    }
-    if (!cellValue || isNaN(parseFloat(cellValue))) {
-        sReturnValue = sCustomBarChartTemplate.replace("{0}", sField).replace("{1}", "0").replace("{2}", "N/A").replace("{3}", "");
-    } else {
-        fPercentValue = parseFloat((parseFloat(cellValue) / fMax * 100).toFixed(2));
-        if (oRowJsonObject.colorStyle && -1 !== oRowJsonObject.colorStyle.columnName.indexOf(sField)) {
-            sBgColor = oRowJsonObject.colorStyle.color[oRowJsonObject.colorStyle.columnName.indexOf(sField)];
-            sReturnValue = sCustomBarChartTemplate.replace("{0}", sField).replace("{1}", fPercentValue.toString()).replace("{2}", funFormatter(cellValue, 1)).replace("{3}", "; background-color:" + sBgColor).replace("{a}", (fParentWidth - 95).toString());
-        } else {
-            sReturnValue = sCustomBarChartTemplate.replace("{0}", sField + " CustomerBarChart_SingleColor").replace("{1}", fPercentValue.toString()).replace("{2}", funFormatter(cellValue, 1)).replace("{3}", "").replace("{a}", (fParentWidth - 105).toString());
-        }
-    }
-    return sReturnValue;
-}
-
-// stringToDateFormatter: Converts the string passed into d-mmm-yy format
-function stringToDateFormatter(sInput) {
-    if (sInput) {
-        var dInputDate = new Date(sInput);
-        if ("Invalid Date" !== dInputDate.toDateString()) {
-            return formatDateFunction(dInputDate, "d-mmm-yy");
-        }
-        return "N/A";
-    }
-    return "N/A";
-}
-
-// stringToNumericalDateFormatter: Converts the string passed into mm/dd/yyyy format
-function stringToNumericalDateFormatter(sInput) {
-    if (sInput) {
-        var dInputDate = new Date(sInput);
-        if ("Invalid Date" !== dInputDate.toDateString()) {
-            return formatDateFunction(dInputDate, "m/d/yyyy");
-        }
-        return "N/A";
-    }
-    return "N/A";
-}
-
-// stringToDateFormatter: Converts the string passed into mmm d, yyyy format
-function customStringToDateFormatter(sInput) {
-    if (sInput) {
-        var dInputDate = new Date(sInput);
-        if ("Invalid Date" !== dInputDate.toDateString()) {
-            return formatDateFunction(dInputDate, "mmm d, yyyy");
-        }
-        return "N/A";
-    }
-    return "N/A";
-}
-
-// insertCommasWithRevenueFormatter: Returns data in format $x,xxx,xxx.xx
-function insertCommasWithRevenueFormatter(sInput, iDecimalPlaces) {
-    if (0 === parseFloat(sInput)) {
-        return "$0";
-    } else if (!sInput || isNaN(parseFloat(sInput))) {
-        return "N/A";
-    } else {
-        var sTempValue = insertCommasOnly(sInput, iDecimalPlaces);
-        return ((parseFloat(sTempValue) < 0) ? "-$" + sTempValue.substr(1) : "$" + sTempValue);
-    }
-}
-
-// insertRevenueWithTwoPlaces: Returns data with 2 decimal places in format $xxx.xxK/M/B
-function insertRevenueWithTwoPlaces(sInput) {
-    if (0 === parseFloat(sInput)) {
-        return "$0";
-    } else if (!sInput || isNaN(parseFloat(sInput))) {
-        return "N/A";
-    } else {
-        return revenueFormatter(sInput, 2);
-    }
-}
-
-// insertRevenueWithTwoPlaces: Returns data with 2 decimal places in format $xxx.xxK/M/B
-function insertPercentageWithTwoPlaces(sInput) {
-    if (0 === parseFloat(sInput)) {
-        return "0%";
-    } else if (!sInput || isNaN(parseFloat(sInput))) {
-        return "N/A";
-    } else {
-        return insertPercentageOnly(sInput, 2);
-    }
-}
-
-// insertPercentageWithOnePlace: Returns data with 1 decimal place in format xx.x%
-function insertPercentageWithOnePlace(sInput) {
-    if (0 === parseFloat(sInput)) {
-        return "0%";
-    } else if (!sInput || isNaN(parseFloat(sInput))) {
-        return "N/A";
-    } else {
-        return insertPercentageOnly(sInput, 1);
-    }
-}
-
-// thousandFormatterWithOnePlace: Returns data with 1 decimal place in format xx.x%
-function thousandFormatterWithOnePlace(sInput) {
-    if (0 === parseFloat(sInput)) {
-        return "0";
-    } else if (!sInput || isNaN(parseFloat(sInput))) {
-        return "N/A";
-    } else {
-        return thousandFormatter(sInput, 1);
-    }
-}
-
-// Add ellipsis after maxLength of characters
-function trimMultiLine(sInput, maxLength) {
-    if (!maxLength) {
-        maxLength = 50; // Default is 25
-    }
-    var sOutput = sInput;
-    if (sOutput.length > maxLength) {
-        sOutput = sOutput.substr(0, maxLength - 3) + "...";
-    }
-    return sOutput;
-}
-
-/// <disable>JS2025.InsertSpaceBeforeCommentText</disable>
-// insertCompetitorByRevLossFormatter: Returns data in format $x,xxx,xxx.x
-function insertCompetitorByRevLossFormatter(sInput, iDecimalPlaces) {
-    if (0 === parseFloat(sInput)) {
-        return "$0";
-    } else if (!sInput || isNaN(parseFloat(sInput))) {
-        return "N/A";
-    } else {
-        var sTempValue = insertCommasOnly(sInput, 1);
-        return ((parseFloat(sTempValue) < 0) ? "-$" + sTempValue.substr(1) : "$" + sTempValue);
-    }
-}
-//# sourceMappingURL=formatters.js.map
-
-
-
 /// <disable>S1003.SemanticAnalysisHalted,JS3092.DeclarePropertiesBeforeUse,JS2032.PlaceLiteralsOnRightSideInComparisons,JS3057.AvoidImplicitTypeCoercion,JS3054.NotAllCodePathsReturnValue</disable>
 /// <dictionary target='member'>Config,sortby,sortorder,viewrecords,oParam, Param, aTrs</dictionary>
 /// <dictionary target='variable'>arr,Config</dictionary>
@@ -1193,7 +676,7 @@ MAQ.getAdjustedRowChunk = function (inputData, width) {
 MAQ.getAdjustedRowChunkAndToolTip = function (inputData, width) {
     width = width || "100";
     width = width.replace("%", "").replace("px", "");
-return "<span class='jsonGridOverflow' title='' + inputData + '' style='width: ' + (width - 15 >= 15 ? width - 15 : 15) + 'px;'>' + inputData + '</span>";
+    return "<span class='jsonGridOverflow' title='' + inputData + '' style='width: ' + (width - 15 >= 15 ? width - 15 : 15) + 'px;'>' + inputData + '</span>";
 };
 MAQ.setViewRecords = function (oCurrentGridConfiguration) {
     /// <disable>JS3058</disable>
@@ -1237,7 +720,7 @@ MAQ.generatePageList = function (oCurrentGridConfiguration, iCurrentPage, iTotal
     // Change page numbers
     if (oPageList) {
         // Clear existing page list
-        $(oPageList).html("");
+        $(oPageList).text("");
         iStartIndex = (((iTotalPages - 4) > 0) && iCurrentPage >= (iTotalPages - 4)) ? iTotalPages - 4 : iCurrentPage;
         iStartIndex = iTotalPages <= 5 ? 1 : iStartIndex;
         for (iIterator = iStartIndex; iIterator <= iTotalPages; iIterator++) {
@@ -1451,9 +934,10 @@ String.prototype.replaceAll = function (search, replacement) {
     return target.replace(new RegExp(search, "g"), replacement);
 };
 MAQ.sortJsonGrid = function (cellObject, sGridName, fieldName) {
+
     var gridObjectPosition, sortOrder, sortFlag, oCurrentGridConfiguration, columnCounter, sortType = String,
         sortKey = "",
-        oSortIndicators, iCount, oArrow;
+        oSortIndicators, iCount, oArrow, span;
     if (MAQ.gridName.length > 0) {
         pageid = 1;
         if (document.getElementsByClassName("ListOptionContainer") && document.getElementsByClassName("ListOptionContainer")[0])
@@ -1504,19 +988,26 @@ MAQ.sortJsonGrid = function (cellObject, sGridName, fieldName) {
                     MAQUtility.addClass(oSortIndicators[iCount], "itemHide");
                 }
                 oSortIndicators = document.querySelectorAll("#" + sGridName + "_right .SortIndicator");
+
                 for (iCount = 0; iCount < oSortIndicators.length; iCount++) {
                     MAQUtility.addClass(oSortIndicators[iCount], "itemHide");
                 }
                 MAQUtility.removeClass(document.querySelector("#" + sGridName + "Head .jsonGridHeaderAlternate"), "jsonGridHeaderAlternate");
-                oArrow = cellObject.querySelector(".sort" + fieldName.replace(/^(([^<>()\[\].,;:\s@"]+(\.[^<>()\[\].,;:\s@"]+)*)|(".+"))@(([^<>()\[\].,;:\s@"]+\.)+[^<>()\[\].,;:\s@"]{2,})$/g, "_") + "Hand");
+                oArrow = cellObject.querySelector(".sort" + fieldName.replace(/[^a-zA-z0-9]/g, "_") + "Hand");
+                span = document.createElement('span');
+                $('.asc').remove();
+                $('.desc').remove();
                 if ("asc" === cellObject.getAttribute("sortorder")) {
-                    $(oArrow).html("<span class='desc'></span>");
-                    MAQUtility.removeClass(oArrow, "itemHide");
-                } else {
-                    $(oArrow).html("<span class='asc'></span>");
-                    MAQUtility.removeClass(oArrow, "itemHide");
+                    MAQUtility.addClass(span, 'desc');
                 }
-                MAQUtility.addClass(oArrow.parentNode, "jsonGridHeaderAlternate");
+                else {
+                    MAQUtility.addClass(span, 'asc');
+                }
+                oArrow.appendChild(span);
+                MAQUtility.removeClass(oArrow, "itemHide");
+                if (oArrow) {
+                    MAQUtility.addClass(oArrow.parentNode, "jsonGridHeaderAlternate");
+                }
                 if (!oCurrentGridConfiguration.pagination.retainPageOnSort && oCurrentGridConfiguration.totalPages) {
                     oCurrentGridConfiguration.currentPage = 0;
                     MAQ.setViewRecords(oCurrentGridConfiguration);
@@ -1530,6 +1021,7 @@ MAQ.sortJsonGrid = function (cellObject, sGridName, fieldName) {
     }
 };
 MAQ.CreatePaginationControl = function (GridConfiguration) {
+
     var paginationSpaceRow = GridConfiguration.tblFoot.insertRow(0),
         row = GridConfiguration.tblFoot.insertRow(1),
         rightRow, leftGrid, rightGrid, rightSpaceCell, spaceCell = paginationSpaceRow.insertCell(0),
@@ -1578,23 +1070,36 @@ MAQ.CreatePaginationControl = function (GridConfiguration) {
     oLabel.innerText = oGridConstants.sPaginationText;
     MAQUtility.addClass(oLabel, "jsonFooterLabel");
     if (!GridConfiguration.isWin8App) {
-        // Disable previous only if current page is 0 i.e., first page
+        var span = document.createElement('span');
+        MAQUtility.addClass(span, 'prev')
+        MAQUtility.addClass(span, 'cur-pointer')
+        $(span).attr('id', GridConfiguration.gridName + '_Prev');
+        $(span).attr('active', '1');
+        $(span).attr('onclick', 'MAQ.goPrevious(this, \'' + GridConfiguration.gridName + "')")
+        span.innerText = '<';
         if (0 === GridConfiguration.currentPage) {
-          $(oPreviousDiv).html('<span id="' + GridConfiguration.gridName + '_Prev" class="prev cur-pointer click-disabled" active="1" onclick="MAQ.goPrevious(this,\'' + GridConfiguration.gridName + '\')"><</span>');
-        } else {
-            $(oPreviousDiv).html('<span id="' + GridConfiguration.gridName + '_Prev" class="prev cur-pointer" active="1" onclick="MAQ.goPrevious(this,\'' + GridConfiguration.gridName + '\')"><</span>');
+            MAQUtility.addClass(span, 'click-disabled')
         }
+        oPreviousDiv.appendChild(span);
         if (iLastPage - 1 !== GridConfiguration.currentPage) {
-            $(oNextDiv).html('<span id="' + GridConfiguration.gridName + '_Next" class="next cur-pointer" active="0" onclick="MAQ.goNext(this,\'' + GridConfiguration.gridName + '\')">></span>');
+            var span = document.createElement('span');
+            MAQUtility.addClass(span, 'next');
+            MAQUtility.addClass(span, 'cur-pointer')
+            $(span).attr('id', GridConfiguration.gridName + '_Next');
+            $(span).attr('active', '0');
+            $(span).attr('onclick', 'MAQ.goNext(this, \'' + GridConfiguration.gridName + "')")
+            span.innerText = '>';
+            oNextDiv.appendChild(span);
         }
     } else {
         MSApp.execUnsafeLocalFunction(function () {
             if (0 === GridConfiguration.currentPage) {
-                WinJS.Utilities.setInnerHTML(oPreviousDiv, '<span id="' + GridConfiguration.gridName + '_Prev" class="prev cur-pointer click-disabled" active="1" width="24" onclick="MAQ.goPrevious(this,\'' + GridConfiguration.gridName + '\')"><</span>');
+
+                WinJS.Utilities.textContent(oPreviousDiv, '<span id="' + GridConfiguration.gridName + '_Prev" class="prev cur-pointer click-disabled" active="1" width="24" onclick="MAQ.goPrevious(this,\'' + GridConfiguration.gridName + '\')"><</span>');
             } else {
-                WinJS.Utilities.setInnerHTML(oPreviousDiv, '<span id="' + GridConfiguration.gridName + '_Prev" class="prev cur-pointer" active="1" width="24" onclick="MAQ.goPrevious(this,\'' + GridConfiguration.gridName + '\')"><</span>');
+                WinJS.Utilities.textContent(oPreviousDiv, '<span id="' + GridConfiguration.gridName + '_Prev" class="prev cur-pointer" active="1" width="24" onclick="MAQ.goPrevious(this,\'' + GridConfiguration.gridName + '\')"><</span>');
             }
-            WinJS.Utilities.setInnerHTML(oNextDiv, '<span id="' + GridConfiguration.gridName + '_Next" class="next cur-pointer" active="0" width="24" onclick="MAQ.goNext(this,\'' + GridConfiguration.gridName + '\')">></span>');
+            WinJS.Utilities.textContent(oNextDiv, '<span id="' + GridConfiguration.gridName + '_Next" class="next cur-pointer" active="0" width="24" onclick="MAQ.goNext(this,\'' + GridConfiguration.gridName + '\')">></span>');
         });
     }
     oPreviousDiv.className = "PaginationPrevArrowDiv";
@@ -1623,7 +1128,7 @@ MAQ.CreatePaginationControl = function (GridConfiguration) {
             oViewRecords.appendChild(oPageList);
         } else {
             MSApp.execUnsafeLocalFunction(function () {
-                WinJS.Utilities.setInnerHTML(oViewRecords, oPageList.innerHTML);
+                WinJS.Utilities.setInnerHTML(oViewRecords, oPageList.innerText);
             });
         }
         iTotalPages = iLastPage < (iCurrentPage + 4) ? iLastPage : (iCurrentPage + 4);
@@ -1723,10 +1228,10 @@ MAQ.setDrillDown = function (sCellValue, iCurrentRow, oGridConfiguration, bEndRo
     } else {
         oDrillCell.setAttribute("colspan", oGridConfiguration.columnHeader.length + iDrillDownCounter);
     }
-    return $(oDrillCellContainer).html() + sCellValue;
+    return $(oDrillCellContainer).text() + sCellValue;
 };
 MAQ.CreateHTMLTableRow = function (GridConfiguration) {
-    var originalGridData = JSON.parse(JSON.stringify(GridConfiguration.data)); 
+    var originalGridData = JSON.parse(JSON.stringify(GridConfiguration.data));
     for (jCount = 0; jCount < GridConfiguration.data.length; jCount++) {
         obj = {};
         for (iCount = 0; iCount < dataView.table.columns.length; iCount++) {
@@ -1736,7 +1241,7 @@ MAQ.CreateHTMLTableRow = function (GridConfiguration) {
                 name = col.substring(col.indexOf('.') + 1, col.lastIndexOf(')')).replaceAll("\"", "'");
             }
             var format = dataView.table.columns[iCount].format;
-            var formatter = valueFormatter.create({format: format});
+            var formatter = valueFormatter.create({ format: format });
             if (format) {
                 GridConfiguration.data[jCount][name] = formatter.format(GridConfiguration.data[jCount][name]);
             }
@@ -1808,7 +1313,11 @@ MAQ.CreateHTMLTableRow = function (GridConfiguration) {
                 // Append static header after level 0 is encountered
                 if (oStaticHeader.staticHeader[iInnerCounter][sStaticColumnName] === GridConfiguration.data[this.rowPosition][sStaticColumnName]) {
                     staticRow = GridConfiguration.tblBody.insertRow(-1);
-                    $(staticRow).html("<td colspan=" + numberOfColumns + " class=" + oStaticHeader.staticHeader[iInnerCounter].className + ">" + oStaticHeader.staticHeader[iInnerCounter].columnText + "</td>");
+                    var td = document.createElement('td');
+                    MAQUtility.colSpan(td, numberOfColumns);
+                    MAQUtility.addClass(td, oStaticHeader.staticHeader[iInnerCounter].className);
+                    span.textContent = oStaticHeader.staticHeader[iInnerCounter].columnText;
+                    staticRow.appendChild(td);
                     MAQUtility.addClass(staticRow, "GridRow");
                 }
             } else if ((iCounter) < (endIndex - 1) && oStaticHeader.enabled && "-1" === oStaticHeader.staticHeader[iInnerCounter][sStaticColumnName]) {
@@ -1816,7 +1325,11 @@ MAQ.CreateHTMLTableRow = function (GridConfiguration) {
                 if (oStaticHeader.staticHeader[iInnerCounter][sStaticColumnName] === GridConfiguration.data[++iCounter][sStaticColumnName] && "1" !== sIsNegativeLevel) {
                     sIsNegativeLevel = "1";
                     staticRow = GridConfiguration.tblBody.insertRow(-1);
-                    $(staticRow).html("<td colspan=" + numberOfColumns + " class=" + oStaticHeader.staticHeader[iInnerCounter].className + ">" + oStaticHeader.staticHeader[iInnerCounter].columnText + "</td>");
+                    var td = document.createElement('td');
+                    MAQUtility.colSpan(td, numberOfColumns);
+                    MAQUtility.addClass(td, oStaticHeader.staticHeader[iInnerCounter].className);
+                    span.textContent = oStaticHeader.staticHeader[iInnerCounter].columnText;
+                    staticRow.appendChild(td);
                     MAQUtility.addClass(staticRow, "GridRow");
                 }
             }
@@ -1838,7 +1351,11 @@ MAQ.CreateHTMLTableRow = function (GridConfiguration) {
                     }
                 });
                 oGroupHeaderRow = GridConfiguration.tblBody.insertRow(iCurrentRowIndex);
-                $(oGroupHeaderRow).html("<td colspan=" + numberOfColumns + " class='" + GridConfiguration.groupedRowHeader.data[iHeaderIndex].headerClassName + "'>" + GridConfiguration.groupedRowHeader.data[iHeaderIndex].columnText + "</td>");
+                var td = document.createElement('td');
+                MAQUtility.colSpan(td, numberOfColumns);
+                MAQUtility.addClass(td, GridConfiguration.groupedRowHeader.data[iHeaderIndex].headerClassName);
+                span.textContent = GridConfiguration.groupedRowHeader.data[iHeaderIndex].columnText;
+                staticRow.appendChild(td);
                 MAQUtility.addClass(oGroupHeaderRow, "GroupHeaderRow");
                 if (GridConfiguration.groupedRowHeader.data[iHeaderIndex].style) {
                     MAQ.applyStyleToObject(oGroupHeaderRow, GridConfiguration.groupedRowHeader.data[iHeaderIndex].style);
@@ -2007,9 +1524,6 @@ MAQ.CreateHTMLTableRow = function (GridConfiguration) {
                 else if (GridConfiguration.columnHeader[cellCounter].category === "WebUrl") {
                     let link = document.createElement("a");
                     link.textContent = sReturnValue;
-                    $(link).on("click", function () {
-                        window.open(sReturnValue, '_blank');
-                    });
                     cell.appendChild(link);
                 }
                 else {
@@ -2148,7 +1662,7 @@ MAQ.CreateHTMLTableWithHeader = function (GridConfiguration) {
             }
         }
         cell.setAttribute("colspan", GridConfiguration.headerTemplate[iParentCounter].colspan || 1);
-        $(cell).html(GridConfiguration.headerTemplate[iParentCounter].columnText || "");
+        $(cell).text(GridConfiguration.headerTemplate[iParentCounter].columnText || "");
         cell.setAttribute("dataID", GridConfiguration.headerTemplate[iParentCounter].dataID || "parent");
         cell.setAttribute("onclick", GridConfiguration.headerTemplate[iParentCounter].onclick || "");
         MAQUtility.addClass(cell, "jsonGridParentHeader");
@@ -2187,7 +1701,7 @@ MAQ.CreateHTMLTableWithHeader = function (GridConfiguration) {
             if (iLoopCounter + 1 === numberOfHeaderColumns) {
                 cell.style.paddingRight = 10 + "px";
             }
-
+            var regex = /[!\"#$%&'\(\)\*\+,\.\/:;<=>\?\@\[\\\]\^`\{\|\}~ ]/g;
             // Add sorting functionality
             if (GridConfiguration.columnHeader[iLoopCounter].sortable) {
                 cell.setAttribute("onclick", 'MAQ.sortJsonGrid(this,"' + GridConfiguration.container + '_Grid","' + GridConfiguration.columnHeader[iLoopCounter].name + '")');
@@ -2211,22 +1725,30 @@ MAQ.CreateHTMLTableWithHeader = function (GridConfiguration) {
             if (!GridConfiguration.gridSort.sortby && GridConfiguration.columnHeader[iLoopCounter].sortable) {
                 GridConfiguration.gridSort.sortby = GridConfiguration.columnHeader[iLoopCounter].name;
             }
+            var span = document.createElement('span');
+            MAQUtility.addClass(span, 'ColumnText')
+            span.textContent = GridConfiguration.columnHeader[iLoopCounter].columnText;
+            cell.appendChild(span);
             if (GridConfiguration.columnHeader[iLoopCounter].name === GridConfiguration.gridSort.sortby && GridConfiguration.columnHeader[iLoopCounter].sortable) {
                 MAQUtility.addClass(cell, "jsonGridHeaderAlternate");
                 MAQUtility.addClass(document.querySelectorAll("#" + GridConfiguration.container + " .SortIndicator"), "itemHide");
-                $(cell).html("<span class='ColumnText'>" + GridConfiguration.columnHeader[iLoopCounter].columnText + "</span>");
+                var spanInner = document.createElement('span');
+                var spanOuter = document.createElement('span');
+                spanOuter.appendChild(spanInner);
+                MAQUtility.addClass(spanOuter, "SortIndicator sort" + GridConfiguration.columnHeader[iLoopCounter].name.replace(regex, '_') + "Hand")
+                cell.appendChild(spanOuter);
                 if (GridConfiguration.gridSort.sortorder === "asc") {
-                    $(cell).append("<span class='SortIndicator sort" + GridConfiguration.columnHeader[iLoopCounter].name.replace(/[!\"#$%&'\(\)\*\+,\.\/:;<=>\?\@\[\\\]\^`\{\|\}~ ]/g, '_') + "Hand'>" + '<span class="asc"></span>' + "</span>");
+                    MAQUtility.addClass(spanInner, 'asc');
                 } else {
-                    $(cell).append("<span class='SortIndicator sort" + GridConfiguration.columnHeader[iLoopCounter].name.replace(/[!\"#$%&'\(\)\*\+,\.\/:;<=>\?\@\[\\\]\^`\{\|\}~ ]/g, '_') + "Hand'>" + '<span class="desc"></span>' + "</span>");
+                    MAQUtility.addClass(spanInner, 'desc');
                 }
             } else if (GridConfiguration.columnHeader[iLoopCounter].sortable) {
-                $(cell).html("<span class='ColumnText'>" + GridConfiguration.columnHeader[iLoopCounter].columnText + "</span>");
-                if (GridConfiguration.columnHeader[iLoopCounter].sortable) {
-                    $(cell).append("<span class='itemHide SortIndicator sort" + GridConfiguration.columnHeader[iLoopCounter].name.replace(/[!\"#$%&'\(\)\*\+,\.\/:;<=>\?\@\[\\\]\^`\{\|\}~ ]/g, '_') + "Hand'>" + '<span class="asc"></span>' + "</span>");
-                }
-            } else {
-                $(cell).html("<span class='ColumnText'>" + GridConfiguration.columnHeader[iLoopCounter].columnText + "</span>");
+                var spanInner = document.createElement('span');
+                MAQUtility.addClass(spanInner, 'asc');
+                var spanOuter = document.createElement('span');
+                spanOuter.appendChild(spanInner);
+                MAQUtility.addClass(spanOuter, "SortIndicator itemHide sort" + GridConfiguration.columnHeader[iLoopCounter].name.replace(regex, '_') + "Hand")
+                cell.appendChild(spanOuter);
             }
         }
     }
@@ -2646,7 +2168,6 @@ MAQ.JsonGrid = function (gridConfigurationOptions) {
             jumpTo(0);
         }
         );
-
     }
 
     selectedElement = document.getElementsByClassName("ListOptionContainer")[1];
@@ -2662,7 +2183,7 @@ MAQ.JsonGrid = function (gridConfigurationOptions) {
 function jumpTo(index) {
     if (document.getElementsByClassName("ListOptionContainer") && document.getElementsByClassName("ListOptionContainer")[index] && document.getElementsByClassName("ListOptionContainer")[index].options) {
         pageid = document.getElementsByClassName("ListOptionContainer")[index].options.selectedIndex + 1;
-        var totalPages = document.getElementsByClassName("totalPagesLabel")[index].innerHTML;
+        var totalPages = document.getElementsByClassName("totalPagesLabel")[index].innerText;
         totalPages.substring(totalPages.indexOf("of") + 2, totalPages.length).trim();
         var oElemJumpTo = document.getElementsByClassName("ListOptionContainer")[index].options[document.getElementsByClassName("ListOptionContainer")[index].options.selectedIndex];
         if (pageid > totalPages) {
@@ -2680,7 +2201,7 @@ MAQ.createHiddenChunk = function (gridOptions) {
     var sContainer = gridOptions.container,
         oHiddenContainer = document.getElementById(sContainer + "_hidden");
     if (oHiddenContainer) {
-        gridOptions.currentPage = parseInt(oHiddenContainer.getAttribute("data-currentPage"));
+    gridOptions.currentPage = parseInt(oHiddenContainer.getAttribute("data-currentPage"));
         gridOptions.totalPages = parseInt(oHiddenContainer.getAttribute("data-totalPages"));
         gridOptions.pagination.maxRows = parseInt(oHiddenContainer.getAttribute("data-maxRows"));
         gridOptions.gridSort.sortby = oHiddenContainer.getAttribute("data-sortBy");
@@ -2717,7 +2238,7 @@ MAQ.callService = function (gridOptions) {
     if (sCallBack && typeof window[sCallBack] === oGridConstants.sFunction) {
         if (gridOptions.pagination.paginate) {
             // Empty the container before fetching next set of data in case of server side pagination
-            $("#" + gridOptions.container).html("");
+            $("#" + gridOptions.container).text("");
         }
         window[sCallBack](oParameters);
     }
