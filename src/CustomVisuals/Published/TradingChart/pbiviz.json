@@ -4,12 +4,12 @@
     "displayName": "Trading Chart by MAQ Software",
     "guid": "StockChart1464746768122",
     "visualClassName": "StockChart",
-    "version": "3.1.1",
+    "version": "3.1.2",
     "description": "Trading chart custom visual is used to display the stock prices for the given period. We can also display trends by using the trend line option available. Stock prices are listed on the vertical axis and time increments are listed on the horizontal axis. The ranges for prices and time periods are auto-adjusted based on the range of values provided. Each bar on the stock represents 4 values. Open and Close will be stock open and close prices for given day, and Low, High values will be the min, max values of that stock for the day.",
     "supportUrl": "https://github.com/maqsoftware/PowerBI-visuals/issues",
     "gitHubUrl": "https://github.com/maqsoftware/PowerBI-visuals/"
   },
-  "apiVersion": "1.4.0",
+  "apiVersion": "1.9.0",
   "author": {
     "name": "MAQ Software",
     "email": "support@maqsoftware.com"
@@ -31,7 +31,9 @@
     "node_modules/powerbi-visuals-utils-formattingutils/lib/index.js",
     "node_modules/jquery/dist/jquery.min.js",
     "node_modules/d3/d3.min.js",
-    "node_modules/powerbi-visuals-utils-tooltiputils/lib/index.js"
+    "node_modules/powerbi-visuals-utils-tooltiputils/lib/index.js",
+    "node_modules/powerbi-visuals-utils-interactivityutils/lib/index.js",
+    "node_modules/powerbi-visuals-utils-chartutils/lib/index.js"
   ],
   "style": "style/visual.less",
   "capabilities": "capabilities.json",
