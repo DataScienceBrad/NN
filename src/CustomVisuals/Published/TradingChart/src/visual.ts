@@ -29,6 +29,9 @@
 module powerbi.extensibility.visual {
     import VisualTooltipDataItem = powerbi.extensibility.VisualTooltipDataItem;
     import ValueFormatter = powerbi.extensibility.utils.formatting.valueFormatter;
+    import AxisHelper = powerbi.extensibility.utils.chart.axis;
+    import TextProperties = powerbi.extensibility.utils.formatting.TextProperties;
+    import textMeasurementService = powerbi.extensibility.utils.formatting.textMeasurementService;
 
     const dateLiteral: string = 'date';
     const openLiteral: string = 'open';
@@ -48,7 +51,8 @@ module powerbi.extensibility.visual {
         value: string;
     }
     export interface IStackViewModel {
-        data: [Object];
+        // tslint:disable-next-line:no-any
+        data: any;
         toolTipInfo: ITooltipDataItem[];
         toolTipInfoLegends: ITooltipDataItem[];
         legendName: string;
@@ -56,6 +60,9 @@ module powerbi.extensibility.visual {
         Low_HighIndicator: string;
         IncreasingTrend: string;
         DecreasingTrend: string;
+        fontSize: number;
+        fontColor: string;
+        fontFamily: string;
         TrendLine: string;
         IsGrouped: boolean;
         legendTextSize: string;
@@ -110,8 +117,15 @@ module powerbi.extensibility.visual {
         borderColor: DataViewObjectPropertyIdentifier;
     }
 
+    interface IDataLabels {
+        fontSize: DataViewObjectPropertyIdentifier;
+        fontColor: DataViewObjectPropertyIdentifier;
+        fontFamily: DataViewObjectPropertyIdentifier;
+    }
+
     interface IStockProperties {
         dataColors: IDataColors;
+        dataLabels: IDataLabels;
         legends: ILegends;
         trends: ITrends;
         yAxis: IYAxis;
@@ -125,6 +139,11 @@ module powerbi.extensibility.visual {
             LowHighDataColor: <DataViewObjectPropertyIdentifier>{ objectName: 'dataColors', propertyName: 'LowHighDataColor' },
             OpenCloseDataColor: <DataViewObjectPropertyIdentifier>{ objectName: 'dataColors', propertyName: 'OpenCloseDataColor' },
             LossPriceColor: <DataViewObjectPropertyIdentifier>{ objectName: 'dataColors', propertyName: 'LossPriceColor' }
+        },
+        dataLabels: {
+            fontSize: <DataViewObjectPropertyIdentifier>{ objectName: 'dataLabels', propertyName: 'fontSize' },
+            fontColor: <DataViewObjectPropertyIdentifier>{ objectName: 'dataLabels', propertyName: 'fontColor' },
+            fontFamily: <DataViewObjectPropertyIdentifier>{ objectName: 'dataLabels', propertyName: 'fontFamily' }
         },
         legends: {
             show: <DataViewObjectPropertyIdentifier>{ objectName: 'legends', propertyName: 'show' },
@@ -158,6 +177,7 @@ module powerbi.extensibility.visual {
         private tooltipServiceWrapper: ITooltipServiceWrapper;
         public rootElement: d3.Selection<SVGElement>;
         public errorDiv: d3.Selection<SVGElement>;
+        private static isDate: boolean = false;
         public dataView: DataView;
         public ORIGIN_COORD: {
             x: number,
@@ -191,6 +211,9 @@ module powerbi.extensibility.visual {
                 Low_HighIndicator: 'grey',
                 IncreasingTrend: 'green',
                 DecreasingTrend: 'red',
+                fontSize: 12,
+                fontColor: 'black',
+                fontFamily: 'Segoe UI',
                 TrendLine: 'rgb(242, 200, 17)',
                 IsGrouped: false,
                 legendName: 'Increasing Trend',
@@ -311,15 +334,17 @@ module powerbi.extensibility.visual {
                     let rowSet: {};
                     rowSet = {};
                     let isPositive: boolean = true;
-                    for (let k: number = 0; k < 4; k++) {
+                    for (let kIterator: number = 0; kIterator < 4; kIterator++) {
                         // Categories
 
                         let colName: string = dataView.categorical.categories[0].source.displayName.toLowerCase();
                         // tslint:disable-next-line:no-any
                         let dateVar: any;
                         dateVar = dataView.categorical.categories[0].values[iIterator];
-                        if (Object.prototype.toString.call(dateVar) === '[object Date]' ||
-                            Object.prototype.toString.call(dateVar) === '[object Number]') {
+
+                        if (Object.prototype.toString.call(dateVar) === '[object Date]') {
+                            StockChart.isDate = true;
+
                             // it is a date
                             if (isNaN(new Date(dateVar.toString()).getTime())) {
                                 // date is not valid
@@ -338,42 +363,31 @@ module powerbi.extensibility.visual {
                                 }
                             }
                         } else {
+                            StockChart.isDate = false;
                             // not a date
-                            isPositive = false;
-                            break;
+                            rowSet[dateLiteral] = dateVar;
                         }
-
                         // Each values
-                        if (dataView.categorical.values[k].source.roles[lowLiteral]) {
+                        if (dataView.categorical.values[kIterator].source.roles[lowLiteral]) {
                             colName = 'low';
-                            resultSet.format[colName] = dataView.categorical.values[k].source.format;
-                        } else if (dataView.categorical.values[k].source.roles[highLiteral]) {
+                        } else if (dataView.categorical.values[kIterator].source.roles[highLiteral]) {
                             colName = 'high';
-                            resultSet.format[colName] = dataView.categorical.values[k].source.format;
-                        } else if (dataView.categorical.values[k].source.roles[openLiteral]) {
+                        } else if (dataView.categorical.values[kIterator].source.roles[openLiteral]) {
                             colName = 'open';
-                            resultSet.format[colName] = dataView.categorical.values[k].source.format;
-                        } else if (dataView.categorical.values[k].source.roles[closeLiteral]) {
+                        } else if (dataView.categorical.values[kIterator].source.roles[closeLiteral]) {
                             colName = 'close';
-                            resultSet.format[colName] = dataView.categorical.values[k].source.format;
                         }
-                        if (parseFloat(dataView.categorical.values[k].values[iIterator].toString()) <= 0) {
-                            isPositive = false;
-                            break;
-                        } else {
-                            rowSet[colName] = dataView.categorical.values[k].values[iIterator];
-                        }
+                        rowSet[colName] = dataView.categorical.values[kIterator].values[iIterator];
+                        resultSet.format[colName] = dataView.categorical.values[kIterator].source.format;
                     }
-                    if (isPositive) {
-                        if (parseFloat(rowSet[openLiteral]) > parseFloat(rowSet[highLiteral]) ||
-                            parseFloat(rowSet[closeLiteral]) < parseFloat(rowSet[lowLiteral]) ||
-                            parseFloat(rowSet[lowLiteral]) > parseFloat(rowSet[openLiteral]) ||
-                            parseFloat(rowSet[highLiteral]) < parseFloat(rowSet[closeLiteral]) ||
-                            parseFloat(rowSet[lowLiteral]) > parseFloat(rowSet[highLiteral])) {
-                            // Do nothing. Invalid data
-                        } else {
-                            resultSet.data.push(rowSet);
-                        }
+                    if (parseFloat(rowSet[openLiteral]) > parseFloat(rowSet[highLiteral]) ||
+                        parseFloat(rowSet[closeLiteral]) < parseFloat(rowSet[lowLiteral]) ||
+                        parseFloat(rowSet[lowLiteral]) > parseFloat(rowSet[openLiteral]) ||
+                        parseFloat(rowSet[highLiteral]) < parseFloat(rowSet[closeLiteral]) ||
+                        parseFloat(rowSet[lowLiteral]) > parseFloat(rowSet[highLiteral])) {
+                        // Do nothing. Invalid data
+                    } else {
+                        resultSet.data.push(rowSet);
                     }
                 }
             } else {
@@ -392,79 +406,96 @@ module powerbi.extensibility.visual {
             yearFormat = d3.time.format('%Y');
             let svgcontainer: d3.Selection<SVGElement>;
             svgcontainer = this.svg;
-            let ticksCount: number = Math.ceil(this.SVG_SIZE.h / 75); //7;
-
+            const divideScale: number = 75;
+            let ticksCount: number = Math.ceil(this.SVG_SIZE.h / divideScale);
+            const divideTick: number = 130;
             svgcontainer.selectAll('*').remove();
             //Create the Scale we will use for the XAxis
             try {
-                ticksCount = Math.ceil(this.SVG_SIZE.w / 130);
-
-                if (viewModel && viewModel.data[0][dateLiteral]) {
-
-                    // tslint:disable-next-line:no-any
-                    let maxDate: any = new Date(viewModel.data[0][dateLiteral]);
-                    // tslint:disable-next-line:no-any
-                    let minDate: any = new Date(viewModel.data[0][dateLiteral]);
-                    let diffDays: number = 0;
-                    let sKey: string;
-                    for (sKey in viewModel.data) {
-                        if (viewModel.data.hasOwnProperty(sKey)) {
-                            let dt: Date;
-                            dt = new Date(viewModel.data[sKey][dateLiteral]);
-                            if (maxDate < dt) {
-                                maxDate = dt;
-                            }
-                            if (minDate > dt) {
-                                minDate = dt;
-                            }
-                        }
-                    }
-
-                    if ((maxDate - minDate) === 0) {
-                        if (viewModel.IsGrouped) {
-                            maxDate = dateParseFormat.parse(`${(parseInt(viewModel.data[0][dateLiteral].substr('0,4'), 10) + 1)}-01-01`);
-                            minDate = dateParseFormat.parse(`${(parseInt(viewModel.data[0][dateLiteral].substr('0,4'), 10) - 1)}-01-01`);
-                        } else {
-                            minDate = maxDate = dateParseFormat.parse(viewModel.data[0][dateLiteral]);
-                            maxDate = powerbi.extensibility.utils.formatting.dateUtils.addDays(maxDate, 7);
-                            minDate = powerbi.extensibility.utils.formatting.dateUtils.addDays(minDate, -7);
-                        }
-                    }
-                    diffDays = (maxDate - minDate) / (1000 * 60 * 60 * 24);
-
-                    let xScale: d3.time.Scale<number, number>;
-                    xScale = d3.time.scale()
-                        .range([0, this.SVG_SIZE.w])
-                        .domain([minDate, maxDate]);
-
-                    let arr: Date[];
-                    arr = [];
-                    let newDate: Date = new Date();
-                    newDate = minDate;
-                    newDate = new Date(newDate.setDate(newDate.getDate()));
-                    // let ne = new Date(newDate + '');
-                    let ne: Date;
-                    ne = new Date(newDate.toString());
-
-                    arr.push(ne);
-
-                    for (let count: number = 1; count < ticksCount; count++) {
-                        newDate = new Date(newDate.setDate(newDate.getDate() + Math.ceil(diffDays / ticksCount)));
+                if (StockChart.isDate) {
+                    ticksCount = Math.ceil(this.SVG_SIZE.w / divideTick);
+                    if (viewModel && viewModel.data[0][dateLiteral]) {
+                        // tslint:disable-next-line:no-any
+                        let maxDate: any = new Date(viewModel.data[0][dateLiteral]);
+                        // tslint:disable-next-line:no-any
+                        let minDate: any = new Date(viewModel.data[0][dateLiteral]);
+                        let diffDays: number = 0;
+                        let sKey: string;
                         let date1: Date;
-                        date1 = new Date(newDate.toString());
-                        arr.push(date1);
-                    }
+                        for (sKey in viewModel.data) {
+                            if (viewModel.data.hasOwnProperty(sKey)) {
+                                date1 = new Date(viewModel.data[sKey][dateLiteral]);
+                                if (maxDate < date1) {
+                                    maxDate = date1;
+                                }
+                                if (minDate > date1) {
+                                    minDate = date1;
+                                }
+                            }
+                        }
+                        if ((maxDate - minDate) === 0) {
+                            if (viewModel.IsGrouped) {
+                                maxDate = dateParseFormat
+                                    .parse(`${(parseInt(viewModel.data[0][dateLiteral].substr('0,4'), 10) + 1)}-01-01`);
+                                minDate = dateParseFormat
+                                    .parse(`${(parseInt(viewModel.data[0][dateLiteral].substr('0,4'), 10) - 1)}-01-01`);
+                            } else {
+                                minDate = maxDate = dateParseFormat.parse(viewModel.data[0][dateLiteral]);
+                                maxDate = powerbi.extensibility.utils.formatting.dateUtils.addDays(maxDate, 7);
+                                minDate = powerbi.extensibility.utils.formatting.dateUtils.addDays(minDate, -7);
+                            }
+                        }
+                        const hour: number = 24;
+                        const milisec: number = 1000;
+                        const minutes: number = 60;
+                        const sec: number = 60;
+                        diffDays = (maxDate - minDate) / (milisec * hour * minutes * sec);
+                        let xScale: d3.time.Scale<number, number>;
+                        xScale = d3.time.scale()
+                            .range([0, this.SVG_SIZE.w])
+                            .domain([minDate, maxDate]);
 
+                        let arr: Date[];
+                        arr = [];
+                        let newDate: Date = new Date();
+                        newDate = minDate;
+                        newDate = new Date(newDate.setDate(newDate.getDate()));
+                        arr.push(new Date(newDate.toString()));
+
+                        for (let count: number = 1; count < ticksCount; count++) {
+                            newDate = new Date(newDate.setDate(newDate.getDate() + Math.ceil(diffDays / ticksCount)));
+                            arr.push(new Date(newDate.toString()));
+                        }
+
+                        if (this.MARGINS) {
+                            let xAxisGroup: d3.Selection<SVGElement>;
+                            xAxisGroup = svgcontainer.append('g')
+                                .call(
+                                d3.svg.axis()
+                                    .scale(xScale)
+                                    .tickValues(arr)
+                                    .tickSize(0)
+                                    .orient('bottom')
+                                    .tickFormat(viewModel.IsGrouped ? yearFormat : dateFormat)
+                                    .tickPadding(12)
+                                )
+                                .classed('Stock_xaxis', true)
+                                .attr('transform', `translate(${this.MARGINS.left},${this.SVG_SIZE.h + this.MARGINS.top + 2})`);
+                        }
+                    }
+                } else {
+                    const adjustMargine: number = 50;
+                    const xScale: d3.scale.Ordinal<string, number> = d3.scale.ordinal()
+                        .domain(viewModel.data.map((data: Object) => data[`date`]))
+                        .rangePoints([0, options.viewport.width - this.MARGINS.left - this.MARGINS.right - adjustMargine]);
                     if (this.MARGINS) {
                         let xAxisGroup: d3.Selection<SVGElement>;
                         xAxisGroup = svgcontainer.append('g')
                             .call(
                             d3.svg.axis()
                                 .scale(xScale)
-                                .tickValues(arr)
                                 .tickSize(0)
                                 .orient('bottom')
-                                .tickFormat(viewModel.IsGrouped ? yearFormat : dateFormat)
                                 .tickPadding(12)
                             )
                             .classed('Stock_xaxis', true)
@@ -476,7 +507,8 @@ module powerbi.extensibility.visual {
             }
             try {
                 //Create the Scale we will use for the yAxis
-                ticksCount = Math.ceil(this.SVG_SIZE.h / 75);
+                const adjustSize: number = 60;
+                ticksCount = Math.ceil(this.SVG_SIZE.h / adjustSize);
                 if (ticksCount <= 1) {
                     ticksCount = 2;
                 }
@@ -494,9 +526,6 @@ module powerbi.extensibility.visual {
 
                 lowestValue = lowestValue - (lowestValue % 5);      //rounding off value to nearest multiple of 5
                 highestValue = highestValue + (5 - (highestValue % 5));       //rounding off value to nearest multiple of 5
-
-                lowestValue = lowestValue < 0 ? 0 : lowestValue;       //Y-axis value not less than 0
-
                 let yScale: d3.scale.Linear<number, number>;
                 yScale = d3.scale.linear()
                     .domain([lowestValue, highestValue])
@@ -558,6 +587,12 @@ module powerbi.extensibility.visual {
                     objects, stockProps.dataColors.OpenCloseDataColor, this.values.IncreasingTrend);
                 this.values.DecreasingTrend = powerbi.extensibility.utils.dataview.DataViewObjects.getFillColor(
                     objects, stockProps.dataColors.LossPriceColor, this.values.DecreasingTrend);
+                this.values.fontSize = powerbi.extensibility.utils.dataview.DataViewObjects.getValue(
+                    objects, stockProps.dataLabels.fontSize, this.values.fontSize);
+                this.values.fontColor = powerbi.extensibility.utils.dataview.DataViewObjects.getFillColor(
+                    objects, stockProps.dataLabels.fontColor, this.values.fontColor);
+                this.values.fontFamily = powerbi.extensibility.utils.dataview.DataViewObjects.getValue(
+                    objects, stockProps.dataLabels.fontFamily, this.values.fontFamily);
                 this.values.hasLegend = powerbi.extensibility.utils.dataview.DataViewObjects.getValue(
                     objects, stockProps.legends.show, this.values.hasLegend);
                 this.values.labelColor = powerbi.extensibility.utils.dataview.DataViewObjects.getFillColor(
@@ -637,6 +672,8 @@ module powerbi.extensibility.visual {
                     .style('display', 'inline-block');
 
                 let textopen: d3.Selection<SVGElement>;
+                const divider: number = 100;
+                const multiplier: number = 20;
                 textopen = legendsOpenCloseBlock
                     .append('div')
                     .classed('title', true)
@@ -644,7 +681,7 @@ module powerbi.extensibility.visual {
                     .style('font-size', `${this.values.legendTextSize}px`)
                     .style('color', this.values.labelColor)
                     .text(powerbi.extensibility.utils.formatting.textMeasurementService
-                        .getTailoredTextOrDefault(textPropertiesLegendName2, (options.viewport.width * 20) / 100));
+                        .getTailoredTextOrDefault(textPropertiesLegendName2, (options.viewport.width * multiplier) / divider));
 
                 legendsOpenCloseBlock
                     .append('div')
@@ -663,7 +700,9 @@ module powerbi.extensibility.visual {
 
                 this.updateZoom(options);
                 this.createAxis(viewModel, options);
-
+                const openArray: number[] = [];
+                const closeArray: number[] = [];
+                let arrayIndex: number = 0;
                 if (viewModel && viewModel.data[0]) {
                     // tslint:disable-next-line:no-any
                     let maxDate: any = new Date(viewModel.data[0][dateLiteral]);
@@ -672,17 +711,16 @@ module powerbi.extensibility.visual {
                     let days: number = 0;
                     // tslint:disable-next-line:no-any
                     let ratioDayLen: any;
-
                     let sKeyDataSet: string;
                     for (sKeyDataSet in viewModel.data) {
                         if (viewModel.data.hasOwnProperty(sKeyDataSet)) {
-                            let dt: Date;
-                            dt = new Date(viewModel.data[sKeyDataSet][dateLiteral]);
-                            if (maxDate < dt) {
-                                maxDate = dt;
+                            let date: Date;
+                            date = new Date(viewModel.data[sKeyDataSet][dateLiteral]);
+                            if (maxDate < date) {
+                                maxDate = date;
                             }
-                            if (minDate > dt) {
-                                minDate = dt;
+                            if (minDate > date) {
+                                minDate = date;
                             }
                         }
                     }
@@ -699,9 +737,9 @@ module powerbi.extensibility.visual {
                             minDate = powerbi.extensibility.utils.formatting.dateUtils.addDays(minDate, -7);
                         }
                     }
-
+                    const increaseDays: number = 50;
                     days = (maxDate - minDate) / (1000 * 60 * 60 * 24);
-                    ratioDayLen = this.SVG_SIZE.w / (days ? days : 1);
+                    ratioDayLen = (this.SVG_SIZE.w - increaseDays) / (days ? days : 1);
 
                     // tslint:disable-next-line:no-any
                     let lowestValue: any = d3.min(viewModel.data.map(function (d: Object): any { return d[lowLiteral]; }));
@@ -716,13 +754,16 @@ module powerbi.extensibility.visual {
 
                     lowestValue = lowestValue - (lowestValue % 5);      //rounding off value to nearest multiple of 5
                     highestValue = highestValue + (5 - (highestValue % 5));       //rounding off value to nearest multiple of 5
-
-                    lowestValue = lowestValue < 0 ? 0 : lowestValue;       //Y-axis value not less than 0
-
                     let differencePadded: number;
                     differencePadded = highestValue - lowestValue;
-
+                    const xScale1: d3.scale.Ordinal<string, number> = d3.scale.ordinal()
+                        .domain(viewModel.data.map((d: Object) => d[`date`]))
+                        .rangePoints([0, options.viewport.width - this.MARGINS.left - this.MARGINS.right - 50]);
                     let sDataKey: string;
+                    let barNumber: number;
+                    barNumber = 1;
+                    // tslint:disable-next-line:no-any
+                    const xValues: number[] = [];
                     for (sDataKey in viewModel.data) {
                         if (viewModel.data.hasOwnProperty(sDataKey)) {
                             let ob: Object;
@@ -730,11 +771,21 @@ module powerbi.extensibility.visual {
                             // tslint:disable-next-line:no-any
                             let dtDate: any;
                             dtDate = new Date(ob[dateLiteral]);
+                            // tslint:disable-next-line:no-any
+                            const dtDate1: any = ob[dateLiteral];
                             let diffDaysNew: number;
-                            diffDaysNew = (dtDate - minDate) / (1000 * 60 * 60 * 24);
+                            const hour: number = 24;
+                            const milisec: number = 1000;
+                            const minutes: number = 60;
+                            const sec: number = 60;
+                            diffDaysNew = (dtDate - minDate) / (milisec * sec * minutes * hour);
                             // tslint:disable-next-line:no-any
                             let x: number;
-                            x = this.ORIGIN_COORD.x + (diffDaysNew * ratioDayLen);
+                            if (StockChart.isDate) {
+                                x = this.ORIGIN_COORD.x + (diffDaysNew * ratioDayLen);
+                            } else {
+                                x = this.ORIGIN_COORD.x + xScale1(viewModel.data[sDataKey][`date`]);
+                            }
                             // tslint:disable-next-line:no-any
                             let low: any;
                             low = viewModel.data[sDataKey][lowLiteral];
@@ -779,19 +830,72 @@ module powerbi.extensibility.visual {
                             let bottomNew: number;
                             bottomNew = this.ORIGIN_COORD.y - bottom2;
                             let rect: d3.Selection<SVGElement>;
+                            const stockRect: string = 'StockRect';
+                            let y1: number = (bottomNew - diffCloseOpenNew);
+                            const y2: number = bottomNew;
+                            // set y co-ordinates depending on the bar size
+                            if (close >= open) {
+                                if ((y2 - y1) < 1) {
+                                    y1 = y1 - 1;
+                                }
+                            }
+                            let yCloseText: number = y1;
+                            if (y2 - y1 < 20) {
+                                yCloseText = yCloseText - 10;
+                            }
                             rect = this.svg
                                 .append('line')
                                 .classed('Stock_rectangle', true)
+                                .classed(stockRect + barNumber, true)
                                 .attr({
                                     x1: x,
                                     x2: x,
-                                    y1: (bottomNew - diffCloseOpenNew),
+                                    y1: y1,
                                     y2: bottomNew
                                 })
                                 .style({
                                     'stroke-width': '6px',
                                     stroke: this.values.IncreasingTrend
                                 });
+
+                            // tslint:disable-next-line:no-any
+                            let openTextValue: any;
+                            const openVal: string = 'openVal';
+                            const closeVal: string = 'closeVal';
+                            const adjustOpenX: number = 5;
+                            const adjustOpenY: number = 2;
+                            openTextValue = powerbi.extensibility.utils.formatting.valueFormatter
+                                .create({ format: viewModel.format[openLiteral] }).format(Number(open.toFixed(2)));
+                            this.svg.append('text').attr({
+                                x: x + adjustOpenX,
+                                y: bottomNew - adjustOpenY,
+                                fill: this.values.fontColor,
+                                'font-size': this.values.fontSize,
+                                'font-family': this.values.fontFamily
+                            })
+                                .text(openTextValue)
+                                .classed('stockValuesOpen', true)
+                                .classed(openVal + barNumber, true);
+                            xValues.push(x);
+                            openArray[arrayIndex] = openTextValue;
+                            // tslint:disable-next-line:no-any
+                            let closeTextValue: any;
+                            const adjustClose: number = 5;
+                            //closeTextValue
+                            closeTextValue = powerbi.extensibility.utils.formatting.valueFormatter
+                                .create({ format: viewModel.format[closeLiteral] }).format(Number(close.toFixed(2)));
+                            this.svg.append('text').attr({
+                                x: x + adjustClose,
+                                y: yCloseText - adjustClose,
+                                fill: this.values.fontColor,
+                                'font-size': this.values.fontSize,
+                                'font-family': this.values.fontFamily
+                            })
+                                .text(closeTextValue)
+                                .classed('stockValuesClose', true)
+                                .classed(closeVal + barNumber, true);
+                            closeArray[arrayIndex] = closeTextValue;
+                            arrayIndex++;
                             let y: number;
                             y = bottomNew - diffCloseOpenNew;
                             point.push({ x, y });
@@ -838,11 +942,17 @@ module powerbi.extensibility.visual {
                             parseDate = d3.time.format('%Y-%m-%d').parse;
                             let formatDate: d3.time.Format;
                             formatDate = d3.time.format('%d-%b-%y');
-                            toolTipInfoNew.push({
-                                displayName: viewModel.IsGrouped ? 'Year' : 'Date'
-                                , value: viewModel.IsGrouped ? dateNew.substr(0, 4) : formatDate(parseDate(dateNew)).toString()
-                            });
-
+                            if (StockChart.isDate) {
+                                toolTipInfoNew.push({
+                                    displayName: viewModel.IsGrouped ? 'Year' : 'Date'
+                                    , value: viewModel.IsGrouped ? dateNew.substr(0, 4) : formatDate(parseDate(dateNew)).toString()
+                                });
+                            } else {
+                                toolTipInfoNew.push({
+                                    displayName: 'Category',
+                                    value: dateNew
+                                });
+                            }
                             lowNew = powerbi.extensibility.utils.formatting.valueFormatter
                                 .create({ format: viewModel.format[lowLiteral] }).format(lowNew);
                             highNew = powerbi.extensibility.utils.formatting.valueFormatter
@@ -858,9 +968,37 @@ module powerbi.extensibility.visual {
 
                             line[0][0]['cust-tooltip'] = rect[0][0]['cust-tooltip'] = toolTipInfoNew;
                         }
+                        barNumber++;
                     }
                 }
-
+                const length: number = d3.selectAll('.stockValuesClose')[0].length - 1;
+                // tslint:disable-next-line:no-any
+                d3.selectAll('.stockValuesClose')[0].forEach(function (ele: any, index: number): void {
+                    const closeVal: string = '.closeVal';
+                    const openVal: string = '.openVal';
+                    const stockRect: string = '.StockRect';
+                    const lastTextWidth: number = 30;
+                    const index1: number = index + 1; // to get index from 1
+                    const index2: number = index + 2; // to get next index
+                    const padding: number = 5;
+                    if (index < length) {
+                        const textWidth: number = parseInt(d3.select(stockRect + (index2))
+                            .attr('x1'),                   10) - parseInt(d3.select(closeVal + (index1))
+                            .attr('x'),                                   10) - padding;
+                        d3.select(closeVal + (index1))
+                            .call(AxisHelper.LabelLayoutStrategy.clip, textWidth, textMeasurementService.svgEllipsis);
+                        d3.select(openVal + (index1))
+                            .call(AxisHelper.LabelLayoutStrategy.clip, textWidth, textMeasurementService.svgEllipsis);
+                    } else {
+                        d3.select(closeVal + (index1))
+                            .call(AxisHelper.LabelLayoutStrategy.clip, lastTextWidth, textMeasurementService.svgEllipsis);
+                        d3.select(openVal + (index1))
+                            .call(AxisHelper.LabelLayoutStrategy.clip, lastTextWidth, textMeasurementService.svgEllipsis);
+                        d3.select(openVal + (index1)).append('title').text(openArray[index]);
+                    }
+                    d3.select(openVal + (index1)).append('title').text(openArray[index]);
+                    d3.select(closeVal + (index1)).append('title').text(closeArray[index]);
+                });
                 this.svg.append('rect')
                     .classed('svgFrame', true)
                     .attr('x', this.ORIGIN_COORD.x - 8)
@@ -874,7 +1012,6 @@ module powerbi.extensibility.visual {
 
                 // Trend Line
                 if (point) {
-                    // point.splice(0, 1);
                     let d3line2: d3.svg.Line<[number, number]>;
                     const xLiteral: string = 'x';
                     const yLiteral: string = 'y';
@@ -904,8 +1041,6 @@ module powerbi.extensibility.visual {
 
                 // Formatting option for y-axis through capabilities
                 // Formatting the y-axis
-                let k: number;
-                k = 0;
                 if (this.rootElement.selectAll('g.Stock_yaxis>g.tick') && this.rootElement.selectAll('g.Stock_yaxis>g.tick')[0]) {
                     if ((this.values && this.values.displayUnits) && this.values.displayUnits > 1) {
                         // tslint:disable-next-line:no-any
@@ -965,6 +1100,18 @@ module powerbi.extensibility.visual {
                             LowHighDataColor: this.values.Low_HighIndicator,
                             OpenCloseDataColor: this.values.IncreasingTrend,
                             LossPriceColor: this.values.DecreasingTrend
+                        }
+                    });
+                    break;
+                case 'dataLabels':
+                    enumeration.push({
+                        objectName: 'dataLabels',
+                        displayName: 'Data Labels',
+                        selector: null,
+                        properties: {
+                            fontSize: this.values.fontSize,
+                            fontColor: this.values.fontColor,
+                            fontFamily: this.values.fontFamily
                         }
                     });
                     break;
@@ -1031,6 +1178,5 @@ module powerbi.extensibility.visual {
 
             return enumeration;
         }
-
     }
 }

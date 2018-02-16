@@ -8,22 +8,42 @@
         {
             "name": "low",
             "kind": "Measure",
-            "displayName": "Low Values"
+            "displayName": "Low Values",
+            "requiredTypes": [
+                {
+                    "numeric": true
+                }
+            ]
         },
         {
             "name": "high",
             "kind": "Measure",
-            "displayName": "High Values"
+            "displayName": "High Values",
+            "requiredTypes": [
+                {
+                    "numeric": true
+                }
+            ]
         },
         {
             "name": "open",
             "kind": "Measure",
-            "displayName": "Open Values"
+            "displayName": "Open Values",
+            "requiredTypes": [
+                {
+                    "numeric": true
+                }
+            ]
         },
         {
             "name": "close",
             "kind": "Measure",
-            "displayName": "Close Values"
+            "displayName": "Close Values",
+            "requiredTypes": [
+                {
+                    "numeric": true
+                }
+            ]
         }
     ],
     "objects": {
@@ -58,6 +78,131 @@
                                 "color": true
                             }
                         }
+                    }
+                }
+            }
+        },
+        "dataLabels": {
+            "displayName": "Data labels",
+            "properties": {
+                "fontSize": {
+                    "displayName": "Font Size",
+                    "description": "Change Font Size",
+                    "type": {
+                        "formatting": {
+                            "fontSize": true
+                        }
+                    }
+                },
+                "fontColor": {
+                    "displayName": "Font color",
+                    "description": "Change Font color",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "fontFamily": {
+                    "displayName": "Font family",
+                    "description": "Change Font family",
+                    "type": {
+                        "enumeration": [
+                            {
+                              "value": "Arial",
+                              "displayName": "Arial"
+                            },
+                            {
+                              "value": "Arial Black",
+                              "displayName": "Arial Black"
+                            },
+                            {
+                              "value": "Arial Unicode MS",
+                              "displayName": "Arial Unicode MS"
+                            },
+                            {
+                              "value": "Calibri",
+                              "displayName": "Calibri"
+                            },
+                            {
+                              "value": "Cambria",
+                              "displayName": "Cambria"
+                            },
+                            {
+                              "value": "Cambria Math",
+                              "displayName": "Cambria Math"
+                            },
+                            {
+                              "value": "Candara",
+                              "displayName": "Candara"
+                            },
+                            {
+                              "value": "Comic Sans MS",
+                              "displayName": "Comic Sans MS"
+                            },
+                            {
+                              "value": "Consolas",
+                              "displayName": "Consolas"
+                            },
+                            {
+                              "value": "Constantia",
+                              "displayName": "Constantia"
+                            },
+                            {
+                              "value": "Corbel",
+                              "displayName": "Corbel"
+                            },
+                            {
+                              "value": "Courier New",
+                              "displayName": "Courier New"
+                            },
+                            {
+                              "value": "Georgia",
+                              "displayName": "Georgia"
+                            },
+                            {
+                              "value": "Lucida Sans Unicode",
+                              "displayName": "Lucida Sans Unicode"
+                            },
+                            {
+                              "value": "Segoe (Bold)",
+                              "displayName": "Segoe (Bold)"
+                            },
+                            {
+                              "value": "Segoe UI",
+                              "displayName": "Segoe UI"
+                            },
+                            {
+                              "value": "Segoe UI Light",
+                              "displayName": "Segoe UI Light"
+                            },
+                            {
+                              "value": "Symbol",
+                              "displayName": "Symbol"
+                            },
+                            {
+                              "value": "Tahoma",
+                              "displayName": "Tahoma"
+                            },
+                            {
+                              "value": "Times New Roman",
+                              "displayName": "Times New Roman"
+                            },
+                            {
+                              "value": "Trebuchet MS",
+                              "displayName": "Trebuchet MS"
+                            },
+                            {
+                              "value": "Verdana",
+                              "displayName": "Verdana"
+                            },
+                            {
+                              "value": "Wingdings",
+                              "displayName": "Wingdings"
+                            }
+                          ]
                     }
                 }
             }
